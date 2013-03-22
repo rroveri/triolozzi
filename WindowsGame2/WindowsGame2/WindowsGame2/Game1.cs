@@ -55,6 +55,10 @@ namespace WindowsGame2
 
         private bool found;
 
+        KeyboardState ks;
+        MouseState ms;
+        GamePadState gps;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -174,23 +178,26 @@ namespace WindowsGame2
         {
 
             // TODO: Add your update logic here
-            
+
+            gps = GamePad.GetState(PlayerIndex.One);
+            ks = Keyboard.GetState();
+            ms = Mouse.GetState();
 
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (gps.Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (ks.IsKeyDown(Keys.Escape))
                 Exit();
 
             //move red car
             redDrawable._compound.LinearDamping = 1;
             redDrawable._compound.AngularDamping = 1;
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            if (ks.IsKeyDown(Keys.Right) || gps.ThumbSticks.Right.X > 0)
             {
                // redDrawable.body.Rotation += 0.1f;
                 redDrawable._compound.ApplyTorque(0.1f);
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            if (ks.IsKeyDown(Keys.Left) || gps.ThumbSticks.Right.X < 0)
             {
                // redDrawable.body.Rotation -= 0.1f;
                 redDrawable._compound.ApplyTorque(-0.1f);
@@ -199,17 +206,17 @@ namespace WindowsGame2
             Vector2 dir = new Vector2((float)Math.Cos(redDrawable._compound.Rotation), (float)Math.Sin(redDrawable._compound.Rotation));
             float force = 1f;
             Vector2 forceVector = dir * force;
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            if (ks.IsKeyDown(Keys.Up) || gps.ThumbSticks.Left.Y > 0)
             {
                 redDrawable._compound.ApplyForce(forceVector, redDrawable._compound.WorldCenter);
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            if (ks.IsKeyDown(Keys.Down) || gps.ThumbSticks.Left.Y < 0)
             {
                 redDrawable._compound.ApplyForce(-forceVector, redDrawable._compound.WorldCenter);
             }
             
             // compute red trail
-            if (Keyboard.GetState().IsKeyDown(Keys.F))
+            if (ks.IsKeyDown(Keys.F) || gps.Triggers.Right > 0)
             {
                 redTrail.Add(redDrawable.Position);     
             }
