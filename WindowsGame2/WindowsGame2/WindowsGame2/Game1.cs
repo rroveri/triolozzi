@@ -127,12 +127,12 @@ namespace WindowsGame2
             ceil.body.BodyType = BodyType.Static;
             bordersList.Add(ceil);
             DrawablePhysicsObject rightWall;
-            rightWall = new DrawablePhysicsObject(world, Content.Load<Texture2D>("Images/triangle"), new Vector2(100.0f, GraphicsDevice.Viewport.Height), 1000.0f, Color.Black);
+            rightWall = new DrawablePhysicsObject(world, Content.Load<Texture2D>("Images/triangle"), new Vector2(100.0f, GraphicsDevice.Viewport.Height - 201), 1000.0f, Color.Black);
             rightWall.Position = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height/2.0f);
             rightWall.body.BodyType = BodyType.Static;
             bordersList.Add(rightWall);
             DrawablePhysicsObject leftWall;
-            leftWall = new DrawablePhysicsObject(world, Content.Load<Texture2D>("Images/triangle"), new Vector2(100.0f, GraphicsDevice.Viewport.Height), 1000.0f, Color.Black);
+            leftWall = new DrawablePhysicsObject(world, Content.Load<Texture2D>("Images/triangle"), new Vector2(100.0f, GraphicsDevice.Viewport.Height - 201), 1000.0f, Color.Black);
             leftWall.Position = new Vector2(0, GraphicsDevice.Viewport.Height / 2.0f);
             leftWall.body.BodyType = BodyType.Static;
             bordersList.Add(leftWall);
