@@ -1,4 +1,0 @@
-Content\Images\triangle.xnb
-Content\Images\triangleRight.xnb
-Content\Images\carRight.xnb
-Content\Font.xnb
