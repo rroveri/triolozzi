@@ -21,6 +21,8 @@ namespace WindowsGame2
         // I've chosen to use the rule that 100 pixels is one meter.
         // We have to take care to convert between these two
         // coordinate-sets wherever we mix them!
+
+        Vector2 textureOrigin = new Vector2();
  
         public const float unitToPixel = 100.0f;
         public const float pixelToUnit = 1 / unitToPixel;
@@ -63,7 +65,9 @@ namespace WindowsGame2
  
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, Position, null, color, body.Rotation, new Vector2(texture.Width / 2.0f, texture.Height / 2.0f), scale, SpriteEffects.None, 0);
+            textureOrigin.X = texture.Width / 2.0f;
+            textureOrigin.Y = texture.Height / 2.0f;
+            spriteBatch.Draw(texture, Position, null, color, body.Rotation, textureOrigin, scale, SpriteEffects.None, 0);
         }
     }
 }

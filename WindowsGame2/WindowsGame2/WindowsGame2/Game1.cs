@@ -34,6 +34,10 @@ namespace WindowsGame2
         List<DrawablePhysicsObject> bordersList;
         List<PolygonPhysicsObject> polygonsList;
 
+
+        TexturePhysicsObject[] carsArray;
+        DrawablePhysicsObject[] bordersArray;
+
         
         KeyboardState prevKeyboardState;
         Random random;
@@ -59,6 +63,11 @@ namespace WindowsGame2
         MouseState ms;
         GamePadState gps;
 
+        Vector2 dir;
+        Vector2 forceVector;
+
+        float force;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -71,8 +80,8 @@ namespace WindowsGame2
 
             Window.Title = "The Drunken Dream Maker (With a Cold)";
 
-            FrameRateCounter myFrameCounter = new FrameRateCounter(this, new Vector2(25, 25), Color.White, Color.Black);
-            Components.Add(myFrameCounter);
+          //  FrameRateCounter myFrameCounter = new FrameRateCounter(this, new Vector2(25, 25), Color.White, Color.Black);
+           // Components.Add(myFrameCounter);
 
         }
 
@@ -93,6 +102,10 @@ namespace WindowsGame2
             found = false;
 
             random = new Random();
+
+            dir = new Vector2();
+            forceVector =new Vector2();
+            force = 1f;
 
             base.Initialize();
         }
@@ -155,6 +168,16 @@ namespace WindowsGame2
             greenDrawable.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
             carsList.Add(greenDrawable);
 
+            carsArray = new TexturePhysicsObject[3];
+            carsArray[0] = redDrawable;
+            carsArray[1] = blueDrawable;
+            carsArray[2] = greenDrawable;
+            bordersArray = new DrawablePhysicsObject[4];
+            bordersArray[0] = floor;
+            bordersArray[1] = ceil;
+            bordersArray[2] = leftWall;
+            bordersArray[3] = rightWall;
+
            
         }
 
@@ -202,10 +225,13 @@ namespace WindowsGame2
                // redDrawable.body.Rotation -= 0.1f;
                 redDrawable._compound.ApplyTorque(-0.1f);
             }
+            
+           
+            dir.X = (float)Math.Cos(redDrawable._compound.Rotation);
+            dir.Y = (float)Math.Sin(redDrawable._compound.Rotation);
+            
+            forceVector = dir * force;
 
-            Vector2 dir = new Vector2((float)Math.Cos(redDrawable._compound.Rotation), (float)Math.Sin(redDrawable._compound.Rotation));
-            float force = 1f;
-            Vector2 forceVector = dir * force;
             if (ks.IsKeyDown(Keys.Up) || gps.ThumbSticks.Left.Y > 0)
             {
                 redDrawable._compound.ApplyForce(forceVector, redDrawable._compound.WorldCenter);
@@ -296,7 +322,7 @@ namespace WindowsGame2
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-            spriteBatch.Draw(squaredBg, Vector2.Zero,null, Color.White, 0.0f, Vector2.Zero, Vector2.One*1.8f,SpriteEffects.None,0f);
+         //   spriteBatch.Draw(squaredBg, Vector2.Zero,null, Color.White, 0.0f, Vector2.Zero, Vector2.One*1.8f,SpriteEffects.None,0f);
 
             // draw red trail
             for (int i = 1; i < redTrail.Count; i++)
@@ -307,15 +333,15 @@ namespace WindowsGame2
             }
 
             // draw cars
-            for (int i = 0; i < carsList.Count; i++)
+            for (int i = 0; i < carsArray.Length; i++)
             {
-                carsList[i].Draw(spriteBatch);
+                carsArray[i].Draw(spriteBatch);
             }
 
             // draw walls
-            for (int i = 0; i < bordersList.Count; i++)
+            for (int i = 0; i < bordersArray.Length; i++)
             {
-                bordersList[i].Draw(spriteBatch);
+                bordersArray[i].Draw(spriteBatch);
             }
 
             // draw polygons
