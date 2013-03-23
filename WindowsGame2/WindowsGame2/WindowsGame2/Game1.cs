@@ -235,6 +235,55 @@ namespace WindowsGame2
             // TODO: Unload any non ContentManager content here
         }
 
+        void lookForIntersection(int index, float minDist){
+
+            if (Vector2.Distance(redDrawable.Position, redTrailArray[index]) < minDist)
+                    {
+                        // intersection found
+                        found = true;
+
+                        // compute polygon vertices
+                        vertices = new Vertices();
+
+                        if (redTrailLoop)
+                        {
+                            for (int ii = index; ii < maxTrailPoints - 1; ii++)
+                            {
+                                if (ii % 10 == 0)
+                                {
+                                    vertices.Add(redTrailArray[ii]);
+                                }
+                            }
+                            for (int ii = 0; ii < redTrailCounter; ii++)
+                            {
+                                if (ii % 10 == 0)
+                                {
+                                    vertices.Add(redTrailArray[ii]);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (int ii = index; ii < redTrailCounter; ii++)
+                            {
+                                if (ii % 10 == 0)
+                                {
+                                    vertices.Add(redTrailArray[ii]);
+                                }
+                            }
+                        }
+
+                        //if the shape is a polygon, create a new object
+                        if (vertices.Count > 2)
+                        {
+                            myBigObject = new PolygonPhysicsObject(world, vertices, dummyTexture);
+                            polygonsList.Add(myBigObject);
+                        }
+
+                    }
+
+        }
+
        
 
         /// <summary>
@@ -309,8 +358,7 @@ namespace WindowsGame2
             }
             else
             {
-                
-                //redTrail.Clear(); 
+             
                 showRedTrail = false;
                 found = false;
                 redTrailLoop = false;
@@ -319,48 +367,44 @@ namespace WindowsGame2
             
             //create red shapes
 
+
             //min dist from the car
             int lowBound=50;
             //distance to check if there is an intersection
             float distToCheckIntersection = 5.0f;
 
-            if (redTrail.Count>lowBound){
-                
-                for (int i = 0; i < redTrail.Count - 1-lowBound; i++)
+
+            if (redTrailCounter > lowBound || (redTrailLoop && maxTrailPoints>lowBound))
+            {
+                float difference=redTrailCounter-lowBound;
+                if (difference>0){
+                    difference=0;
+                }
+                for (int i = 0; i < redTrailCounter - 1 - lowBound; i++)
                 {
                     if (found)
                     {
                         //already one shape with this trail, do not draw other shapes
                         break;
                     }
-                    
-                    if (Vector2.Distance(redDrawable.Position, redTrail[i]) < distToCheckIntersection)
-                    {
-                        // intersection found
-                        found = true;
-
-                        // compute polygon vertices
-                        vertices = new Vertices();
-
-                        for (int ii = i; ii < redTrail.Count - 1; ii++)
-                        {
-                            if (ii % 10 == 0)
-                            {
-                                vertices.Add(redTrail[ii]);
-                            }
-                        }
-                        //if the shape is a polygon, create a new object
-                        if (vertices.Count > 2)
-                        {
-                            myBigObject = new PolygonPhysicsObject(world, vertices, dummyTexture);
-                            polygonsList.Add(myBigObject);
-                        }
-                        
-                        break;
-                    }
-
+                    lookForIntersection(i,distToCheckIntersection);
                 }
+                if (redTrailLoop)
+                {
+                    for (int i = redTrailCounter; i < maxTrailPoints - 1 + difference; i++)
+                    {
+                        if (found)
+                        {
+                            //already one shape with this trail, do not draw other shapes
+                            break;
+                        }
+                        lookForIntersection(i, distToCheckIntersection);
+                    }
+                }
+
             }
+
+
 
             world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
             base.Update(gameTime);
