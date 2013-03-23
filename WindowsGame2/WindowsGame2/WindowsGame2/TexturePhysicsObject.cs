@@ -58,7 +58,7 @@ namespace WindowsGame2
             _origin = -centroid;
 
             //We simplify the vertices found in the texture.
-            textureVertices = SimplifyTools.ReduceByDistance(textureVertices, 4f);
+            textureVertices = SimplifyTools.ReduceByDistance(textureVertices, 60f);
 
             //Since it is a concave polygon, we need to partition it into several smaller convex polygons
             List<Vertices> list = BayazitDecomposer.ConvexPartition(textureVertices);

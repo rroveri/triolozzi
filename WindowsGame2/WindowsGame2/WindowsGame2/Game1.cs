@@ -20,6 +20,15 @@ using FarseerPhysics.SamplesFramework;
 
 namespace WindowsGame2
 {
+
+    struct car
+    {
+        public Body carBody;
+        public Texture2D carTexture;
+        public Color carColor;
+    };
+
+
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -68,6 +77,15 @@ namespace WindowsGame2
 
         float force;
 
+        
+        Vector2[] redTrailArray;
+        int maxTrailPoints;
+        int redTrailCounter;
+        bool redTrailLoop;
+        bool showRedTrail;
+
+        car[] carStructsArray;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -106,6 +124,12 @@ namespace WindowsGame2
             dir = new Vector2();
             forceVector =new Vector2();
             force = 1f;
+
+            maxTrailPoints = 500;
+            redTrailArray = new Vector2[maxTrailPoints];
+            redTrailCounter = 0;
+            showRedTrail = false;
+            redTrailLoop = false;
 
             base.Initialize();
         }
@@ -178,6 +202,27 @@ namespace WindowsGame2
             bordersArray[2] = leftWall;
             bordersArray[3] = rightWall;
 
+            car redCarStruct;
+            redCarStruct.carBody = redDrawable._compound;
+            redCarStruct.carTexture = Content.Load<Texture2D>("Images/penis");
+            redCarStruct.carColor = Color.Red;
+            car blueCarStruct;
+            blueCarStruct.carBody = blueDrawable._compound;
+            blueCarStruct.carTexture = Content.Load<Texture2D>("Images/penis");
+            blueCarStruct.carColor = Color.Blue;
+            car greenCarStruct;
+            greenCarStruct.carBody = greenDrawable._compound;
+            greenCarStruct.carTexture = Content.Load<Texture2D>("Images/greenCarXna");
+            greenCarStruct.carColor = Color.Green;
+
+            carStructsArray = new car[3];
+            carStructsArray[0] = redCarStruct;
+            carStructsArray[1] = blueCarStruct;
+            carStructsArray[2] = greenCarStruct;
+
+            redDrawable._compound.LinearDamping = 1;
+            redDrawable._compound.AngularDamping = 1;
+
            
         }
 
@@ -213,43 +258,63 @@ namespace WindowsGame2
                 Exit();
 
             //move red car
-            redDrawable._compound.LinearDamping = 1;
-            redDrawable._compound.AngularDamping = 1;
+            
             if (ks.IsKeyDown(Keys.Right) || gps.ThumbSticks.Right.X > 0)
             {
-               // redDrawable.body.Rotation += 0.1f;
-                redDrawable._compound.ApplyTorque(0.1f);
+                carStructsArray[0].carBody.ApplyTorque(0.1f);
+                //redDrawable._compound.ApplyTorque(0.1f);
             }
             if (ks.IsKeyDown(Keys.Left) || gps.ThumbSticks.Right.X < 0)
             {
-               // redDrawable.body.Rotation -= 0.1f;
-                redDrawable._compound.ApplyTorque(-0.1f);
+                carStructsArray[0].carBody.ApplyTorque(-0.1f);
+               // redDrawable._compound.ApplyTorque(-0.1f);
             }
             
            
-            dir.X = (float)Math.Cos(redDrawable._compound.Rotation);
-            dir.Y = (float)Math.Sin(redDrawable._compound.Rotation);
-            
+            //dir.X = (float)Math.Cos(redDrawable._compound.Rotation);
+            //dir.Y = (float)Math.Sin(redDrawable._compound.Rotation);
+            dir.X = (float)Math.Cos(carStructsArray[0].carBody.Rotation);
+            dir.Y = (float)Math.Sin(carStructsArray[0].carBody.Rotation);
+
+
             forceVector = dir * force;
 
             if (ks.IsKeyDown(Keys.Up) || gps.ThumbSticks.Left.Y > 0)
             {
-                redDrawable._compound.ApplyForce(forceVector, redDrawable._compound.WorldCenter);
+                carStructsArray[0].carBody.ApplyForce(forceVector, carStructsArray[0].carBody.WorldCenter);
+                //redDrawable._compound.ApplyForce(forceVector, redDrawable._compound.WorldCenter);
+                
             }
             if (ks.IsKeyDown(Keys.Down) || gps.ThumbSticks.Left.Y < 0)
             {
-                redDrawable._compound.ApplyForce(-forceVector, redDrawable._compound.WorldCenter);
+                carStructsArray[0].carBody.ApplyForce(-forceVector, carStructsArray[0].carBody.WorldCenter);
+                //redDrawable._compound.ApplyForce(-forceVector, redDrawable._compound.WorldCenter);
             }
             
             // compute red trail
             if (ks.IsKeyDown(Keys.F) || gps.Triggers.Right > 0)
             {
-                redTrail.Add(redDrawable.Position);     
+
+                showRedTrail = true;
+               // redTrail.Add(redDrawable.Position);
+
+                if (redTrailCounter >= maxTrailPoints)
+                {
+                    redTrailLoop = true;
+                    redTrailCounter = 0;
+                }
+                
+                redTrailArray[redTrailCounter] = redDrawable.Position;
+                redTrailCounter++;
             }
             else
             {
-                redTrail.Clear(); 
+                
+                //redTrail.Clear(); 
+                showRedTrail = false;
                 found = false;
+                redTrailLoop = false;
+                redTrailCounter = 0;
             }
             
             //create red shapes
@@ -294,7 +359,6 @@ namespace WindowsGame2
                         break;
                     }
 
-                    
                 }
             }
 
@@ -325,14 +389,35 @@ namespace WindowsGame2
          //   spriteBatch.Draw(squaredBg, Vector2.Zero,null, Color.White, 0.0f, Vector2.Zero, Vector2.One*1.8f,SpriteEffects.None,0f);
 
             // draw red trail
+            /*
             for (int i = 1; i < redTrail.Count; i++)
             {
                 Vector2 position1 = redTrail[i];
                 Vector2 position2 = redTrail[i-1];
                 DrawLine(spriteBatch, dummyTexture,5,Color.Red,position1,position2);
             }
+            */
+            if (showRedTrail)
+            {
+                for (int i = 1; i < redTrailCounter; i++)
+                {
+                    DrawLine(spriteBatch, dummyTexture, 5, Color.Red, redTrailArray[i], redTrailArray[i - 1]);
+                }
+                if (redTrailLoop)
+                {
+                    for (int i = redTrailCounter + 1; i < maxTrailPoints; i++)
+                    {
+                        DrawLine(spriteBatch, dummyTexture, 5, Color.Red, redTrailArray[i], redTrailArray[i - 1]);
+                    }
+                    if (redTrailCounter != maxTrailPoints)
+                    {
+                        DrawLine(spriteBatch, dummyTexture, 5, Color.Red, redTrailArray[0], redTrailArray[maxTrailPoints - 1]);
+                    }
+                }
+            }
 
             // draw cars
+            
             for (int i = 0; i < carsArray.Length; i++)
             {
                 carsArray[i].Draw(spriteBatch);
@@ -350,7 +435,6 @@ namespace WindowsGame2
                 polygonsList[i].Draw(spriteBatch);
             }
 
-           
             spriteBatch.End();
 
             base.Draw(gameTime);
