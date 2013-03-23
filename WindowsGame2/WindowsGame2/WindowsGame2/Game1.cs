@@ -245,18 +245,20 @@ namespace WindowsGame2
                         // compute polygon vertices
                         vertices = new Vertices();
 
+                        int verticesInterval = 10;
+
                         if (redTrailLoop)
                         {
                             for (int ii = index; ii < maxTrailPoints - 1; ii++)
                             {
-                                if (ii % 10 == 0)
+                                if (ii % verticesInterval == 0)
                                 {
                                     vertices.Add(redTrailArray[ii]);
                                 }
                             }
                             for (int ii = 0; ii < redTrailCounter; ii++)
                             {
-                                if (ii % 10 == 0)
+                                if (ii % verticesInterval == 0)
                                 {
                                     vertices.Add(redTrailArray[ii]);
                                 }
@@ -266,7 +268,7 @@ namespace WindowsGame2
                         {
                             for (int ii = index; ii < redTrailCounter; ii++)
                             {
-                                if (ii % 10 == 0)
+                                if (ii % verticesInterval == 0)
                                 {
                                     vertices.Add(redTrailArray[ii]);
                                 }
@@ -345,7 +347,6 @@ namespace WindowsGame2
             {
 
                 showRedTrail = true;
-               // redTrail.Add(redDrawable.Position);
 
                 if (redTrailCounter >= maxTrailPoints)
                 {
