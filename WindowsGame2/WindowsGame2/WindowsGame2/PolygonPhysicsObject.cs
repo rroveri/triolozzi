@@ -125,7 +125,7 @@ namespace WindowsGame2
 
             spriteBatch.Draw(sprite.Texture, ConvertUnits.ToDisplayUnits(compound.Position),
                                          null, Color, compound.Rotation, sprite.Origin, 1f, SpriteEffects.None,
-                                         0f);
+                                         0.95f);
 
 
 

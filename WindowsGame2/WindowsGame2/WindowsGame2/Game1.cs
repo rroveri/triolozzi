@@ -202,8 +202,8 @@ namespace WindowsGame2
         {
             GraphicsDevice.Clear(Color.White);
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-            spriteBatch.Draw(squaredBg, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero, Vector2.One * 0.9f, SpriteEffects.None, 0f);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            spriteBatch.Draw(squaredBg, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero, Vector2.One * 0.9f, SpriteEffects.None, 1f);
 
             // draw cars and their trails
             for (int i = 0; i < cars.Count; i++)
