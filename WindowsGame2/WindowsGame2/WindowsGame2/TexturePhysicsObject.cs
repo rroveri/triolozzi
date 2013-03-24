@@ -77,7 +77,7 @@ namespace WindowsGame2
 
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
 
             spriteBatch.Draw(_polygonTexture, ConvertUnits.ToDisplayUnits(_compound.Position),

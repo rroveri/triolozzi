@@ -31,12 +31,11 @@ namespace WindowsGame2
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        List<TexturePhysicsObject> carsList;
         List<DrawablePhysicsObject> bordersList;
         List<PolygonPhysicsObject> polygonsList;
 
 
-        TexturePhysicsObject[] carsArray;
+        Car[] carsArray;
         DrawablePhysicsObject[] bordersArray;
 
         
@@ -47,33 +46,10 @@ namespace WindowsGame2
 
         Texture2D dummyTexture;
 
-        List<Vector2> redTrail;
-
-        PolygonPhysicsObject myBigObject;
-        Vertices vertices;
-
-        Rectangle dummyRectangle;
-
         Texture2D squaredBg;
 
-        private bool found;
-
         KeyboardState ks;
-        MouseState ms;
         GamePadState gps;
-
-        Vector2 dir;
-        Vector2 forceVector;
-
-        float force;
-
-        
-        Vector2[] redTrailArray;
-        int maxTrailPoints;
-        int redTrailCounter;
-        bool redTrailLoop;
-        bool showRedTrail;
-
         
         public Game1()
         {
@@ -100,25 +76,8 @@ namespace WindowsGame2
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
-            
-            redTrail=new List<Vector2>();
             polygonsList = new List<PolygonPhysicsObject>();
-
-            found = false;
-
             random = new Random();
-
-            dir = new Vector2();
-            forceVector =new Vector2();
-            force = 1f;
-
-            maxTrailPoints = 500;
-            redTrailArray = new Vector2[maxTrailPoints];
-            redTrailCounter = 0;
-            showRedTrail = false;
-            redTrailLoop = false;
 
             base.Initialize();
         }
@@ -176,7 +135,7 @@ namespace WindowsGame2
             Car greenCar = new Car(world, this, Color.Green);
             greenCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
 
-            carsArray = new TexturePhysicsObject[3];
+            carsArray = new Car[3];
             carsArray[0] = redCar;
             carsArray[1] = blueCar;
             carsArray[2] = greenCar;
@@ -189,6 +148,8 @@ namespace WindowsGame2
             redCar._compound.LinearDamping = 1;
             redCar._compound.AngularDamping = 1;
 
+            blueCar._compound.LinearDamping = 1;
+            blueCar._compound.AngularDamping = 1;
            
         }
 
@@ -201,58 +162,6 @@ namespace WindowsGame2
             // TODO: Unload any non ContentManager content here
         }
 
-        void lookForIntersection(int index, float minDist){
-
-            if (Vector2.Distance(redCar.Position, redTrailArray[index]) < minDist)
-                    {
-                        // intersection found
-                        found = true;
-
-                        // compute polygon vertices
-                        vertices = new Vertices();
-
-                        int verticesInterval = 10;
-
-                        if (redTrailLoop)
-                        {
-                            for (int ii = index; ii < maxTrailPoints - 1; ii++)
-                            {
-                                if (ii % verticesInterval == 0)
-                                {
-                                    vertices.Add(redTrailArray[ii]);
-                                }
-                            }
-                            for (int ii = 0; ii < redTrailCounter; ii++)
-                            {
-                                if (ii % verticesInterval == 0)
-                                {
-                                    vertices.Add(redTrailArray[ii]);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            for (int ii = index; ii < redTrailCounter; ii++)
-                            {
-                                if (ii % verticesInterval == 0)
-                                {
-                                    vertices.Add(redTrailArray[ii]);
-                                }
-                            }
-                        }
-
-                        //if the shape is a polygon, create a new object
-                        if (vertices.Count > 2)
-                        {
-                            myBigObject = new PolygonPhysicsObject(world, vertices, dummyTexture);
-                            polygonsList.Add(myBigObject);
-                        }
-
-                    }
-
-        }
-
-       
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -261,12 +170,8 @@ namespace WindowsGame2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-
-            // TODO: Add your update logic here
-
             gps = GamePad.GetState(PlayerIndex.One);
             ks = Keyboard.GetState();
-            ms = Mouse.GetState();
 
             // Allows the game to exit
             if (gps.Buttons.Back == ButtonState.Pressed || ks.IsKeyDown(Keys.Escape))
@@ -274,82 +179,26 @@ namespace WindowsGame2
 
             //move red car
             redCar.Update(gps, ks);
-            
-            // compute red trail
-            if (ks.IsKeyDown(Keys.F) || gps.Triggers.Right > 0)
+
+            // move blue car
+            carsArray[1].Update(GamePad.GetState(PlayerIndex.Two), Keyboard.GetState());
+
+            // Find and add obstacle for red car and add it
+            PolygonPhysicsObject obstacle = redCar.TrailObstacle(world);
+            if (obstacle != null)
             {
-
-                showRedTrail = true;
-
-                if (redTrailCounter >= maxTrailPoints)
-                {
-                    redTrailLoop = true;
-                    redTrailCounter = 0;
-                }
-                
-                redTrailArray[redTrailCounter] = redCar.Position;
-                redTrailCounter++;
-            }
-            else
-            {
-             
-                showRedTrail = false;
-                found = false;
-                redTrailLoop = false;
-                redTrailCounter = 0;
-            }
-            
-            //create red shapes
-
-
-            //min dist from the car
-            int lowBound=50;
-            //distance to check if there is an intersection
-            float distToCheckIntersection = 5.0f;
-
-
-            if (redTrailCounter > lowBound || (redTrailLoop && maxTrailPoints>lowBound))
-            {
-                float difference=redTrailCounter-lowBound;
-                if (difference>0){
-                    difference=0;
-                }
-                for (int i = 0; i < redTrailCounter - 1 - lowBound; i++)
-                {
-                    if (found)
-                    {
-                        //already one shape with this trail, do not draw other shapes
-                        break;
-                    }
-                    lookForIntersection(i,distToCheckIntersection);
-                }
-                if (redTrailLoop)
-                {
-                    for (int i = redTrailCounter; i < maxTrailPoints - 1 + difference; i++)
-                    {
-                        if (found)
-                        {
-                            //already one shape with this trail, do not draw other shapes
-                            break;
-                        }
-                        lookForIntersection(i, distToCheckIntersection);
-                    }
-                }
-
+                polygonsList.Add(obstacle);
             }
 
-
+            // Find and add obstacle for red car and add it
+            obstacle = carsArray[1].TrailObstacle(world);
+            if (obstacle != null)
+            {
+                polygonsList.Add(obstacle);
+            }
 
             world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
             base.Update(gameTime);
-        }
-
-        void DrawLine(SpriteBatch batch, Texture2D blank, float width, Color color, Vector2 point1, Vector2 point2)
-        {
-            float angle = (float)Math.Atan2(point2.Y - point1.Y, point2.X - point1.X);
-            float length = Vector2.Distance(point1, point2);
-           // color.A = 50;
-            batch.Draw(blank, point1, null, color, angle, Vector2.Zero, new Vector2(length, width), SpriteEffects.None, 0);
         }
 
         /// <summary>
@@ -360,42 +209,9 @@ namespace WindowsGame2
         {
             GraphicsDevice.Clear(Color.White);
 
-            // TODO: Add your drawing code here
-
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-         //   spriteBatch.Draw(squaredBg, Vector2.Zero,null, Color.White, 0.0f, Vector2.Zero, Vector2.One*1.8f,SpriteEffects.None,0f);
-
-            // draw red trail
-            /*
-            for (int i = 1; i < redTrail.Count; i++)
-            {
-                Vector2 position1 = redTrail[i];
-                Vector2 position2 = redTrail[i-1];
-                DrawLine(spriteBatch, dummyTexture,5,Color.Red,position1,position2);
-            }
-            */
-            if (showRedTrail)
-            {
-                for (int i = 1; i < redTrailCounter; i++)
-                {
-                    DrawLine(spriteBatch, dummyTexture, 5, Color.Red, redTrailArray[i], redTrailArray[i - 1]);
-                }
-                if (redTrailLoop)
-                {
-                    for (int i = redTrailCounter + 1; i < maxTrailPoints; i++)
-                    {
-                        DrawLine(spriteBatch, dummyTexture, 5, Color.Red, redTrailArray[i], redTrailArray[i - 1]);
-                    }
-                    if (redTrailCounter != maxTrailPoints)
-                    {
-                        DrawLine(spriteBatch, dummyTexture, 5, Color.Red, redTrailArray[0], redTrailArray[maxTrailPoints - 1]);
-                    }
-                }
-            }
-
-            // draw cars
-            
+            // draw cars and their trails
             for (int i = 0; i < carsArray.Length; i++)
             {
                 carsArray[i].Draw(spriteBatch);
