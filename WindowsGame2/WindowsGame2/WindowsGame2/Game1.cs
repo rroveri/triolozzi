@@ -86,6 +86,8 @@ namespace WindowsGame2
 
         car[] carStructsArray;
 
+        AssetCreator assetCreator;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -147,7 +149,7 @@ namespace WindowsGame2
             dummyTexture = new Texture2D(GraphicsDevice, 1, 1);
             dummyTexture.SetData(new Color[] { Color.White });
 
-            squaredBg = Content.Load<Texture2D>("Images/squaredBg");
+            squaredBg = Content.Load<Texture2D>("Images/squaredBg2");
 
 
             // TODO: use this.Content to load your game content here
@@ -223,7 +225,8 @@ namespace WindowsGame2
             redDrawable._compound.LinearDamping = 1;
             redDrawable._compound.AngularDamping = 1;
 
-           
+            assetCreator = new AssetCreator(graphics.GraphicsDevice);
+            assetCreator.LoadContent(this.Content);
         }
 
         /// <summary>
@@ -278,7 +281,7 @@ namespace WindowsGame2
                         //if the shape is a polygon, create a new object
                         if (vertices.Count > 2)
                         {
-                            myBigObject = new PolygonPhysicsObject(world, vertices, dummyTexture);
+                            myBigObject = new PolygonPhysicsObject(world, vertices, dummyTexture, assetCreator);
                             polygonsList.Add(myBigObject);
                         }
 
@@ -431,7 +434,7 @@ namespace WindowsGame2
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-         //   spriteBatch.Draw(squaredBg, Vector2.Zero,null, Color.White, 0.0f, Vector2.Zero, Vector2.One*1.8f,SpriteEffects.None,0f);
+            spriteBatch.Draw(squaredBg, Vector2.Zero,null, Color.White, 0.0f, Vector2.Zero, Vector2.One*0.9f,SpriteEffects.None,0f);
 
             // draw red trail
             /*
