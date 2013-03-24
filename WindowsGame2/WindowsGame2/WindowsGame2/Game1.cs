@@ -50,14 +50,6 @@ namespace WindowsGame2
 
         KeyboardState ks;
         GamePadState gps;
-        
-        Vector2[] redTrailArray;
-        int maxTrailPoints;
-        int redTrailCounter;
-        bool redTrailLoop;
-        bool showRedTrail;
-
-        car[] carStructsArray;
 
         AssetCreator assetCreator;
 
@@ -157,27 +149,6 @@ namespace WindowsGame2
             bordersArray[2] = leftWall;
             bordersArray[3] = rightWall;
 
-            car redCarStruct;
-            redCarStruct.carBody = redDrawable._compound;
-            redCarStruct.carTexture = Content.Load<Texture2D>("Images/penis");
-            redCarStruct.carColor = Color.Red;
-            car blueCarStruct;
-            blueCarStruct.carBody = blueDrawable._compound;
-            blueCarStruct.carTexture = Content.Load<Texture2D>("Images/penis");
-            blueCarStruct.carColor = Color.Blue;
-            car greenCarStruct;
-            greenCarStruct.carBody = greenDrawable._compound;
-            greenCarStruct.carTexture = Content.Load<Texture2D>("Images/greenCarXna");
-            greenCarStruct.carColor = Color.Green;
-
-            carStructsArray = new car[3];
-            carStructsArray[0] = redCarStruct;
-            carStructsArray[1] = blueCarStruct;
-            carStructsArray[2] = greenCarStruct;
-
-            redDrawable._compound.LinearDamping = 1;
-            redDrawable._compound.AngularDamping = 1;
-
             assetCreator = new AssetCreator(graphics.GraphicsDevice);
             assetCreator.LoadContent(this.Content);
         }
@@ -212,7 +183,7 @@ namespace WindowsGame2
                 // Update the position of the car
                 cars[i].Update(GamePad.GetState(playerIndexes[i]), ks);
                 // Find an obstacle (if any) drawn by the car and add it to the scene
-                obstacle = cars[i].TrailObstacle(world);
+                obstacle = cars[i].TrailObstacle(world, assetCreator);
                 if (obstacle != null)
                 {
                     polygonsList.Add(obstacle);
@@ -232,6 +203,7 @@ namespace WindowsGame2
             GraphicsDevice.Clear(Color.White);
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            spriteBatch.Draw(squaredBg, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero, Vector2.One * 0.9f, SpriteEffects.None, 0f);
 
             // draw cars and their trails
             for (int i = 0; i < cars.Count; i++)

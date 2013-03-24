@@ -45,8 +45,7 @@ namespace WindowsGame2
             set;
         }
 
-        public PolygonPhysicsObject(World world, Vertices vertices, Texture2D texture)
-        MaterialType chooseMaterialType(Random random)
+       MaterialType chooseMaterialType(Random random)
         {
             int caseSwitch = random.Next(1, 6);
             MaterialType resultMaterial = MaterialType.Blank;

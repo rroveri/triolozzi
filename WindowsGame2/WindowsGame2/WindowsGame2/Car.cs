@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Common;
+using FarseerPhysics.SamplesFramework;
 
 namespace WindowsGame2
 {
@@ -133,7 +134,7 @@ namespace WindowsGame2
             batch.Draw(blank, point1, null, mColor, angle, Vector2.Zero, new Vector2(length, width), SpriteEffects.None, 0);
         }
 
-        public PolygonPhysicsObject TrailObstacle(World World)
+        public PolygonPhysicsObject TrailObstacle(World World, AssetCreator AssetCreator)
         {
             PolygonPhysicsObject result = null;
             if (mTrailPoints > mMinimumCarDistance || (mIsTrailLoop && mMaximumTrailPoints > mMinimumCarDistance))
@@ -150,7 +151,7 @@ namespace WindowsGame2
                         //already one shape with this trail, do not draw other shapes
                         break;
                     }
-                    result = TrailIntersection(World, i);
+                    result = TrailIntersection(World, i, AssetCreator);
                 }
                 if (mIsTrailLoop)
                 {
@@ -161,7 +162,7 @@ namespace WindowsGame2
                             //already one shape with this trail, do not draw other shapes
                             break;
                         }
-                        result = TrailIntersection(World, i);
+                        result = TrailIntersection(World, i, AssetCreator);
                     }
                 }
 
@@ -176,7 +177,7 @@ namespace WindowsGame2
 
         // Helper Method
         // Return a new polygon in the given world if the trail self-intersects, null otherwise.
-        private PolygonPhysicsObject TrailIntersection(World World, int Index)
+        private PolygonPhysicsObject TrailIntersection(World World, int Index, AssetCreator AssetCreator)
         {
             if (Vector2.Distance(Position, mTrailPositions[Index]) < mIntersectionDistance)
             {
@@ -219,7 +220,7 @@ namespace WindowsGame2
                 //if the shape is a polygon, create a new object
                 if (mTrailVertices.Count > 2)
                 {
-                    return new PolygonPhysicsObject(World, mTrailVertices, mDummyTexture);
+                    return new PolygonPhysicsObject(World, mTrailVertices, mDummyTexture, AssetCreator);
                 }
             }
             return null;
