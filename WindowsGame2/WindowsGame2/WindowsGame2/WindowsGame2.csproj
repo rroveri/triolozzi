@@ -110,6 +110,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Car.cs" />
     <Compile Include="ConvertUnits.cs" />
     <Compile Include="DrawablePhysicsObject.cs" />
     <Compile Include="FrameRateCounter.cs" />
