@@ -84,6 +84,7 @@ namespace WindowsGame2
                                            null, color, _compound.Rotation, _origin, textureScale, SpriteEffects.None,
                                            0f);
 
+           // Console.WriteLine(ConvertUnits.ToDisplayUnits(_compound.Position));
 
         }
     }

@@ -51,6 +51,16 @@ namespace WindowsGame2
         KeyboardState ks;
         GamePadState gps;
         
+        Vector2[] redTrailArray;
+        int maxTrailPoints;
+        int redTrailCounter;
+        bool redTrailLoop;
+        bool showRedTrail;
+
+        car[] carStructsArray;
+
+        AssetCreator assetCreator;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -99,7 +109,7 @@ namespace WindowsGame2
             dummyTexture = new Texture2D(GraphicsDevice, 1, 1);
             dummyTexture.SetData(new Color[] { Color.White });
 
-            squaredBg = Content.Load<Texture2D>("Images/squaredBg");
+            squaredBg = Content.Load<Texture2D>("Images/squaredBg2");
 
 
             // TODO: use this.Content to load your game content here
@@ -146,6 +156,30 @@ namespace WindowsGame2
             bordersArray[1] = ceil;
             bordersArray[2] = leftWall;
             bordersArray[3] = rightWall;
+
+            car redCarStruct;
+            redCarStruct.carBody = redDrawable._compound;
+            redCarStruct.carTexture = Content.Load<Texture2D>("Images/penis");
+            redCarStruct.carColor = Color.Red;
+            car blueCarStruct;
+            blueCarStruct.carBody = blueDrawable._compound;
+            blueCarStruct.carTexture = Content.Load<Texture2D>("Images/penis");
+            blueCarStruct.carColor = Color.Blue;
+            car greenCarStruct;
+            greenCarStruct.carBody = greenDrawable._compound;
+            greenCarStruct.carTexture = Content.Load<Texture2D>("Images/greenCarXna");
+            greenCarStruct.carColor = Color.Green;
+
+            carStructsArray = new car[3];
+            carStructsArray[0] = redCarStruct;
+            carStructsArray[1] = blueCarStruct;
+            carStructsArray[2] = greenCarStruct;
+
+            redDrawable._compound.LinearDamping = 1;
+            redDrawable._compound.AngularDamping = 1;
+
+            assetCreator = new AssetCreator(graphics.GraphicsDevice);
+            assetCreator.LoadContent(this.Content);
         }
 
         /// <summary>
