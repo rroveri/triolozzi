@@ -31,11 +31,11 @@ namespace WindowsGame2
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        List<Car> cars;
+        List<PlayerIndex> playerIndexes;
         List<DrawablePhysicsObject> bordersList;
         List<PolygonPhysicsObject> polygonsList;
 
-
-        Car[] carsArray;
         DrawablePhysicsObject[] bordersArray;
 
         
@@ -77,6 +77,10 @@ namespace WindowsGame2
         protected override void Initialize()
         {
             polygonsList = new List<PolygonPhysicsObject>();
+            cars = new List<Car>();
+            playerIndexes = new List<PlayerIndex>();
+            playerIndexes.Add(PlayerIndex.One); playerIndexes.Add(PlayerIndex.Two);
+            playerIndexes.Add(PlayerIndex.Three); playerIndexes.Add(PlayerIndex.Four);
             random = new Random();
 
             base.Initialize();
@@ -135,22 +139,13 @@ namespace WindowsGame2
             Car greenCar = new Car(world, this, Color.Green);
             greenCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
 
-            carsArray = new Car[3];
-            carsArray[0] = redCar;
-            carsArray[1] = blueCar;
-            carsArray[2] = greenCar;
+            cars.Add(redCar); cars.Add(blueCar); cars.Add(greenCar);
+
             bordersArray = new DrawablePhysicsObject[4];
             bordersArray[0] = floor;
             bordersArray[1] = ceil;
             bordersArray[2] = leftWall;
             bordersArray[3] = rightWall;
-
-            redCar._compound.LinearDamping = 1;
-            redCar._compound.AngularDamping = 1;
-
-            blueCar._compound.LinearDamping = 1;
-            blueCar._compound.AngularDamping = 1;
-           
         }
 
         /// <summary>
@@ -172,29 +167,22 @@ namespace WindowsGame2
         {
             gps = GamePad.GetState(PlayerIndex.One);
             ks = Keyboard.GetState();
+            PolygonPhysicsObject obstacle;
 
             // Allows the game to exit
             if (gps.Buttons.Back == ButtonState.Pressed || ks.IsKeyDown(Keys.Escape))
                 Exit();
 
-            //move red car
-            redCar.Update(gps, ks);
-
-            // move blue car
-            carsArray[1].Update(GamePad.GetState(PlayerIndex.Two), Keyboard.GetState());
-
-            // Find and add obstacle for red car and add it
-            PolygonPhysicsObject obstacle = redCar.TrailObstacle(world);
-            if (obstacle != null)
+            for (int i = 0; i < cars.Count; i++)
             {
-                polygonsList.Add(obstacle);
-            }
-
-            // Find and add obstacle for red car and add it
-            obstacle = carsArray[1].TrailObstacle(world);
-            if (obstacle != null)
-            {
-                polygonsList.Add(obstacle);
+                // Update the position of the car
+                cars[i].Update(GamePad.GetState(playerIndexes[i]), ks);
+                // Find an obstacle (if any) drawn by the car and add it to the scene
+                obstacle = cars[i].TrailObstacle(world);
+                if (obstacle != null)
+                {
+                    polygonsList.Add(obstacle);
+                }
             }
 
             world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
@@ -212,9 +200,9 @@ namespace WindowsGame2
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
             // draw cars and their trails
-            for (int i = 0; i < carsArray.Length; i++)
+            for (int i = 0; i < cars.Count; i++)
             {
-                carsArray[i].Draw(spriteBatch);
+                cars[i].Draw(spriteBatch);
             }
 
             // draw walls

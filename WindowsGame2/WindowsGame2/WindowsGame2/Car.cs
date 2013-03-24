@@ -49,6 +49,9 @@ namespace WindowsGame2
             mDummyTexture = new Texture2D(Game.GraphicsDevice, 1, 1);
             mDummyTexture.SetData(new Color[] { Color.White });
             mColor = Color;
+
+            _compound.LinearDamping = 1;
+            _compound.AngularDamping = 1;
         }
 
         public void Update(GamePadState gps, KeyboardState ks)
