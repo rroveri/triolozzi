@@ -163,6 +163,11 @@ namespace WindowsGame2
                 }
 
             }
+            if (result != null)
+            {
+                result.Color = mColor;
+                result.compound.IgnoreCollisionWith(_compound);
+            }
             return result;
         }
 

@@ -34,6 +34,12 @@ namespace WindowsGame2
         Vector2 newVertex;
         Vector2 lengthWidth;
 
+        public Color Color
+        {
+            get;
+            set;
+        }
+
         public PolygonPhysicsObject(World world, Vertices vertices, Texture2D texture)
         {
             this.texture = texture;
@@ -60,6 +66,7 @@ namespace WindowsGame2
 
             lengthWidth = new Vector2();
             dummyRectangle = new Rectangle();
+            Color = Color.Black;
             
         }
 
@@ -93,7 +100,7 @@ namespace WindowsGame2
                     dummyRectangle.Y = (int)newVertex.Y;
                     dummyRectangle.Width = 5;
                     dummyRectangle.Height = 5;
-                    spriteBatch.Draw(texture, dummyRectangle, Color.Red);
+                    spriteBatch.Draw(texture, dummyRectangle, Color);
 
                     /*
                     //draw lines
