@@ -67,6 +67,11 @@ namespace WindowsGame2
         Matrix projectionMatrix;
         Matrix halfprojectionMatrix;
 
+        List<Vector2> backgrounds;
+
+        float bgScale;
+        float trackWidth;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -99,8 +104,149 @@ namespace WindowsGame2
             playerIndexes.Add(PlayerIndex.Three); playerIndexes.Add(PlayerIndex.Four);
             random = new Random();
 
+            bgScale = 0.9f;
+            backgrounds = new List<Vector2>();
+
             
             base.Initialize();
+        }
+
+
+        void rightTopTile(int cellX, int cellY)
+        {
+            float height = 800.0f;
+            float width = 800f;
+
+            DrawablePhysicsObject floor;
+            floor = new DrawablePhysicsObject(world, dummyTexture, new Vector2(squaredBg.Width * bgScale, height / 2), 1000.0f, Color.Black);
+            floor.Position = new Vector2(squaredBg.Width * bgScale / 2.0f + squaredBg.Width * bgScale * cellX, squaredBg.Height * bgScale - height / 4 + squaredBg.Height * bgScale * cellY);
+            floor.body.BodyType = BodyType.Static;
+            bordersList.Add(floor);  
+            DrawablePhysicsObject ceil;
+            ceil = new DrawablePhysicsObject(world, dummyTexture, new Vector2(width / 2, height / 2), 1000.0f, Color.Black);
+            ceil.Position = new Vector2(squaredBg.Width * bgScale - width / 4 + squaredBg.Width * bgScale * cellX, height / 4 + squaredBg.Height * bgScale * cellY);
+            ceil.body.BodyType = BodyType.Static;
+            bordersList.Add(ceil);
+            DrawablePhysicsObject leftWall;
+            leftWall = new DrawablePhysicsObject(world, dummyTexture, new Vector2(width / 2, squaredBg.Height * bgScale - height / 2), 1000.0f, Color.Black);
+            leftWall.Position = new Vector2(width / 4 + squaredBg.Width * bgScale * cellX,squaredBg.Height * bgScale / 2.0f + squaredBg.Height * bgScale * cellY - height / 4);
+            leftWall.body.BodyType = BodyType.Static;
+            bordersList.Add(leftWall);
+
+            backgrounds.Add(new Vector2(cellX * squaredBg.Width * bgScale, cellY * squaredBg.Height * bgScale));
+
+        }
+
+        void rightBottomTile(int cellX, int cellY)
+        {
+            float height = 800.0f;
+            float width = 800f;
+
+            DrawablePhysicsObject floor;
+            floor = new DrawablePhysicsObject(world, dummyTexture, new Vector2(width / 2, height / 2), 1000.0f, Color.Black);
+            floor.Position = new Vector2(squaredBg.Width*bgScale- width / 4 + squaredBg.Width * bgScale * cellX, squaredBg.Height * bgScale - height / 4 + squaredBg.Height * bgScale * cellY);
+            floor.body.BodyType = BodyType.Static;
+            bordersList.Add(floor);
+            DrawablePhysicsObject ceil;
+            ceil = new DrawablePhysicsObject(world, dummyTexture, new Vector2(squaredBg.Width * bgScale, height / 2), 1000.0f, Color.Black);
+            ceil.Position = new Vector2(squaredBg.Width * bgScale / 2.0f + squaredBg.Width * bgScale * cellX, height / 4 + squaredBg.Height * bgScale * cellY);
+            ceil.body.BodyType = BodyType.Static;
+            bordersList.Add(ceil);
+            DrawablePhysicsObject leftWall;
+            leftWall = new DrawablePhysicsObject(world, dummyTexture, new Vector2(width / 2, squaredBg.Height * bgScale - height / 2), 1000.0f, Color.Black);
+            leftWall.Position = new Vector2(width / 4 + squaredBg.Width * bgScale * cellX, squaredBg.Height * bgScale / 2.0f + squaredBg.Height * bgScale * cellY + height / 4);
+            leftWall.body.BodyType = BodyType.Static;
+            bordersList.Add(leftWall);
+
+            backgrounds.Add(new Vector2(cellX * squaredBg.Width * bgScale, cellY * squaredBg.Height * bgScale));
+
+        }
+
+        void leftBottomTile(int cellX, int cellY)
+        {
+            float height = 800.0f;
+            float width = 800f;
+
+            DrawablePhysicsObject floor;
+            floor = new DrawablePhysicsObject(world, dummyTexture, new Vector2(width / 2, height / 2), 1000.0f, Color.Black);
+            floor.Position = new Vector2(width / 4 + squaredBg.Width * bgScale * cellX, squaredBg.Height * bgScale - height / 4 + squaredBg.Height * bgScale * cellY);
+            floor.body.BodyType = BodyType.Static;
+            bordersList.Add(floor);
+            DrawablePhysicsObject ceil;
+            ceil = new DrawablePhysicsObject(world, dummyTexture, new Vector2(squaredBg.Width * bgScale, height / 2), 1000.0f, Color.Black);
+            ceil.Position = new Vector2(squaredBg.Width * bgScale / 2.0f + squaredBg.Width * bgScale * cellX, height / 4 + squaredBg.Height * bgScale * cellY);
+            ceil.body.BodyType = BodyType.Static;
+            bordersList.Add(ceil);
+            DrawablePhysicsObject rightWall;
+            rightWall = new DrawablePhysicsObject(world, dummyTexture, new Vector2(width / 2, squaredBg.Height * bgScale - height / 2), 1000.0f, Color.Black);
+            rightWall.Position = new Vector2(squaredBg.Width * bgScale - width / 4 + squaredBg.Width * bgScale * cellX, squaredBg.Height * bgScale / 2.0f + squaredBg.Height * bgScale * cellY + height / 4);
+            rightWall.body.BodyType = BodyType.Static;
+            bordersList.Add(rightWall);
+
+            backgrounds.Add(new Vector2(cellX * squaredBg.Width * bgScale, cellY * squaredBg.Height * bgScale));
+
+        }
+
+        void leftTopTile(int cellX, int cellY)
+        {
+            float height = 800.0f;
+            float width = 800f;
+
+            DrawablePhysicsObject floor;
+            floor = new DrawablePhysicsObject(world, dummyTexture, new Vector2(squaredBg.Width * bgScale, height / 2), 1000.0f, Color.Black);
+            floor.Position = new Vector2(squaredBg.Width * bgScale / 2.0f + squaredBg.Width * bgScale * cellX, squaredBg.Height * bgScale - height / 4 + squaredBg.Height * bgScale * cellY);
+            floor.body.BodyType = BodyType.Static;
+            bordersList.Add(floor);          
+            DrawablePhysicsObject ceil;
+            ceil = new DrawablePhysicsObject(world, dummyTexture, new Vector2(width/2, height / 2), 1000.0f, Color.Black);
+            ceil.Position = new Vector2(width/4 + squaredBg.Width * bgScale * cellX, height / 4 + squaredBg.Height * bgScale * cellY);
+            ceil.body.BodyType = BodyType.Static;
+            bordersList.Add(ceil);           
+            DrawablePhysicsObject rightWall;
+            rightWall = new DrawablePhysicsObject(world, dummyTexture, new Vector2(width / 2, squaredBg.Height * bgScale - height / 2), 1000.0f, Color.Black);
+            rightWall.Position = new Vector2(squaredBg.Width * bgScale - width / 4 + squaredBg.Width * bgScale * cellX, squaredBg.Height * bgScale / 2.0f + squaredBg.Height * bgScale * cellY - height / 4);
+            rightWall.body.BodyType = BodyType.Static;
+            bordersList.Add(rightWall);
+
+            backgrounds.Add(new Vector2(cellX * squaredBg.Width * bgScale, cellY * squaredBg.Height * bgScale));
+
+        }
+        void bottomTopTile(int cellX, int cellY)
+        {
+          
+            float width = 800f;
+
+            DrawablePhysicsObject rightWall;
+            rightWall = new DrawablePhysicsObject(world, dummyTexture, new Vector2(width/2, squaredBg.Height * bgScale), 1000.0f, Color.Black);
+            rightWall.Position = new Vector2(squaredBg.Width * bgScale - width / 4 + squaredBg.Width * bgScale * cellX, squaredBg.Height * bgScale / 2.0f + squaredBg.Height * bgScale * cellY);
+            rightWall.body.BodyType = BodyType.Static;
+            bordersList.Add(rightWall);
+            DrawablePhysicsObject leftWall;
+            leftWall = new DrawablePhysicsObject(world, dummyTexture, new Vector2(width/2, squaredBg.Height * bgScale), 1000.0f, Color.Black);
+            leftWall.Position = new Vector2(width / 4 + squaredBg.Width * bgScale * cellX, squaredBg.Height * bgScale / 2.0f + squaredBg.Height * bgScale * cellY);
+            leftWall.body.BodyType = BodyType.Static;
+            bordersList.Add(leftWall);
+
+            backgrounds.Add(new Vector2(cellX * squaredBg.Width * bgScale, cellY * squaredBg.Height * bgScale));
+             
+        }
+        void leftRightTile(int cellX, int cellY)
+        {
+            float height = 800.0f;
+
+            DrawablePhysicsObject floor;
+            floor = new DrawablePhysicsObject(world, dummyTexture, new Vector2(squaredBg.Width * bgScale, height / 2), 1000.0f, Color.Black);
+            floor.Position = new Vector2(squaredBg.Width * bgScale / 2.0f + squaredBg.Width * bgScale * cellX, squaredBg.Height * bgScale - height / 4 + squaredBg.Height * bgScale * cellY);
+            floor.body.BodyType = BodyType.Static;
+            bordersList.Add(floor);
+            DrawablePhysicsObject ceil;
+            ceil = new DrawablePhysicsObject(world, dummyTexture, new Vector2(squaredBg.Width * bgScale, height / 2), 1000.0f, Color.Black);
+            ceil.Position = new Vector2(squaredBg.Width * bgScale / 2.0f + squaredBg.Width * bgScale * cellX, height / 4 + squaredBg.Height * bgScale * cellY);
+            ceil.body.BodyType = BodyType.Static;
+            bordersList.Add(ceil);
+
+            backgrounds.Add(new Vector2(cellX * squaredBg.Width * bgScale, cellY * squaredBg.Height * bgScale));
+            
         }
 
         /// <summary>
@@ -118,6 +264,8 @@ namespace WindowsGame2
 
             squaredBg = Content.Load<Texture2D>("Images/squaredBg2");
 
+            trackWidth = squaredBg.Height - 30;
+
 
             // TODO: use this.Content to load your game content here
 
@@ -126,26 +274,36 @@ namespace WindowsGame2
             
             //load walls
             bordersList = new List<DrawablePhysicsObject>();
-            DrawablePhysicsObject floor;
-            floor = new DrawablePhysicsObject(world, Content.Load<Texture2D>("Images/triangle"), new Vector2(GraphicsDevice.Viewport.Width, 100.0f), 1000.0f, Color.Black);
-            floor.Position = new Vector2(GraphicsDevice.Viewport.Width / 2.0f, GraphicsDevice.Viewport.Height);
-            floor.body.BodyType = BodyType.Static;
-            bordersList.Add(floor);
-            DrawablePhysicsObject ceil;
-            ceil = new DrawablePhysicsObject(world, Content.Load<Texture2D>("Images/triangle"), new Vector2(GraphicsDevice.Viewport.Width, 100.0f), 1000.0f, Color.Black);
-            ceil.Position = new Vector2(GraphicsDevice.Viewport.Width / 2.0f, 0);
-            ceil.body.BodyType = BodyType.Static;
-            bordersList.Add(ceil);
-            DrawablePhysicsObject rightWall;
-            rightWall = new DrawablePhysicsObject(world, Content.Load<Texture2D>("Images/triangle"), new Vector2(100.0f, GraphicsDevice.Viewport.Height - 201), 1000.0f, Color.Black);
-            rightWall.Position = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height/2.0f);
-            rightWall.body.BodyType = BodyType.Static;
-            bordersList.Add(rightWall);
-            DrawablePhysicsObject leftWall;
-            leftWall = new DrawablePhysicsObject(world, Content.Load<Texture2D>("Images/triangle"), new Vector2(100.0f, GraphicsDevice.Viewport.Height - 201), 1000.0f, Color.Black);
-            leftWall.Position = new Vector2(0, GraphicsDevice.Viewport.Height / 2.0f);
-            leftWall.body.BodyType = BodyType.Static;
-            bordersList.Add(leftWall);
+            //create track
+            leftRightTile(0, 0);
+            leftRightTile(1, 0);
+            leftTopTile(2, 0);
+            rightBottomTile(2, -1);
+            leftTopTile(3, -1);
+            leftBottomTile(3, -2);
+            rightTopTile(2, -2);
+            bottomTopTile(2, -3);
+            leftBottomTile(2, -4);
+            leftRightTile(1, -4);
+            leftRightTile(0, -4);
+            rightBottomTile(-1, -4);
+            bottomTopTile(-1, -3);
+            leftTopTile(-1, -2);
+            rightTopTile(-2, -2);
+            leftBottomTile(-2, -3);
+            rightBottomTile(-3, -3);
+            bottomTopTile(-3, -2);
+            bottomTopTile(-3, -1);
+            bottomTopTile(-3, 0);
+            bottomTopTile(-3, 1);
+            rightTopTile(-3,2);
+            leftTopTile(-2,2);
+            bottomTopTile(-2, 1);
+            bottomTopTile(-2, 0);
+            rightBottomTile(-2,-1);
+            leftBottomTile(-1,-1);
+            rightTopTile(-1, 0);
+
 
             redCar = new Car(world, this, Color.Red);
             redCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
@@ -159,10 +317,10 @@ namespace WindowsGame2
             cars.Add(redCar); cars.Add(blueCar); cars.Add(greenCar);
 
             bordersArray = new DrawablePhysicsObject[4];
-            bordersArray[0] = floor;
-            bordersArray[1] = ceil;
-            bordersArray[2] = leftWall;
-            bordersArray[3] = rightWall;
+          //  bordersArray[0] = floor;
+          //  bordersArray[1] = ceil;
+          //  bordersArray[2] = leftWall;
+          //  bordersArray[3] = rightWall;
 
             assetCreator = new AssetCreator(graphics.GraphicsDevice);
             assetCreator.LoadContent(this.Content);
@@ -188,6 +346,8 @@ namespace WindowsGame2
 
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1.0f, 10000f);
             halfprojectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 2.0f / 3.0f, 1.0f, 10000f);
+
+            
             
         }
 
@@ -268,12 +428,17 @@ namespace WindowsGame2
         public void DrawSprites(Camera camera){
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.Transform);
-            spriteBatch.Draw(squaredBg, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero, Vector2.One * 0.9f, SpriteEffects.None, 1f);
+
+            // draw backgrounds
+            for (int i = 0; i < backgrounds.Count; i++)
+            {
+                spriteBatch.Draw(squaredBg, backgrounds[i], null, Color.White, 0.0f, Vector2.Zero, Vector2.One * bgScale, SpriteEffects.None, 1f);
+            }
 
             // draw walls
-            for (int i = 0; i < bordersArray.Length; i++)
+            for (int i = 0; i < bordersList.Count; i++)
             {
-                bordersArray[i].Draw(spriteBatch);
+                bordersList[i].Draw(spriteBatch);
             }
 
             // draw polygons

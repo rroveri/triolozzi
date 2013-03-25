@@ -106,7 +106,7 @@ namespace WindowsGame2
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            base.Draw(spriteBatch);
+            
             if (mShowTrail)
             {
                 for (int i = 1; i < mTrailPoints; i++)
@@ -125,6 +125,10 @@ namespace WindowsGame2
                     }
                 }
             }
+
+            base.Draw(spriteBatch);
+
+
         }
 
         private void DrawLine(SpriteBatch batch, Texture2D blank, float width, Vector2 point1, Vector2 point2)
