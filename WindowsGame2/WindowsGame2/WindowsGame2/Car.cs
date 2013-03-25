@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Common;
 using FarseerPhysics.SamplesFramework;
+using FarseerPhysics.DebugViews;
 
 namespace WindowsGame2
 {
@@ -46,6 +47,8 @@ namespace WindowsGame2
         private float rotVel = 0.07f;
         private float maxVel = 8;
         private float linearVel = 0;
+
+     
 
         public Car(World world, Game Game, Color Color)
             : base(world, Game.Content.Load<Texture2D>("Images/penis"), new Vector2(65.0f, 40.0f), Color)

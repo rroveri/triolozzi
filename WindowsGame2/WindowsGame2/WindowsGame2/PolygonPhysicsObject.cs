@@ -18,6 +18,7 @@ using FarseerPhysics.Common.Decomposition;
 using FarseerPhysics.SamplesFramework;
 using FarseerPhysics.Common.PolygonManipulation;
 using FarseerPhysics;
+using FarseerPhysics.DebugViews;
 
 
 
@@ -38,6 +39,8 @@ namespace WindowsGame2
         Vector2 _origin;
         PolygonShape shape;
         Random random;
+        Vertices _vertices;
+
 
         public Color Color
         {
@@ -78,6 +81,7 @@ namespace WindowsGame2
         public PolygonPhysicsObject(World world, Vertices vertices, Texture2D texture, AssetCreator assetCreator)
         {
 
+            this._vertices = vertices;
             this.texture = texture;
             Vector2 centroid = -vertices.GetCentroid();
             //vertices.Translate(ref origin);
@@ -87,13 +91,11 @@ namespace WindowsGame2
             vertices = SimplifyTools.ReduceByDistance(vertices, 4f);
 
             // compute comvex shape
-<<<<<<< HEAD
-            List<Vertices> list = BayazitDecomposer.ConvexPartition(vertices);
 
-=======
+            //List<Vertices> list = EarclipDecomposer.ConvexPartition(vertices);
             List<Vertices> list = EarclipDecomposer.ConvexPartition(vertices);
-            
->>>>>>> ebb21e9bc975859e9983c527db54506065692902
+
+
             // scale vertices
             Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1)) * 1f;
             foreach (Vertices verti in list)
@@ -109,12 +111,12 @@ namespace WindowsGame2
             dummyRectangle = new Rectangle();
             Color = Color.Black;
 
-            /*
-            shape = new PolygonShape(vertices, 1);
-            random = new Random();
-            MaterialType myMaterial = chooseMaterialType(random);
-            sprite = new Sprite(assetCreator.TextureFromShape(shape, myMaterial, Color.White, 1f), AssetCreator.CalculateOrigin(compound));
-            */
+            //generate texture (SLOW!)
+            //shape = new PolygonShape(vertices, 1);
+            //random = new Random();
+            //MaterialType myMaterial = chooseMaterialType(random);
+            //sprite = new Sprite(assetCreator.TextureFromShape(shape, MaterialType.Blank, Color.White, 1f), AssetCreator.CalculateOrigin(compound));
+            
         }
 
         void DrawLine(SpriteBatch batch, Texture2D blank, float width, Color color, Vector2 point1, Vector2 point2)
@@ -130,11 +132,10 @@ namespace WindowsGame2
         public void Draw(SpriteBatch spriteBatch)
         {
 
+            //draw texture
             //spriteBatch.Draw(sprite.Texture, ConvertUnits.ToDisplayUnits(compound.Position),
             //                             null, Color, compound.Rotation, sprite.Origin, 1f, SpriteEffects.None,
             //                             0.95f);
-
-
 
 
             // iterate fixtures
@@ -150,25 +151,34 @@ namespace WindowsGame2
                     newVertex = ConvertUnits.ToDisplayUnits(MathUtils.Multiply(ref xf, ((PolygonShape)compound.FixtureList[j].Shape).Vertices[i]));
 
                     // draw vertices
-                    dummyRectangle.X = (int)newVertex.X;
-                    dummyRectangle.Y = (int)newVertex.Y;
-                    dummyRectangle.Width = 15;
-                    dummyRectangle.Height = 15;
-                    spriteBatch.Draw(texture, dummyRectangle, Color);
+                    //dummyRectangle.X = (int)newVertex.X;
+                    // dummyRectangle.Y = (int)newVertex.Y;
+                    // dummyRectangle.Width = 15;
+                    //dummyRectangle.Height = 15;
+                    //spriteBatch.Draw(texture, dummyRectangle, Color);
 
-
-                    //draw lines
-                    //if (i > 0 && i < ((PolygonShape)compound.FixtureList[j].Shape).Vertices.Count)
-                    //{
-                    //    Vector2 position1 = _tempVertices[i];
-                    //    Vector2 position2 = _tempVertices[i - 1];
-                    //    DrawLine(spriteBatch, texture, 5, Color.Red, position1, position2);
-                    //}
+                    //draw triangles
+                    if (i > 0)
+                    {
+                        DrawLine(spriteBatch, texture, 5, Color, newVertex, ConvertUnits.ToDisplayUnits(MathUtils.Multiply(ref xf, ((PolygonShape)compound.FixtureList[j].Shape).Vertices[i-1])));
+                    }
+                    DrawLine(spriteBatch, texture, 5, Color, newVertex, ConvertUnits.ToDisplayUnits(MathUtils.Multiply(ref xf, ((PolygonShape)compound.FixtureList[j].Shape).Vertices[0])));
+                    
+                    
+                    /*
+                    //draw random lines
+                    if (i > 0 && i < ((PolygonShape)compound.FixtureList[j].Shape).Vertices.Count)
+                    {
+                        Vector2 position1 = _tempVertices[i];
+                        Vector2 position2 = _tempVertices[i - 1];
+                        DrawLine(spriteBatch, texture, 5, Color.Red, position1, position2);
+                    }
+                     */
 
 
                 }
             }
-
+            
 
 
 

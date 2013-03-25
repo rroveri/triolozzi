@@ -17,6 +17,9 @@ using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Common.Decomposition;
 using FarseerPhysics.Common.PolygonManipulation;
 using FarseerPhysics.SamplesFramework;
+using FarseerPhysics.DebugViews;
+
+
 
 namespace WindowsGame2
 {
@@ -26,7 +29,7 @@ namespace WindowsGame2
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-
+        DebugViewXNA _debugView;
         World world;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -72,6 +75,7 @@ namespace WindowsGame2
         float bgScale;
         float trackWidth;
 
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -106,7 +110,6 @@ namespace WindowsGame2
 
             bgScale = 0.9f;
             backgrounds = new List<Vector2>();
-
             
             base.Initialize();
         }
@@ -350,7 +353,16 @@ namespace WindowsGame2
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1.0f, 10000f);
             halfprojectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 2.0f / 3.0f, 1.0f, 10000f);
 
-            
+
+
+
+
+            // create and configure the debug view
+            _debugView = new DebugViewXNA(world);
+            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.DebugPanel);
+            _debugView.DefaultShapeColor = Color.White;
+            _debugView.SleepingShapeColor = Color.LightGray;
+            _debugView.LoadContent(GraphicsDevice, Content);
             
         }
 
@@ -459,6 +471,20 @@ namespace WindowsGame2
             {
                 cars[i].Draw(spriteBatch);
             }
+
+
+
+
+            //debug view...not working!
+            Vector2 _screenCenter = new Vector2(camera.View.Width / 2f,camera.View.Height / 2f);
+            float MeterInPixels = 64;
+            Matrix projection = Matrix.CreateOrthographicOffCenter(0f, camera.View.Width / MeterInPixels,
+                                                             camera.View.Height / MeterInPixels, 0f, 0f,
+                                                             1f);
+            Matrix view = Matrix.CreateTranslation(new Vector3((camera.Position / MeterInPixels) - (_screenCenter / MeterInPixels), 0f)) * Matrix.CreateTranslation(new Vector3((_screenCenter / MeterInPixels), 0f));
+            _debugView.RenderDebugData(ref projection, ref view);
+            // finish debug view
+
 
             spriteBatch.End();
         }
