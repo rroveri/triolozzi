@@ -20,9 +20,10 @@ namespace WindowsGame2
         private static float mIntersectionDistance = 5.0f;
         private static string vicksMode = "vicks";
         private static string richMode = "rich";
+        private static string unityMode = "unity";
         private static string microMode = "micro";
         private static string physicMode = "physic";
-        private static string drivingMode = microMode;
+        private static string drivingMode = unityMode;
 
         private static int mMaximumTrailPoints = 500;
         private int mTrailPoints;
@@ -122,7 +123,7 @@ namespace WindowsGame2
                     _compound.ApplyForce(-mForceVector, _compound.WorldCenter);
                 }
             }
-            else if (drivingMode == microMode)
+            else if (drivingMode == unityMode)
             {
                 if (ks.IsKeyDown(Keys.Right) && mColor == Color.Blue || gps.ThumbSticks.Right.X > 0)
                 {
@@ -135,19 +136,18 @@ namespace WindowsGame2
                     _compound.Rotation -= rotVel;
                 }
 
-                _compound.LinearVelocity = mDirection * (linearVel);
-
                 if (ks.IsKeyDown(Keys.Up) && mColor == Color.Blue || gps.ThumbSticks.Left.Y > 0)
                 {
+                    _compound.LinearVelocity = mDirection * (linearVel);
                     _compound.LinearVelocity += mDirection * (acc);
-
                 }
                 if (ks.IsKeyDown(Keys.Down) && mColor == Color.Blue || gps.ThumbSticks.Left.Y < 0)
                 {
+                    _compound.LinearVelocity = -mDirection * (linearVel);
                     _compound.LinearVelocity += -mDirection * (acc);
                 }
             }
-            else if (drivingMode == physicMode)
+            else if (drivingMode == microMode)
             {
                 // Move the car
                 if (ks.IsKeyDown(Keys.Right) && mColor == Color.Blue || gps.ThumbSticks.Right.X > 0)
