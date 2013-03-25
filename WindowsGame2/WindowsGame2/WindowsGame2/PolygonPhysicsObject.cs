@@ -86,7 +86,7 @@ namespace WindowsGame2
             vertices = SimplifyTools.ReduceByDistance(vertices, 4f);
             
             // compute comvex shape
-            List<Vertices> list = BayazitDecomposer.ConvexPartition(vertices);
+            List<Vertices> list = EarclipDecomposer.ConvexPartition(vertices);
             
             // scale vertices
             Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1)) * 1f;
