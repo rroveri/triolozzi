@@ -306,13 +306,16 @@ namespace WindowsGame2
 
 
             redCar = new Car(world, this, Color.Red);
-            redCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
+            //redCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
+            redCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
 
             blueCar = new Car(world, this, Color.Blue);
-            blueCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
+            //blueCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
+            blueCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2+250);
 
             greenCar = new Car(world, this, Color.Green);
-            greenCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
+            //greenCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
+            greenCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2 + 500);
 
             cars.Add(redCar); cars.Add(blueCar); cars.Add(greenCar);
 
@@ -434,6 +437,10 @@ namespace WindowsGame2
             {
                 spriteBatch.Draw(squaredBg, backgrounds[i], null, Color.White, 0.0f, Vector2.Zero, Vector2.One * bgScale, SpriteEffects.None, 1f);
             }
+
+            //draw starting line
+            spriteBatch.Draw(dummyTexture, new Vector2(squaredBg.Width / 2 * bgScale-100, 0), null, Color.Yellow, 0.0f, Vector2.Zero, new Vector2(100, squaredBg.Height*bgScale), SpriteEffects.None, 1f);
+
 
             // draw walls
             for (int i = 0; i < bordersList.Count; i++)
