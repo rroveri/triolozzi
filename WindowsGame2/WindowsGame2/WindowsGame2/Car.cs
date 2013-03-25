@@ -33,7 +33,8 @@ namespace WindowsGame2
         private float mForce;
 
         private bool mShowTrail;
-        private bool mIsTrailLoop;
+        //private bool mIsTrailLoop;
+        private bool wasDrawing;
         private bool mFoundIntersection;
 
         private Vertices mTrailVertices;
@@ -64,6 +65,19 @@ namespace WindowsGame2
 
             _compound.LinearDamping = 1;
             _compound.AngularDamping = 1;
+        }
+
+        private int mod(int index)
+        {
+            return (index + mMaximumTrailPoints) % mMaximumTrailPoints;
+        }
+
+        private void resetTrail()
+        {
+            for (int i = 0; i < mMaximumTrailPoints; i++)
+            {
+                mTrailPositions[i] = Position;
+            }
         }
 
         public void Update(GamePadState gps, KeyboardState ks)
@@ -175,19 +189,23 @@ namespace WindowsGame2
             {
                 mShowTrail = true;
 
+                /*
                 if (mTrailPoints >= mMaximumTrailPoints)
                 {
                     mIsTrailLoop = true;
                     mTrailPoints = 0;
                 }
+                 */
+                if (!wasDrawing) resetTrail();
+                wasDrawing = true;
                 mTrailPositions[mTrailPoints] = Position;
-                mTrailPoints++;
+                mTrailPoints = mod(mTrailPoints + 1);
             }
             else
             {
                 mShowTrail = false;
                 mFoundIntersection = false;
-                mIsTrailLoop = false;
+                wasDrawing = false;
                 mTrailPoints = 0;
             }
         }
@@ -197,21 +215,29 @@ namespace WindowsGame2
             
             if (mShowTrail)
             {
-                for (int i = 1; i < mTrailPoints; i++)
+                int i = mod(mTrailPoints - 1);
+                int j = 0;
+                while (i != (mTrailPoints+1) % mMaximumTrailPoints)
                 {
-                    DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[i], mTrailPositions[i - 1]);
+                    j = mod(i - 1);
+                    DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[i], mTrailPositions[j]);
+                    i = j;
                 }
-                if (mIsTrailLoop)
-                {
-                    for (int i = mTrailPoints + 1; i < mMaximumTrailPoints; i++)
-                    {
-                        DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[i], mTrailPositions[i - 1]);
-                    }
-                    if (mTrailPoints != mMaximumTrailPoints)
-                    {
-                        DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[0], mTrailPositions[mMaximumTrailPoints - 1]);
-                    }
-                }
+                //for (int i = mTrailPoints; i != mod(mTrailPoints + 1); mod(i--))
+                //{
+                //    DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[i], mTrailPositions[i - 1]);
+                //}
+                //if (mIsTrailLoop)
+                //{
+                    //for (int i = mTrailPoints + 1; i < mMaximumTrailPoints; i++)
+                    //{
+                    //    DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[i], mTrailPositions[i - 1]);
+                    //}
+                    //if (mTrailPoints != mMaximumTrailPoints)
+                    //{
+                    //    DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[0], mTrailPositions[mMaximumTrailPoints - 1]);
+                    //}
+                //}
             }
 
             base.Draw(spriteBatch);
@@ -229,6 +255,39 @@ namespace WindowsGame2
         public PolygonPhysicsObject TrailObstacle(World World, AssetCreator AssetCreator)
         {
             PolygonPhysicsObject result = null;
+
+            int i = mTrailPoints;
+            int j = 0;
+            float sumDist = 0;
+            while (i != (mTrailPoints + 1) % mMaximumTrailPoints)
+            {
+                j = mod(i - 1);
+                sumDist += Vector2.Distance(mTrailPositions[i],mTrailPositions[j]);
+                i = j;
+
+                if (i == mod(mTrailPoints - mMinimumCarDistance))
+                {
+                    break;
+                }
+            }
+            if (sumDist < mIntersectionDistance * 3)
+            {
+                return null;
+            }
+
+            while (i != (mTrailPoints + 1) % mMaximumTrailPoints)
+            {
+                j = mod(i - 1);
+                result = TrailIntersection(World, i, AssetCreator);
+                i = j;
+
+                if (mFoundIntersection)
+                {
+                    mFoundIntersection = false;
+                    break;
+                }
+            }
+            /*
             if (mTrailPoints > mMinimumCarDistance || (mIsTrailLoop && mMaximumTrailPoints > mMinimumCarDistance))
             {
                 float difference = mTrailPoints - mMinimumCarDistance;
@@ -259,6 +318,10 @@ namespace WindowsGame2
                 }
 
             }
+             */
+
+
+
             if (result != null)
             {
                 result.Color = mColor;
@@ -281,37 +344,50 @@ namespace WindowsGame2
 
                 int verticesInterval = 10;
 
-                if (mIsTrailLoop)
+                int i = mTrailPoints;
+                int j = 0;
+                while (i != Index)
                 {
-                    for (int ii = Index; ii < mMaximumTrailPoints - 1; ii++)
+                    j = mod(i - 1);
+                    if (i % verticesInterval == 0)
                     {
-                        if (ii % verticesInterval == 0)
-                        {
-                            mTrailVertices.Add(mTrailPositions[ii]);
-                        }
+                        mTrailVertices.Add(mTrailPositions[i]);
                     }
-                    for (int ii = 0; ii < mTrailPoints; ii++)
-                    {
-                        if (ii % verticesInterval == 0)
-                        {
-                            mTrailVertices.Add(mTrailPositions[ii]);
-                        }
-                    }
+                    i = j;
                 }
-                else
-                {
-                    for (int ii = Index; ii < mTrailPoints; ii++)
-                    {
-                        if (ii % verticesInterval == 0)
-                        {
-                            mTrailVertices.Add(mTrailPositions[ii]);
-                        }
-                    }
-                }
+
+                //if (mIsTrailLoop)
+                //{
+                //    for (int ii = Index; ii < mMaximumTrailPoints - 1; ii++)
+                //    {
+                //        if (ii % verticesInterval == 0)
+                //        {
+                //            mTrailVertices.Add(mTrailPositions[ii]);
+                //        }
+                //    }
+                //    for (int ii = 0; ii < mTrailPoints; ii++)
+                //    {
+                //        if (ii % verticesInterval == 0)
+                //        {
+                //            mTrailVertices.Add(mTrailPositions[ii]);
+                //        }
+                //    }
+                //}
+                //else
+                //{
+                //    for (int ii = Index; ii < mTrailPoints; ii++)
+                //    {
+                //        if (ii % verticesInterval == 0)
+                //        {
+                //            mTrailVertices.Add(mTrailPositions[ii]);
+                //        }
+                //    }
+                //}
 
                 //if the shape is a polygon, create a new object
                 if (mTrailVertices.Count > 2)
                 {
+                    resetTrail();
                     return new PolygonPhysicsObject(World, mTrailVertices, mDummyTexture, AssetCreator);
                 }
             }
