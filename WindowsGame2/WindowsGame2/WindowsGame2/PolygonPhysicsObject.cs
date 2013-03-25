@@ -25,7 +25,7 @@ namespace WindowsGame2
 {
     public class PolygonPhysicsObject
     {
-       
+
         Vector2 origin;
         public Body compound;
         Texture2D texture;
@@ -45,9 +45,10 @@ namespace WindowsGame2
             set;
         }
 
-       MaterialType chooseMaterialType(Random random)
+        MaterialType chooseMaterialType(Random random)
         {
             int caseSwitch = random.Next(1, 6);
+            caseSwitch = 1;
             MaterialType resultMaterial = MaterialType.Blank;
             switch (caseSwitch)
             {
@@ -74,7 +75,7 @@ namespace WindowsGame2
             return resultMaterial;
         }
 
-        public PolygonPhysicsObject(World world, Vertices vertices, Texture2D texture , AssetCreator assetCreator)
+        public PolygonPhysicsObject(World world, Vertices vertices, Texture2D texture, AssetCreator assetCreator)
         {
 
             this.texture = texture;
@@ -84,10 +85,10 @@ namespace WindowsGame2
 
             // reduce vertices
             vertices = SimplifyTools.ReduceByDistance(vertices, 4f);
-            
+
             // compute comvex shape
             List<Vertices> list = BayazitDecomposer.ConvexPartition(vertices);
-            
+
             // scale vertices
             Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1)) * 1f;
             foreach (Vertices verti in list)
@@ -102,12 +103,13 @@ namespace WindowsGame2
             lengthWidth = new Vector2();
             dummyRectangle = new Rectangle();
             Color = Color.Black;
-            
+
+            /*
             shape = new PolygonShape(vertices, 1);
             random = new Random();
             MaterialType myMaterial = chooseMaterialType(random);
             sprite = new Sprite(assetCreator.TextureFromShape(shape, myMaterial, Color.White, 1f), AssetCreator.CalculateOrigin(compound));
-
+            */
         }
 
         void DrawLine(SpriteBatch batch, Texture2D blank, float width, Color color, Vector2 point1, Vector2 point2)
@@ -123,17 +125,17 @@ namespace WindowsGame2
         public void Draw(SpriteBatch spriteBatch)
         {
 
-            spriteBatch.Draw(sprite.Texture, ConvertUnits.ToDisplayUnits(compound.Position),
-                                         null, Color, compound.Rotation, sprite.Origin, 1f, SpriteEffects.None,
-                                         0.95f);
+            //spriteBatch.Draw(sprite.Texture, ConvertUnits.ToDisplayUnits(compound.Position),
+            //                             null, Color, compound.Rotation, sprite.Origin, 1f, SpriteEffects.None,
+            //                             0.95f);
 
 
 
-            /*
+
             // iterate fixtures
             for (int j = 0; j < compound.FixtureList.Count; j++)
             {
-                
+
                 compound.GetTransform(out xf);
 
                 // iterate vertices
@@ -141,15 +143,15 @@ namespace WindowsGame2
                 {
                     // transform them from local to world coordinates
                     newVertex = ConvertUnits.ToDisplayUnits(MathUtils.Multiply(ref xf, ((PolygonShape)compound.FixtureList[j].Shape).Vertices[i]));
-                 
-                   // draw vertices
+
+                    // draw vertices
                     dummyRectangle.X = (int)newVertex.X;
                     dummyRectangle.Y = (int)newVertex.Y;
-                    dummyRectangle.Width = 5;
-                    dummyRectangle.Height = 5;
+                    dummyRectangle.Width = 15;
+                    dummyRectangle.Height = 15;
                     spriteBatch.Draw(texture, dummyRectangle, Color);
 
-                    
+
                     //draw lines
                     //if (i > 0 && i < ((PolygonShape)compound.FixtureList[j].Shape).Vertices.Count)
                     //{
@@ -157,18 +159,18 @@ namespace WindowsGame2
                     //    Vector2 position2 = _tempVertices[i - 1];
                     //    DrawLine(spriteBatch, texture, 5, Color.Red, position1, position2);
                     //}
-                     
+
 
                 }
             }
 
-            */
 
-           
-            
+
+
+
         }
 
-        
+
 
     }
 }
