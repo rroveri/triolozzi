@@ -15,7 +15,7 @@ using FarseerPhysics;
 
 namespace WindowsGame2
 {
-    class TexturePhysicsObject
+    public class TexturePhysicsObject
     {
         public Body _compound;
         private Vector2 _origin;

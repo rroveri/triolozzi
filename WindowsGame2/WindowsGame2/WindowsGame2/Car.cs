@@ -14,7 +14,7 @@ using FarseerPhysics.SamplesFramework;
 namespace WindowsGame2
 {
 
-    class Car : TexturePhysicsObject
+    public class Car : TexturePhysicsObject
     {
         private static int mMinimumCarDistance = 50;
         private static float mIntersectionDistance = 5.0f;

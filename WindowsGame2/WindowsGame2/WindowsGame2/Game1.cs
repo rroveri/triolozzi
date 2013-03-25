@@ -43,6 +43,8 @@ namespace WindowsGame2
         Random random;
 
         Car redCar;
+        Car blueCar;
+        Car greenCar;
 
         Texture2D dummyTexture;
 
@@ -52,6 +54,18 @@ namespace WindowsGame2
         GamePadState gps;
 
         AssetCreator assetCreator;
+
+        Camera cameraTopLeft;
+        Camera cameraTopRight;
+        Camera cameraBottomLeft;
+
+        Viewport topLeftViewport;
+        Viewport topRightViewport;
+        Viewport bottomLeftViewport;
+        Viewport defaultViewport;
+
+        Matrix projectionMatrix;
+        Matrix halfprojectionMatrix;
 
         public Game1()
         {
@@ -85,6 +99,7 @@ namespace WindowsGame2
             playerIndexes.Add(PlayerIndex.Three); playerIndexes.Add(PlayerIndex.Four);
             random = new Random();
 
+            
             base.Initialize();
         }
 
@@ -135,10 +150,10 @@ namespace WindowsGame2
             redCar = new Car(world, this, Color.Red);
             redCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
 
-            Car blueCar = new Car(world, this, Color.Blue);
+            blueCar = new Car(world, this, Color.Blue);
             blueCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
 
-            Car greenCar = new Car(world, this, Color.Green);
+            greenCar = new Car(world, this, Color.Green);
             greenCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
 
             cars.Add(redCar); cars.Add(blueCar); cars.Add(greenCar);
@@ -151,6 +166,29 @@ namespace WindowsGame2
 
             assetCreator = new AssetCreator(graphics.GraphicsDevice);
             assetCreator.LoadContent(this.Content);
+
+
+            defaultViewport = GraphicsDevice.Viewport;
+            topLeftViewport = defaultViewport;
+            topRightViewport = defaultViewport;
+            bottomLeftViewport = defaultViewport;
+            topLeftViewport.Width = topLeftViewport.Width / 2-1;
+            topRightViewport.Width = topRightViewport.Width / 2-1;
+            bottomLeftViewport.Width = bottomLeftViewport.Width / 2-1;
+            topLeftViewport.Height = topLeftViewport.Height / 2-1;
+            topRightViewport.Height = topRightViewport.Height / 2-1;
+            bottomLeftViewport.Height = bottomLeftViewport.Height / 2-1;
+            topRightViewport.X = topLeftViewport.Width+2;
+            bottomLeftViewport.Y = bottomLeftViewport.Height+2;
+
+
+            cameraTopLeft = new Camera(topLeftViewport, Vector2.Zero, new Vector2(topLeftViewport.Width / 2, topLeftViewport.Height / 2), 0.95f, 0.0f);
+            cameraTopRight = new Camera(topRightViewport, Vector2.Zero, new Vector2(topRightViewport.Width / 2, topRightViewport.Height / 2), 0.95f, 0.0f);
+            cameraBottomLeft = new Camera(bottomLeftViewport, Vector2.Zero, new Vector2(bottomLeftViewport.Width / 2, bottomLeftViewport.Height / 2), 0.95f, 0.0f);
+
+            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1.0f, 10000f);
+            halfprojectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 2.0f / 3.0f, 1.0f, 10000f);
+            
         }
 
         /// <summary>
@@ -190,6 +228,15 @@ namespace WindowsGame2
                 }
             }
 
+            cameraTopLeft.Update(gameTime);
+            cameraTopLeft.Follow(redCar, 0.0f);
+
+            cameraTopRight.Update(gameTime);
+            cameraTopRight.Follow(blueCar, 0.0f);
+
+            cameraBottomLeft.Update(gameTime);
+            cameraBottomLeft.Follow(greenCar, 0.0f);
+
             world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
             base.Update(gameTime);
         }
@@ -202,14 +249,26 @@ namespace WindowsGame2
         {
             GraphicsDevice.Clear(Color.White);
 
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
-            spriteBatch.Draw(squaredBg, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero, Vector2.One * 0.9f, SpriteEffects.None, 1f);
+            GraphicsDevice.Viewport = defaultViewport;
+            GraphicsDevice.Clear(Color.Black);
 
-            // draw cars and their trails
-            for (int i = 0; i < cars.Count; i++)
-            {
-                cars[i].Draw(spriteBatch);
-            }
+            GraphicsDevice.Viewport = topLeftViewport;
+            DrawSprites(cameraTopLeft);
+
+            GraphicsDevice.Viewport = topRightViewport;
+            DrawSprites(cameraTopRight);
+
+            GraphicsDevice.Viewport = bottomLeftViewport;
+            DrawSprites(cameraBottomLeft);
+
+
+            base.Draw(gameTime);
+        }
+
+        public void DrawSprites(Camera camera){
+
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.Transform);
+            spriteBatch.Draw(squaredBg, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero, Vector2.One * 0.9f, SpriteEffects.None, 1f);
 
             // draw walls
             for (int i = 0; i < bordersArray.Length; i++)
@@ -223,9 +282,13 @@ namespace WindowsGame2
                 polygonsList[i].Draw(spriteBatch);
             }
 
-            spriteBatch.End();
+            // draw cars and their trails
+            for (int i = 0; i < cars.Count; i++)
+            {
+                cars[i].Draw(spriteBatch);
+            }
 
-            base.Draw(gameTime);
+            spriteBatch.End();
         }
     }
 }
