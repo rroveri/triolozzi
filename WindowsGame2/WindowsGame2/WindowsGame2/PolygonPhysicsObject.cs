@@ -40,6 +40,11 @@ namespace WindowsGame2
         PolygonShape shape;
         Random random;
         Vertices _vertices;
+        public bool IsValid
+        {
+            get;
+            private set;
+        }
 
 
         public Color Color
@@ -90,6 +95,13 @@ namespace WindowsGame2
             // reduce vertices
             vertices = SimplifyTools.ReduceByDistance(vertices, 4f);
 
+            if (vertices.Count < 2)
+            {
+                IsValid = false;
+                return;
+            }
+
+            IsValid = true;
             // compute comvex shape
 
             //List<Vertices> list = EarclipDecomposer.ConvexPartition(vertices);
@@ -144,6 +156,10 @@ namespace WindowsGame2
                 compound.GetTransform(out xf);
 
                 // iterate vertices
+                if (compound.FixtureList[j].ShapeType != ShapeType.Polygon)
+                {
+                    continue;
+                }
                 for (int i = 0; i < ((PolygonShape)compound.FixtureList[j].Shape).Vertices.Count; ++i)
                 {
                     // transform them from local to world coordinates
