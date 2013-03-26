@@ -355,11 +355,16 @@ namespace WindowsGame2
 
 
 
-
-
-            // create and configure the debug view
             _debugView = new DebugViewXNA(world);
+            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Shape);
             _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.DebugPanel);
+            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.PerformanceGraph);
+            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Joint);
+            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.ContactPoints);
+            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.ContactNormals);
+            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Controllers);
+            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.CenterOfMass);
+            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.AABB);
             _debugView.DefaultShapeColor = Color.White;
             _debugView.SleepingShapeColor = Color.LightGray;
             _debugView.LoadContent(GraphicsDevice, Content);
@@ -428,22 +433,43 @@ namespace WindowsGame2
             GraphicsDevice.Clear(Color.Black);
 
             GraphicsDevice.Viewport = topLeftViewport;
+            //if not debug
             DrawSprites(cameraTopLeft);
+            //if debug view
+            //DrawSpritesDebug(cameraTopLeft);
 
             GraphicsDevice.Viewport = topRightViewport;
+            //if not debug
             DrawSprites(cameraTopRight);
+            //if debug
+            //DrawSpritesDebug(cameraTopRight);
 
             GraphicsDevice.Viewport = bottomLeftViewport;
+            //if not debug
             DrawSprites(cameraBottomLeft);
+            //if debug
+            //DrawSpritesDebug(cameraBottomLeft);
 
 
             base.Draw(gameTime);
+        }
+
+        public void DrawSpritesDebug(Camera camera)
+        {
+
+            Vector2 _screenCenter = new Vector2(camera.View.Width / 2f, camera.View.Height / 2f);
+            Matrix projection = Matrix.CreateOrthographicOffCenter(0f, ConvertUnits.ToSimUnits(camera.View.Width) * (1 / (float)Math.Pow(camera.Zoom, 10)),
+                                                              ConvertUnits.ToSimUnits(camera.View.Height) * (1 / (float)Math.Pow(camera.Zoom, 10)), 0f, 0f,
+                                                              1f);
+            Matrix view = Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(camera.Source.Position) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(camera.Zoom, 10)), 0f));
+            _debugView.RenderDebugData(ref projection, ref view);
         }
 
         public void DrawSprites(Camera camera){
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.Transform);
 
+            
             // draw backgrounds
             for (int i = 0; i < backgrounds.Count; i++)
             {
@@ -465,26 +491,13 @@ namespace WindowsGame2
             {
                 polygonsList[i].Draw(spriteBatch);
             }
-
+            
             // draw cars and their trails
             for (int i = 0; i < cars.Count; i++)
             {
                 cars[i].Draw(spriteBatch);
             }
-
-
-
-
-            //debug view...not working!
-            Vector2 _screenCenter = new Vector2(camera.View.Width / 2f,camera.View.Height / 2f);
-            float MeterInPixels = 64;
-            Matrix projection = Matrix.CreateOrthographicOffCenter(0f, camera.View.Width / MeterInPixels,
-                                                             camera.View.Height / MeterInPixels, 0f, 0f,
-                                                             1f);
-            Matrix view = Matrix.CreateTranslation(new Vector3((camera.Position / MeterInPixels) - (_screenCenter / MeterInPixels), 0f)) * Matrix.CreateTranslation(new Vector3((_screenCenter / MeterInPixels), 0f));
-            _debugView.RenderDebugData(ref projection, ref view);
-            // finish debug view
-
+            
 
             spriteBatch.End();
         }

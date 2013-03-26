@@ -101,6 +101,7 @@ namespace WindowsGame2
             FocusPoint = focus;
         }
 
+        
         public void Update(GameTime gametime)
         {
             
@@ -123,6 +124,8 @@ namespace WindowsGame2
 
        
         }
+
+     
 
         /// <summary>
         /// Resets the camera to default values
