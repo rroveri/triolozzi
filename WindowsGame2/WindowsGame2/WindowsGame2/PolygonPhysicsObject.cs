@@ -95,7 +95,6 @@ namespace WindowsGame2
             //List<Vertices> list = EarclipDecomposer.ConvexPartition(vertices);
             List<Vertices> list = EarclipDecomposer.ConvexPartition(vertices);
 
-
             // scale vertices
             Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1)) * 1f;
             foreach (Vertices verti in list)
