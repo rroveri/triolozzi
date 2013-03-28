@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -48,8 +49,8 @@ namespace WindowsGame2
         private float maxVel = 8;
         private float linearVel = 0;
 
-        public Car(World world, Game Game, Color Color)
-            : base(world, Game.Content.Load<Texture2D>("Images/penis"), new Vector2(65.0f, 40.0f), Color)
+        public Car(World world, Color Color)
+            : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/penis"), new Vector2(65.0f, 40.0f), Color)
         {
             mForceVector = new Vector2();
             mDirection = new Vector2();
@@ -59,7 +60,7 @@ namespace WindowsGame2
             mTrailVertices = new Vertices();
             mTrailPositions = new Vector2[mMaximumTrailPoints];
 
-            mDummyTexture = new Texture2D(Game.GraphicsDevice, 1, 1);
+            mDummyTexture = new Texture2D(GameServices.GetService<GraphicsDevice>(), 1, 1);
             mDummyTexture.SetData(new Color[] { Color.White });
             mColor = Color;
 

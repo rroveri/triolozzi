@@ -19,6 +19,7 @@ using FarseerPhysics.Common.PolygonManipulation;
 using FarseerPhysics.SamplesFramework;
 using FarseerPhysics.DebugViews;
 using WindowsGame2.GameElements;
+using WindowsGame2.Screens;
 
 
 namespace WindowsGame2
@@ -64,9 +65,12 @@ namespace WindowsGame2
 
         Track raceTrack;
 
+        ScreenManager ScreenManager;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            GameServices.AddService<GraphicsDeviceManager>(graphics);
             Content.RootDirectory = "Content";
            
             graphics.PreferredBackBufferHeight = 1000;
@@ -75,6 +79,11 @@ namespace WindowsGame2
             graphics.IsFullScreen = false;
 
             Window.Title = "The Drunken Dream Maker (With a Cold)";
+
+            ScreenManager = new ScreenManager(this);
+            Components.Add(ScreenManager);
+            ScreenManager.AddScreen(new BackgroundScreen(), null);
+            ScreenManager.AddScreen(new MainMenuScreen(), null);
 
           //  FrameRateCounter myFrameCounter = new FrameRateCounter(this, new Vector2(25, 25), Color.White, Color.Black);
            // Components.Add(myFrameCounter);
@@ -89,12 +98,12 @@ namespace WindowsGame2
         /// </summary>
         protected override void Initialize()
         {
-            polygonsList = new List<PolygonPhysicsObject>();
-            cars = new List<Car>();
-            playerIndexes = new List<PlayerIndex>();
-            playerIndexes.Add(PlayerIndex.One); playerIndexes.Add(PlayerIndex.Two);
-            playerIndexes.Add(PlayerIndex.Three); playerIndexes.Add(PlayerIndex.Four);
-            random = new Random();
+            //polygonsList = new List<PolygonPhysicsObject>();
+            //cars = new List<Car>();
+            //playerIndexes = new List<PlayerIndex>();
+            //playerIndexes.Add(PlayerIndex.One); playerIndexes.Add(PlayerIndex.Two);
+            //playerIndexes.Add(PlayerIndex.Three); playerIndexes.Add(PlayerIndex.Four);
+            //random = new Random();
             
             base.Initialize();
         }
@@ -112,71 +121,67 @@ namespace WindowsGame2
             GameServices.AddService<GraphicsDevice>(GraphicsDevice);
             GameServices.AddService<ContentManager>(Content);
 
-            world = new World(new Vector2(0, 0));
-            GameServices.AddService<World>(world);
+            //world = new World(new Vector2(0, 0));
+            //GameServices.AddService<World>(world);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             
             // Create a new track
-            raceTrack = Track.CreateTrack(TrackType.PenisTrack);
+            //raceTrack = Track.CreateTrack(TrackType.PenisTrack);
 
-            prevKeyboardState = Keyboard.GetState();
+            //prevKeyboardState = Keyboard.GetState();
 
-            redCar = new Car(world, this, Color.Red);
-            //redCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
-            redCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
+            //redCar = new Car(world, Color.Red);
+            //redCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
 
-            blueCar = new Car(world, this, Color.Blue);
-            //blueCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
-            blueCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2+250);
+            //blueCar = new Car(world, Color.Blue);
+            //blueCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2+250);
 
-            greenCar = new Car(world, this, Color.Green);
-            //greenCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
-            greenCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2 + 500);
+            //greenCar = new Car(world, Color.Green);
+            //greenCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2 + 500);
 
-            cars.Add(redCar); cars.Add(blueCar); cars.Add(greenCar);
+            //cars.Add(redCar); cars.Add(blueCar); cars.Add(greenCar);
 
-            assetCreator = new AssetCreator(graphics.GraphicsDevice);
-            assetCreator.LoadContent(this.Content);
+            //assetCreator = new AssetCreator(graphics.GraphicsDevice);
+            //assetCreator.LoadContent(this.Content);
 
-
-            defaultViewport = GraphicsDevice.Viewport;
-            topLeftViewport = defaultViewport;
-            topRightViewport = defaultViewport;
-            bottomLeftViewport = defaultViewport;
-            topLeftViewport.Width = topLeftViewport.Width / 2-1;
-            topRightViewport.Width = topRightViewport.Width / 2-1;
-            bottomLeftViewport.Width = bottomLeftViewport.Width / 2-1;
-            topLeftViewport.Height = topLeftViewport.Height / 2-1;
-            topRightViewport.Height = topRightViewport.Height / 2-1;
-            bottomLeftViewport.Height = bottomLeftViewport.Height / 2-1;
-            topRightViewport.X = topLeftViewport.Width+2;
-            bottomLeftViewport.Y = bottomLeftViewport.Height+2;
+            //defaultViewport = GraphicsDevice.Viewport;
+            //topLeftViewport = defaultViewport;
+            //topRightViewport = defaultViewport;
+            //bottomLeftViewport = defaultViewport;
+            //topLeftViewport.Width = topLeftViewport.Width / 2-1;
+            //topRightViewport.Width = topRightViewport.Width / 2-1;
+            //bottomLeftViewport.Width = bottomLeftViewport.Width / 2-1;
+            //topLeftViewport.Height = topLeftViewport.Height / 2-1;
+            //topRightViewport.Height = topRightViewport.Height / 2-1;
+            //bottomLeftViewport.Height = bottomLeftViewport.Height / 2-1;
+            //topRightViewport.X = topLeftViewport.Width+2;
+            //bottomLeftViewport.Y = bottomLeftViewport.Height+2;
 
 
-            cameraTopLeft = new Camera(topLeftViewport, Vector2.Zero, new Vector2(topLeftViewport.Width / 2, topLeftViewport.Height / 2), 0.95f, 0.0f);
-            cameraTopRight = new Camera(topRightViewport, Vector2.Zero, new Vector2(topRightViewport.Width / 2, topRightViewport.Height / 2), 0.95f, 0.0f);
-            cameraBottomLeft = new Camera(bottomLeftViewport, Vector2.Zero, new Vector2(bottomLeftViewport.Width / 2, bottomLeftViewport.Height / 2), 0.95f, 0.0f);
+            //cameraTopLeft = new Camera(topLeftViewport, Vector2.Zero, new Vector2(topLeftViewport.Width / 2, topLeftViewport.Height / 2), 0.95f, 0.0f);
+            //cameraTopRight = new Camera(topRightViewport, Vector2.Zero, new Vector2(topRightViewport.Width / 2, topRightViewport.Height / 2), 0.95f, 0.0f);
+            //cameraBottomLeft = new Camera(bottomLeftViewport, Vector2.Zero, new Vector2(bottomLeftViewport.Width / 2, bottomLeftViewport.Height / 2), 0.95f, 0.0f);
 
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1.0f, 10000f);
-            halfprojectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 2.0f / 3.0f, 1.0f, 10000f);
+            //projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1.0f, 10000f);
+            //halfprojectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 2.0f / 3.0f, 1.0f, 10000f);
 
 
 
-            _debugView = new DebugViewXNA(world);
-            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Shape);
-            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.DebugPanel);
-            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.PerformanceGraph);
-            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Joint);
-            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.ContactPoints);
-            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.ContactNormals);
-            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Controllers);
-            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.CenterOfMass);
-            _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.AABB);
-            _debugView.DefaultShapeColor = Color.White;
-            _debugView.SleepingShapeColor = Color.LightGray;
-            _debugView.LoadContent(GraphicsDevice, Content);
+            //_debugView = new DebugViewXNA(world);
+            //_debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Shape);
+            //_debugView.AppendFlags(FarseerPhysics.DebugViewFlags.DebugPanel);
+            //_debugView.AppendFlags(FarseerPhysics.DebugViewFlags.PerformanceGraph);
+            //_debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Joint);
+            //_debugView.AppendFlags(FarseerPhysics.DebugViewFlags.ContactPoints);
+            //_debugView.AppendFlags(FarseerPhysics.DebugViewFlags.ContactNormals);
+            //_debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Controllers);
+            //_debugView.AppendFlags(FarseerPhysics.DebugViewFlags.CenterOfMass);
+            //_debugView.AppendFlags(FarseerPhysics.DebugViewFlags.AABB);
+            //_debugView.DefaultShapeColor = Color.White;
+            //_debugView.SleepingShapeColor = Color.LightGray;
+            //_debugView.LoadContent(GraphicsDevice, Content);
             
         }
 
@@ -197,36 +202,36 @@ namespace WindowsGame2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            gps = GamePad.GetState(PlayerIndex.One);
-            ks = Keyboard.GetState();
-            PolygonPhysicsObject obstacle;
+            //gps = GamePad.GetState(PlayerIndex.One);
+            //ks = Keyboard.GetState();
+            //PolygonPhysicsObject obstacle;
 
-            // Allows the game to exit
-            if (gps.Buttons.Back == ButtonState.Pressed || ks.IsKeyDown(Keys.Escape))
-                Exit();
+            //// Allows the game to exit
+            //if (gps.Buttons.Back == ButtonState.Pressed || ks.IsKeyDown(Keys.Escape))
+            //    Exit();
 
-            for (int i = 0; i < cars.Count; i++)
-            {
-                // Update the position of the car
-                cars[i].Update(GamePad.GetState(playerIndexes[i]), ks);
-                // Find an obstacle (if any) drawn by the car and add it to the scene
-                obstacle = cars[i].TrailObstacle(world, assetCreator);
-                if (obstacle != null)
-                {
-                    polygonsList.Add(obstacle);
-                }
-            }
+            //for (int i = 0; i < cars.Count; i++)
+            //{
+            //    // Update the position of the car
+            //    cars[i].Update(GamePad.GetState(playerIndexes[i]), ks);
+            //    // Find an obstacle (if any) drawn by the car and add it to the scene
+            //    obstacle = cars[i].TrailObstacle(world, assetCreator);
+            //    if (obstacle != null)
+            //    {
+            //        polygonsList.Add(obstacle);
+            //    }
+            //}
 
-            cameraTopLeft.Update(gameTime);
-            cameraTopLeft.Follow(redCar, 0.0f);
+            //cameraTopLeft.Update(gameTime);
+            //cameraTopLeft.Follow(redCar, 0.0f);
 
-            cameraTopRight.Update(gameTime);
-            cameraTopRight.Follow(blueCar, 0.0f);
+            //cameraTopRight.Update(gameTime);
+            //cameraTopRight.Follow(blueCar, 0.0f);
 
-            cameraBottomLeft.Update(gameTime);
-            cameraBottomLeft.Follow(greenCar, 0.0f);
+            //cameraBottomLeft.Update(gameTime);
+            //cameraBottomLeft.Follow(greenCar, 0.0f);
 
-            world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
+            //world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
             base.Update(gameTime);
         }
 
@@ -238,26 +243,26 @@ namespace WindowsGame2
         {
             GraphicsDevice.Clear(Color.White);
 
-            GraphicsDevice.Viewport = defaultViewport;
-            GraphicsDevice.Clear(Color.Black);
+            //GraphicsDevice.Viewport = defaultViewport;
+            //GraphicsDevice.Clear(Color.Black);
 
-            GraphicsDevice.Viewport = topLeftViewport;
-            //if not debug
-            DrawSprites(cameraTopLeft);
-            //if debug view
-            //DrawSpritesDebug(cameraTopLeft);
+            //GraphicsDevice.Viewport = topLeftViewport;
+            ////if not debug
+            //DrawSprites(cameraTopLeft);
+            ////if debug view
+            ////DrawSpritesDebug(cameraTopLeft);
 
-            GraphicsDevice.Viewport = topRightViewport;
-            //if not debug
-            DrawSprites(cameraTopRight);
-            //if debug
-            //DrawSpritesDebug(cameraTopRight);
+            //GraphicsDevice.Viewport = topRightViewport;
+            ////if not debug
+            //DrawSprites(cameraTopRight);
+            ////if debug
+            ////DrawSpritesDebug(cameraTopRight);
 
-            GraphicsDevice.Viewport = bottomLeftViewport;
-            //if not debug
-            DrawSprites(cameraBottomLeft);
-            //if debug
-            //DrawSpritesDebug(cameraBottomLeft);
+            //GraphicsDevice.Viewport = bottomLeftViewport;
+            ////if not debug
+            //DrawSprites(cameraBottomLeft);
+            ////if debug
+            ////DrawSpritesDebug(cameraBottomLeft);
 
 
             base.Draw(gameTime);
