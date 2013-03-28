@@ -74,13 +74,8 @@ namespace WindowsGame2
         /// <param name="view">The viewport we want the camera to use (holds dimensions and so on)</param>
         /// <param name="position">Where to point the center of the camera (0x0 will be the center of the viewport)</param>
         public Camera(Viewport view, Vector2 position)
+            : this(view, position, new Vector2(view.Width / 2, view.Height / 2), 1.0f, 0)
         {
-            View = view;
-            Position = position;
-            Zoom = 1.0f;
-            Rotation = 0;
-            random = new Random();
-            FocusPoint = new Vector2(view.Width / 2, view.Height / 2);
         }
 
         /// <summary>

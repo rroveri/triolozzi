@@ -161,6 +161,12 @@ namespace WindowsGame2.Screens
             _debugView.LoadContent(GraphicsDevice, Content);
         }
 
+        public override void Unload()
+        {
+            base.Unload();
+            GameServices.DeleteService<World>();
+        }
+
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
             // TODO: should this be executed before?
@@ -235,6 +241,8 @@ namespace WindowsGame2.Screens
             DrawSprites(cameraBottomLeft);
             //if debug
             //DrawSpritesDebug(cameraBottomLeft);
+
+            GraphicsDevice.Viewport = defaultViewport;
 
             // If the game is transitioning on or off, fade it out to black.
             if (TransitionPosition > 0 || pauseAlpha > 0)
