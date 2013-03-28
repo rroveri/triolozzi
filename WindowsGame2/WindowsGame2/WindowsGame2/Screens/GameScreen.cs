@@ -65,6 +65,9 @@ namespace WindowsGame2.Screens
 
         Track raceTrack;
 
+        PauseMenuScreen PauseScreen;
+        float pauseAlpha;
+
         #endregion
 
         /// <summary>
@@ -75,6 +78,10 @@ namespace WindowsGame2.Screens
         /// </summary>
         public GameScreen()
         {
+            TransitionOnTime = TimeSpan.FromSeconds(1.5);
+            TransitionOffTime = TimeSpan.FromSeconds(0.5);
+            PauseScreen = new PauseMenuScreen();
+
             polygonsList = new List<PolygonPhysicsObject>();
             cars = new List<Car>();
             playerIndexes = new List<PlayerIndex>();
@@ -156,13 +163,29 @@ namespace WindowsGame2.Screens
 
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
+            // TODO: should this be executed before?
+            base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
+
+            // Gradually fade in or out depending on whether we are covered by the pause screen.
+            if (coveredByOtherScreen)
+                pauseAlpha = Math.Min(pauseAlpha + 1f / 32, 1);
+            else
+                pauseAlpha = Math.Max(pauseAlpha - 1f / 32, 0);
+
+            if (!IsActive)
+                return;
+
             gps = GamePad.GetState(PlayerIndex.One);
             ks = Keyboard.GetState();
             PolygonPhysicsObject obstacle;
 
             // Allows the game to exit
             if (gps.Buttons.Back == ButtonState.Pressed || ks.IsKeyDown(Keys.Escape))
-                ExitScreen();
+            {
+                ScreenManager.AddScreen(PauseScreen, null);
+                return;
+                //ExitScreen();
+            }
 
             for (int i = 0; i < cars.Count; i++)
             {
@@ -186,9 +209,6 @@ namespace WindowsGame2.Screens
             cameraBottomLeft.Follow(greenCar, 0.0f);
 
             world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
-
-            // TODO: should this be executed before?
-            base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
         }
 
         public override void Draw(GameTime gameTime)
@@ -216,6 +236,14 @@ namespace WindowsGame2.Screens
             //if debug
             //DrawSpritesDebug(cameraBottomLeft);
 
+            // If the game is transitioning on or off, fade it out to black.
+            if (TransitionPosition > 0 || pauseAlpha > 0)
+            {
+                float alpha = MathHelper.Lerp(1f - TransitionAlpha, 1f, pauseAlpha / 2);
+
+                ScreenManager.FadeBackBufferToBlack(alpha);
+            }
+
             base.Draw(gameTime);
         }
 
@@ -240,6 +268,17 @@ namespace WindowsGame2.Screens
             }
 
             spriteBatch.End();
+        }
+
+        public void DrawSpritesDebug(Camera camera)
+        {
+
+            Vector2 _screenCenter = new Vector2(camera.View.Width / 2f, camera.View.Height / 2f);
+            Matrix projection = Matrix.CreateOrthographicOffCenter(0f, ConvertUnits.ToSimUnits(camera.View.Width) * (1 / (float)Math.Pow(camera.Zoom, 10)),
+                                                              ConvertUnits.ToSimUnits(camera.View.Height) * (1 / (float)Math.Pow(camera.Zoom, 10)), 0f, 0f,
+                                                              1f);
+            Matrix view = Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(camera.Source.Position) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(camera.Zoom, 10)), 0f));
+            _debugView.RenderDebugData(ref projection, ref view);
         }
     }
 }
