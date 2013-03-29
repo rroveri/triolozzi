@@ -48,9 +48,16 @@ namespace WindowsGame2
         private float maxVel = 8;
         private float linearVel = 0;
 
-        public Car(World world, Game Game, Color Color)
+        private BasicEffect polygonsColorShader;
+        private GraphicsDevice _graphicsDevice;
+
+        public Car(World world, Game Game, Color Color, BasicEffect colorShader)
             : base(world, Game.Content.Load<Texture2D>("Images/penis"), new Vector2(65.0f, 40.0f), Color)
         {
+
+            this._graphicsDevice = Game.GraphicsDevice;
+            this.polygonsColorShader = colorShader;
+
             mForceVector = new Vector2();
             mDirection = new Vector2();
             mForce = 1.0f;
@@ -65,6 +72,8 @@ namespace WindowsGame2
 
             _compound.LinearDamping = 1;
             _compound.AngularDamping = 1;
+
+            
         }
 
         private int mod(int index)
@@ -317,7 +326,7 @@ namespace WindowsGame2
                 if (mTrailVertices.Count > 2)
                 {
                     resetTrail();
-                    PolygonPhysicsObject result = new PolygonPhysicsObject(World, mTrailVertices, mDummyTexture, AssetCreator);
+                    PolygonPhysicsObject result = new PolygonPhysicsObject(World, mTrailVertices, mDummyTexture, AssetCreator, _graphicsDevice, polygonsColorShader);
                     if (result.IsValid)
                     {
                         return result;

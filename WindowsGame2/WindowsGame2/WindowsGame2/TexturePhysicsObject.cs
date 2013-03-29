@@ -46,6 +46,7 @@ namespace WindowsGame2
 
             //Find the vertices that makes up the outline of the shape in the texture
             Vertices textureVertices = PolygonTools.CreatePolygon(data, _polygonTexture.Width, false);
+            
 
             //The tool return vertices as they were found in the texture.
             //We need to find the real center (centroid) of the vertices for 2 reasons:
@@ -84,7 +85,6 @@ namespace WindowsGame2
                                            null, color, _compound.Rotation, _origin, textureScale, SpriteEffects.None,
                                            0.9f);
 
-           // Console.WriteLine(ConvertUnits.ToDisplayUnits(_compound.Position));
 
         }
     }

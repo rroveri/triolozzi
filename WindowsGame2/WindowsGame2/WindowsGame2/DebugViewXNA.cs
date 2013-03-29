@@ -791,7 +791,7 @@ namespace FarseerPhysics.DebugViews
             _primitiveBatch.Begin(ref projection, ref view);
             DrawDebugData();
             _primitiveBatch.End();
-
+            
             if ((Flags & DebugViewFlags.PerformanceGraph) == DebugViewFlags.PerformanceGraph)
             {
                 _primitiveBatch.Begin(ref _localProjection, ref _localView);
@@ -812,7 +812,7 @@ namespace FarseerPhysics.DebugViews
             }
             // end the sprite batch effect
             _batch.End();
-
+            
             _stringData.Clear();
         }
 

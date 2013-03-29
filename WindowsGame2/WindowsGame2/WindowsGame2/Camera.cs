@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using FarseerPhysics.SamplesFramework;
 
 namespace WindowsGame2
 {
@@ -52,6 +53,20 @@ namespace WindowsGame2
             private set;
         }
 
+        //Our camera's transform matrix
+        public Matrix ViewMatrix
+        {
+            get;
+            private set;
+        }
+
+        //Our camera's transform matrix
+        public Matrix ProjectionMatrix
+        {
+            get;
+            private set;
+        }
+
         //The source object to follow
         public Car Source
         {
@@ -68,6 +83,8 @@ namespace WindowsGame2
 
         Random random;
 
+        Vector2 _screenCenter;
+
         /// <summary>
         /// Initialize a new Camera object
         /// </summary>
@@ -81,6 +98,7 @@ namespace WindowsGame2
             Rotation = 0;
             random = new Random();
             FocusPoint = new Vector2(view.Width / 2, view.Height / 2);
+            _screenCenter = new Vector2(View.Width / 2f, View.Height / 2f);
         }
 
         /// <summary>
@@ -99,6 +117,7 @@ namespace WindowsGame2
             Rotation = rotation;
             random = new Random();
             FocusPoint = focus;
+            _screenCenter = new Vector2(View.Width / 2f, View.Height / 2f);
         }
 
         
@@ -121,6 +140,12 @@ namespace WindowsGame2
                 Matrix.CreateScale(new Vector3((float)Math.Pow(Zoom, 10), (float)Math.Pow(Zoom, 10), 0)) *
                 Matrix.CreateRotationZ(-objectRotation + deltaRotation) *
                 Matrix.CreateTranslation(new Vector3(FocusPoint.X, FocusPoint.Y, 0));
+
+            
+            //create also projection and viewMatrix for the shaders
+            ProjectionMatrix = Matrix.CreateOrthographicOffCenter(0f, ConvertUnits.ToSimUnits(View.Width) * (1 / (float)Math.Pow(Zoom, 10)),
+                                                              ConvertUnits.ToSimUnits(View.Height) * (1 / (float)Math.Pow(Zoom, 10)), 0f, 0f,1f);
+            ViewMatrix = Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(Source.Position) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(Zoom, 10)), 0f));
 
        
         }

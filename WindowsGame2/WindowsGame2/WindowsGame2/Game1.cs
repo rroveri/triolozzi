@@ -74,6 +74,13 @@ namespace WindowsGame2
 
         float bgScale;
         float trackWidth;
+        
+        Matrix projection;
+        Matrix view;
+        Vector2 _screenCenter;
+
+        BasicEffect polygonsColorShader;
+
 
 
         public Game1()
@@ -110,6 +117,8 @@ namespace WindowsGame2
 
             bgScale = 0.9f;
             backgrounds = new List<Vector2>();
+
+            _screenCenter = new Vector2();
             
             base.Initialize();
         }
@@ -307,16 +316,19 @@ namespace WindowsGame2
             leftBottomTile(-1,-1);
             rightTopTile(-1, 0);
 
+            polygonsColorShader = new BasicEffect(GraphicsDevice);
+            polygonsColorShader.VertexColorEnabled = true;
 
-            redCar = new Car(world, this, Color.Red);
+
+            redCar = new Car(world, this, Color.Red, polygonsColorShader);
             //redCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
             redCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
 
-            blueCar = new Car(world, this, Color.Blue);
+            blueCar = new Car(world, this, Color.Blue, polygonsColorShader);
             //blueCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
             blueCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2+250);
 
-            greenCar = new Car(world, this, Color.Green);
+            greenCar = new Car(world, this, Color.Green, polygonsColorShader);
             //greenCar.Position = new Vector2(random.Next(50, GraphicsDevice.Viewport.Width - 50), random.Next(50, GraphicsDevice.Viewport.Height - 50));
             greenCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2 + 500);
 
@@ -350,9 +362,9 @@ namespace WindowsGame2
             cameraTopRight = new Camera(topRightViewport, Vector2.Zero, new Vector2(topRightViewport.Width / 2, topRightViewport.Height / 2), 0.95f, 0.0f);
             cameraBottomLeft = new Camera(bottomLeftViewport, Vector2.Zero, new Vector2(bottomLeftViewport.Width / 2, bottomLeftViewport.Height / 2), 0.95f, 0.0f);
 
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 4.0f / 3.0f, 1.0f, 10000f);
-            halfprojectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 2.0f / 3.0f, 1.0f, 10000f);
-
+            cameraTopLeft.Follow(redCar, 0.0f);
+            cameraTopRight.Follow(blueCar, 0.0f);
+            cameraBottomLeft.Follow(greenCar, 0.0f);
 
 
             _debugView = new DebugViewXNA(world);
@@ -368,7 +380,9 @@ namespace WindowsGame2
             _debugView.DefaultShapeColor = Color.White;
             _debugView.SleepingShapeColor = Color.LightGray;
             _debugView.LoadContent(GraphicsDevice, Content);
+
             
+  
         }
 
         /// <summary>
@@ -409,13 +423,8 @@ namespace WindowsGame2
             }
 
             cameraTopLeft.Update(gameTime);
-            cameraTopLeft.Follow(redCar, 0.0f);
-
             cameraTopRight.Update(gameTime);
-            cameraTopRight.Follow(blueCar, 0.0f);
-
             cameraBottomLeft.Update(gameTime);
-            cameraBottomLeft.Follow(greenCar, 0.0f);
 
             world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
             base.Update(gameTime);
@@ -427,6 +436,9 @@ namespace WindowsGame2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            
+
+
             GraphicsDevice.Clear(Color.White);
 
             GraphicsDevice.Viewport = defaultViewport;
@@ -454,22 +466,30 @@ namespace WindowsGame2
             base.Draw(gameTime);
         }
 
+
+
         public void DrawSpritesDebug(Camera camera)
         {
 
-            Vector2 _screenCenter = new Vector2(camera.View.Width / 2f, camera.View.Height / 2f);
-            Matrix projection = Matrix.CreateOrthographicOffCenter(0f, ConvertUnits.ToSimUnits(camera.View.Width) * (1 / (float)Math.Pow(camera.Zoom, 10)),
-                                                              ConvertUnits.ToSimUnits(camera.View.Height) * (1 / (float)Math.Pow(camera.Zoom, 10)), 0f, 0f,
-                                                              1f);
-            Matrix view = Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(camera.Source.Position) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(camera.Zoom, 10)), 0f));
+            //compute camera matrices
+            projection = camera.ProjectionMatrix;
+            view = camera.ViewMatrix;
+
+            //draw debug
             _debugView.RenderDebugData(ref projection, ref view);
         }
 
         public void DrawSprites(Camera camera){
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.Transform);
+            //compute camera matrices
+            projection = camera.ProjectionMatrix;
+            view = camera.ViewMatrix;
 
             
+            //draw 2D (!keep DepthStencilState to None in order to see shaders!)
+
+            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
+
             // draw backgrounds
             for (int i = 0; i < backgrounds.Count; i++)
             {
@@ -486,20 +506,33 @@ namespace WindowsGame2
                 bordersList[i].Draw(spriteBatch);
             }
 
-            // draw polygons
-            for (int i = 0; i < polygonsList.Count; i++)
-            {
-                polygonsList[i].Draw(spriteBatch);
-            }
-            
             // draw cars and their trails
             for (int i = 0; i < cars.Count; i++)
             {
                 cars[i].Draw(spriteBatch);
             }
-            
 
             spriteBatch.End();
+            
+
+
+            //now draw 3D (shaders)
+
+            //reset GraphicsDevice states (might be slow)
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+            
+            // draw polygons
+            for (int i = 0; i < polygonsList.Count; i++)
+            {
+                polygonsList[i].Draw(spriteBatch, ref projection, ref view, camera.Transform);
+            }
+            
+
+            
+
         }
     }
 }
