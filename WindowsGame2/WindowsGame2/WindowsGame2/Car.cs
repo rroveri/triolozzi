@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -49,13 +50,11 @@ namespace WindowsGame2
         private float linearVel = 0;
 
         private BasicEffect polygonsColorShader;
-        private GraphicsDevice _graphicsDevice;
 
-        public Car(World world, Game Game, Color Color, BasicEffect colorShader)
-            : base(world, Game.Content.Load<Texture2D>("Images/penis"), new Vector2(65.0f, 40.0f), Color)
+        public Car(World world, Color Color, BasicEffect colorShader)
+            : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/penis"), new Vector2(65.0f, 40.0f), Color)
         {
 
-            this._graphicsDevice = Game.GraphicsDevice;
             this.polygonsColorShader = colorShader;
 
             mForceVector = new Vector2();
@@ -66,7 +65,7 @@ namespace WindowsGame2
             mTrailVertices = new Vertices();
             mTrailPositions = new Vector2[mMaximumTrailPoints];
 
-            mDummyTexture = new Texture2D(Game.GraphicsDevice, 1, 1);
+            mDummyTexture = new Texture2D(GameServices.GetService<GraphicsDevice>(), 1, 1);
             mDummyTexture.SetData(new Color[] { Color.White });
             mColor = Color;
 
@@ -326,7 +325,7 @@ namespace WindowsGame2
                 if (mTrailVertices.Count > 2)
                 {
                     resetTrail();
-                    PolygonPhysicsObject result = new PolygonPhysicsObject(World, mTrailVertices, mDummyTexture, AssetCreator, _graphicsDevice, polygonsColorShader);
+                    PolygonPhysicsObject result = new PolygonPhysicsObject(World, mTrailVertices, mDummyTexture, AssetCreator, GameServices.GetService<GraphicsDevice>(), polygonsColorShader);
                     if (result.IsValid)
                     {
                         return result;
