@@ -26,7 +26,7 @@ namespace WindowsGame2.Screens
 
         MenuEntry playersMenuEntry;
 
-        private GameScreen GameScreen;
+        private MessageBoxScreen ExitDialog;
 
         static int[] numberOfPlayers = { 2, 3, 4 };
         static int currentNumberOfPlayers = 0;
@@ -63,8 +63,12 @@ namespace WindowsGame2.Screens
             MenuEntries.Add(playersMenuEntry);
             MenuEntries.Add(exitMenuEntry);
 
-            GameScreen = new GameScreen();
             UpdatePlayersCount();
+
+            // Prepare the exit dialog.
+            const string message = "Are you sure you want to exit the game?";
+            ExitDialog = new MessageBoxScreen(message);
+            ExitDialog.Accepted += ConfirmExitMessageBoxAccepted;
         }
 
         #endregion
@@ -78,7 +82,7 @@ namespace WindowsGame2.Screens
         void PlayGameMenuEntrySelected(object sender, PlayerIndexEventArgs e)
         {
             // TODO: start game here
-            LoadingScreen.Load(ScreenManager, true, e.PlayerIndex, GameScreen);
+            ScreenManager.ShowScreen<GameScreen>();
         }
 
 
@@ -107,13 +111,7 @@ namespace WindowsGame2.Screens
         /// </summary>
         protected override void OnCancel(PlayerIndex playerIndex)
         {
-            const string message = "Are you sure you want to exit the game?";
-
-            MessageBoxScreen confirmExitMessageBox = new MessageBoxScreen(message);
-
-            confirmExitMessageBox.Accepted += ConfirmExitMessageBoxAccepted;
-
-            ScreenManager.AddScreen(confirmExitMessageBox, playerIndex);
+            ScreenManager.AddScreen(ExitDialog, playerIndex);
         }
 
 

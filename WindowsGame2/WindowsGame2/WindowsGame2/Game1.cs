@@ -66,6 +66,7 @@ namespace WindowsGame2
             GameServices.AddService<ContentManager>(Content);
 
             //ScreenManager.AddScreen(new BackgroundScreen(), null);
+            ScreenManager.AddScreen(new GameScreen(), null);
             ScreenManager.AddScreen(new MainMenuScreen(), null);
         }
 

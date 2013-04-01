@@ -247,6 +247,24 @@ namespace WindowsGame2
             screens.Remove(screen);
         }
 
+        public void ShowScreen<T>()
+        {
+            int index = -1;
+            for (int i = 0; i < screens.Count; i++)
+            {
+                if (typeof(T) == screens[i].GetType())
+                {
+                    index = i;
+                }
+            }
+            if (index > -1)
+            {
+                AbstractScreen screen = screens[index];
+                screens.RemoveAt(index);
+                screens.Add(screen);
+            }
+        }
+
 
         /// <summary>
         /// Expose an array holding all the screens. We return a copy rather
