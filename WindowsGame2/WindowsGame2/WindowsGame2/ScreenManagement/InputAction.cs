@@ -77,14 +77,14 @@ namespace WindowsGame2
             }
 
             // Now we simply need to invoke the appropriate methods for each button and key in our collections
-            foreach (Buttons button in buttons)
+            for (int i = 0; i < buttons.Length; i++)
             {
-                if (buttonTest(button, controllingPlayer, out player))
+                if (buttonTest(buttons[i], controllingPlayer, out player))
                     return true;
             }
-            foreach (Keys key in keys)
+            for (int i = 0; i < keys.Length; i++)
             {
-                if (keyTest(key, controllingPlayer, out player))
+                if (keyTest(keys[i], controllingPlayer, out player))
                     return true;
             }
 

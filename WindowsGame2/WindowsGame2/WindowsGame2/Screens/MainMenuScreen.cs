@@ -26,6 +26,8 @@ namespace WindowsGame2.Screens
 
         MenuEntry playersMenuEntry;
 
+        private GameScreen GameScreen;
+
         static int[] numberOfPlayers = { 2, 3, 4 };
         static int currentNumberOfPlayers = 0;
         
@@ -61,9 +63,9 @@ namespace WindowsGame2.Screens
             MenuEntries.Add(playersMenuEntry);
             MenuEntries.Add(exitMenuEntry);
 
+            GameScreen = new GameScreen();
             UpdatePlayersCount();
         }
-
 
         #endregion
 
@@ -76,7 +78,7 @@ namespace WindowsGame2.Screens
         void PlayGameMenuEntrySelected(object sender, PlayerIndexEventArgs e)
         {
             // TODO: start game here
-            LoadingScreen.Load(ScreenManager, true, e.PlayerIndex, new GameScreen());
+            LoadingScreen.Load(ScreenManager, true, e.PlayerIndex, GameScreen);
         }
 
 

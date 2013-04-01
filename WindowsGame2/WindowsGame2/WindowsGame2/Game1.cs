@@ -36,12 +36,9 @@ namespace WindowsGame2
 
             ScreenManager = new ScreenManager(this);
             Components.Add(ScreenManager);
-            ScreenManager.AddScreen(new BackgroundScreen(), null);
-            ScreenManager.AddScreen(new MainMenuScreen(), null);
 
            // FrameRateCounter myFrameCounter = new FrameRateCounter(this, new Vector2(25, 25), Color.White, Color.Black);
            // Components.Add(myFrameCounter);
-
         }
 
         /// <summary>
@@ -67,6 +64,9 @@ namespace WindowsGame2
             // without having to pass them explicitly every time.
             GameServices.AddService<GraphicsDevice>(GraphicsDevice);
             GameServices.AddService<ContentManager>(Content);
+
+            //ScreenManager.AddScreen(new BackgroundScreen(), null);
+            ScreenManager.AddScreen(new MainMenuScreen(), null);
         }
 
         /// <summary>
