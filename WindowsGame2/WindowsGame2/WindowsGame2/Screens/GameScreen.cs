@@ -109,7 +109,7 @@ namespace WindowsGame2.Screens
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Create a new track
-            raceTrack = Track.CreateTrack(TrackType.PenisTrack);
+            //raceTrack = Track.CreateTrack(TrackType.PenisTrack);
 
             prevKeyboardState = Keyboard.GetState();
 
@@ -273,7 +273,7 @@ namespace WindowsGame2.Screens
             spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
 
             // Draw the race track and the starting line
-            raceTrack.DrawSprites(camera, spriteBatch);
+           // raceTrack.DrawSprites(camera, spriteBatch);
 
             
 
