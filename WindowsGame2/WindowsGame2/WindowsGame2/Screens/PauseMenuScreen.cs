@@ -21,6 +21,7 @@ namespace WindowsGame2.Screens
     {
         #region Initialization
 
+        private MessageBoxScreen QuitDialog;
 
         /// <summary>
         /// Constructor.
@@ -39,6 +40,11 @@ namespace WindowsGame2.Screens
             // Add entries to the menu.
             MenuEntries.Add(resumeGameMenuEntry);
             MenuEntries.Add(quitGameMenuEntry);
+
+            // Prepare the dialog for quitting the game.
+            const string message = "Are you sure you want to quit this game?";
+            QuitDialog = new MessageBoxScreen(message);
+            QuitDialog.Accepted += ConfirmQuitMessageBoxAccepted;
         }
 
 
@@ -52,25 +58,17 @@ namespace WindowsGame2.Screens
         /// </summary>
         void QuitGameMenuEntrySelected(object sender, PlayerIndexEventArgs e)
         {
-            const string message = "Are you sure you want to quit this game?";
-
-            MessageBoxScreen confirmQuitMessageBox = new MessageBoxScreen(message);
-
-            confirmQuitMessageBox.Accepted += ConfirmQuitMessageBoxAccepted;
-
-            ScreenManager.AddScreen(confirmQuitMessageBox, ControllingPlayer);
+            ScreenManager.AddScreen(QuitDialog, ControllingPlayer);
         }
 
 
         /// <summary>
         /// Event handler for when the user selects ok on the "are you sure
-        /// you want to quit" message box. This uses the loading screen to
-        /// transition from the game back to the main menu screen.
+        /// you want to quit" message box. Go back to the main menu screen.
         /// </summary>
         void ConfirmQuitMessageBoxAccepted(object sender, PlayerIndexEventArgs e)
         {
-            LoadingScreen.Load(ScreenManager, false, null, new BackgroundScreen(),
-                                                           new MainMenuScreen());
+            ScreenManager.ShowScreen<MainMenuScreen>();
         }
 
 

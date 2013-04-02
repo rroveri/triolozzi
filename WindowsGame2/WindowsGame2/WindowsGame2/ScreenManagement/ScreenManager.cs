@@ -32,8 +32,6 @@ namespace WindowsGame2
     {
         #region Fields
 
-        private const string StateFilename = "ScreenManagerState.xml";
-
         List<AbstractScreen> screens = new List<AbstractScreen>();
         List<AbstractScreen> tempScreensList = new List<AbstractScreen>();
 
@@ -44,8 +42,6 @@ namespace WindowsGame2
         Texture2D blankTexture;
 
         bool isInitialized;
-
-        bool traceEnabled;
 
         #endregion
 
@@ -71,19 +67,6 @@ namespace WindowsGame2
             get { return font; }
         }
 
-
-        /// <summary>
-        /// If true, the manager prints out a list of all the screens
-        /// each time it is updated. This can be useful for making sure
-        /// everything is being added and removed at the right times.
-        /// </summary>
-        public bool TraceEnabled
-        {
-            get { return traceEnabled; }
-            set { traceEnabled = value; }
-        }
-
-
         /// <summary>
         /// Gets a blank texture that can be used by the screens.
         /// </summary>
@@ -104,9 +87,6 @@ namespace WindowsGame2
         public ScreenManager(Game game)
             : base(game)
         {
-            // we must set EnabledGestures before we can query for them, but
-            // we don't assume the game wants to read them.
-            //TouchPanel.EnabledGestures = GestureType.None;
         }
 
 
@@ -134,9 +114,9 @@ namespace WindowsGame2
             blankTexture = content.Load<Texture2D>("Images/blank");
 
             // Tell each of the screens to load their content.
-            foreach (AbstractScreen screen in screens)
+            for (int i = 0; i < screens.Count; i++)
             {
-                screen.LoadContent();
+                screens[i].LoadContent();
             }
         }
 
@@ -171,8 +151,10 @@ namespace WindowsGame2
             // the process of updating one screen adds or removes others.
             tempScreensList.Clear();
 
-            foreach (AbstractScreen screen in screens)
-                tempScreensList.Add(screen);
+            for (int i = 0; i < screens.Count; i++)
+            {
+                tempScreensList.Add(screens[i]);
+            }
 
             bool otherScreenHasFocus = !Game.IsActive;
             bool coveredByOtherScreen = false;
@@ -206,24 +188,6 @@ namespace WindowsGame2
                         coveredByOtherScreen = true;
                 }
             }
-
-            // Print debug trace?
-            if (traceEnabled)
-                TraceScreens();
-        }
-
-
-        /// <summary>
-        /// Prints a list of all the screens, for debugging.
-        /// </summary>
-        void TraceScreens()
-        {
-            List<string> screenNames = new List<string>();
-
-            foreach (AbstractScreen screen in screens)
-                screenNames.Add(screen.GetType().Name);
-
-            Debug.WriteLine(string.Join(", ", screenNames.ToArray()));
         }
 
 
@@ -232,12 +196,12 @@ namespace WindowsGame2
         /// </summary>
         public override void Draw(GameTime gameTime)
         {
-            foreach (AbstractScreen screen in screens)
+            for (int i = 0; i < screens.Count; i++)
             {
-                if (screen.ScreenState == ScreenState.Hidden)
+                if (screens[i].ScreenState == ScreenState.Hidden)
                     continue;
 
-                screen.Draw(gameTime);
+                screens[i].Draw(gameTime);
             }
         }
 
@@ -263,9 +227,6 @@ namespace WindowsGame2
             }
 
             screens.Add(screen);
-
-            // update the TouchPanel to respond to gestures this screen is interested in
-            //TouchPanel.EnabledGestures = screen.EnabledGestures;
         }
 
 
@@ -278,19 +239,29 @@ namespace WindowsGame2
         public void RemoveScreen(AbstractScreen screen)
         {
             // If we have a graphics device, tell the screen to unload content.
-            if (isInitialized)
-            {
-                screen.Unload();
-            }
+            //if (isInitialized)
+            //{
+            //    screen.Unload();
+            //}
 
             screens.Remove(screen);
-            tempScreensList.Remove(screen);
+        }
 
-            // if there is a screen still in the manager, update TouchPanel
-            // to respond to gestures that screen is interested in.
-            if (screens.Count > 0)
+        public void ShowScreen<T>()
+        {
+            int index = -1;
+            for (int i = 0; i < screens.Count; i++)
             {
-                //TouchPanel.EnabledGestures = screens[screens.Count - 1].EnabledGestures;
+                if (typeof(T) == screens[i].GetType())
+                {
+                    index = i;
+                }
+            }
+            if (index > -1)
+            {
+                AbstractScreen screen = screens[index];
+                screens.RemoveAt(index);
+                screens.Add(screen);
             }
         }
 
@@ -315,19 +286,6 @@ namespace WindowsGame2
             spriteBatch.Begin();
             spriteBatch.Draw(blankTexture, GraphicsDevice.Viewport.Bounds, Color.Black * alpha);
             spriteBatch.End();
-        }
-
-        /// <summary>
-        /// Informs the screen manager to serialize its state to disk.
-        /// </summary>
-        public void Deactivate()
-        {
-            return;
-        }
-
-        public bool Activate(bool instancePreserved)
-        {
-            return false;
         }
 
         #endregion

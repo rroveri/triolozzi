@@ -35,6 +35,8 @@ namespace WindowsGame2.Screens
         InputAction menuSelect;
         InputAction menuCancel;
 
+        private Vector2 position;
+
         #endregion
 
         #region Properties
@@ -81,6 +83,8 @@ namespace WindowsGame2.Screens
                 new Buttons[] { Buttons.B, Buttons.Back },
                 new Keys[] { Keys.Escape },
                 true);
+
+            position = new Vector2(0f, 175f);
         }
 
 
@@ -175,7 +179,7 @@ namespace WindowsGame2.Screens
             float transitionOffset = (float)Math.Pow(TransitionPosition, 2);
 
             // start at Y = 175; each X value is generated per entry
-            Vector2 position = new Vector2(0f, 175f);
+            position.X = 0f; position.Y = 175f;
 
             // update each menu entry's location in turn
             for (int i = 0; i < menuEntries.Count; i++)
@@ -249,7 +253,7 @@ namespace WindowsGame2.Screens
             // Draw the menu title centered on the screen
             Vector2 titlePosition = new Vector2(graphics.Viewport.Width / 2, 80);
             Vector2 titleOrigin = font.MeasureString(menuTitle) / 2;
-            Color titleColor = new Color(192, 192, 192) * TransitionAlpha;
+            Color titleColor = Color.GhostWhite * TransitionAlpha;
             float titleScale = 1.25f;
 
             titlePosition.Y -= transitionOffset * 100;

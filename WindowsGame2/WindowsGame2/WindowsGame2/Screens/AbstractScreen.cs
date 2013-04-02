@@ -311,12 +311,12 @@ namespace WindowsGame2
         /// </summary>
         public void ExitScreen()
         {
-            if (TransitionOffTime == TimeSpan.Zero)
-            {
-                // If the screen has a zero transition time, remove it immediately.
-                ScreenManager.RemoveScreen(this);
-            }
-            else
+            //if (TransitionOffTime == TimeSpan.Zero)
+            //{
+            //    // If the screen has a zero transition time, remove it immediately.
+            //    ScreenManager.RemoveScreen(this);
+            //}
+            //else
             {
                 // Otherwise flag that it should transition off and then exit.
                 isExiting = true;

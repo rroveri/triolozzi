@@ -31,6 +31,9 @@ namespace WindowsGame2
         private readonly Keys[] keys;
         private readonly bool newPressOnly;
 
+        private ButtonPress buttonTest;
+        private KeyPress keyTest;
+
         // These delegate types map to the methods on InputState. We use these to simplify the evalute method
         // by allowing us to map the appropriate delegates and invoke them, rather than having two separate code paths.
         private delegate bool ButtonPress(Buttons button, PlayerIndex? controllingPlayer, out PlayerIndex player);
@@ -63,8 +66,6 @@ namespace WindowsGame2
         public bool Evaluate(InputState state, PlayerIndex? controllingPlayer, out PlayerIndex player)
         {
             // Figure out which delegate methods to map from the state which takes care of our "newPressOnly" logic
-            ButtonPress buttonTest;
-            KeyPress keyTest;
             if (newPressOnly)
             {
                 buttonTest = state.IsNewButtonPress;
@@ -77,14 +78,14 @@ namespace WindowsGame2
             }
 
             // Now we simply need to invoke the appropriate methods for each button and key in our collections
-            foreach (Buttons button in buttons)
+            for (int i = 0; i < buttons.Length; i++)
             {
-                if (buttonTest(button, controllingPlayer, out player))
+                if (buttonTest(buttons[i], controllingPlayer, out player))
                     return true;
             }
-            foreach (Keys key in keys)
+            for (int i = 0; i < keys.Length; i++)
             {
-                if (keyTest(key, controllingPlayer, out player))
+                if (keyTest(keys[i], controllingPlayer, out player))
                     return true;
             }
 
