@@ -51,6 +51,9 @@ namespace WindowsGame2
 
         private int mIndex;
 
+        private int boostFrames;
+        private bool hasBoost;
+
         public Car(World world, Color Color)
             : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/small_white_penis"), new Vector2(65.0f, 40.0f), Color)
         {
@@ -70,7 +73,8 @@ namespace WindowsGame2
             _compound.LinearDamping = 1;
             _compound.AngularDamping = 1;
 
-            
+            hasBoost = false;
+            boostFrames = 0;
         }
 
         private int mod(int index)
@@ -88,7 +92,19 @@ namespace WindowsGame2
 
         public void Update(GamePadState gps, KeyboardState ks)
         {
+            if (boostFrames == 50)
+            {
+                boostFrames = 0;
+                hasBoost = false;
+                maxVel = 10;
+                acc = 0.4f;
+            }
+            if (hasBoost)
+            {
+                boostFrames++;
+            }
 
+            
             mDirection.X = (float)Math.Cos(_compound.Rotation);
             mDirection.Y = (float)Math.Sin(_compound.Rotation);
 
@@ -353,6 +369,11 @@ namespace WindowsGame2
                     {
                         result.Color = mColor;
                         result.compound.IgnoreCollisionWith(_compound);
+
+                       
+                        maxVel = 10 + result.compound.Mass;
+                        acc = acc + result.compound.Mass / 10;
+                        hasBoost = true;
                         return result;
                     }
                     else
