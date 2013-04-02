@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Common;
 using FarseerPhysics.SamplesFramework;
+using Microsoft.Xna.Framework.Content;
 
 namespace WindowsGame2
 {
@@ -48,16 +49,11 @@ namespace WindowsGame2
         private float maxVel = 10; //5
         private float linearVel = 0;
 
-        private BasicEffect polygonsColorShader;
-        private GraphicsDevice _graphicsDevice;
-
         private int mIndex;
 
-        public Car(World world, Game Game, Color Color, BasicEffect colorShader)
-            : base(world, Game.Content.Load<Texture2D>("Images/small_white_penis"), new Vector2(65.0f, 40.0f), Color)
+        public Car(World world, Color Color)
+            : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/small_white_penis"), new Vector2(65.0f, 40.0f), Color)
         {
-
-            this._graphicsDevice = Game.GraphicsDevice;
 
             mForceVector = new Vector2();
             mDirection = new Vector2();
@@ -67,7 +63,7 @@ namespace WindowsGame2
             mTrailVertices = new Vertices();
             mTrailPositions = new Vector2[mMaximumTrailPoints];
 
-            mDummyTexture = new Texture2D(Game.GraphicsDevice, 1, 1);
+            mDummyTexture = new Texture2D(GameServices.GetService<GraphicsDevice>(), 1, 1);
             mDummyTexture.SetData(new Color[] { Color.White });
             mColor = Color;
 
@@ -352,7 +348,7 @@ namespace WindowsGame2
                 //if the shape is a polygon, create a new object
                 if (mTrailVertices.Count > 2)
                 {
-                    PolygonPhysicsObject result = new PolygonPhysicsObject(World, mTrailVertices, _graphicsDevice, polygonsColorShader);
+                    PolygonPhysicsObject result = new PolygonPhysicsObject(World, mTrailVertices);
                     if (result.IsValid)
                     {
                         result.Color = mColor;

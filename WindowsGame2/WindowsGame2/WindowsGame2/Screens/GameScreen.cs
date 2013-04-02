@@ -72,6 +72,10 @@ namespace WindowsGame2.Screens
         Matrix projection;
         Matrix view;
 
+        VertexPositionColor[] basicVert;
+        short[] triangleListIndices;
+        int maxNumberOfTriangles = 10000;
+
         #endregion
 
         /// <summary>
@@ -109,7 +113,7 @@ namespace WindowsGame2.Screens
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Create a new track
-            //raceTrack = Track.CreateTrack(TrackType.PenisTrack);
+            raceTrack = Track.CreateTrack(TrackType.PenisTrack);
 
             prevKeyboardState = Keyboard.GetState();
 
@@ -117,13 +121,13 @@ namespace WindowsGame2.Screens
             polygonsColorShader = new BasicEffect(GraphicsDevice);
             polygonsColorShader.VertexColorEnabled = true;
 
-            redCar = new Car(world, Color.Red, polygonsColorShader);
+            redCar = new Car(world, Color.Red);
             redCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
 
-            blueCar = new Car(world, Color.Blue, polygonsColorShader);
+            blueCar = new Car(world, Color.Blue);
             blueCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2 + 250);
 
-            greenCar = new Car(world, Color.Green, polygonsColorShader);
+            greenCar = new Car(world, Color.Green);
             greenCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2 + 500);
 
             cars.Add(redCar); cars.Add(blueCar); cars.Add(greenCar);
@@ -168,6 +172,9 @@ namespace WindowsGame2.Screens
             _debugView.DefaultShapeColor = Color.White;
             _debugView.SleepingShapeColor = Color.LightGray;
             _debugView.LoadContent(GraphicsDevice, Content);
+
+            basicVert = new VertexPositionColor[maxNumberOfTriangles];
+            triangleListIndices = new short[maxNumberOfTriangles * 3];
         }
 
         public override void Unload()
@@ -207,18 +214,23 @@ namespace WindowsGame2.Screens
                 // Update the position of the car
                 cars[i].Update(GamePad.GetState(playerIndexes[i]), ks);
                 // Find an obstacle (if any) drawn by the car and add it to the scene
-                obstacle = cars[i].TrailObstacle(world, assetCreator);
-                if (obstacle != null)
+                if (cars[i].TrailObstacle(world))
                 {
-                    polygonsList.Add(obstacle);
+                    obstacle = cars[i].TrailIntersection(world);
+                    if (obstacle != null)
+                    {
+                        polygonsList.Add(obstacle);
+                    }
                 }
+
             }
 
             cameraTopLeft.Update(gameTime);
             cameraTopRight.Update(gameTime);
             cameraBottomLeft.Update(gameTime);
 
-            world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
+            world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
+            // world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
         }
 
         public override void Draw(GameTime gameTime)
@@ -273,7 +285,7 @@ namespace WindowsGame2.Screens
             spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
 
             // Draw the race track and the starting line
-           // raceTrack.DrawSprites(camera, spriteBatch);
+            raceTrack.DrawSprites(camera, spriteBatch);
 
             
 
@@ -294,12 +306,24 @@ namespace WindowsGame2.Screens
             GraphicsDevice.RasterizerState = RasterizerState.CullNone;
             GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
 
+            int counter = 0;
+
             // draw polygons
             for (int i = 0; i < polygonsList.Count; i++)
             {
-                polygonsList[i].Draw(spriteBatch, ref projection, ref view, camera.Transform);
+                polygonsList[i].Draw(ref projection, ref view, camera.Transform, ref basicVert, ref counter);
             }
 
+            if (counter > 0)
+            {
+                polygonsColorShader.Projection = projection;
+                polygonsColorShader.View = view;
+                polygonsColorShader.CurrentTechnique.Passes[0].Apply();
+
+                //draw shader
+
+                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
+            }
 
         }
 

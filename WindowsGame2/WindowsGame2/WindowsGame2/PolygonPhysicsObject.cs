@@ -46,14 +46,6 @@ namespace WindowsGame2
         Random random;
         Vertices _vertices;
 
-        private VertexPositionColor[] verts;
-        BasicEffect _colorShader;
-
-        GraphicsDevice _graphicsDevice;
-
-
-
-
         public bool IsValid
         {
             get;
@@ -97,15 +89,8 @@ namespace WindowsGame2
             return resultMaterial;
         }
 
-        public PolygonPhysicsObject(World world, Vertices vertices, GraphicsDevice graphicsDevice, BasicEffect polygonsColorShader)
+        public PolygonPhysicsObject(World world, Vertices vertices)
         {
-            this._graphicsDevice = graphicsDevice;
-
-
-            // set up a new basic effect, and enable vertex colors.
-            _colorShader = polygonsColorShader;
-
-
             // this._vertices = vertices;
 
             //Vector2 centroid = -vertices.GetCentroid();

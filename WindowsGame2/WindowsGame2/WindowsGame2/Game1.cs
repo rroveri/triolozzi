@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using WindowsGame2.GameElements;
 using WindowsGame2.Screens;
+using FarseerPhysics;
 
 
 namespace WindowsGame2
@@ -49,6 +50,12 @@ namespace WindowsGame2
         /// </summary>
         protected override void Initialize()
         {
+            Settings.EnableDiagnostics = false;
+            Settings.VelocityIterations = 1; //6
+            Settings.PositionIterations = 1; //2
+            Settings.ContinuousPhysics = false;
+            // IsFixedTimeStep = false;
+
             base.Initialize();
         }
 
