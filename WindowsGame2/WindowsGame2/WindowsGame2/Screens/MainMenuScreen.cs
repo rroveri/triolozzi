@@ -52,6 +52,7 @@ namespace WindowsGame2.Screens
 
             // Hook up menu event handlers.
             playGameMenuEntry.Selected += PlayGameMenuEntrySelected;
+            singleScreenEntry.Selected += PlayGameMenuSingleModeEntrySelected;
             //optionsMenuEntry.Selected += OptionsMenuEntrySelected;
             playersMenuEntry.Selected += PlayersMenuEntrySelected;
             exitMenuEntry.Selected += OnCancel;
@@ -82,9 +83,17 @@ namespace WindowsGame2.Screens
         void PlayGameMenuEntrySelected(object sender, PlayerIndexEventArgs e)
         {
             // TODO: start game here
+            ScreenManager.GetScreen<GameScreen>().SetGameMode(0);
             ScreenManager.ShowScreen<GameScreen>();
         }
 
+
+        void PlayGameMenuSingleModeEntrySelected(object sender, PlayerIndexEventArgs e)
+        {
+            // TODO: start game here
+            ScreenManager.GetScreen<GameScreen>().SetGameMode(1);
+            ScreenManager.ShowScreen<GameScreen>();
+        }
 
         /// <summary>
         /// Event handler for when the Options menu entry is selected.

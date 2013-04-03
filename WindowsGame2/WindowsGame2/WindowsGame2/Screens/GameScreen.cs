@@ -54,6 +54,7 @@ namespace WindowsGame2.Screens
         Camera cameraTopLeft;
         Camera cameraTopRight;
         Camera cameraBottomLeft;
+        Camera cameraFollowing;
 
         Viewport topLeftViewport;
         Viewport topRightViewport;
@@ -64,6 +65,7 @@ namespace WindowsGame2.Screens
         Matrix halfprojectionMatrix;
 
         Track raceTrack;
+        RandomTrack randomRaceTrack;
 
         PauseMenuScreen PauseScreen;
         float pauseAlpha;
@@ -75,6 +77,7 @@ namespace WindowsGame2.Screens
         VertexPositionColor[] basicVert;
         short[] triangleListIndices;
         int maxNumberOfTriangles = 10000;
+        private int mGameMode;
 
         #endregion
 
@@ -113,7 +116,10 @@ namespace WindowsGame2.Screens
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Create a new track
-            raceTrack = Track.CreateTrack(TrackType.PenisTrack);
+
+
+            //raceTrack = Track.CreateTrack(TrackType.PenisTrack);
+            randomRaceTrack = RandomTrack.createTrack();
 
             prevKeyboardState = Keyboard.GetState();
 
@@ -123,12 +129,23 @@ namespace WindowsGame2.Screens
 
             redCar = new Car(world, Color.Red);
             redCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
+            
 
             blueCar = new Car(world, Color.Blue);
             blueCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2 + 250);
 
             greenCar = new Car(world, Color.Green);
             greenCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2 + 500);
+
+            //random track
+            Vertices startingPos = randomRaceTrack.computeStartingPositions(0);
+            redCar._compound.Position = startingPos[0];
+            blueCar._compound.Position = startingPos[1];
+            greenCar._compound.Position = startingPos[2];
+            float angle = randomRaceTrack.computeStartingAngle(0) - 90 ;
+            redCar._compound.Rotation = angle;
+            greenCar._compound.Rotation = angle;
+            blueCar._compound.Rotation = angle;
 
             cars.Add(redCar); cars.Add(blueCar); cars.Add(greenCar);
 
@@ -148,16 +165,22 @@ namespace WindowsGame2.Screens
             topRightViewport.X = topLeftViewport.Width + 2;
             bottomLeftViewport.Y = bottomLeftViewport.Height + 2;
 
-
-            cameraTopLeft = new Camera(topLeftViewport, Vector2.Zero, new Vector2(topLeftViewport.Width / 2, topLeftViewport.Height / 2), 0.95f, 0.0f);
-            cameraTopRight = new Camera(topRightViewport, Vector2.Zero, new Vector2(topRightViewport.Width / 2, topRightViewport.Height / 2), 0.95f, 0.0f);
-            cameraBottomLeft = new Camera(bottomLeftViewport, Vector2.Zero, new Vector2(bottomLeftViewport.Width / 2, bottomLeftViewport.Height / 2), 0.95f, 0.0f);
-
-            cameraTopLeft.Follow(redCar, 0.0f);
-            cameraTopRight.Follow(blueCar, 0.0f);
-            cameraBottomLeft.Follow(greenCar, 0.0f);
-
-
+            if (mGameMode == 0)
+            {
+                cameraTopLeft = new Camera(topLeftViewport, Vector2.Zero, new Vector2(topLeftViewport.Width / 2, topLeftViewport.Height / 2), 0.95f, 0.0f);
+                cameraTopRight = new Camera(topRightViewport, Vector2.Zero, new Vector2(topRightViewport.Width / 2, topRightViewport.Height / 2), 0.95f, 0.0f);
+                cameraBottomLeft = new Camera(bottomLeftViewport, Vector2.Zero, new Vector2(bottomLeftViewport.Width / 2, bottomLeftViewport.Height / 2), 0.95f, 0.0f);
+                
+                cameraTopLeft.Follow(redCar, 0.0f);
+                cameraTopRight.Follow(blueCar, 0.0f);
+                cameraBottomLeft.Follow(greenCar, 0.0f);
+            }
+            else if (mGameMode==1)
+            {
+                cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f);
+                cameraFollowing.Follow(redCar, 0.0f);
+                
+            }
 
             _debugView = new DebugViewXNA(world);
             _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Shape);
@@ -181,6 +204,19 @@ namespace WindowsGame2.Screens
         {
             base.Unload();
             GameServices.DeleteService<World>();
+        }
+
+        public void SetGameMode(int gameMode)
+        {
+            mGameMode = gameMode;
+
+            
+            if (mGameMode==1)
+            {
+                cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f);
+                cameraFollowing.Follow(blueCar, 0.0f);
+                
+            }
         }
 
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
@@ -225,9 +261,16 @@ namespace WindowsGame2.Screens
 
             }
 
-            cameraTopLeft.Update(gameTime);
-            cameraTopRight.Update(gameTime);
-            cameraBottomLeft.Update(gameTime);
+            if (mGameMode == 0)
+            {
+                cameraTopLeft.Update(gameTime);
+                cameraTopRight.Update(gameTime);
+                cameraBottomLeft.Update(gameTime);
+            }
+            else if (mGameMode == 1)
+            {
+                cameraFollowing.Update(gameTime);
+            }
 
             world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
             // world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
@@ -237,26 +280,35 @@ namespace WindowsGame2.Screens
         {
             GraphicsDevice.Clear(Color.White);
 
-            GraphicsDevice.Viewport = defaultViewport;
-            GraphicsDevice.Clear(Color.Black);
+            if (mGameMode == 0)
+            {
 
-            GraphicsDevice.Viewport = topLeftViewport;
-            //if not debug
-            DrawSprites(cameraTopLeft);
-            //if debug view
-            //DrawSpritesDebug(cameraTopLeft);
+                GraphicsDevice.Viewport = defaultViewport;
+                GraphicsDevice.Clear(Color.White);
 
-            GraphicsDevice.Viewport = topRightViewport;
-            //if not debug
-            DrawSprites(cameraTopRight);
-            //if debug
-            //DrawSpritesDebug(cameraTopRight);
+                GraphicsDevice.Viewport = topLeftViewport;
+                //if not debug
+                DrawSprites(cameraTopLeft);
+                //if debug view
+                //DrawSpritesDebug(cameraTopLeft);
 
-            GraphicsDevice.Viewport = bottomLeftViewport;
-            //if not debug
-            DrawSprites(cameraBottomLeft);
-            //if debug
-            //DrawSpritesDebug(cameraBottomLeft);
+                GraphicsDevice.Viewport = topRightViewport;
+                //if not debug
+                DrawSprites(cameraTopRight);
+                //if debug
+                //DrawSpritesDebug(cameraTopRight);
+
+                GraphicsDevice.Viewport = bottomLeftViewport;
+                //if not debug
+                DrawSprites(cameraBottomLeft);
+                //if debug
+                //DrawSpritesDebug(cameraBottomLeft);
+            }
+            else if (mGameMode == 1)
+            {
+                GraphicsDevice.Viewport = defaultViewport;
+                DrawSprites(cameraFollowing);
+            }
 
             GraphicsDevice.Viewport = defaultViewport;
 
@@ -285,8 +337,8 @@ namespace WindowsGame2.Screens
             spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
 
             // Draw the race track and the starting line
-            raceTrack.DrawSprites(camera, spriteBatch);
-
+           // raceTrack.DrawSprites(camera, spriteBatch);
+            randomRaceTrack.DrawSprites(camera,spriteBatch);
             
 
             // draw cars and their trails

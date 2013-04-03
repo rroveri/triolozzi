@@ -265,6 +265,18 @@ namespace WindowsGame2
             }
         }
 
+        public T GetScreen<T>() where T : AbstractScreen
+        {
+            for (int i = 0; i < screens.Count; i++)
+            {
+                if (typeof(T) == screens[i].GetType())
+                {
+                    return (T)screens[i];
+                }
+            }
+            return null;
+        }
+
 
         /// <summary>
         /// Expose an array holding all the screens. We return a copy rather
