@@ -28,6 +28,7 @@ namespace WindowsGame2.GameElements
         Body externalBody;
         Body internalBody;
         List<Vector2> normals;
+        List<int> internalCorrispondances;
         
         public static RandomTrack createTrack()
         {
@@ -46,6 +47,7 @@ namespace WindowsGame2.GameElements
             curvePointsInternal = new Vertices();
             curvePointsExternal = new Vertices();
             curvePointsMiddle = new Vertices();
+            internalCorrispondances= new List<int>();
             dummyTexture = new Texture2D(GameServices.GetService<GraphicsDevice>(), 1, 1);
             dummyTexture.SetData(new Color[] { Color.White });
             random = new Random();
@@ -110,6 +112,7 @@ namespace WindowsGame2.GameElements
                     curvePointsExternal.Add(newPoint);
                     normals.Add(normalVector);
                     curvePointsMiddle.Add(curvePointsInternal[i] + (newPoint - curvePointsInternal[i])/2f);
+                    internalCorrispondances.Add(i);
                 }
             }
 
@@ -175,7 +178,7 @@ namespace WindowsGame2.GameElements
 
         public float computeStartingAngle(int index)
         {
-            Vector2 point1 = curvePointsInternal[index];
+            Vector2 point1 = curvePointsInternal[internalCorrispondances[index]];
             Vector2 point2 = curvePointsExternal[index];
             float result = (float)Math.Atan2(point2.Y - point1.Y, point2.X - point1.X);
 
@@ -216,7 +219,7 @@ namespace WindowsGame2.GameElements
         {
 
             //draw starting line
-            DrawLine(spriteBatch, 100, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[0]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
+            DrawLine(spriteBatch, 100, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
           //spriteBatch.Draw(dummyTexture, ConvertUnits.ToDisplayUnits(curvePointsMiddle[0]), null, Color.Yellow, 0.0f, Vector2.Zero, new Vector2(100, squaredBg.Height * bgScale), SpriteEffects.None, 1f);
 
 
@@ -230,14 +233,17 @@ namespace WindowsGame2.GameElements
             // why multiply by 5????? random like a drunk kurva!!!
             for (int i = 1; i < curvePointsExternal.Count; i++)
             {
-                DrawLine(spriteBatch, 50, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsExternal[i]) + normals[i] * 5, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]) + normals[i - 1] * 5);
+                DrawLine(spriteBatch, 50, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i]) + normals[i] * 5, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]) + normals[i - 1] * 5);
             }
-            DrawLine(spriteBatch, 50, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normals[0] * 5, ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]) + normals[curvePointsExternal.Count - 1] * 5);
+            DrawLine(spriteBatch, 50, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normals[0] * 5, ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]) + normals[curvePointsExternal.Count - 1] * 5);
 
+            /*
+            //draw middle points
             for (int i = 1; i < curvePointsMiddle.Count; i++)
             {
                 spriteBatch.Draw(dummyTexture, ConvertUnits.ToDisplayUnits(curvePointsMiddle[i]), null, Color.Green, 0f, Vector2.Zero, new Vector2(20,20), SpriteEffects.None, 0);
             }
+             */ 
 
             /*
             for (int i = 1; i < curvePointsExternal.Count; i++)
