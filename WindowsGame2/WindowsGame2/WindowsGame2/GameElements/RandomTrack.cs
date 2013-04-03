@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using FarseerPhysics.SamplesFramework;
 using FarseerPhysics.Factories;
+using Microsoft.Xna.Framework.Content;
 
 
 namespace WindowsGame2.GameElements
@@ -29,6 +30,14 @@ namespace WindowsGame2.GameElements
         Body internalBody;
         List<Vector2> normals;
         List<int> internalCorrispondances;
+        Texture2D bgTexture;
+
+        float left = 10000000;
+        float right = -10000000;
+        float up = -10000000;
+        float down = 10000000;
+
+        int textureScale = 5;
         
         public static RandomTrack createTrack()
         {
@@ -52,6 +61,8 @@ namespace WindowsGame2.GameElements
             dummyTexture.SetData(new Color[] { Color.White });
             random = new Random();
             normals = new List<Vector2>();
+            ContentManager Content = GameServices.GetService<ContentManager>();
+            bgTexture = Content.Load<Texture2D>("Images/bgNew");
         }
     
         public void buildRandomTrack(){
@@ -92,6 +103,9 @@ namespace WindowsGame2.GameElements
             }
 
             
+            
+            
+            
             //generate external, middle points and normals
             for (int i = 1; i < curvePointsInternal.Count-1; i++)
             {
@@ -115,11 +129,33 @@ namespace WindowsGame2.GameElements
                     internalCorrispondances.Add(i);
                 }
             }
-
+            
             
 
             externalBody = BodyFactory.CreateLoopShape(world, curvePointsExternal);
             internalBody = BodyFactory.CreateLoopShape(world, curvePointsInternal);
+
+            //compute bounding box in screen coordinates
+            
+            for (int i = 0; i < curvePointsExternal.Count; i++)
+            {
+                if (ConvertUnits.ToDisplayUnits(curvePointsExternal[i].X) < left)
+                {
+                    left = ConvertUnits.ToDisplayUnits(curvePointsExternal[i].X);
+                }
+                else if (ConvertUnits.ToDisplayUnits(curvePointsExternal[i].X) > right)
+                {
+                    right = ConvertUnits.ToDisplayUnits(curvePointsExternal[i].X);
+                }
+                if (ConvertUnits.ToDisplayUnits(curvePointsExternal[i].Y) < down)
+                {
+                    down = ConvertUnits.ToDisplayUnits(curvePointsExternal[i].Y);
+                }
+                else if (ConvertUnits.ToDisplayUnits(curvePointsExternal[i].Y) > up)
+                {
+                    up = ConvertUnits.ToDisplayUnits(curvePointsExternal[i].Y);
+                }
+            }
             
 
             /*
@@ -218,9 +254,21 @@ namespace WindowsGame2.GameElements
         public void DrawSprites(Camera camera, SpriteBatch spriteBatch)
         {
 
+            //draw background
+            for (int y = (int)Math.Ceiling(down); y < (int)Math.Ceiling(up); y = y + bgTexture.Height * textureScale)
+            {
+                for (int x = (int)Math.Floor(left); x < (int)Math.Ceiling(right); x = x + bgTexture.Width * textureScale)
+                {
+                    spriteBatch.Draw(bgTexture, new Vector2(x, y), null, Color.White, 0.0f, Vector2.Zero, Vector2.One*textureScale, SpriteEffects.None, 1f);
+                }
+            }
+
+                
+
             //draw starting line
             DrawLine(spriteBatch, 100, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
-          //spriteBatch.Draw(dummyTexture, ConvertUnits.ToDisplayUnits(curvePointsMiddle[0]), null, Color.Yellow, 0.0f, Vector2.Zero, new Vector2(100, squaredBg.Height * bgScale), SpriteEffects.None, 1f);
+          
+            
 
 
             // draw track
@@ -233,16 +281,19 @@ namespace WindowsGame2.GameElements
             // why multiply by 5????? random like a drunk kurva!!!
             for (int i = 1; i < curvePointsExternal.Count; i++)
             {
-                DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]) + normals[i - 1], ConvertUnits.ToDisplayUnits(curvePointsExternal[i]) + normals[i]);
+               // DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]) + normals[i - 1], ConvertUnits.ToDisplayUnits(curvePointsExternal[i]) + normals[i]);
+                DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]) , ConvertUnits.ToDisplayUnits(curvePointsExternal[i]) );
             }
-            DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]) + normals[curvePointsExternal.Count - 1], ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normals[0]);
-
+           // DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]) + normals[curvePointsExternal.Count - 1], ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normals[0]);
+            DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
+            
             
             //draw middle points
             for (int i = 1; i < curvePointsMiddle.Count; i++)
             {
                 spriteBatch.Draw(dummyTexture, ConvertUnits.ToDisplayUnits(curvePointsMiddle[i]), null, Color.Green, 0f, Vector2.Zero, new Vector2(20,20), SpriteEffects.None, 0);
             }
+            
               
 
             /*
