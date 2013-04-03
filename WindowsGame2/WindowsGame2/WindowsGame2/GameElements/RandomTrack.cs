@@ -226,24 +226,24 @@ namespace WindowsGame2.GameElements
             // draw track
             for (int i = 1; i < curvePointsInternal.Count; i++)
             {
-                DrawLine(spriteBatch, 50, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[i]), ConvertUnits.ToDisplayUnits(curvePointsInternal[i - 1]));
+                DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[i]), ConvertUnits.ToDisplayUnits(curvePointsInternal[i - 1]));
             }
-            DrawLine(spriteBatch, 50, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[0]), ConvertUnits.ToDisplayUnits(curvePointsInternal[curvePointsInternal.Count - 1]));
+            DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[0]), ConvertUnits.ToDisplayUnits(curvePointsInternal[curvePointsInternal.Count - 1]));
 
             // why multiply by 5????? random like a drunk kurva!!!
             for (int i = 1; i < curvePointsExternal.Count; i++)
             {
-                DrawLine(spriteBatch, 50, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i]) + normals[i] * 5, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]) + normals[i - 1] * 5);
+                DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]) + normals[i - 1], ConvertUnits.ToDisplayUnits(curvePointsExternal[i]) + normals[i]);
             }
-            DrawLine(spriteBatch, 50, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normals[0] * 5, ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]) + normals[curvePointsExternal.Count - 1] * 5);
+            DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]) + normals[curvePointsExternal.Count - 1], ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normals[0]);
 
-            /*
+            
             //draw middle points
             for (int i = 1; i < curvePointsMiddle.Count; i++)
             {
                 spriteBatch.Draw(dummyTexture, ConvertUnits.ToDisplayUnits(curvePointsMiddle[i]), null, Color.Green, 0f, Vector2.Zero, new Vector2(20,20), SpriteEffects.None, 0);
             }
-             */ 
+              
 
             /*
             for (int i = 1; i < curvePointsExternal.Count; i++)
