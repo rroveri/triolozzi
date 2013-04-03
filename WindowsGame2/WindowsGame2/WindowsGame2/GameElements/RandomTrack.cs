@@ -78,25 +78,26 @@ namespace WindowsGame2.GameElements
             }
 
             //create bezier curve
+            int timeStep = 10;
             for (int i = 0; i <= controlPointsCount - 4; i++)
             {
-                for (int t = 10; t <= 100; t=t+10)
+                for (int t = timeStep; t <= 100; t = t + timeStep)
                 {
                     Vector2 newPoint = Vector2.CatmullRom( controlPoints[i], controlPoints[i + 1], controlPoints[i + 2], controlPoints[i + 3], t/100f);
                     curvePointsInternal.Add(newPoint);
                 }
             }
-            for (int t = 10; t <= 100; t = t + 10)
+            for (int t = timeStep; t <= 100; t = t + timeStep)
             {
                 Vector2 newPoint = Vector2.CatmullRom(controlPoints[controlPointsCount - 3], controlPoints[controlPointsCount - 2], controlPoints[controlPointsCount - 1], controlPoints[0], t / 100f);
                 curvePointsInternal.Add(newPoint);
             }
-            for (int t = 10; t <= 100; t = t + 10)
+            for (int t = timeStep; t <= 100; t = t + timeStep)
             {
                 Vector2 newPoint = Vector2.CatmullRom(controlPoints[controlPointsCount - 2], controlPoints[controlPointsCount - 1], controlPoints[0], controlPoints[1], t / 100f);
                 curvePointsInternal.Add(newPoint);
             }
-            for (int t = 10; t <= 100; t = t + 10)
+            for (int t = timeStep; t <= 100; t = t + timeStep)
             {
                 Vector2 newPoint = Vector2.CatmullRom(controlPoints[controlPointsCount - 1], controlPoints[0], controlPoints[1], controlPoints[2], t / 100f);
                 curvePointsInternal.Add(newPoint);
@@ -107,16 +108,28 @@ namespace WindowsGame2.GameElements
             
             
             //generate external, middle points and normals
-            for (int i = 1; i < curvePointsInternal.Count-1; i++)
+            for (int i = 0; i < curvePointsInternal.Count; i++)
             {
-                Vector2 tangentVector = curvePointsInternal[i + 1] - curvePointsInternal[i - 1];
+                int preIndex = i - 1;
+                int postIndex = i + 1;
+                if (preIndex < 0)
+                {
+                    preIndex = curvePointsInternal.Count - 1;
+                }
+                if (postIndex > curvePointsInternal.Count - 1)
+                {
+                    postIndex = 0;
+                }
+
+                Vector2 tangentVector = curvePointsInternal[postIndex] - curvePointsInternal[preIndex];
                 Vector2 normalVector = Vector2.Normalize(new Vector2(-tangentVector.Y, tangentVector.X))*pathWidth;
                 Vector2 newPoint=curvePointsInternal[i] + normalVector;
                 bool okToAdd=true;
                 for (int j = 0; j < curvePointsInternal.Count - 1; j++)
                 {
-                    //slow like an old kurva!!!
-                    if (Vector2.Distance(newPoint, curvePointsInternal[j]) < pathWidth)
+                    //slow like an old kurva!!! 
+                    //0.01 margin della vita!!
+                    if (Vector2.Distance(newPoint, curvePointsInternal[j]) < pathWidth-0.01f)
                     {
                         okToAdd = false;
                     }
@@ -130,6 +143,8 @@ namespace WindowsGame2.GameElements
                 }
             }
             
+
+
             
 
             externalBody = BodyFactory.CreateLoopShape(world, curvePointsExternal);
@@ -267,8 +282,12 @@ namespace WindowsGame2.GameElements
 
             //draw starting line
             DrawLine(spriteBatch, 100, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
-          
-            
+
+            //draw connections between internal and external points for debugging
+            for (int i = 0; i < curvePointsExternal.Count; i++)
+            {
+                DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[i]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
+            }
 
 
             // draw track
