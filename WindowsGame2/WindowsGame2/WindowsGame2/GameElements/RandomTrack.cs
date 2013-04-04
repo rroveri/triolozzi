@@ -129,10 +129,18 @@ namespace WindowsGame2.GameElements
                 {
                     //slow like an old kurva!!! 
                     //0.01 margin della vita!!
+                    
+                    if (Vector2.Distance(newPoint, curvePointsInternal[j]) < pathWidth && j!=i)
+                    {
+                        okToAdd = false;
+                    }
+                    
+                    /*
                     if (Vector2.Distance(newPoint, curvePointsInternal[j]) < pathWidth-0.01f)
                     {
                         okToAdd = false;
                     }
+                     */ 
                 }
                 if (okToAdd)
                 {
