@@ -227,14 +227,19 @@ namespace WindowsGame2.GameElements
 
 
             myArray = new VertexPositionColorTexture[(curvePointsExternal.Count) * 6 + (curvePointsInternal.Count) * 6];
-            for (int i = 1; i < curvePointsExternal.Count; i++)
+            for (int i = 0; i < curvePointsExternal.Count; i++)
             {
-                myArray[i * 6].Position = new Vector3( curvePointsExternal[i - 1],-0.1f);
+                int preIndex = i - 1;
+                if (preIndex < 0)
+                {
+                    preIndex = curvePointsExternal.Count-1;
+                }
+                myArray[i * 6].Position = new Vector3(curvePointsExternal[preIndex], -0.1f);
                 myArray[i * 6 + 1].Position = new Vector3(curvePointsExternal[i], -0.1f);
-                myArray[i * 6 + 2].Position = new Vector3(curvePointsExternal[i - 1] + normals[i - 1] / pathWidth, -0.1f);
+                myArray[i * 6 + 2].Position = new Vector3(curvePointsExternal[preIndex] + normals[preIndex] / pathWidth, -0.1f);
 
                 myArray[i * 6 + 3].Position = new Vector3(curvePointsExternal[i], -0.1f);
-                myArray[i * 6 + 4].Position = new Vector3(curvePointsExternal[i - 1] + normals[i - 1] / pathWidth, -0.1f);
+                myArray[i * 6 + 4].Position = new Vector3(curvePointsExternal[preIndex] + normals[preIndex] / pathWidth, -0.1f);
                 myArray[i * 6 + 5].Position = new Vector3(curvePointsExternal[i] + normals[i] / pathWidth,-0.1f);
 
                 myArray[i * 6].TextureCoordinate = new Vector2(0,1);
@@ -247,14 +252,20 @@ namespace WindowsGame2.GameElements
 
              }
 
-            for (int i = 1; i < curvePointsInternal.Count; i++)
+            for (int i = 0; i < curvePointsInternal.Count; i++)
             {
-                myArray[(i+curvePointsExternal.Count) * 6].Position = new Vector3(curvePointsInternal[i - 1], -0.1f);
+                int preIndex = i - 1;
+                if (preIndex < 0)
+                {
+                    preIndex = curvePointsExternal.Count - 1;
+                }
+
+                myArray[(i + curvePointsExternal.Count) * 6].Position = new Vector3(curvePointsInternal[preIndex], -0.1f);
                 myArray[(i + curvePointsExternal.Count) * 6 + 1].Position = new Vector3(curvePointsInternal[i], -0.1f);
-                myArray[(i + curvePointsExternal.Count) * 6 + 2].Position = new Vector3(curvePointsInternal[i - 1] + normalsInternal[i - 1] / pathWidth, -0.1f);
+                myArray[(i + curvePointsExternal.Count) * 6 + 2].Position = new Vector3(curvePointsInternal[preIndex] + normalsInternal[preIndex] / pathWidth, -0.1f);
 
                 myArray[(i + curvePointsExternal.Count) * 6 + 3].Position = new Vector3(curvePointsInternal[i], -0.1f);
-                myArray[(i + curvePointsExternal.Count) * 6 + 4].Position = new Vector3(curvePointsInternal[i - 1] + normalsInternal[i - 1] / pathWidth, -0.1f);
+                myArray[(i + curvePointsExternal.Count) * 6 + 4].Position = new Vector3(curvePointsInternal[preIndex] + normalsInternal[preIndex] / pathWidth, -0.1f);
                 myArray[(i + curvePointsExternal.Count) * 6 + 5].Position = new Vector3(curvePointsInternal[i] + normalsInternal[i] / pathWidth, -0.1f);
 
                 myArray[(i + curvePointsExternal.Count) * 6].TextureCoordinate = new Vector2(0, 1);
