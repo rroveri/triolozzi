@@ -11,6 +11,7 @@ using FarseerPhysics.Dynamics;
 using FarseerPhysics.Common;
 using FarseerPhysics.SamplesFramework;
 using Microsoft.Xna.Framework.Content;
+using WindowsGame2.GameElements;
 
 namespace WindowsGame2
 {
@@ -27,14 +28,14 @@ namespace WindowsGame2
         private static string drivingMode = unityMode;
 
         private static int mMaximumTrailPoints = 130;
-        private int mTrailPoints;
+        public int mTrailPoints;
 
         private Vector2 mForceVector;
         private Vector2 mDirection;
         private float mForce;
 
         private bool mShowTrail;
-        private bool mIsTrailLoop;
+        public bool mIsTrailLoop;
         private bool wasDrawing;
         private bool mFoundIntersection;
 
@@ -54,9 +55,20 @@ namespace WindowsGame2
         private int boostFrames;
         private bool hasBoost;
 
-        public Car(World world, Color Color)
+        private RandomTrack randomTrack;
+        public int currentMiddlePoint;
+        public Vector2 projectedPosition;
+
+        public bool isActive;
+
+        public Car(World world, Color Color, RandomTrack _randomTrack)
             : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/small_white_penis"), new Vector2(65.0f, 40.0f), Color)
         {
+
+            isActive = true;
+
+            this.randomTrack = _randomTrack;
+            projectedPosition = new Vector2();
 
             mForceVector = new Vector2();
             mDirection = new Vector2();
@@ -76,6 +88,13 @@ namespace WindowsGame2
             hasBoost = false;
             boostFrames = 0;
         }
+
+        public Vector2 ProjectedPosition
+        {
+            get { return ConvertUnits.ToDisplayUnits(projectedPosition); }
+            set { projectedPosition = value * ConvertUnits.ToSimUnits(1); }
+        }
+
 
         private int mod(int index)
         {
@@ -226,10 +245,37 @@ namespace WindowsGame2
                 mIsTrailLoop = false;
                 mTrailPoints = 0;
             }
+
+            projectedPosition = computeMiddleTrackProjection();
+        }
+
+        Vector2 computeMiddleTrackProjection()
+        {
+            int nextMiddlePoint = currentMiddlePoint + 1;
+            if (nextMiddlePoint >= randomTrack.curvePointsMiddle.Count)
+            {
+              //  nextMiddlePoint = 0;
+            }
+
+            float distBack = Vector2.Distance(this._compound.Position, randomTrack.curvePointsInternal[randomTrack.internalCorrispondances[currentMiddlePoint % randomTrack.curvePointsMiddle.Count]]) + Vector2.Distance(this._compound.Position, randomTrack.curvePointsExternal[currentMiddlePoint % randomTrack.curvePointsMiddle.Count]);
+            float distFront = Vector2.Distance(this._compound.Position, randomTrack.curvePointsInternal[randomTrack.internalCorrispondances[nextMiddlePoint % randomTrack.curvePointsMiddle.Count]]) + Vector2.Distance(this._compound.Position, randomTrack.curvePointsExternal[nextMiddlePoint % randomTrack.curvePointsMiddle.Count]);
+            float margin = 0.2f;
+
+            float totalDist = (distBack - randomTrack.pathWidth) + (distFront - randomTrack.pathWidth);
+            float ratio = (distBack - randomTrack.pathWidth) / totalDist;
+            Vector2 _projectedPosition = randomTrack.curvePointsMiddle[currentMiddlePoint % randomTrack.curvePointsMiddle.Count] + (randomTrack.curvePointsMiddle[nextMiddlePoint % randomTrack.curvePointsMiddle.Count] - randomTrack.curvePointsMiddle[currentMiddlePoint % randomTrack.curvePointsMiddle.Count]) * ratio;
+
+            if (distFront < randomTrack.pathWidth + margin)
+            {
+                currentMiddlePoint = nextMiddlePoint;
+            }
+
+            return _projectedPosition;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            spriteBatch.Draw(mDummyTexture, ConvertUnits.ToDisplayUnits(projectedPosition), null, mColor, 0.0f, Vector2.Zero, Vector2.One * 10, SpriteEffects.None, 0);
 
             if (mShowTrail)
             {

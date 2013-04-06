@@ -45,6 +45,7 @@ namespace WindowsGame2.Screens
         Car redCar;
         Car blueCar;
         Car greenCar;
+        Car yellowCar;
 
         KeyboardState ks;
         GamePadState gps;
@@ -79,6 +80,13 @@ namespace WindowsGame2.Screens
         int maxNumberOfTriangles = 10000;
         private int mGameMode;
 
+        private int playersNumber;
+        Vertices startingPos;
+        int[] ranking;
+        int[] taken;
+        int[] orderToExit;
+        private int currentExitIndex;
+
         #endregion
 
         /// <summary>
@@ -99,6 +107,13 @@ namespace WindowsGame2.Screens
             playerIndexes.Add(PlayerIndex.One); playerIndexes.Add(PlayerIndex.Two);
             playerIndexes.Add(PlayerIndex.Three); playerIndexes.Add(PlayerIndex.Four);
             random = new Random();
+
+            playersNumber = 4;
+            ranking = new int[playersNumber];
+            taken = new int[playersNumber];
+            orderToExit = new int[playersNumber-1];
+            startingPos = new Vertices();
+            currentExitIndex = 0;
         }
 
         public override void LoadContent()
@@ -117,7 +132,6 @@ namespace WindowsGame2.Screens
 
             // Create a new track
 
-
             //raceTrack = Track.CreateTrack(TrackType.PenisTrack);
             randomRaceTrack = RandomTrack.createTrack();
 
@@ -127,27 +141,31 @@ namespace WindowsGame2.Screens
             polygonsColorShader = new BasicEffect(GraphicsDevice);
             polygonsColorShader.VertexColorEnabled = true;
 
-            redCar = new Car(world, Color.Red);
-            redCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
+
             
+            //create cars
+            redCar = new Car(world, Color.Red, randomRaceTrack);
+            cars.Add(redCar);
+            if (playersNumber > 1)
+            {
+                blueCar = new Car(world, Color.Blue, randomRaceTrack);
+                cars.Add(blueCar); 
+                if (playersNumber > 2)
+                {
+                    greenCar = new Car(world, Color.Green, randomRaceTrack);
+                    cars.Add(greenCar);
+                    if (playersNumber > 3)
+                    {
+                        yellowCar = new Car(world, Color.HotPink, randomRaceTrack);
+                        cars.Add(yellowCar);
+                    }
+                }
+            }
 
-            blueCar = new Car(world, Color.Blue);
-            blueCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2 + 250);
-
-            greenCar = new Car(world, Color.Green);
-            greenCar.Position = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2 + 500);
-
-            //random track
-            Vertices startingPos = randomRaceTrack.computeStartingPositions(0);
-            redCar._compound.Position = startingPos[0];
-            blueCar._compound.Position = startingPos[1];
-            greenCar._compound.Position = startingPos[2];
-            float angle = randomRaceTrack.computeStartingAngle(0) - 90 ;
-            redCar._compound.Rotation = angle;
-            greenCar._compound.Rotation = angle;
-            blueCar._compound.Rotation = angle;
-
-            cars.Add(redCar); cars.Add(blueCar); cars.Add(greenCar);
+            //generate starting positions and angles
+            int startingPoint = 0;
+            positionCars(startingPoint);
+            
 
             assetCreator = new AssetCreator(graphics.GraphicsDevice);
             assetCreator.LoadContent(this.Content);
@@ -165,23 +183,26 @@ namespace WindowsGame2.Screens
             topRightViewport.X = topLeftViewport.Width + 2;
             bottomLeftViewport.Y = bottomLeftViewport.Height + 2;
 
+            //useless like an old kurva
+            /*
             if (mGameMode == 0)
             {
-                cameraTopLeft = new Camera(topLeftViewport, Vector2.Zero, new Vector2(topLeftViewport.Width / 2, topLeftViewport.Height / 2), 0.95f, 0.0f);
-                cameraTopRight = new Camera(topRightViewport, Vector2.Zero, new Vector2(topRightViewport.Width / 2, topRightViewport.Height / 2), 0.95f, 0.0f);
-                cameraBottomLeft = new Camera(bottomLeftViewport, Vector2.Zero, new Vector2(bottomLeftViewport.Width / 2, bottomLeftViewport.Height / 2), 0.95f, 0.0f);
-                
-                cameraTopLeft.Follow(redCar, 0.0f);
-                cameraTopRight.Follow(blueCar, 0.0f);
-                cameraBottomLeft.Follow(greenCar, 0.0f);
+
+                //eliminate split screen mode?
+
+               // cameraTopLeft = new Camera(topLeftViewport, Vector2.Zero, new Vector2(topLeftViewport.Width / 2, topLeftViewport.Height / 2), 0.95f, 0.0f);
+               // cameraTopRight = new Camera(topRightViewport, Vector2.Zero, new Vector2(topRightViewport.Width / 2, topRightViewport.Height / 2), 0.95f, 0.0f);
+               // cameraBottomLeft = new Camera(bottomLeftViewport, Vector2.Zero, new Vector2(bottomLeftViewport.Width / 2, bottomLeftViewport.Height / 2), 0.95f, 0.0f);
+               // cameraTopLeft.Follow(redCar, 0.0f);
+               // cameraTopRight.Follow(blueCar, 0.0f);
+               // cameraBottomLeft.Follow(greenCar, 0.0f);
             }
             else if (mGameMode==1)
             {
-                cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f);
-                cameraFollowing.Follow(redCar, 0.0f);
-                
+                //cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f, cars);
                 
             }
+            */
 
             _debugView = new DebugViewXNA(world);
             _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Shape);
@@ -201,6 +222,55 @@ namespace WindowsGame2.Screens
             triangleListIndices = new short[maxNumberOfTriangles * 3];
         }
 
+        public void positionCars(int startingPoint)
+        {
+            //compute cars positions
+            startingPos = randomRaceTrack.computeStartingPositions(startingPoint);
+            
+            switch (playersNumber)
+            {
+                case 1:
+                    redCar._compound.Position = startingPos[1];
+                    break;
+                case 2:
+                    redCar._compound.Position = startingPos[1];
+                    blueCar._compound.Position = startingPos[2];
+                    break;
+                case 3:
+                    redCar._compound.Position = startingPos[1];
+                    blueCar._compound.Position = startingPos[2];
+                    greenCar._compound.Position = startingPos[0];
+                    break;
+                case 4:
+                    redCar._compound.Position = startingPos[0];
+                    blueCar._compound.Position = startingPos[1];
+                    greenCar._compound.Position = startingPos[2];
+                    yellowCar._compound.Position = startingPos[3];
+                    break;
+                default:
+                    redCar._compound.Position = startingPos[1];
+                    break;
+            }
+
+            
+            float angle = randomRaceTrack.computeStartingAngle(startingPoint) - 90;
+            for (int i = 0; i < cars.Count; i++)
+            {
+                //set current middle point
+                cars[i].currentMiddlePoint = startingPoint;
+                //set rotation
+                cars[i]._compound.Rotation = angle;
+                //erase velocity
+                cars[i]._compound.LinearVelocity = Vector2.Zero;
+
+                //clear trail
+                cars[i].mIsTrailLoop = false;
+                cars[i].mTrailPoints = 0;
+
+            }
+            
+        }
+
         public override void Unload()
         {
             base.Unload();
@@ -214,8 +284,7 @@ namespace WindowsGame2.Screens
             
             if (mGameMode==1)
             {
-                cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f);
-                cameraFollowing.Follow(blueCar, 0.0f);
+                cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f, cars);
                 
             }
         }
@@ -273,9 +342,107 @@ namespace WindowsGame2.Screens
                 cameraFollowing.Update(gameTime);
             }
 
+            gameLogic();
+
             world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
             // world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
+
+            
+            
+
         }
+
+        public void gameLogic()
+        {
+            //update ranking
+            for (int i = 0; i < cars.Count; i++)
+            {
+                taken[i]=0;
+            }
+            for (int i = 0; i < cars.Count; i++)
+            {
+                int newMax=-1;
+                int newIndex = 0;
+                for (int ii = 0; ii < cars.Count; ii++)
+                {
+                    if (cars[ii].isActive && cars[ii].currentMiddlePoint > newMax && taken[ii] == 0)
+                    {
+                        newMax = cars[ii].currentMiddlePoint;
+                        newIndex = ii;
+                    }
+                }
+                taken[newIndex] = 1;
+                ranking[i] = newIndex;
+            }
+
+            //debug ranking
+            /*
+            for (int i = 0; i < cars.Count; i++)
+            {
+                Console.Write(ranking[i]+" ");
+            }
+            Console.WriteLine();
+            */
+
+            //loop the active cars and check if anybody is off screen
+            for (int i = 0; i < cars.Count; i++)
+            {
+                if (cars[i].isActive)
+                {
+                    //compute screen coordinates
+                    Vector2 screenPosition = Vector2.Transform(cars[i].Position, cameraFollowing.Transform);
+
+                    //check if off screen 
+                    //how to put graphics.PreferredBackBufferHeight and graphics.PreferredBackBufferWidth instead of 1000 and 1800????????????????????
+                    if (screenPosition.X < 0 || screenPosition.X > 1800 || screenPosition.Y < 0 || screenPosition.Y > 1000)
+                    {
+                        //check if car is in the last position
+                        if (ranking[playersNumber-1-currentExitIndex]==i){
+                            //disactivate car and add index to the array with the order of exiting
+                            cars[i].isActive = false;
+                            orderToExit[currentExitIndex] = i;
+                            currentExitIndex++;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            //check if only one player remains
+            if (currentExitIndex == playersNumber - 1)
+            {
+                currentExitIndex=0;
+                
+                //look for the remaining car and activate the others
+                int winnerIndex = 0;
+                for (int i = 0; i < cars.Count; i++)
+                {
+                    if (cars[i].isActive)
+                    {
+                        winnerIndex=i;
+                    }
+                    else{
+                        cars[i].isActive=true;
+                    }
+                }
+
+                //start a new race and update score
+                positionCars(cars[winnerIndex].currentMiddlePoint % randomRaceTrack.curvePointsMiddle.Count);
+                updateScore();
+ 
+            }
+
+            //set camera parameters
+            cameraFollowing.firstCarIndex = ranking[0];
+            cameraFollowing.lastCarIndex = ranking[playersNumber - 1 - currentExitIndex];
+        }
+
+        public void updateScore()
+        {
+            // update the score here, a mini race has just finished
+            // order in which the cars have fallen off screen is stored in the array orderToExit
+        }
+
 
         public override void Draw(GameTime gameTime)
         {

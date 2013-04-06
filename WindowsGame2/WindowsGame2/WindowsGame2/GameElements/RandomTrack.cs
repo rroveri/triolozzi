@@ -13,23 +13,23 @@ using Microsoft.Xna.Framework.Content;
 
 namespace WindowsGame2.GameElements
 {
-    class RandomTrack
+    public class RandomTrack
     {
 
         World world;
         Vertices controlPoints;
-        Vertices curvePointsInternal;
-        Vertices curvePointsExternal;
-        Vertices curvePointsMiddle;
+        public Vertices curvePointsInternal;
+        public Vertices curvePointsExternal;
+        public Vertices curvePointsMiddle;
         int controlPointsCount = 20;
         Texture2D dummyTexture;
         Random random;
-        float pathWidth = 10f;
+        public float pathWidth = 10f;
         float initialRadius = 35f;
         Body externalBody;
         Body internalBody;
         List<Vector2> normals;
-        List<int> internalCorrispondances;
+        public List<int> internalCorrispondances;
         Texture2D bgTexture;
 
         float left = 10000000;
@@ -37,7 +37,7 @@ namespace WindowsGame2.GameElements
         float up = -10000000;
         float down = 10000000;
 
-        int textureScale = 5;
+        int textureScale = 3;
         
         public static RandomTrack createTrack()
         {

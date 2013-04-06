@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using FarseerPhysics.SamplesFramework;
+using FarseerPhysics.Common;
 
 namespace WindowsGame2
 {
@@ -68,7 +69,7 @@ namespace WindowsGame2
         }
 
         //The source object to follow
-        public Car Source
+        public List<Car> Sources
         {
             get;
             private set;
@@ -84,13 +85,17 @@ namespace WindowsGame2
         Random random;
 
         Vector2 _screenCenter;
+        Vertices carsPositions;
+
+        public int firstCarIndex;
+        public int lastCarIndex;
 
         /// <summary>
         /// Initialize a new Camera object
         /// </summary>
         /// <param name="view">The viewport we want the camera to use (holds dimensions and so on)</param>
         /// <param name="position">Where to point the center of the camera (0x0 will be the center of the viewport)</param>
-        public Camera(Viewport view, Vector2 position)
+        public Camera(Viewport view, Vector2 position, List<Car> cars)
         {
             View = view;
             Position = position;
@@ -99,6 +104,13 @@ namespace WindowsGame2
             random = new Random();
             FocusPoint = new Vector2(view.Width / 2, view.Height / 2);
             _screenCenter = new Vector2(View.Width / 2f, View.Height / 2f);
+
+            Sources = cars;
+            this.carsPositions = new Vertices();
+            for (int i = 0; i < Sources.Count; i++)
+            {
+                carsPositions.Add(Sources[i].Position);
+            }
         }
 
         /// <summary>
@@ -109,7 +121,7 @@ namespace WindowsGame2
         /// <param name="focus">Where to point the center of the camera (0x0 will be the center of the viewport)</param>
         /// <param name="zoom">How much we want the camera zoomed by default</param>
         /// <param name="rotation">How much we want the camera to be rotated by default</param>
-        public Camera(Viewport view, Vector2 position, Vector2 focus, float zoom, float rotation)
+        public Camera(Viewport view, Vector2 position, Vector2 focus, float zoom, float rotation, List<Car> cars)
         {
             View = view;
             Position = position;
@@ -118,6 +130,16 @@ namespace WindowsGame2
             random = new Random();
             FocusPoint = focus;
             _screenCenter = new Vector2(View.Width / 2f, View.Height / 2f);
+
+            Sources = cars;
+            this.carsPositions = new Vertices();
+
+            /*
+            for (int i = 0; i < Sources.Count; i++)
+            {
+                carsPositions.Add(Sources[i].Position);
+            }
+             */
         }
 
         
@@ -128,13 +150,11 @@ namespace WindowsGame2
              * We use Math.Pow on the zoom to speed up or slow down the zoom.  Both X and Y will have the same zoom levels
              * so there will be no stretching.
              * */
-            Vector2 objectPosition = Source != null ? Source.Position : Position;
-            float objectRotation = Source != null ? Source._compound.Rotation : Rotation;
-            float deltaRotation = Source != null ? SourceRotationOffset : 0.0f;
 
-            //headache!!!
-            objectRotation = 0;
-            deltaRotation = 0;
+            Vector2 objectPosition = ConvertUnits.ToDisplayUnits((Sources[firstCarIndex]._compound.Position + Sources[lastCarIndex]._compound.Position) / 2f);
+            float objectRotation = 0;
+            float deltaRotation = 0;
+
 
             Transform = Matrix.CreateTranslation(new Vector3(-objectPosition, 0)) *
                 Matrix.CreateScale(new Vector3((float)Math.Pow(Zoom, 10), (float)Math.Pow(Zoom, 10), 0)) *
@@ -145,10 +165,12 @@ namespace WindowsGame2
             //create also projection and viewMatrix for the shaders
             ProjectionMatrix = Matrix.CreateOrthographicOffCenter(0f, ConvertUnits.ToSimUnits(View.Width) * (1 / (float)Math.Pow(Zoom, 10)),
                                                               ConvertUnits.ToSimUnits(View.Height) * (1 / (float)Math.Pow(Zoom, 10)), 0f, 0f,1f);
-            ViewMatrix = Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(Source.Position) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(Zoom, 10)), 0f));
+            ViewMatrix = Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(objectPosition) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(Zoom, 10)), 0f));
 
        
         }
+
+        
 
      
 
@@ -160,13 +182,13 @@ namespace WindowsGame2
             Position = Vector2.Zero;
             Rotation = 0;
             Zoom = 1.0f;
-            Source = null;
+            Sources= null;
         }
 
 
-        public void Follow(Car source, float rotationOffset)
+        public void Follow(List<Car> sources, float rotationOffset)
         {
-            Source = source;
+            Sources = sources;
             SourceRotationOffset = rotationOffset;
         }
 
