@@ -574,6 +574,9 @@ namespace WindowsGame2.Screens
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
             }
 
+            polygonsColorShader.CurrentTechnique.Passes["TrailPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
+            
         }
 
         public void DrawSpritesDebug(Camera camera)
