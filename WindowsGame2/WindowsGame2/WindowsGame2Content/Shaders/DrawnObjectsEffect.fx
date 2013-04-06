@@ -50,44 +50,54 @@ struct ObjectVertexShaderInput
 {
     float4 Position : POSITION;
 	float4 Color    : COLOR0;
+	float2 uv		: TEXCOORD0;
 };
 
-struct VertexShaderOutput
+struct ObjectVertexShaderOutput
 {
     float4 Position : POSITION;
 	float4 Color    : COLOR0;
-    float2 xy       : TEXCOORD0;
+    float2 uv       : TEXCOORD0;
+	float2 xy       : TEXCOORD1;
 };
 
-VertexShaderOutput VertexShaderFunctionObject(ObjectVertexShaderInput input)
+struct TrailVertexShaderOutput
 {
-    VertexShaderOutput output;
+    float4 Position : POSITION;
+	float4 Color    : COLOR0;
+    float2 uv       : TEXCOORD0;
+};
+
+ObjectVertexShaderOutput VertexShaderFunctionObject(ObjectVertexShaderInput input)
+{
+    ObjectVertexShaderOutput output;
 
     //float4 worldPosition = mul(input.Position, World);
     float4 viewPosition = mul(input.Position, View);
     output.Position = mul(viewPosition, Projection);
 	output.Color = input.Color;
-    output.xy = float2(input.Position[0],input.Position[1]);
+	output.xy = float2(input.Position[0],input.Position[1]);
+    output.uv = input.uv;
 
     return output;
 }
 
-VertexShaderOutput VertexShaderFunctionTrail(TrailVertexShaderInput input)
+TrailVertexShaderOutput VertexShaderFunctionTrail(TrailVertexShaderInput input)
 {
-    VertexShaderOutput output;
+    TrailVertexShaderOutput output;
 
     //float4 worldPosition = mul(input.Position, World);
     float4 viewPosition = mul(input.Position, View);
     output.Position = mul(viewPosition, Projection);
 	output.Color = input.Color;
-    output.xy = input.uv;
+    output.uv = input.uv;
 
     return output;
 }
 
-float4 PixelShaderFunctionObject(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunctionObject(ObjectVertexShaderOutput input) : COLOR0
 {
-    float4 texCol = tex2D(objectSketchSampler, input.xy / 4);
+    float4 texCol = tex2D(objectSketchSampler, input.uv / 4);
     float alpha = texCol[0] + objetAlpha;
     texCol *= input.Color;
 	texCol += input.Color * objetAlpha;
@@ -95,15 +105,15 @@ float4 PixelShaderFunctionObject(VertexShaderOutput input) : COLOR0
 
     // Moses Effect
 	float2 carPos;
-	if(input.Color[0] = 1)
+	if(input.Color[0] == 1)
 	{
 		carPos = redCarPos;
 	}
-	else if(input.Color[1] = 1)
+	else if(input.Color[1] == 1)
 	{
 		carPos = greenCarPos;
 	}
-	else if(input.Color[2] = 1)
+	else if(input.Color[2] == 1)
 	{
 		carPos = blueCarPos;
 	}
@@ -122,17 +132,12 @@ float4 PixelShaderFunctionObject(VertexShaderOutput input) : COLOR0
     //return float4(texCol[0],texCol[1],texCol[2],alpha);
 }
 
-float4 PixelShaderFunctionTrail(VertexShaderOutput input) : COLOR0
+float4 PixelShaderFunctionTrail(TrailVertexShaderOutput input) : COLOR0
 {
-    float4 texCol = tex2D(trailSketchSampler, input.xy);
+    float4 texCol = tex2D(trailSketchSampler, input.uv);
     float alpha = texCol[0];
     texCol *= input.Color;
     return float4(texCol[0],texCol[1],texCol[2],alpha);
-
-    //float4 rand = tex2D(randomSampler, input.xy)[0];
-    //float alpha = rand * cos(input.xy[0] + input.xy[1]) + sin(input.xy[0] - input.xy[1]);
-    //float4 texCol = input.Color;
-    //return float4(texCol[0],texCol[1],texCol[2],alpha);
 }
 
 technique DoodleTechinque

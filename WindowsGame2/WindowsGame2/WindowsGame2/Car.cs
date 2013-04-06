@@ -38,6 +38,7 @@ namespace WindowsGame2
         public bool mIsTrailLoop;
         private bool wasDrawing;
         private bool mFoundIntersection;
+        public bool justStarted;
 
         private Vertices mTrailVertices;
         private Vector2[] mTrailPositions;
@@ -122,9 +123,9 @@ namespace WindowsGame2
 
         private void resetTrail()
         {
-            for (int i = 0; i < mMaximumTrailPoints; i++)
+            for (int i = 0; i < trailVertices.Count(); i++)
             {
-                mTrailPositions[i] = Position;
+                trailVertices[i].Position = tdPos;
             }
         }
 
@@ -253,7 +254,7 @@ namespace WindowsGame2
             tdPos.Y = _compound.Position.Y;
 
             // Add a trail point if the player is drawing
-            if (ks.IsKeyDown(Keys.F) && mColor == Color.Blue || gps.Triggers.Right > 0)
+            if ((ks.IsKeyDown(Keys.F) && mColor == Color.Blue || gps.Triggers.Right > 0) && !justStarted)
             {
                 mShowTrail = true;
 
@@ -301,6 +302,9 @@ namespace WindowsGame2
 
                 oldEVert.X = tdPos.X + mDirection.Y * offset;
                 oldEVert.Y = tdPos.Y - mDirection.X * offset;
+
+                justStarted = false;
+                resetTrail();
             }
 
             projectedPosition = computeMiddleTrackProjection();
