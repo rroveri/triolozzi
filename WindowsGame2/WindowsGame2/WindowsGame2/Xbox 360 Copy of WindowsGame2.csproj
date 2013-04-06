@@ -128,8 +128,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="FarseerPhysicsXNA, Version=3.3.4839.27855, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FarseerPhysicsXNA, Version=3.3.4844.27635, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\Xbox 360\$(Configuration)\FarseerPhysicsXNA.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xna.Framework">
       <Private>False</Private>

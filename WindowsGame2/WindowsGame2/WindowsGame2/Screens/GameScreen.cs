@@ -38,6 +38,7 @@ namespace WindowsGame2.Screens
         List<Car> cars;
         List<PlayerIndex> playerIndexes;
         List<PolygonPhysicsObject> polygonsList;
+        VertexPositionColorTexture[][] trails = new VertexPositionColorTexture[4][];
 
         KeyboardState prevKeyboardState;
         Random random;
@@ -71,7 +72,7 @@ namespace WindowsGame2.Screens
         PauseMenuScreen PauseScreen;
         float pauseAlpha;
 
-        BasicEffect polygonsColorShader;
+        Effect polygonsColorShader;
         Matrix projection;
         Matrix view;
 
@@ -138,8 +139,21 @@ namespace WindowsGame2.Screens
             prevKeyboardState = Keyboard.GetState();
 
 
-            polygonsColorShader = new BasicEffect(GraphicsDevice);
-            polygonsColorShader.VertexColorEnabled = true;
+            polygonsColorShader = Content.Load<Effect>("Shaders/DrawnObjectsEffect");
+            polygonsColorShader.CurrentTechnique = polygonsColorShader.Techniques["DoodleTechinque"];
+            Texture2D trailSketch = Content.Load<Texture2D>("Materials/trailSketch");
+            Texture2D objectSketch = Content.Load<Texture2D>("Materials/objectSketch");
+            polygonsColorShader.Parameters["trailSketch"].SetValue(trailSketch);
+            polygonsColorShader.Parameters["objectSketch"].SetValue(objectSketch);
+            float[] random = new float[16 * 16];
+            Color[] randomCol = new Color[16 * 16];
+            Random seed = new Random();
+            random[0] = 0.5f;
+            for (int i = 1; i < random.Count(); i++) random[i] = (float)seed.NextDouble();
+            for (int i = 0; i < random.Count(); i++) randomCol[i] = Color.White * random[i];
+            Texture2D randomTex = new Texture2D(graphics.GraphicsDevice, 16, 16);
+            randomTex.SetData(randomCol);
+            polygonsColorShader.Parameters["random"].SetValue(randomTex);
 
 
             
@@ -499,36 +513,52 @@ namespace WindowsGame2.Screens
             projection = camera.ProjectionMatrix;
             view = camera.ViewMatrix;
 
-
-
             //draw 2D (!keep DepthStencilState to None in order to see shaders!)
 
             spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
 
             // Draw the race track and the starting line
-           // raceTrack.DrawSprites(camera, spriteBatch);
-            randomRaceTrack.DrawSprites(camera,spriteBatch);
-            
+            // raceTrack.DrawSprites(camera, spriteBatch);
+            randomRaceTrack.DrawSprites(camera, spriteBatch);
+
 
             // draw cars and their trails
             for (int i = 0; i < cars.Count; i++)
             {
-                cars[i].Draw(spriteBatch);
+                cars[i].Draw(spriteBatch, out trails[i]);
+                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
             }
 
             spriteBatch.End();
+
+            GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+
+            polygonsColorShader.Parameters["Projection"].SetValue(projection);
+            polygonsColorShader.Parameters["View"].SetValue(view);
+            polygonsColorShader.CurrentTechnique.Passes["TrailPass"].Apply();
+            polygonsColorShader.Parameters["redCarPos"].SetValue(cars[0]._compound.Position);
+            polygonsColorShader.Parameters["blueCarPos"].SetValue(cars[1]._compound.Position);
+            polygonsColorShader.Parameters["greenCarPos"].SetValue(cars[2]._compound.Position);
+            polygonsColorShader.Parameters["pinkCarPos"].SetValue(cars[3]._compound.Position);
+
+            for (int i = 0; i < cars.Count; i++)
+            {
+                //cars[i].Draw(spriteBatch, out trails[i]);
+                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, 130 * 2);
+            }
 
 
             //now draw 3D (shaders)
 
             //reset GraphicsDevice states (might be slow)
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-            GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+
 
             int counter = 0;
 
+            polygonsColorShader.CurrentTechnique.Passes["ObjectPass"].Apply();
             // draw polygons
             for (int i = 0; i < polygonsList.Count; i++)
             {
@@ -537,9 +567,6 @@ namespace WindowsGame2.Screens
 
             if (counter > 0)
             {
-                polygonsColorShader.Projection = projection;
-                polygonsColorShader.View = view;
-                polygonsColorShader.CurrentTechnique.Passes[0].Apply();
 
                 //draw shader
 
