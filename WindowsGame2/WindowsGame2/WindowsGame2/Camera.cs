@@ -150,11 +150,28 @@ namespace WindowsGame2
         
         public void Update(GameTime gametime)
         {
-            
-            
+
+            //choose interpolation weight and cars weights depending on the number of players
+            float interpWeight = 0.1f;
+            float firstCarWeight = 0.5f;
+            if (Sources.Count == 4)
+            {
+                interpWeight = 0.1f;
+                firstCarWeight = 0.6f;
+            }
+            else if (Sources.Count == 3)
+            {
+                interpWeight = 0.1f;
+                firstCarWeight = 0.55f;
+            }
+            else if (Sources.Count == 2)
+            {
+                interpWeight = 1f;
+                firstCarWeight = 0.5f;
+            }
 
             //set taget position
-            Vector2 objectPosition_ = ConvertUnits.ToDisplayUnits((Sources[firstCarIndex]._compound.Position + Sources[lastCarIndex]._compound.Position) / 2f);
+            Vector2 objectPosition_ = ConvertUnits.ToDisplayUnits(firstCarWeight*Sources[firstCarIndex]._compound.Position + (1-firstCarWeight)*Sources[lastCarIndex]._compound.Position);
 
             //initialize old position
             if (firstTime){
@@ -162,20 +179,7 @@ namespace WindowsGame2
                 firstTime = false;
             }
 
-            //choose interpolation weight depending on the number of players
-            float interpWeight = 0.1f;
-            if (Sources.Count == 4)
-            {
-                interpWeight = 0.1f;
-            }
-            else if (Sources.Count == 3)
-            {
-                interpWeight = 0.2f;
-            }
-            else if (Sources.Count == 2)
-            {
-                interpWeight = 1;
-            }
+            
 
             //interpolate
             Vector2 objectPosition = new Vector2();

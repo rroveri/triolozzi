@@ -108,7 +108,7 @@ namespace WindowsGame2.Screens
             playerIndexes.Add(PlayerIndex.Three); playerIndexes.Add(PlayerIndex.Four);
             random = new Random();
 
-            playersNumber = 4;
+            playersNumber = 2;
             ranking = new int[playersNumber];
             taken = new int[playersNumber];
             orderToExit = new int[playersNumber-1];
