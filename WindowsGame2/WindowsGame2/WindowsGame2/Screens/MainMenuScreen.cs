@@ -92,6 +92,7 @@ namespace WindowsGame2.Screens
         {
             // TODO: start game here
             ScreenManager.GetScreen<GameScreen>().SetGameMode(1);
+            ScreenManager.GetScreen<GameScreen>().PlayersCount = currentNumberOfPlayers;
             ScreenManager.ShowScreen<GameScreen>();
         }
 

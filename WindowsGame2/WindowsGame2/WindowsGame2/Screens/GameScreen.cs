@@ -88,6 +88,8 @@ namespace WindowsGame2.Screens
         int[] orderToExit;
         private int currentExitIndex;
 
+        public int PlayersCount { get; set; }
+
         #endregion
 
         /// <summary>
