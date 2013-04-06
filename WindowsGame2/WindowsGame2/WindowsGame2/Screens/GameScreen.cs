@@ -362,11 +362,6 @@ namespace WindowsGame2.Screens
             gameLogic();
 
             world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
-            // world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
-
-            
-            
-
         }
 
         public void gameLogic()
@@ -409,9 +404,8 @@ namespace WindowsGame2.Screens
                     //compute screen coordinates
                     Vector2 screenPosition = Vector2.Transform(cars[i].Position, cameraFollowing.Transform);
 
-                    //check if off screen 
-                    //how to put graphics.PreferredBackBufferHeight and graphics.PreferredBackBufferWidth instead of 1000 and 1800????????????????????
-                    if (screenPosition.X < 0 || screenPosition.X > 1800 || screenPosition.Y < 0 || screenPosition.Y > 1000)
+                    //check if off screen
+                    if (screenPosition.X < 0 || screenPosition.X > graphics.PreferredBackBufferWidth || screenPosition.Y < 0 || screenPosition.Y > graphics.PreferredBackBufferHeight)
                     {
                         //check if car is in the last position
                         if (ranking[playersNumber-1-currentExitIndex]==i){
