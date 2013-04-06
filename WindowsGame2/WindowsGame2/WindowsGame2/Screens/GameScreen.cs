@@ -441,6 +441,7 @@ namespace WindowsGame2.Screens
         {
             // update the score here, a mini race has just finished
             // order in which the cars have fallen off screen is stored in the array orderToExit
+
         }
 
 

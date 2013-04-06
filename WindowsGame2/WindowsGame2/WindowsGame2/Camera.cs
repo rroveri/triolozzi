@@ -90,6 +90,9 @@ namespace WindowsGame2
         public int firstCarIndex;
         public int lastCarIndex;
 
+        public Vector2 oldPosition;
+        private bool firstTime=true;
+
         /// <summary>
         /// Initialize a new Camera object
         /// </summary>
@@ -111,6 +114,8 @@ namespace WindowsGame2
             {
                 carsPositions.Add(Sources[i].Position);
             }
+
+
         }
 
         /// <summary>
@@ -146,12 +151,45 @@ namespace WindowsGame2
         public void Update(GameTime gametime)
         {
             
+            
+
+            //set taget position
+            Vector2 objectPosition_ = ConvertUnits.ToDisplayUnits((Sources[firstCarIndex]._compound.Position + Sources[lastCarIndex]._compound.Position) / 2f);
+
+            //initialize old position
+            if (firstTime){
+                oldPosition=objectPosition_;
+                firstTime = false;
+            }
+
+            //choose interpolation weight depending on the number of players
+            float interpWeight = 0.1f;
+            if (Sources.Count == 4)
+            {
+                interpWeight = 0.1f;
+            }
+            else if (Sources.Count == 3)
+            {
+                interpWeight = 0.2f;
+            }
+            else if (Sources.Count == 2)
+            {
+                interpWeight = 1;
+            }
+
+            //interpolate
+            Vector2 objectPosition = new Vector2();
+            objectPosition.X = MathHelper.Lerp(oldPosition.X, objectPosition_.X, interpWeight);
+            objectPosition.Y = MathHelper.Lerp(oldPosition.Y, objectPosition_.Y, interpWeight);
+    
+            //set old position
+            oldPosition = objectPosition;
+
+
             /* Create a transform matrix through position, scale, rotation, and translation to the focus point
              * We use Math.Pow on the zoom to speed up or slow down the zoom.  Both X and Y will have the same zoom levels
              * so there will be no stretching.
              * */
-
-            Vector2 objectPosition = ConvertUnits.ToDisplayUnits((Sources[firstCarIndex]._compound.Position + Sources[lastCarIndex]._compound.Position) / 2f);
             float objectRotation = 0;
             float deltaRotation = 0;
 
