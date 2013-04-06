@@ -130,6 +130,11 @@ namespace WindowsGame2
 
         public void Update(GamePadState gps, KeyboardState ks)
         {
+            if (isActive == false)
+            {
+                return;
+            }
+
             if (boostFrames == 50)
             {
                 boostFrames = 0;
