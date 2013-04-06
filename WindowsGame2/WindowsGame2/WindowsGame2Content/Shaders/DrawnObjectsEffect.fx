@@ -6,6 +6,7 @@ float2 redCarPos,blueCarPos,greenCarPos,pinkCarPos;
 Texture2D trailSketch;
 Texture2D objectSketch;
 Texture2D random;
+Texture2D ink;
 
 float objetAlpha = 0.2;
 
@@ -39,6 +40,16 @@ sampler randomSampler = sampler_state
     AddressV  = Wrap;
 };
 
+sampler inkSampler = sampler_state
+{
+    Texture = <ink>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
+
 struct TrailVertexShaderInput
 {
     float4 Position : POSITION;
@@ -47,6 +58,13 @@ struct TrailVertexShaderInput
 };
 
 struct ObjectVertexShaderInput
+{
+    float4 Position : POSITION;
+	float4 Color    : COLOR0;
+	float2 uv		: TEXCOORD0;
+};
+
+struct InkVertexShaderInput
 {
     float4 Position : POSITION;
 	float4 Color    : COLOR0;
@@ -66,6 +84,14 @@ struct TrailVertexShaderOutput
     float4 Position : POSITION;
 	float4 Color    : COLOR0;
     float2 uv       : TEXCOORD0;
+};
+
+struct InkVertexShaderOutput
+{
+    float4 Position : POSITION;
+	float4 Color    : COLOR0;
+    float2 uv       : TEXCOORD0;
+	float2 xy       : TEXCOORD1;
 };
 
 ObjectVertexShaderOutput VertexShaderFunctionObject(ObjectVertexShaderInput input)
@@ -90,6 +116,20 @@ TrailVertexShaderOutput VertexShaderFunctionTrail(TrailVertexShaderInput input)
     float4 viewPosition = mul(input.Position, View);
     output.Position = mul(viewPosition, Projection);
 	output.Color = input.Color;
+    output.uv = input.uv;
+
+    return output;
+}
+
+InkVertexShaderOutput VertexShaderFunctionInk(InkVertexShaderInput input)
+{
+    InkVertexShaderOutput output;
+
+    //float4 worldPosition = mul(input.Position, World);
+    float4 viewPosition = mul(input.Position, View);
+    output.Position = mul(viewPosition, Projection);
+	output.Color = input.Color;
+	output.xy = float2(input.Position[0],input.Position[1]);
     output.uv = input.uv;
 
     return output;
@@ -140,6 +180,14 @@ float4 PixelShaderFunctionTrail(TrailVertexShaderOutput input) : COLOR0
     return float4(texCol[0],texCol[1],texCol[2],alpha);
 }
 
+float4 PixelShaderFunctionInk(InkVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(trailSketchSampler, input.uv);
+    float alpha = texCol[0];
+    texCol *= input.Color;
+    return float4(texCol[0],texCol[1],texCol[2],alpha);
+}
+
 technique DoodleTechinque
 {
     pass ObjectPass
@@ -153,4 +201,10 @@ technique DoodleTechinque
         VertexShader = compile vs_3_0 VertexShaderFunctionTrail();
         PixelShader = compile ps_3_0 PixelShaderFunctionTrail();
     }
+
+	pass BorderPass
+	{
+		VertexShader = compile vs_3_0 VertexShaderFunctionInk();
+        PixelShader = compile ps_3_0 PixelShaderFunctionInk();
+	}
 }
