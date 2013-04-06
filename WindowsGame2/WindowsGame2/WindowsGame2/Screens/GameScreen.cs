@@ -143,8 +143,10 @@ namespace WindowsGame2.Screens
             polygonsColorShader.CurrentTechnique = polygonsColorShader.Techniques["DoodleTechinque"];
             Texture2D trailSketch = Content.Load<Texture2D>("Materials/trailSketch");
             Texture2D objectSketch = Content.Load<Texture2D>("Materials/objectSketch");
+            Texture2D ink = Content.Load<Texture2D>("Materials/ink_texture");
             polygonsColorShader.Parameters["trailSketch"].SetValue(trailSketch);
             polygonsColorShader.Parameters["objectSketch"].SetValue(objectSketch);
+            polygonsColorShader.Parameters["ink"].SetValue(ink);
             float[] random = new float[16 * 16];
             Color[] randomCol = new Color[16 * 16];
             Random seed = new Random();
@@ -585,7 +587,7 @@ namespace WindowsGame2.Screens
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
             }
 
-            polygonsColorShader.CurrentTechnique.Passes["TrailPass"].Apply();
+            polygonsColorShader.CurrentTechnique.Passes["BorderPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
             
         }

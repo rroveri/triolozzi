@@ -182,10 +182,12 @@ float4 PixelShaderFunctionTrail(TrailVertexShaderOutput input) : COLOR0
 
 float4 PixelShaderFunctionInk(InkVertexShaderOutput input) : COLOR0
 {
-    float4 texCol = tex2D(trailSketchSampler, input.uv);
-    float alpha = texCol[0];
-    texCol *= input.Color;
-    return float4(texCol[0],texCol[1],texCol[2],alpha);
+    float4 texCol = tex2D(inkSampler, input.uv);
+	float rand = tex2D(randomSampler, input.xy)[0];
+	//float alpha = 1;
+	//if(texCol[0] > 0.5) alpha = 0;
+    return float4(texCol[0] * rand,texCol[1]* rand,texCol[2]* rand,texCol[3]);
+	return texCol;
 }
 
 technique DoodleTechinque
