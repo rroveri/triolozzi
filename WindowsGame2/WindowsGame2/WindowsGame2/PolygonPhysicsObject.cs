@@ -200,7 +200,7 @@ namespace WindowsGame2
         }
 
 
-        public void Draw( ref Matrix projection, ref Matrix view, Matrix transform, ref VertexPositionColor[] basicVert,ref int counter)
+        public void Draw( ref Matrix projection, ref Matrix view, Matrix transform, ref VertexPositionColorTexture[] basicVert,ref int counter)
         { 
             {
 
@@ -241,13 +241,32 @@ namespace WindowsGame2
                         // DrawLine(spriteBatch, texture, 5, Color, ConvertUnits.ToDisplayUnits(vertex1), ConvertUnits.ToDisplayUnits(vertex2));
                         // DrawLine(spriteBatch, texture, 5, Color, ConvertUnits.ToDisplayUnits(vertex1), ConvertUnits.ToDisplayUnits(vertex3));
 
+                        Vector3 v1 = new Vector3(vertex1, -0.1f), v2 = new Vector3(vertex2, -0.1f), v3 = new Vector3(vertex3, -0.1f);
+
                         //set shader values
-                        basicVert[(counter - 1) * 3].Position = new Vector3(vertex3, -0.1f);
+                        basicVert[(counter - 1) * 3].Position = v3;
                         basicVert[(counter - 1) * 3].Color = Color;
-                        basicVert[(counter - 1) * 3 + 1].Position = new Vector3(vertex1, -0.1f);
+                        if (basicVert[(counter - 1) * 3].TextureCoordinate.X == -1)
+                        {
+                            basicVert[(counter - 1) * 3].TextureCoordinate.X = v3.X;
+                            basicVert[(counter - 1) * 3].TextureCoordinate.Y = v3.Y;
+                        }
+
+                        basicVert[(counter - 1) * 3 + 1].Position = v1;
                         basicVert[(counter - 1) * 3 + 1].Color = Color;
-                        basicVert[(counter - 1) * 3 + 2].Position = new Vector3(vertex2, -0.1f);
+                        if (basicVert[(counter - 1) * 3 + 1].TextureCoordinate.X == -1)
+                        {
+                            basicVert[(counter - 1) * 3 + 1].TextureCoordinate.X = v1.X;
+                            basicVert[(counter - 1) * 3 + 1].TextureCoordinate.Y = v1.Y;
+                        }
+
+                        basicVert[(counter - 1) * 3 + 2].Position = v2;
                         basicVert[(counter - 1) * 3 + 2].Color = Color;
+                        if (basicVert[(counter - 1) * 3 + 2].TextureCoordinate.X == -1)
+                        {
+                            basicVert[(counter - 1) * 3 + 2].TextureCoordinate.X = v2.X;
+                            basicVert[(counter - 1) * 3 + 2].TextureCoordinate.Y = v2.Y;
+                        }
 
                         /*
 

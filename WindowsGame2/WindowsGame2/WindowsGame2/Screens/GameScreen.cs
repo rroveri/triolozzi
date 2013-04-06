@@ -76,7 +76,7 @@ namespace WindowsGame2.Screens
         Matrix projection;
         Matrix view;
 
-        VertexPositionColor[] basicVert;
+        VertexPositionColorTexture[] basicVert;
         short[] triangleListIndices;
         int maxNumberOfTriangles = 10000;
         private int mGameMode;
@@ -109,7 +109,7 @@ namespace WindowsGame2.Screens
             playerIndexes.Add(PlayerIndex.Three); playerIndexes.Add(PlayerIndex.Four);
             random = new Random();
 
-            playersNumber = 2;
+            playersNumber = 4;
             ranking = new int[playersNumber];
             taken = new int[playersNumber];
             orderToExit = new int[playersNumber-1];
@@ -232,8 +232,9 @@ namespace WindowsGame2.Screens
             _debugView.SleepingShapeColor = Color.LightGray;
             _debugView.LoadContent(GraphicsDevice, Content);
 
-            basicVert = new VertexPositionColor[maxNumberOfTriangles];
-            triangleListIndices = new short[maxNumberOfTriangles * 3];
+            basicVert = new VertexPositionColorTexture[maxNumberOfTriangles];
+            for (int i = 0; i < maxNumberOfTriangles; i++) basicVert[i].TextureCoordinate = new Vector2(-1);
+                triangleListIndices = new short[maxNumberOfTriangles * 3];
         }
 
         public void positionCars(int startingPoint)
@@ -280,7 +281,7 @@ namespace WindowsGame2.Screens
                 //clear trail
                 cars[i].mIsTrailLoop = false;
                 cars[i].mTrailPoints = 0;
-
+                cars[i].justStarted = true;
             }
             
         }
