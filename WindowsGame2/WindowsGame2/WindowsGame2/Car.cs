@@ -45,6 +45,13 @@ namespace WindowsGame2
         private Texture2D mDummyTexture;
         private Color mColor;
 
+        private VertexPositionColorTexture[] trailVertices = new VertexPositionColorTexture[mMaximumTrailPoints * 6];
+        private Vector3 tdPos = new Vector3(0, 0, -0.1f);
+        private Vector3 oldWVert, newWVert, oldEVert, newEVert;
+        private Vector2 texNW, texNE, texOW, texOE;
+        private float offset = 0.3f, tailOffset = 0.2f;
+        private Random seed = new Random();
+
         private float acc = 0.4f;
         private float rotVel = 0.12f; //0.12
         private float maxVel = 10; //5
@@ -87,6 +94,18 @@ namespace WindowsGame2
 
             hasBoost = false;
             boostFrames = 0;
+
+            for (int i = 0; i < trailVertices.Count(); i++) trailVertices[i].Color = mColor;
+
+            newWVert = new Vector3(-0.1f);
+            newEVert = new Vector3(-0.1f);
+            oldWVert = new Vector3(-0.1f);
+            oldEVert = new Vector3(-0.1f);
+
+            texNW = new Vector2(0, 0);
+            texNE = new Vector2(1, 0);
+            texOW = new Vector2(0, 1);
+            texOE = new Vector2(1, 1);
         }
 
         public Vector2 ProjectedPosition
@@ -224,7 +243,10 @@ namespace WindowsGame2
                     _compound.ApplyForce(-mForceVector, _compound.WorldCenter);
                 }
             }
-            
+
+            tdPos.X = _compound.Position.X;
+            tdPos.Y = _compound.Position.Y;
+
             // Add a trail point if the player is drawing
             if (ks.IsKeyDown(Keys.F) && mColor == Color.Blue || gps.Triggers.Right > 0)
             {
@@ -235,7 +257,31 @@ namespace WindowsGame2
                     mIsTrailLoop = true;
                     mTrailPoints = 0;
                 }
-                mTrailPositions[mTrailPoints] = Position;
+                mTrailPositions[mTrailPoints] = Position - mDirection * tailOffset;
+
+                newWVert.X = tdPos.X - mDirection.Y * offset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f;
+                newWVert.Y = tdPos.Y + mDirection.X * offset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f;
+
+                newEVert.X = tdPos.X + mDirection.Y * offset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f;
+                newEVert.Y = tdPos.Y - mDirection.X * offset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f;
+
+                trailVertices[mTrailPoints * 6 + 0].Position = newWVert;
+                trailVertices[mTrailPoints * 6 + 1].Position = newEVert;
+                trailVertices[mTrailPoints * 6 + 2].Position = oldWVert;
+                trailVertices[mTrailPoints * 6 + 3].Position = oldWVert;
+                trailVertices[mTrailPoints * 6 + 4].Position = oldEVert;
+                trailVertices[mTrailPoints * 6 + 5].Position = newEVert;
+
+                trailVertices[mTrailPoints * 6 + 0].TextureCoordinate = texNW;
+                trailVertices[mTrailPoints * 6 + 1].TextureCoordinate = texNE;
+                trailVertices[mTrailPoints * 6 + 2].TextureCoordinate = texOW;
+                trailVertices[mTrailPoints * 6 + 3].TextureCoordinate = texOW;
+                trailVertices[mTrailPoints * 6 + 4].TextureCoordinate = texOE;
+                trailVertices[mTrailPoints * 6 + 5].TextureCoordinate = texNE;
+
+                oldWVert = newWVert;
+                oldEVert = newEVert;
+
                 mTrailPoints++;
             }
             else
@@ -244,6 +290,12 @@ namespace WindowsGame2
                 mFoundIntersection = false;
                 mIsTrailLoop = false;
                 mTrailPoints = 0;
+
+                oldWVert.X = tdPos.X - mDirection.Y * offset;
+                oldWVert.Y = tdPos.Y + mDirection.X * offset;
+
+                oldEVert.X = tdPos.X + mDirection.Y * offset;
+                oldEVert.Y = tdPos.Y - mDirection.X * offset;
             }
 
             projectedPosition = computeMiddleTrackProjection();
@@ -273,28 +325,29 @@ namespace WindowsGame2
             return _projectedPosition;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, out VertexPositionColorTexture[] vertices)
         {
-            spriteBatch.Draw(mDummyTexture, ConvertUnits.ToDisplayUnits(projectedPosition), null, mColor, 0.0f, Vector2.Zero, Vector2.One * 10, SpriteEffects.None, 0);
+            base.Draw(spriteBatch);
+            //if (mShowTrail)
+            //{
+            //    for (int i = 1; i < mTrailPoints; i++)
+            //    {
+            //        DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[i], mTrailPositions[i - 1]);
+            //    }
+            //    if (mIsTrailLoop)
+            //    {
+            //        for (int i = mTrailPoints + 1; i < mMaximumTrailPoints; i++)
+            //        {
+            //            DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[i], mTrailPositions[i - 1]);
+            //        }
+            //        if (mTrailPoints != mMaximumTrailPoints)
+            //        {
+            //            DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[0], mTrailPositions[mMaximumTrailPoints - 1]);
+            //        }
+            //    }
+            //}
 
-            if (mShowTrail)
-            {
-                for (int i = 1; i < mTrailPoints; i++)
-                {
-                    DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[i], mTrailPositions[i - 1]);
-                }
-                if (mIsTrailLoop)
-                {
-                    for (int i = mTrailPoints + 1; i < mMaximumTrailPoints; i++)
-                    {
-                        DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[i], mTrailPositions[i - 1]);
-                    }
-                    if (mTrailPoints != mMaximumTrailPoints)
-                    {
-                        DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[0], mTrailPositions[mMaximumTrailPoints - 1]);
-                    }
-                }
-            }
+            vertices = trailVertices;
 
             base.Draw(spriteBatch);
 
