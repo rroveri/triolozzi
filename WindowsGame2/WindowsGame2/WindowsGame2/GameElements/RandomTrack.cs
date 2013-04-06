@@ -29,6 +29,7 @@ namespace WindowsGame2.GameElements
         Body externalBody;
         Body internalBody;
         List<Vector2> normals;
+        List<Vector2> normalsInternal;
         public List<int> internalCorrispondances;
         Texture2D bgTexture;
 
@@ -38,6 +39,8 @@ namespace WindowsGame2.GameElements
         float down = 10000000;
 
         int textureScale = 3;
+
+        public VertexPositionColorTexture[] myArray;
         
         public static RandomTrack createTrack()
         {
@@ -61,8 +64,9 @@ namespace WindowsGame2.GameElements
             dummyTexture.SetData(new Color[] { Color.White });
             random = new Random();
             normals = new List<Vector2>();
+            normalsInternal = new List<Vector2>();
             ContentManager Content = GameServices.GetService<ContentManager>();
-            bgTexture = Content.Load<Texture2D>("Images/bgNew");
+            bgTexture = Content.Load<Texture2D>("Images/bgNew2");
         }
     
         public void buildRandomTrack(){
@@ -123,6 +127,7 @@ namespace WindowsGame2.GameElements
 
                 Vector2 tangentVector = curvePointsInternal[postIndex] - curvePointsInternal[preIndex];
                 Vector2 normalVector = Vector2.Normalize(new Vector2(-tangentVector.Y, tangentVector.X))*pathWidth;
+                normalsInternal.Add(-normalVector);
                 Vector2 newPoint=curvePointsInternal[i] + normalVector;
                 bool okToAdd=true;
                 for (int j = 0; j < curvePointsInternal.Count - 1; j++)
@@ -152,8 +157,6 @@ namespace WindowsGame2.GameElements
             }
             
 
-
-            
 
             externalBody = BodyFactory.CreateLoopShape(world, curvePointsExternal);
             internalBody = BodyFactory.CreateLoopShape(world, curvePointsInternal);
@@ -221,6 +224,49 @@ namespace WindowsGame2.GameElements
                 curvePointsExternal.Add(newPoint);
             }
             */
+
+
+            myArray = new VertexPositionColorTexture[(curvePointsExternal.Count) * 6 + (curvePointsInternal.Count) * 6];
+            for (int i = 1; i < curvePointsExternal.Count; i++)
+            {
+                myArray[i * 6].Position = new Vector3( curvePointsExternal[i - 1],-0.1f);
+                myArray[i * 6 + 1].Position = new Vector3(curvePointsExternal[i], -0.1f);
+                myArray[i * 6 + 2].Position = new Vector3(curvePointsExternal[i - 1] + normals[i - 1] / pathWidth, -0.1f);
+
+                myArray[i * 6 + 3].Position = new Vector3(curvePointsExternal[i], -0.1f);
+                myArray[i * 6 + 4].Position = new Vector3(curvePointsExternal[i - 1] + normals[i - 1] / pathWidth, -0.1f);
+                myArray[i * 6 + 5].Position = new Vector3(curvePointsExternal[i] + normals[i] / pathWidth,-0.1f);
+
+                myArray[i * 6].TextureCoordinate = new Vector2(0,1);
+                myArray[i * 6 + 1].TextureCoordinate = new Vector2(0, 0);
+                myArray[i * 6 + 2].TextureCoordinate = new Vector2(1, 1);
+
+                myArray[i * 6 + 3].TextureCoordinate = new Vector2(0, 0);
+                myArray[i * 6 + 4].TextureCoordinate = new Vector2(1, 1);
+                myArray[i * 6 + 5].TextureCoordinate = new Vector2(1, 0);
+
+             }
+
+            for (int i = 1; i < curvePointsInternal.Count; i++)
+            {
+                myArray[(i+curvePointsExternal.Count) * 6].Position = new Vector3(curvePointsInternal[i - 1], -0.1f);
+                myArray[(i + curvePointsExternal.Count) * 6 + 1].Position = new Vector3(curvePointsInternal[i], -0.1f);
+                myArray[(i + curvePointsExternal.Count) * 6 + 2].Position = new Vector3(curvePointsInternal[i - 1] + normalsInternal[i - 1] / pathWidth, -0.1f);
+
+                myArray[(i + curvePointsExternal.Count) * 6 + 3].Position = new Vector3(curvePointsInternal[i], -0.1f);
+                myArray[(i + curvePointsExternal.Count) * 6 + 4].Position = new Vector3(curvePointsInternal[i - 1] + normalsInternal[i - 1] / pathWidth, -0.1f);
+                myArray[(i + curvePointsExternal.Count) * 6 + 5].Position = new Vector3(curvePointsInternal[i] + normalsInternal[i] / pathWidth, -0.1f);
+
+                myArray[(i + curvePointsExternal.Count) * 6].TextureCoordinate = new Vector2(0, 1);
+                myArray[(i + curvePointsExternal.Count) * 6 + 1].TextureCoordinate = new Vector2(0, 0);
+                myArray[(i + curvePointsExternal.Count) * 6 + 2].TextureCoordinate = new Vector2(1, 1);
+
+                myArray[(i + curvePointsExternal.Count) * 6 + 3].TextureCoordinate = new Vector2(0, 0);
+                myArray[(i + curvePointsExternal.Count) * 6 + 4].TextureCoordinate = new Vector2(1, 1);
+                myArray[(i + curvePointsExternal.Count) * 6 + 5].TextureCoordinate = new Vector2(1, 0);
+
+            }
+
             
         }
 
@@ -304,6 +350,10 @@ namespace WindowsGame2.GameElements
             for (int i = 1; i < curvePointsInternal.Count; i++)
             {
                 DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[i]), ConvertUnits.ToDisplayUnits(curvePointsInternal[i - 1]));
+
+                DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[i - 1]), ConvertUnits.ToDisplayUnits(curvePointsInternal[i - 1] + normalsInternal[i - 1] / pathWidth));
+                DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[i]), ConvertUnits.ToDisplayUnits(curvePointsInternal[i - 1] + normalsInternal[i - 1] / pathWidth));
+                DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[i] + normalsInternal[i] / pathWidth), ConvertUnits.ToDisplayUnits(curvePointsInternal[i - 1] + normalsInternal[i - 1] / pathWidth));
             }
             DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[0]), ConvertUnits.ToDisplayUnits(curvePointsInternal[curvePointsInternal.Count - 1]));
 
@@ -312,10 +362,18 @@ namespace WindowsGame2.GameElements
             {
                // DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]) + normals[i - 1], ConvertUnits.ToDisplayUnits(curvePointsExternal[i]) + normals[i]);
                 DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]) , ConvertUnits.ToDisplayUnits(curvePointsExternal[i]) );
+
+                //ugo
+               
+                DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]+normals[i-1] / pathWidth));
+                DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i-1]+normals[i-1]/pathWidth));
+                DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i] + normals[i] / pathWidth), ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1] + normals[i - 1] / pathWidth));
             }
-           // DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]) + normals[curvePointsExternal.Count - 1], ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normals[0]);
+            // DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]) + normals[curvePointsExternal.Count - 1], ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normals[0]);
             DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
             
+
+
             /*
             //draw middle points
             for (int i = 1; i < curvePointsMiddle.Count; i++)
@@ -334,6 +392,8 @@ namespace WindowsGame2.GameElements
             DrawLine(spriteBatch, 50, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]), ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]));
         
              */ 
+
+
         }
 
     
