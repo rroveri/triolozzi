@@ -257,7 +257,7 @@ namespace WindowsGame2.GameElements
                 int preIndex = i - 1;
                 if (preIndex < 0)
                 {
-                    preIndex = curvePointsExternal.Count - 1;
+                    preIndex = curvePointsInternal.Count - 1;
                 }
 
                 myArray[(i + curvePointsExternal.Count) * 6].Position = new Vector3(curvePointsInternal[preIndex], -0.1f);
