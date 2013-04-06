@@ -109,13 +109,13 @@ float4 PixelShaderFunctionObject(ObjectVertexShaderOutput input) : COLOR0
 	{
 		carPos = redCarPos;
 	}
-	else if(input.Color[1] == 1)
-	{
-		carPos = greenCarPos;
-	}
 	else if(input.Color[2] == 1)
 	{
 		carPos = blueCarPos;
+	}
+	else if(input.Color[0] == 0 && input.Color[2] == 0)
+	{
+		carPos = greenCarPos;
 	}
 	else
 	{

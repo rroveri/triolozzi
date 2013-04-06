@@ -170,7 +170,7 @@ namespace WindowsGame2.Screens
                     cars.Add(greenCar);
                     if (playersNumber > 3)
                     {
-                        yellowCar = new Car(world, Color.HotPink, randomRaceTrack);
+                        yellowCar = new Car(world, Color.Brown, randomRaceTrack);
                         cars.Add(yellowCar);
                     }
                 }
@@ -540,11 +540,22 @@ namespace WindowsGame2.Screens
             polygonsColorShader.Parameters["Projection"].SetValue(projection);
             polygonsColorShader.Parameters["View"].SetValue(view);
             polygonsColorShader.CurrentTechnique.Passes["TrailPass"].Apply();
-            polygonsColorShader.Parameters["redCarPos"].SetValue(cars[0]._compound.Position);
-            polygonsColorShader.Parameters["blueCarPos"].SetValue(cars[1]._compound.Position);
-            polygonsColorShader.Parameters["greenCarPos"].SetValue(cars[2]._compound.Position);
-            polygonsColorShader.Parameters["pinkCarPos"].SetValue(cars[3]._compound.Position);
-
+            if (playersNumber > 0)
+            {
+                polygonsColorShader.Parameters["redCarPos"].SetValue(cars[0]._compound.Position);
+            }
+            if (playersNumber > 1)
+            {
+                polygonsColorShader.Parameters["blueCarPos"].SetValue(cars[1]._compound.Position);
+            }
+            if (playersNumber > 2)
+            {
+                polygonsColorShader.Parameters["greenCarPos"].SetValue(cars[2]._compound.Position);
+            }
+            if (playersNumber > 3)
+            {
+                polygonsColorShader.Parameters["pinkCarPos"].SetValue(cars[3]._compound.Position);
+            }
             for (int i = 0; i < cars.Count; i++)
             {
                 //cars[i].Draw(spriteBatch, out trails[i]);
