@@ -72,7 +72,8 @@ namespace WindowsGame2.Screens
         PauseMenuScreen PauseScreen;
         float pauseAlpha;
 
-        Effect polygonsColorShader;
+        Effect paperEffect, screenEffect;
+        ScreenRenderer screenRenderer;
         Matrix projection;
         Matrix view;
 
@@ -141,14 +142,14 @@ namespace WindowsGame2.Screens
             prevKeyboardState = Keyboard.GetState();
 
 
-            polygonsColorShader = Content.Load<Effect>("Shaders/DrawnObjectsEffect");
-            polygonsColorShader.CurrentTechnique = polygonsColorShader.Techniques["DoodleTechinque"];
+            paperEffect = Content.Load<Effect>("Shaders/PaperEffect");
+            paperEffect.CurrentTechnique = paperEffect.Techniques["DoodleTechinque"];
             Texture2D trailSketch = Content.Load<Texture2D>("Materials/trailSketch");
             Texture2D objectSketch = Content.Load<Texture2D>("Materials/objectSketch");
             Texture2D ink = Content.Load<Texture2D>("Materials/ink_texture");
-            polygonsColorShader.Parameters["trailSketch"].SetValue(trailSketch);
-            polygonsColorShader.Parameters["objectSketch"].SetValue(objectSketch);
-            polygonsColorShader.Parameters["ink"].SetValue(ink);
+            paperEffect.Parameters["trailSketch"].SetValue(trailSketch);
+            paperEffect.Parameters["objectSketch"].SetValue(objectSketch);
+            paperEffect.Parameters["ink"].SetValue(ink);
             float[] random = new float[16 * 16];
             Color[] randomCol = new Color[16 * 16];
             Random seed = new Random();
@@ -157,9 +158,17 @@ namespace WindowsGame2.Screens
             for (int i = 0; i < random.Count(); i++) randomCol[i] = Color.White * random[i];
             Texture2D randomTex = new Texture2D(graphics.GraphicsDevice, 16, 16);
             randomTex.SetData(randomCol);
-            polygonsColorShader.Parameters["random"].SetValue(randomTex);
+            paperEffect.Parameters["random"].SetValue(randomTex);
 
-
+            screenRenderer = new ScreenRenderer(playersNumber);
+            screenEffect = Content.Load<Effect>("Shaders/ScreenEffect");
+            screenEffect.CurrentTechnique = screenEffect.Techniques["ScreenTechinque"];
+            Texture2D postitHappy = Content.Load<Texture2D>("Images/postitHappy");
+            screenEffect.Parameters["postitHappy"].SetValue(postitHappy);
+            Texture2D postitSad = Content.Load<Texture2D>("Images/postitSad");
+            screenEffect.Parameters["postitSad"].SetValue(postitSad);
+            Texture2D numbers = Content.Load<Texture2D>("Images/numbers");
+            screenEffect.Parameters["numbers"].SetValue(numbers);
             
             //create cars
             redCar = new Car(world, Color.Red, randomRaceTrack);
@@ -441,7 +450,7 @@ namespace WindowsGame2.Screens
 
                 //start a new race and update score
                 positionCars(cars[winnerIndex].currentMiddlePoint % randomRaceTrack.curvePointsMiddle.Count);
-                updateScore();
+                updateScore(winnerIndex);
  
             }
 
@@ -450,11 +459,24 @@ namespace WindowsGame2.Screens
             cameraFollowing.lastCarIndex = ranking[playersNumber - 1 - currentExitIndex];
         }
 
-        public void updateScore()
+        public void updateScore(int winnerIndex)
         {
             // update the score here, a mini race has just finished
             // order in which the cars have fallen off screen is stored in the array orderToExit
 
+            int malus = 9;
+            for (int i = 0; i < playersNumber - 1; i++)
+            {
+                int carIndex = orderToExit[i];
+
+                cars[carIndex].score -= malus;
+                malus -= 3;
+
+                cars[carIndex].score = Math.Max(1, cars[carIndex].score);
+            }
+
+            cars[winnerIndex].score += 3;
+            cars[winnerIndex].score = Math.Min(27 * 2, cars[winnerIndex].score);
         }
 
 
@@ -535,24 +557,24 @@ namespace WindowsGame2.Screens
             GraphicsDevice.RasterizerState = RasterizerState.CullNone;
             GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
 
-            polygonsColorShader.Parameters["Projection"].SetValue(projection);
-            polygonsColorShader.Parameters["View"].SetValue(view);
-            polygonsColorShader.CurrentTechnique.Passes["TrailPass"].Apply();
+            paperEffect.Parameters["Projection"].SetValue(projection);
+            paperEffect.Parameters["View"].SetValue(view);
+            paperEffect.CurrentTechnique.Passes["TrailPass"].Apply();
             if (playersNumber > 0)
             {
-                polygonsColorShader.Parameters["redCarPos"].SetValue(cars[0]._compound.Position);
+                paperEffect.Parameters["redCarPos"].SetValue(cars[0]._compound.Position);
             }
             if (playersNumber > 1)
             {
-                polygonsColorShader.Parameters["blueCarPos"].SetValue(cars[1]._compound.Position);
+                paperEffect.Parameters["blueCarPos"].SetValue(cars[1]._compound.Position);
             }
             if (playersNumber > 2)
             {
-                polygonsColorShader.Parameters["greenCarPos"].SetValue(cars[2]._compound.Position);
+                paperEffect.Parameters["greenCarPos"].SetValue(cars[2]._compound.Position);
             }
             if (playersNumber > 3)
             {
-                polygonsColorShader.Parameters["pinkCarPos"].SetValue(cars[3]._compound.Position);
+                paperEffect.Parameters["pinkCarPos"].SetValue(cars[3]._compound.Position);
             }
             for (int i = 0; i < cars.Count; i++)
             {
@@ -568,7 +590,7 @@ namespace WindowsGame2.Screens
 
             int counter = 0;
 
-            polygonsColorShader.CurrentTechnique.Passes["ObjectPass"].Apply();
+            paperEffect.CurrentTechnique.Passes["ObjectPass"].Apply();
             // draw polygons
             for (int i = 0; i < polygonsList.Count; i++)
             {
@@ -583,9 +605,15 @@ namespace WindowsGame2.Screens
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
             }
 
-            polygonsColorShader.CurrentTechnique.Passes["BorderPass"].Apply();
+            paperEffect.CurrentTechnique.Passes["BorderPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
-            
+
+            screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, screenRenderer.postitVertices.Count() / 3);
+
+            screenEffect.CurrentTechnique.Passes["BarPass"].Apply();
+            for (int i = 0; i < playersNumber; i++)
+                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.barVertices[i], 0, cars[i].score * 2);
         }
 
         public void DrawSpritesDebug(Camera camera)

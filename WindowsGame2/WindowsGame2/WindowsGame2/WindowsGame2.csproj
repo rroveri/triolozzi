@@ -129,6 +129,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="ScreenManagement\InputState.cs" />
     <Compile Include="ScreenManagement\ScreenManager.cs" />
+    <Compile Include="ScreenRenderer.cs" />
     <Compile Include="Screens\AbstractScreen.cs" />
     <Compile Include="Screens\BackgroundScreen.cs" />
     <Compile Include="Screens\GameScreen.cs" />

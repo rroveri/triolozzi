@@ -40,6 +40,8 @@ namespace WindowsGame2
         private bool mFoundIntersection;
         public bool justStarted;
 
+        public int score;
+
         private Vertices mTrailVertices;
         private Vector2[] mTrailPositions;
 
@@ -107,6 +109,8 @@ namespace WindowsGame2
             texNE = new Vector2(1, 0);
             texOW = new Vector2(0, 1);
             texOE = new Vector2(1, 1);
+
+            score = 27;
         }
 
         public Vector2 ProjectedPosition
