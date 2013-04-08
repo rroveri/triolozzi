@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using FarseerPhysics.SamplesFramework;
 using FarseerPhysics.Common;
+using WindowsGame2.GameElements;
 
 namespace WindowsGame2
 {
@@ -104,7 +105,7 @@ namespace WindowsGame2
             Position = position;
             Zoom = 1.0f;
             Rotation = 0;
-            random = new Random();
+            random = new Random(new DateTime().Millisecond);
             FocusPoint = new Vector2(view.Width / 2, view.Height / 2);
             _screenCenter = new Vector2(View.Width / 2f, View.Height / 2f);
 
@@ -132,7 +133,7 @@ namespace WindowsGame2
             Position = position;
             Zoom = zoom;
             Rotation = rotation;
-            random = new Random();
+            random = new Random(new DateTime().Millisecond);
             FocusPoint = focus;
             _screenCenter = new Vector2(View.Width / 2f, View.Height / 2f);
 

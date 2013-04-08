@@ -44,6 +44,7 @@ namespace WindowsGame2.Screens
         /// each frame in Update.
         /// </summary>
         Vector2 position;
+        private Vector2 origin;
 
         #endregion
 
@@ -102,6 +103,7 @@ namespace WindowsGame2.Screens
         public MenuEntry(string text)
         {
             this.text = text;
+            origin = new Vector2(0f, 0f);
         }
 
 
@@ -150,7 +152,7 @@ namespace WindowsGame2.Screens
             SpriteBatch spriteBatch = screenManager.SpriteBatch;
             SpriteFont font = screenManager.Font;
 
-            Vector2 origin = new Vector2(0, font.LineSpacing / 2);
+            origin.Y = font.LineSpacing / 2;
 
             spriteBatch.DrawString(font, text, position, color, 0,
                                    origin, scale, SpriteEffects.None, 0);

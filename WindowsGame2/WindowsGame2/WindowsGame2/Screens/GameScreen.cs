@@ -41,7 +41,7 @@ namespace WindowsGame2.Screens
         VertexPositionColorTexture[][] trails = new VertexPositionColorTexture[4][];
 
         KeyboardState prevKeyboardState;
-        Random random;
+        Random Random;
 
         Car redCar;
         Car blueCar;
@@ -53,20 +53,10 @@ namespace WindowsGame2.Screens
 
         AssetCreator assetCreator;
 
-        Camera cameraTopLeft;
-        Camera cameraTopRight;
-        Camera cameraBottomLeft;
         Camera cameraFollowing;
 
-        Viewport topLeftViewport;
-        Viewport topRightViewport;
-        Viewport bottomLeftViewport;
         Viewport defaultViewport;
 
-        Matrix projectionMatrix;
-        Matrix halfprojectionMatrix;
-
-        Track raceTrack;
         RandomTrack randomRaceTrack;
 
         PauseMenuScreen PauseScreen;
@@ -80,9 +70,8 @@ namespace WindowsGame2.Screens
         VertexPositionColorTexture[] basicVert;
         short[] triangleListIndices;
         int maxNumberOfTriangles = 10000;
-        private int mGameMode;
+        public int GameMode { get; set; }
 
-        private int playersNumber;
         Vertices startingPos;
         int[] ranking;
         int[] taken;
@@ -110,12 +99,12 @@ namespace WindowsGame2.Screens
             playerIndexes = new List<PlayerIndex>();
             playerIndexes.Add(PlayerIndex.One); playerIndexes.Add(PlayerIndex.Two);
             playerIndexes.Add(PlayerIndex.Three); playerIndexes.Add(PlayerIndex.Four);
-            random = new Random();
+            Random = new Random(new DateTime().Millisecond);
 
-            playersNumber = 4;
-            ranking = new int[playersNumber];
-            taken = new int[playersNumber];
-            orderToExit = new int[playersNumber-1];
+            PlayersCount = 4;
+            ranking = new int[PlayersCount];
+            taken = new int[PlayersCount];
+            orderToExit = new int[PlayersCount-1];
             startingPos = new Vertices();
             currentExitIndex = 0;
         }
@@ -152,15 +141,14 @@ namespace WindowsGame2.Screens
             paperEffect.Parameters["ink"].SetValue(ink);
             float[] random = new float[16 * 16];
             Color[] randomCol = new Color[16 * 16];
-            Random seed = new Random();
             random[0] = 0.5f;
-            for (int i = 1; i < random.Count(); i++) random[i] = (float)seed.NextDouble();
+            for (int i = 1; i < random.Count(); i++) random[i] = (float)Random.NextDouble();
             for (int i = 0; i < random.Count(); i++) randomCol[i] = Color.White * random[i];
             Texture2D randomTex = new Texture2D(graphics.GraphicsDevice, 16, 16);
             randomTex.SetData(randomCol);
             paperEffect.Parameters["random"].SetValue(randomTex);
 
-            screenRenderer = new ScreenRenderer(playersNumber);
+            screenRenderer = new ScreenRenderer(PlayersCount);
             screenEffect = Content.Load<Effect>("Shaders/ScreenEffect");
             screenEffect.CurrentTechnique = screenEffect.Techniques["ScreenTechinque"];
             Texture2D postitHappy = Content.Load<Texture2D>("Images/postitHappy");
@@ -173,15 +161,15 @@ namespace WindowsGame2.Screens
             //create cars
             redCar = new Car(world, Color.Red, randomRaceTrack);
             cars.Add(redCar);
-            if (playersNumber > 1)
+            if (PlayersCount > 1)
             {
                 blueCar = new Car(world, Color.Blue, randomRaceTrack);
                 cars.Add(blueCar); 
-                if (playersNumber > 2)
+                if (PlayersCount > 2)
                 {
                     greenCar = new Car(world, Color.Green, randomRaceTrack);
                     cars.Add(greenCar);
-                    if (playersNumber > 3)
+                    if (PlayersCount > 3)
                     {
                         yellowCar = new Car(world, Color.Brown, randomRaceTrack);
                         cars.Add(yellowCar);
@@ -192,44 +180,14 @@ namespace WindowsGame2.Screens
             //generate starting positions and angles
             int startingPoint = 0;
             positionCars(startingPoint);
-            
 
             assetCreator = new AssetCreator(graphics.GraphicsDevice);
             assetCreator.LoadContent(this.Content);
 
             defaultViewport = GraphicsDevice.Viewport;
-            topLeftViewport = defaultViewport;
-            topRightViewport = defaultViewport;
-            bottomLeftViewport = defaultViewport;
-            topLeftViewport.Width = topLeftViewport.Width / 2 - 1;
-            topRightViewport.Width = topRightViewport.Width / 2 - 1;
-            bottomLeftViewport.Width = bottomLeftViewport.Width / 2 - 1;
-            topLeftViewport.Height = topLeftViewport.Height / 2 - 1;
-            topRightViewport.Height = topRightViewport.Height / 2 - 1;
-            bottomLeftViewport.Height = bottomLeftViewport.Height / 2 - 1;
-            topRightViewport.X = topLeftViewport.Width + 2;
-            bottomLeftViewport.Y = bottomLeftViewport.Height + 2;
 
-            //useless like an old kurva
-            /*
-            if (mGameMode == 0)
-            {
-
-                //eliminate split screen mode?
-
-               // cameraTopLeft = new Camera(topLeftViewport, Vector2.Zero, new Vector2(topLeftViewport.Width / 2, topLeftViewport.Height / 2), 0.95f, 0.0f);
-               // cameraTopRight = new Camera(topRightViewport, Vector2.Zero, new Vector2(topRightViewport.Width / 2, topRightViewport.Height / 2), 0.95f, 0.0f);
-               // cameraBottomLeft = new Camera(bottomLeftViewport, Vector2.Zero, new Vector2(bottomLeftViewport.Width / 2, bottomLeftViewport.Height / 2), 0.95f, 0.0f);
-               // cameraTopLeft.Follow(redCar, 0.0f);
-               // cameraTopRight.Follow(blueCar, 0.0f);
-               // cameraBottomLeft.Follow(greenCar, 0.0f);
-            }
-            else if (mGameMode==1)
-            {
-                //cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f, cars);
-                
-            }
-            */
+            // Single screen mode only
+            cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f, cars);
 
             _debugView = new DebugViewXNA(world);
             _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Shape);
@@ -255,7 +213,7 @@ namespace WindowsGame2.Screens
             //compute cars positions
             startingPos = randomRaceTrack.computeStartingPositions(startingPoint);
             
-            switch (playersNumber)
+            switch (PlayersCount)
             {
                 case 1:
                     redCar._compound.Position = startingPos[1];
@@ -305,18 +263,6 @@ namespace WindowsGame2.Screens
             GameServices.DeleteService<World>();
         }
 
-        public void SetGameMode(int gameMode)
-        {
-            mGameMode = gameMode;
-
-            
-            if (mGameMode==1)
-            {
-                cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f, cars);
-                
-            }
-        }
-
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
             // TODO: should this be executed before?
@@ -358,17 +304,8 @@ namespace WindowsGame2.Screens
                 }
 
             }
-
-            if (mGameMode == 0)
-            {
-                cameraTopLeft.Update(gameTime);
-                cameraTopRight.Update(gameTime);
-                cameraBottomLeft.Update(gameTime);
-            }
-            else if (mGameMode == 1)
-            {
-                cameraFollowing.Update(gameTime);
-            }
+            
+            cameraFollowing.Update(gameTime);
 
             gameLogic();
 
@@ -419,7 +356,7 @@ namespace WindowsGame2.Screens
                     if (screenPosition.X < 0 || screenPosition.X > graphics.PreferredBackBufferWidth || screenPosition.Y < 0 || screenPosition.Y > graphics.PreferredBackBufferHeight)
                     {
                         //check if car is in the last position
-                        if (ranking[playersNumber-1-currentExitIndex]==i){
+                        if (ranking[PlayersCount-1-currentExitIndex]==i){
                             //disactivate car and add index to the array with the order of exiting
                             cars[i].isActive = false;
                             orderToExit[currentExitIndex] = i;
@@ -431,7 +368,7 @@ namespace WindowsGame2.Screens
             }
 
             //check if only one player remains
-            if (currentExitIndex == playersNumber - 1)
+            if (currentExitIndex == PlayersCount - 1)
             {
                 currentExitIndex=0;
                 
@@ -456,7 +393,7 @@ namespace WindowsGame2.Screens
 
             //set camera parameters
             cameraFollowing.firstCarIndex = ranking[0];
-            cameraFollowing.lastCarIndex = ranking[playersNumber - 1 - currentExitIndex];
+            cameraFollowing.lastCarIndex = ranking[PlayersCount - 1 - currentExitIndex];
         }
 
         public void updateScore(int winnerIndex)
@@ -465,7 +402,7 @@ namespace WindowsGame2.Screens
             // order in which the cars have fallen off screen is stored in the array orderToExit
 
             int malus = 9;
-            for (int i = 0; i < playersNumber - 1; i++)
+            for (int i = 0; i < PlayersCount - 1; i++)
             {
                 int carIndex = orderToExit[i];
 
@@ -484,38 +421,9 @@ namespace WindowsGame2.Screens
         {
             GraphicsDevice.Clear(Color.White);
 
-            if (mGameMode == 0)
-            {
-
-                GraphicsDevice.Viewport = defaultViewport;
-                GraphicsDevice.Clear(Color.White);
-
-                GraphicsDevice.Viewport = topLeftViewport;
-                //if not debug
-                DrawSprites(cameraTopLeft);
-                //if debug view
-                //DrawSpritesDebug(cameraTopLeft);
-
-                GraphicsDevice.Viewport = topRightViewport;
-                //if not debug
-                DrawSprites(cameraTopRight);
-                //if debug
-                //DrawSpritesDebug(cameraTopRight);
-
-                GraphicsDevice.Viewport = bottomLeftViewport;
-                //if not debug
-                DrawSprites(cameraBottomLeft);
-                //if debug
-                //DrawSpritesDebug(cameraBottomLeft);
-            }
-            else if (mGameMode == 1)
-            {
-                GraphicsDevice.Viewport = defaultViewport;
-                DrawSprites(cameraFollowing);
-            }
-
             GraphicsDevice.Viewport = defaultViewport;
-
+            DrawSprites(cameraFollowing);
+            
             // If the game is transitioning on or off, fade it out to black.
             if (TransitionPosition > 0 || pauseAlpha > 0)
             {
@@ -560,19 +468,19 @@ namespace WindowsGame2.Screens
             paperEffect.Parameters["Projection"].SetValue(projection);
             paperEffect.Parameters["View"].SetValue(view);
             paperEffect.CurrentTechnique.Passes["TrailPass"].Apply();
-            if (playersNumber > 0)
+            if (PlayersCount > 0)
             {
                 paperEffect.Parameters["redCarPos"].SetValue(cars[0]._compound.Position);
             }
-            if (playersNumber > 1)
+            if (PlayersCount > 1)
             {
                 paperEffect.Parameters["blueCarPos"].SetValue(cars[1]._compound.Position);
             }
-            if (playersNumber > 2)
+            if (PlayersCount > 2)
             {
                 paperEffect.Parameters["greenCarPos"].SetValue(cars[2]._compound.Position);
             }
-            if (playersNumber > 3)
+            if (PlayersCount > 3)
             {
                 paperEffect.Parameters["pinkCarPos"].SetValue(cars[3]._compound.Position);
             }
@@ -612,7 +520,7 @@ namespace WindowsGame2.Screens
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, screenRenderer.postitVertices.Count() / 3);
 
             screenEffect.CurrentTechnique.Passes["BarPass"].Apply();
-            for (int i = 0; i < playersNumber; i++)
+            for (int i = 0; i < PlayersCount; i++)
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.barVertices[i], 0, cars[i].score * 2);
         }
 

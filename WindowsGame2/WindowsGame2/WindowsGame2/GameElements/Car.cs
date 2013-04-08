@@ -11,9 +11,8 @@ using FarseerPhysics.Dynamics;
 using FarseerPhysics.Common;
 using FarseerPhysics.SamplesFramework;
 using Microsoft.Xna.Framework.Content;
-using WindowsGame2.GameElements;
 
-namespace WindowsGame2
+namespace WindowsGame2.GameElements
 {
 
     public class Car : TexturePhysicsObject
@@ -34,10 +33,7 @@ namespace WindowsGame2
         private Vector2 mDirection;
         private float mForce;
 
-        private bool mShowTrail;
         public bool mIsTrailLoop;
-        private bool wasDrawing;
-        private bool mFoundIntersection;
         public bool justStarted;
 
         public int score;
@@ -53,7 +49,7 @@ namespace WindowsGame2
         private Vector3 oldWVert, newWVert, oldEVert, newEVert;
         private Vector2 texNW, texNE, texOW, texOE;
         private float offset = 0.3f, tailOffset = 0.2f;
-        private Random seed = new Random();
+        private Random seed = new Random(new DateTime().Millisecond);
 
         private float acc = 0.4f;
         private float rotVel = 0.12f; //0.12
@@ -260,9 +256,7 @@ namespace WindowsGame2
             // Add a trail point if the player is drawing
             if ((ks.IsKeyDown(Keys.F) && mColor == Color.Blue || gps.Triggers.Right > 0) && !justStarted)
             {
-                mShowTrail = true;
-
-                if (mTrailPoints >= mMaximumTrailPoints)
+               if (mTrailPoints >= mMaximumTrailPoints)
                 {
                     mIsTrailLoop = true;
                     mTrailPoints = 0;
@@ -296,8 +290,6 @@ namespace WindowsGame2
             }
             else
             {
-                mShowTrail = false;
-                mFoundIntersection = false;
                 mIsTrailLoop = false;
                 mTrailPoints = 0;
 
@@ -340,127 +332,60 @@ namespace WindowsGame2
 
         public void Draw(SpriteBatch spriteBatch, out VertexPositionColorTexture[] vertices)
         {
-            base.Draw(spriteBatch);
-            //if (mShowTrail)
-            //{
-            //    for (int i = 1; i < mTrailPoints; i++)
-            //    {
-            //        DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[i], mTrailPositions[i - 1]);
-            //    }
-            //    if (mIsTrailLoop)
-            //    {
-            //        for (int i = mTrailPoints + 1; i < mMaximumTrailPoints; i++)
-            //        {
-            //            DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[i], mTrailPositions[i - 1]);
-            //        }
-            //        if (mTrailPoints != mMaximumTrailPoints)
-            //        {
-            //            DrawLine(spriteBatch, mDummyTexture, 5, mTrailPositions[0], mTrailPositions[mMaximumTrailPoints - 1]);
-            //        }
-            //    }
-            //}
-
             vertices = trailVertices;
 
             base.Draw(spriteBatch);
-
-
         }
 
-        private void DrawLine(SpriteBatch batch, Texture2D blank, float width, Vector2 point1, Vector2 point2)
+        public bool TrailObstacle(World World)
         {
-            float angle = (float)Math.Atan2(point2.Y - point1.Y, point2.X - point1.X);
-            float length = Vector2.Distance(point1, point2);
-            batch.Draw(blank, point1, null, mColor, angle, Vector2.Zero, new Vector2(length, width), SpriteEffects.None, 0);
-        }
-
-
-
-         public bool TrailObstacle(World World)
-        {
-            
-            if (mTrailPoints > mMinimumCarDistance || (mIsTrailLoop && mMaximumTrailPoints > mMinimumCarDistance))
-            {
-                float difference = mTrailPoints - mMinimumCarDistance;
-                if (difference > 0)
-                {
-                    difference = 0;
-                }
-                for (int i = 0; i < mTrailPoints - 1 - mMinimumCarDistance; i++)
-                {
-                    if (Vector2.Distance(Position, mTrailPositions[i]) < mIntersectionDistance)
-                    {
-                        mIndex=i;
-                        //already one shape with this trail, do not draw other shapes
-                        return true;
-                    }
-                   
-                }
-                if (mIsTrailLoop)
-                {
-                    for (int i = mTrailPoints; i < mMaximumTrailPoints - 1 + difference; i++)
-                    {
-                        if (Vector2.Distance(Position, mTrailPositions[i]) < mIntersectionDistance)
-                    {
-                            mIndex=i;
-                            //already one shape with this trail, do not draw other shapes
-                            return true;
-                        }
-                        
-                    }
-                }
-
-            }
-            return false;
+           if (mTrailPoints > mMinimumCarDistance || (mIsTrailLoop && mMaximumTrailPoints > mMinimumCarDistance))
+           {
+               float difference = mTrailPoints - mMinimumCarDistance;
+               if (difference > 0)
+               {
+                   difference = 0;
+               }
+               for (int i = 0; i < mTrailPoints - 1 - mMinimumCarDistance; i++)
+               {
+                   if (Vector2.Distance(Position, mTrailPositions[i]) < mIntersectionDistance)
+                   {
+                       mIndex=i;
+                       //already one shape with this trail, do not draw other shapes
+                       return true;
+                   }
+                  
+               }
+               if (mIsTrailLoop)
+               {
+                   for (int i = mTrailPoints; i < mMaximumTrailPoints - 1 + difference; i++)
+                   {
+                       if (Vector2.Distance(Position, mTrailPositions[i]) < mIntersectionDistance)
+                       {
+                           mIndex=i;
+                           //already one shape with this trail, do not draw other shapes
+                           return true;
+                       }
+                   }
+               }
+           }
+           return false;
         }
 
         // Helper Method
         // Return a new polygon in the given world if the trail self-intersects, null otherwise.
         public PolygonPhysicsObject TrailIntersection(World World)
         {
-            
-                // intersection found
-                mFoundIntersection = true;
-       
+            // compute polygon vertices
+            mTrailVertices.Clear();
 
-                // compute polygon vertices
-                mTrailVertices.Clear();
+            int verticesInterval =5;
 
-                int verticesInterval =5;
-
-                if (mIsTrailLoop)
+            if (mIsTrailLoop)
+            {
+                if (mIndex < mTrailPoints)
                 {
-                    if (mIndex < mTrailPoints)
-                    {
-                        for (int ii = mIndex; ii < mTrailPoints - 1; ii++)
-                        {
-                            if (ii % verticesInterval == 0)
-                            {
-                                mTrailVertices.Add(mTrailPositions[ii]);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (int ii = mIndex; ii < mMaximumTrailPoints - 1; ii++)
-                        {
-                            if (ii % verticesInterval == 0)
-                            {
-                                mTrailVertices.Add(mTrailPositions[ii]);
-                            }
-                        }
-                        for (int ii = 0; ii < mTrailPoints; ii++)
-                        {
-                            if (ii % verticesInterval == 0)
-                            {
-                                mTrailVertices.Add(mTrailPositions[ii]);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    for (int ii = mIndex; ii < mTrailPoints; ii++)
+                    for (int ii = mIndex; ii < mTrailPoints - 1; ii++)
                     {
                         if (ii % verticesInterval == 0)
                         {
@@ -468,37 +393,63 @@ namespace WindowsGame2
                         }
                     }
                 }
-
-                mTrailPoints = 0;
-                mIsTrailLoop = false;
-                mShowTrail = false;
-
-                //if the shape is a polygon, create a new object
-                if (mTrailVertices.Count > 2)
+                else
                 {
-                    PolygonPhysicsObject result = new PolygonPhysicsObject(World, mTrailVertices);
-                    if (result.IsValid)
+                    for (int ii = mIndex; ii < mMaximumTrailPoints - 1; ii++)
                     {
-                        result.Color = mColor;
-                        result.compound.IgnoreCollisionWith(_compound);
+                        if (ii % verticesInterval == 0)
+                        {
+                            mTrailVertices.Add(mTrailPositions[ii]);
+                        }
+                    }
+                    for (int ii = 0; ii < mTrailPoints; ii++)
+                    {
+                        if (ii % verticesInterval == 0)
+                        {
+                            mTrailVertices.Add(mTrailPositions[ii]);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int ii = mIndex; ii < mTrailPoints; ii++)
+                {
+                    if (ii % verticesInterval == 0)
+                    {
+                        mTrailVertices.Add(mTrailPositions[ii]);
+                    }
+                }
+            }
+
+            mTrailPoints = 0;
+            mIsTrailLoop = false;
+
+            //if the shape is a polygon, create a new object
+            if (mTrailVertices.Count > 2)
+            {
+                PolygonPhysicsObject result = new PolygonPhysicsObject(World, mTrailVertices);
+                if (result.IsValid)
+                {
+                    result.Color = mColor;
+                    result.compound.IgnoreCollisionWith(_compound);
 
                        
-                        maxVel = 10 + result.compound.Mass;
-                        acc = acc + result.compound.Mass / 10;
-                        hasBoost = true;
-                        return result;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                    
+                    maxVel = 10 + result.compound.Mass;
+                    acc = acc + result.compound.Mass / 10;
+                    hasBoost = true;
+                    return result;
                 }
-                else{
+                else
+                {
                     return null;
                 }
-            
-            
+                    
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

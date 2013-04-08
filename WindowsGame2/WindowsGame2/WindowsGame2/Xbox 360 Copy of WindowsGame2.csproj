@@ -65,14 +65,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
-    <Compile Include="Car.cs" />
     <Compile Include="AssetCreator.cs" />
     <Compile Include="ConvertUnits.cs" />
     <Compile Include="DebugViewXNA.cs" />
     <Compile Include="DrawablePhysicsObject.cs" />
     <Compile Include="FrameRateCounter.cs" />
+    <Compile Include="GameElements\Car.cs" />
     <Compile Include="GameElements\RandomTrack.cs" />
-    <Compile Include="GameElements\Track.cs" />
     <Compile Include="ScreenManagement\GameServices.cs" />
     <Compile Include="ScreenManagement\InputAction.cs" />
     <Compile Include="PolygonPhysicsObject.cs" />
