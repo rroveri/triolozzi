@@ -49,7 +49,7 @@ namespace WindowsGame2.GameElements
         private Vector3 oldWVert, newWVert, oldEVert, newEVert;
         private Vector2 texNW, texNE, texOW, texOE;
         private float offset = 0.3f, tailOffset = 0.2f;
-        private Random seed = new Random(new DateTime().Millisecond);
+        private Random seed = new Random(DateTime.Now.Millisecond);
 
         private float acc = 0.4f;
         private float rotVel = 0.12f; //0.12
@@ -157,26 +157,27 @@ namespace WindowsGame2.GameElements
             linearVel = _compound.LinearVelocity.Length();
             if(linearVel > maxVel) linearVel = maxVel;
 
+            bool _moveOnlyBlue = (mColor == Color.Blue) || true;
             if (drivingMode == vicksMode)
             {
                 // Move the car
-                if (ks.IsKeyDown(Keys.Right) && mColor == Color.Blue || gps.ThumbSticks.Right.X > 0)
+                if (ks.IsKeyDown(Keys.Right) && _moveOnlyBlue || gps.ThumbSticks.Right.X > 0)
                 {
                     _compound.AngularVelocity = 0;
                     _compound.Rotation += rotVel;
                 }
-                if (ks.IsKeyDown(Keys.Left) && mColor == Color.Blue || gps.ThumbSticks.Right.X < 0)
+                if (ks.IsKeyDown(Keys.Left) && _moveOnlyBlue || gps.ThumbSticks.Right.X < 0)
                 {
                     _compound.AngularVelocity = 0;
                     _compound.Rotation -= rotVel;
                 }
 
-                if (ks.IsKeyDown(Keys.Up) && mColor == Color.Blue || gps.ThumbSticks.Left.Y > 0)
+                if (ks.IsKeyDown(Keys.Up) && _moveOnlyBlue || gps.ThumbSticks.Left.Y > 0)
                 {
                     _compound.LinearVelocity += mDirection * (linearVel);
 
                 }
-                if (ks.IsKeyDown(Keys.Down) && mColor == Color.Blue || gps.ThumbSticks.Left.Y < 0)
+                if (ks.IsKeyDown(Keys.Down) && _moveOnlyBlue || gps.ThumbSticks.Left.Y < 0)
                 {
                     _compound.LinearVelocity += -mDirection * (linearVel);
                 }
@@ -184,44 +185,44 @@ namespace WindowsGame2.GameElements
             else if (drivingMode == richMode)
             {
                 // Move the car
-                if (ks.IsKeyDown(Keys.Right) && mColor == Color.Blue || gps.ThumbSticks.Right.X > 0)
+                if (ks.IsKeyDown(Keys.Right) && _moveOnlyBlue || gps.ThumbSticks.Right.X > 0)
                 {
                     _compound.ApplyTorque(0.1f);
                 }
-                if (ks.IsKeyDown(Keys.Left) && mColor == Color.Blue || gps.ThumbSticks.Right.X < 0)
+                if (ks.IsKeyDown(Keys.Left) && _moveOnlyBlue || gps.ThumbSticks.Right.X < 0)
                 {
                     _compound.ApplyTorque(-0.1f);
                 }
 
-                if (ks.IsKeyDown(Keys.Up) && mColor == Color.Blue || gps.ThumbSticks.Left.Y > 0)
+                if (ks.IsKeyDown(Keys.Up) && _moveOnlyBlue || gps.ThumbSticks.Left.Y > 0)
                 {
                     _compound.ApplyForce(mForceVector, _compound.WorldCenter);
 
                 }
-                if (ks.IsKeyDown(Keys.Down) && mColor == Color.Blue || gps.ThumbSticks.Left.Y < 0)
+                if (ks.IsKeyDown(Keys.Down) && _moveOnlyBlue || gps.ThumbSticks.Left.Y < 0)
                 {
                     _compound.ApplyForce(-mForceVector, _compound.WorldCenter);
                 }
             }
             else if (drivingMode == unityMode)
             {
-                if (ks.IsKeyDown(Keys.Right) && mColor == Color.Blue || gps.ThumbSticks.Right.X > 0)
+                if (ks.IsKeyDown(Keys.Right) && _moveOnlyBlue || gps.ThumbSticks.Right.X > 0)
                 {
                     _compound.AngularVelocity = 0;
                     _compound.Rotation += rotVel;
                 }
-                if (ks.IsKeyDown(Keys.Left) && mColor == Color.Blue || gps.ThumbSticks.Right.X < 0)
+                if (ks.IsKeyDown(Keys.Left) && _moveOnlyBlue || gps.ThumbSticks.Right.X < 0)
                 {
                     _compound.AngularVelocity = 0;
                     _compound.Rotation -= rotVel;
                 }
 
-                if (ks.IsKeyDown(Keys.Up) && mColor == Color.Blue || gps.ThumbSticks.Left.Y > 0)
+                if (ks.IsKeyDown(Keys.Up) && _moveOnlyBlue || gps.ThumbSticks.Left.Y > 0)
                 {
                     _compound.LinearVelocity = mDirection * (linearVel);
                     _compound.LinearVelocity += mDirection * (acc);
                 }
-                if (ks.IsKeyDown(Keys.Down) && mColor == Color.Blue || gps.ThumbSticks.Left.Y < 0)
+                if (ks.IsKeyDown(Keys.Down) && _moveOnlyBlue || gps.ThumbSticks.Left.Y < 0)
                 {
                     _compound.LinearVelocity = -mDirection * (linearVel);
                     _compound.LinearVelocity += -mDirection * (acc);
@@ -230,21 +231,21 @@ namespace WindowsGame2.GameElements
             else if (drivingMode == microMode)
             {
                 // Move the car
-                if (ks.IsKeyDown(Keys.Right) && mColor == Color.Blue || gps.ThumbSticks.Right.X > 0)
+                if (ks.IsKeyDown(Keys.Right) && _moveOnlyBlue || gps.ThumbSticks.Right.X > 0)
                 {
                     _compound.ApplyTorque(0.1f);
                 }
-                if (ks.IsKeyDown(Keys.Left) && mColor == Color.Blue || gps.ThumbSticks.Right.X < 0)
+                if (ks.IsKeyDown(Keys.Left) && _moveOnlyBlue || gps.ThumbSticks.Right.X < 0)
                 {
                     _compound.ApplyTorque(-0.1f);
                 }
 
-                if (ks.IsKeyDown(Keys.Up) && mColor == Color.Blue || gps.ThumbSticks.Left.Y > 0)
+                if (ks.IsKeyDown(Keys.Up) && _moveOnlyBlue || gps.ThumbSticks.Left.Y > 0)
                 {
                     _compound.ApplyForce(mForceVector, _compound.WorldCenter);
 
                 }
-                if (ks.IsKeyDown(Keys.Down) && mColor == Color.Blue || gps.ThumbSticks.Left.Y < 0)
+                if (ks.IsKeyDown(Keys.Down) && _moveOnlyBlue || gps.ThumbSticks.Left.Y < 0)
                 {
                     _compound.ApplyForce(-mForceVector, _compound.WorldCenter);
                 }
@@ -254,7 +255,7 @@ namespace WindowsGame2.GameElements
             tdPos.Y = _compound.Position.Y;
 
             // Add a trail point if the player is drawing
-            if ((ks.IsKeyDown(Keys.F) && mColor == Color.Blue || gps.Triggers.Right > 0) && !justStarted)
+            if ((ks.IsKeyDown(Keys.F) && _moveOnlyBlue || gps.Triggers.Right > 0) && !justStarted)
             {
                if (mTrailPoints >= mMaximumTrailPoints)
                 {

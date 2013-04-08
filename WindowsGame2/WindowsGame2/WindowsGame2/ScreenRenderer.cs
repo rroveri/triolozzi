@@ -11,7 +11,7 @@ namespace WindowsGame2
 {
     class ScreenRenderer
     {
-        private int nPlayers;
+        public int PlayersCount { get; set; }
 
         private float nPoints = 27;
         public VertexPositionColorTexture[] postitVertices, lapVertices, numberLapsVertices;
@@ -29,7 +29,7 @@ namespace WindowsGame2
         public ScreenRenderer(int nPlayers)
         {
 
-            this.nPlayers = nPlayers;
+            PlayersCount = nPlayers;
 
             barOffset = 0.03f;
             barWidth = 0.15f;// barOffset;
