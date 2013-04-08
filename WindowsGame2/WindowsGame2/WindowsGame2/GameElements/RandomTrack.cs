@@ -62,7 +62,7 @@ namespace WindowsGame2.GameElements
             internalCorrispondances= new List<int>();
             dummyTexture = new Texture2D(GameServices.GetService<GraphicsDevice>(), 1, 1);
             dummyTexture.SetData(new Color[] { Color.White });
-            random = new Random();
+            random = new Random(new DateTime().Millisecond);
             normals = new List<Vector2>();
             normalsInternal = new List<Vector2>();
             ContentManager Content = GameServices.GetService<ContentManager>();

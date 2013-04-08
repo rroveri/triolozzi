@@ -26,10 +26,11 @@ namespace WindowsGame2.Screens
 
         MenuEntry playersMenuEntry;
 
-        private MessageBoxScreen ExitDialog;
+        //private MessageBoxScreen ExitDialog;
 
         static int[] numberOfPlayers = { 2, 3, 4 };
-        static int currentNumberOfPlayers = 0;
+        static string[] _playersText = { "2 Players", "3 Players", "4 Players" };
+        static int _playersCountIndex = 2;
         
         #endregion
 
@@ -40,36 +41,34 @@ namespace WindowsGame2.Screens
         /// <summary>
         /// Constructor fills in the menu contents.
         /// </summary>
-        public MainMenuScreen()
-            : base("The Drunken Dream Maker (With a Cold)")
+        public MainMenuScreen() : base("The Drunken Dream Maker (With a Cold)")
         {
-            // Create our menu entries.
-            MenuEntry playGameMenuEntry = new MenuEntry("Split Screen Game");
+            //MenuEntry playGameMenuEntry = new MenuEntry("Split Screen Game");
+            //playGameMenuEntry.Selected += PlayGameMenuEntrySelected;
+            //MenuEntries.Add(playGameMenuEntry);
+
             MenuEntry singleScreenEntry = new MenuEntry("Single Screen Game");
-            //MenuEntry optionsMenuEntry = new MenuEntry("Options");
-            playersMenuEntry = new MenuEntry("Players");
-            MenuEntry exitMenuEntry = new MenuEntry("Exit");
-
-            // Hook up menu event handlers.
-            playGameMenuEntry.Selected += PlayGameMenuEntrySelected;
             singleScreenEntry.Selected += PlayGameMenuSingleModeEntrySelected;
-            //optionsMenuEntry.Selected += OptionsMenuEntrySelected;
-            playersMenuEntry.Selected += PlayersMenuEntrySelected;
-            exitMenuEntry.Selected += OnCancel;
-
-            // Add entries to the menu.
-            MenuEntries.Add(playGameMenuEntry);
             MenuEntries.Add(singleScreenEntry);
+            
+            //MenuEntry optionsMenuEntry = new MenuEntry("Options");
+            //optionsMenuEntry.Selected += OptionsMenuEntrySelected;
             //MenuEntries.Add(optionsMenuEntry);
+
+            playersMenuEntry = new MenuEntry("Players");
+            playersMenuEntry.Selected += PlayersMenuEntrySelected;
             MenuEntries.Add(playersMenuEntry);
+
+            MenuEntry exitMenuEntry = new MenuEntry("Exit");
+            exitMenuEntry.Selected += OnCancel;
             MenuEntries.Add(exitMenuEntry);
 
             UpdatePlayersCount();
 
             // Prepare the exit dialog.
-            const string message = "Are you sure you want to exit the game?";
-            ExitDialog = new MessageBoxScreen(message);
-            ExitDialog.Accepted += ConfirmExitMessageBoxAccepted;
+            //const string message = "Are you sure you want to exit the game?";
+            //ExitDialog = new MessageBoxScreen(message);
+            //ExitDialog.Accepted += ConfirmExitMessageBoxAccepted;
         }
 
         #endregion
@@ -80,39 +79,40 @@ namespace WindowsGame2.Screens
         /// <summary>
         /// Event handler for when the Play Game menu entry is selected.
         /// </summary>
-        void PlayGameMenuEntrySelected(object sender, PlayerIndexEventArgs e)
-        {
-            // TODO: start game here
-            ScreenManager.GetScreen<GameScreen>().SetGameMode(0);
-            ScreenManager.ShowScreen<GameScreen>();
-        }
+        //void PlayGameMenuEntrySelected(object sender, PlayerIndexEventArgs e)
+        //{
+        //    // TODO: start game here
+        //    ScreenManager.GetScreen<GameScreen>().GameMode = 0;
+        //    ScreenManager.GetScreen<GameScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
+        //    ScreenManager.ShowScreen<GameScreen>();
+        //}
 
 
         void PlayGameMenuSingleModeEntrySelected(object sender, PlayerIndexEventArgs e)
         {
             // TODO: start game here
-            ScreenManager.GetScreen<GameScreen>().SetGameMode(1);
-            ScreenManager.GetScreen<GameScreen>().PlayersCount = currentNumberOfPlayers;
+            ScreenManager.GetScreen<GameScreen>().GameMode = 1;
+            ScreenManager.GetScreen<GameScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
             ScreenManager.ShowScreen<GameScreen>();
         }
 
         /// <summary>
         /// Event handler for when the Options menu entry is selected.
         /// </summary>
-        void OptionsMenuEntrySelected(object sender, PlayerIndexEventArgs e)
-        {
-            ScreenManager.AddScreen(new OptionsMenuScreen(), e.PlayerIndex);
-        }
+        //void OptionsMenuEntrySelected(object sender, PlayerIndexEventArgs e)
+        //{
+        //    ScreenManager.AddScreen(new OptionsMenuScreen(), e.PlayerIndex);
+        //}
 
         void PlayersMenuEntrySelected(object sender, PlayerIndexEventArgs e)
         {
-            currentNumberOfPlayers = (currentNumberOfPlayers + 1) % numberOfPlayers.Length;
+            _playersCountIndex = (_playersCountIndex + 1) % numberOfPlayers.Length;
             UpdatePlayersCount();
         }
 
         private void UpdatePlayersCount()
         {
-            playersMenuEntry.Text = numberOfPlayers[currentNumberOfPlayers] + " players";
+            playersMenuEntry.Text = _playersText[_playersCountIndex];
         }
 
 
@@ -121,7 +121,8 @@ namespace WindowsGame2.Screens
         /// </summary>
         protected override void OnCancel(PlayerIndex playerIndex)
         {
-            ScreenManager.AddScreen(ExitDialog, playerIndex);
+            ScreenManager.Game.Exit();
+            //ScreenManager.AddScreen(ExitDialog, playerIndex);
         }
 
 
@@ -129,10 +130,10 @@ namespace WindowsGame2.Screens
         /// Event handler for when the user selects ok on the "are you sure
         /// you want to exit" message box.
         /// </summary>
-        void ConfirmExitMessageBoxAccepted(object sender, PlayerIndexEventArgs e)
-        {
-            ScreenManager.Game.Exit();
-        }
+        //void ConfirmExitMessageBoxAccepted(object sender, PlayerIndexEventArgs e)
+        //{
+        //    ScreenManager.Game.Exit();
+        //}
 
         #endregion
     }
