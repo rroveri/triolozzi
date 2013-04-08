@@ -42,6 +42,8 @@ namespace WindowsGame2.Screens
 
         KeyboardState prevKeyboardState;
         Random Random;
+        float[] randomArray;
+        int lastFrame = 0, randomIndex = 0;
 
         Car redCar;
         Car blueCar;
@@ -139,16 +141,16 @@ namespace WindowsGame2.Screens
             paperEffect.Parameters["trailSketch"].SetValue(trailSketch);
             paperEffect.Parameters["objectSketch"].SetValue(objectSketch);
             paperEffect.Parameters["ink"].SetValue(ink);
-            float[] random = new float[16 * 16];
+            randomArray = new float[16 * 16];
             Color[] randomCol = new Color[16 * 16];
-            random[0] = 0.5f;
-            for (int i = 1; i < random.Count(); i++) random[i] = (float)Random.NextDouble();
-            for (int i = 0; i < random.Count(); i++) randomCol[i] = Color.White * random[i];
+            randomArray[0] = 0.5f;
+            for (int i = 1; i < randomArray.Count(); i++) randomArray[i] = (float)Random.NextDouble();
+            for (int i = 0; i < randomArray.Count(); i++) randomCol[i] = Color.White * randomArray[i];
             Texture2D randomTex = new Texture2D(graphics.GraphicsDevice, 16, 16);
             randomTex.SetData(randomCol);
             paperEffect.Parameters["random"].SetValue(randomTex);
 
-            screenRenderer = new ScreenRenderer(PlayersCount);
+            screenRenderer = new ScreenRenderer(4);
             screenEffect = Content.Load<Effect>("Shaders/ScreenEffect");
             screenEffect.CurrentTechnique = screenEffect.Techniques["ScreenTechinque"];
             Texture2D postitHappy = Content.Load<Texture2D>("Images/postitHappy");
@@ -278,6 +280,14 @@ namespace WindowsGame2.Screens
 
             if (!IsActive)
                 return;
+
+            if (lastFrame == 5) 
+            {
+                randomIndex = (randomIndex + 1) % randomArray.Count();
+                lastFrame = 0;
+            }
+            lastFrame++;
+            paperEffect.Parameters["randomSeed"].SetValue(randomArray[randomIndex]);
 
             gps = GamePad.GetState(PlayerIndex.One);
             ks = Keyboard.GetState();
@@ -484,6 +494,7 @@ namespace WindowsGame2.Screens
 
             paperEffect.Parameters["Projection"].SetValue(projection);
             paperEffect.Parameters["View"].SetValue(view);
+
             paperEffect.CurrentTechnique.Passes["TrailPass"].Apply();
             if (PlayersCount > 0)
             {
@@ -534,7 +545,7 @@ namespace WindowsGame2.Screens
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
 
             screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, screenRenderer.postitVertices.Count() / 3);
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, PlayersCount * 2);
 
             screenEffect.CurrentTechnique.Passes["BarPass"].Apply();
             for (int i = 0; i < PlayersCount; i++)
