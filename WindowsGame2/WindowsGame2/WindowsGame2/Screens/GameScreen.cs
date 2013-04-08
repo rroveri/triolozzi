@@ -243,17 +243,13 @@ namespace WindowsGame2.Screens
                 Cars[i]._compound.LinearVelocity = Vector2.Zero;
 
                 //clear trail
-<<<<<<< HEAD
-                cars[i].mIsTrailLoop = false;
-                cars[i].mTrailPoints = 0;
-                cars[i].justStarted = true;
 
-                cars[i].resetBoost();
-=======
                 Cars[i].mIsTrailLoop = false;
                 Cars[i].mTrailPoints = 0;
                 Cars[i].justStarted = true;
->>>>>>> 6ad5559d5245298344d1f0d8987960774017e92d
+
+                Cars[i].resetBoost();
+
             }
             
         }
