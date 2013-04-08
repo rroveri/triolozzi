@@ -23,7 +23,7 @@ namespace WindowsGame2
         private Color currentColor;
 
         private float offset = 0.05f;
-        private float width = 0.25f, height = 0.15f;
+        private float width = 0.25f, height = 0.20f;
         private float barOffset, barWidth, barHeight = 0.025f, pointLength;
 
         public ScreenRenderer(int nPlayers)

@@ -203,13 +203,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Materials\ink_texture.png">
-      <Name>ink_texture</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Shaders\ScreenEffect.fx">
       <Name>ScreenEffect</Name>
       <Importer>EffectImporter</Importer>
@@ -233,6 +226,13 @@
   <ItemGroup>
     <Compile Include="Images\postitSad.png">
       <Name>postitSad</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Materials\ink_texture.png">
+      <Name>ink_texture</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

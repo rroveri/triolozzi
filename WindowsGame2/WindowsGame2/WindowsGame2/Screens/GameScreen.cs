@@ -311,7 +311,22 @@ namespace WindowsGame2.Screens
 
             gameLogic();
 
+            
+
             world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
+
+            for (int i = 0; i < polygonsList.Count; i++)
+            {
+                Vector2 screenPosition = Vector2.Transform(ConvertUnits.ToDisplayUnits( polygonsList[i].compound.LocalCenter), cameraFollowing.Transform);
+                if (screenPosition.X < 0 || screenPosition.X > graphics.PreferredBackBufferWidth || screenPosition.Y < 0 || screenPosition.Y > graphics.PreferredBackBufferHeight)
+                {
+                    polygonsList[i].compound.Enabled = false;
+                }
+                else
+                {
+                    polygonsList[i].compound.Enabled = true;
+                }
+            }
         }
 
         public void gameLogic()
