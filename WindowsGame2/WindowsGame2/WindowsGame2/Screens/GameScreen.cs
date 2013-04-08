@@ -243,6 +243,8 @@ namespace WindowsGame2.Screens
 
         public void positionCars(int startingPoint)
         {
+            //GC.Collect();
+
             //compute cars positions
             startingPos = randomRaceTrack.computeStartingPositions(startingPoint);
             

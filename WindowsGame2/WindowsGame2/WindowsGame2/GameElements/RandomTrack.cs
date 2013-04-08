@@ -82,7 +82,7 @@ namespace WindowsGame2.GameElements
             }
 
             //create bezier curve
-            int timeStep = 10;
+            int timeStep = 3;
             for (int i = 0; i <= controlPointsCount - 4; i++)
             {
                 for (int t = timeStep; t <= 100; t = t + timeStep)
@@ -277,6 +277,8 @@ namespace WindowsGame2.GameElements
                 myArray[(i + curvePointsExternal.Count) * 6 + 5].TextureCoordinate = new Vector2(1, 0);
 
             }
+
+            
 
             
         }
