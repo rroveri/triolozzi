@@ -29,7 +29,7 @@ namespace WindowsGame2.Screens
         //private MessageBoxScreen ExitDialog;
 
         static int[] numberOfPlayers = { 2, 3, 4 };
-        static string[] _playersText = { "2 Players", "3 Players", "4 Players" };
+        static string[] _playersText = {"2 Players", "3 Players", "4 Players" };
         static int _playersCountIndex = 2;
         
         #endregion

@@ -29,8 +29,8 @@ namespace WindowsGame2.GameElements
         private static int mMaximumTrailPoints = 130;
         public int mTrailPoints;
 
-        private Vector2 mForceVector;
-        private Vector2 mDirection;
+        public Vector2 mForceVector;
+        public Vector2 mDirection;
         private float mForce;
 
         public bool mIsTrailLoop;
@@ -53,8 +53,12 @@ namespace WindowsGame2.GameElements
 
         private float acc = 0.4f;
         private float rotVel = 0.12f; //0.12
-        private float maxVel = 10; //5
+        private float maxVel = 11.5f; //5
         private float linearVel = 0;
+        private float boostAcc = 3f;
+        private float boostMaxVel = 18f;
+        private float currentAcc;
+        private float currentMaxVel;
 
         private int mIndex;
 
@@ -66,6 +70,10 @@ namespace WindowsGame2.GameElements
         public Vector2 projectedPosition;
 
         public bool isActive;
+
+        private float driftValue;
+
+        private int maxBoostFrames;
 
         public Car(World world, Color Color, RandomTrack _randomTrack)
             : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/small_white_penis"), new Vector2(65.0f, 40.0f), Color)
@@ -107,6 +115,12 @@ namespace WindowsGame2.GameElements
             texOE = new Vector2(1, 1);
 
             score = 27;
+
+            driftValue = 0;
+            maxBoostFrames = -1;
+
+            currentAcc = acc;
+            currentMaxVel = maxVel;
         }
 
         public Vector2 ProjectedPosition
@@ -129,6 +143,16 @@ namespace WindowsGame2.GameElements
             }
         }
 
+        public void resetBoost()
+        {
+            boostFrames = 0;
+            hasBoost = false;
+            currentMaxVel = maxVel;
+            currentAcc = acc;
+
+            driftValue = 0;
+        }
+
         public void Update(GamePadState gps, KeyboardState ks)
         {
             if (isActive == false)
@@ -136,15 +160,13 @@ namespace WindowsGame2.GameElements
                 return;
             }
 
-            if (boostFrames == 50)
+            if (boostFrames == maxBoostFrames)
             {
-                boostFrames = 0;
-                hasBoost = false;
-                maxVel = 10;
-                acc = 0.4f;
+                resetBoost();
             }
             if (hasBoost)
             {
+                driftValue = 1;
                 boostFrames++;
             }
 
@@ -154,8 +176,8 @@ namespace WindowsGame2.GameElements
 
             mForceVector = mDirection * mForce;
 
-            linearVel = _compound.LinearVelocity.Length();
-            if(linearVel > maxVel) linearVel = maxVel;
+           // linearVel = _compound.LinearVelocity.Length();
+          //  if(linearVel > maxVel) linearVel = maxVel;
 
             if (drivingMode == vicksMode)
             {
@@ -186,11 +208,12 @@ namespace WindowsGame2.GameElements
                 // Move the car
                 if (ks.IsKeyDown(Keys.Right) && mColor == Color.Blue || gps.ThumbSticks.Right.X > 0)
                 {
-                    _compound.ApplyTorque(0.1f);
+                    _compound.ApplyTorque(0.05f);
                 }
                 if (ks.IsKeyDown(Keys.Left) && mColor == Color.Blue || gps.ThumbSticks.Right.X < 0)
                 {
-                    _compound.ApplyTorque(-0.1f);
+                    _compound.ApplyTorque(-0.05f);
+                   
                 }
 
                 if (ks.IsKeyDown(Keys.Up) && mColor == Color.Blue || gps.ThumbSticks.Left.Y > 0)
@@ -202,9 +225,12 @@ namespace WindowsGame2.GameElements
                 {
                     _compound.ApplyForce(-mForceVector, _compound.WorldCenter);
                 }
+
+                KillOrthogonalVelocity(this, 0.1f);
             }
             else if (drivingMode == unityMode)
             {
+                float newAcc = 0.0f;
                 if (ks.IsKeyDown(Keys.Right) && mColor == Color.Blue || gps.ThumbSticks.Right.X > 0)
                 {
                     _compound.AngularVelocity = 0;
@@ -218,14 +244,22 @@ namespace WindowsGame2.GameElements
 
                 if (ks.IsKeyDown(Keys.Up) && mColor == Color.Blue || gps.ThumbSticks.Left.Y > 0)
                 {
-                    _compound.LinearVelocity = mDirection * (linearVel);
-                    _compound.LinearVelocity += mDirection * (acc);
+                    newAcc = currentAcc;
                 }
                 if (ks.IsKeyDown(Keys.Down) && mColor == Color.Blue || gps.ThumbSticks.Left.Y < 0)
                 {
-                    _compound.LinearVelocity = -mDirection * (linearVel);
-                    _compound.LinearVelocity += -mDirection * (acc);
+                    newAcc = -currentAcc;
                 }
+
+                _compound.LinearVelocity += mDirection * (newAcc);
+                KillOrthogonalVelocity(this, driftValue);
+                if (_compound.LinearVelocity.Length() > currentMaxVel)
+                {
+                    Vector2 tempVel=_compound.LinearVelocity;
+                    _compound.LinearVelocity = Vector2.Normalize(tempVel) * currentMaxVel;
+                }
+                
+
             }
             else if (drivingMode == microMode)
             {
@@ -304,6 +338,16 @@ namespace WindowsGame2.GameElements
             }
 
             projectedPosition = computeMiddleTrackProjection();
+        }
+
+        public void KillOrthogonalVelocity(Car car, float drift)
+        {
+            Vector2 forwardVelocity = mDirection * Vector2.Dot(car._compound.LinearVelocity, mDirection);
+            Vector2 rightVector = new Vector2(-mDirection.Y, mDirection.X);
+            Vector2 rightVelocity = rightVector * Vector2.Dot(car._compound.LinearVelocity,rightVector);
+            car._compound.LinearVelocity = forwardVelocity + rightVelocity * drift;
+ 
+            
         }
 
         Vector2 computeMiddleTrackProjection()
@@ -434,9 +478,11 @@ namespace WindowsGame2.GameElements
                     result.Color = mColor;
                     result.compound.IgnoreCollisionWith(_compound);
 
-                       
-                    maxVel = 10 + result.compound.Mass;
-                    acc = acc + result.compound.Mass / 10;
+                    maxBoostFrames =(int)Math.Floor(result.compound.Mass * 5);
+                  //  maxVel = 10 + result.compound.Mass;
+                    currentMaxVel = boostMaxVel;
+                 //   acc = acc + result.compound.Mass / 10;
+                    currentAcc = boostAcc;
                     hasBoost = true;
                     return result;
                 }

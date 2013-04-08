@@ -255,6 +255,8 @@ namespace WindowsGame2.Screens
                 cars[i].mIsTrailLoop = false;
                 cars[i].mTrailPoints = 0;
                 cars[i].justStarted = true;
+
+                cars[i].resetBoost();
             }
             
         }
@@ -410,7 +412,14 @@ namespace WindowsGame2.Screens
 
             //set camera parameters
             cameraFollowing.firstCarIndex = ranking[0];
-            cameraFollowing.lastCarIndex = ranking[PlayersCount - 1 - currentExitIndex];
+            if (PlayersCount > 1)
+            {
+                cameraFollowing.lastCarIndex = ranking[PlayersCount - 1 - currentExitIndex];
+            }
+            else
+            {
+                cameraFollowing.lastCarIndex=ranking[0];
+            }
         }
 
         public void updateScore(int winnerIndex)
