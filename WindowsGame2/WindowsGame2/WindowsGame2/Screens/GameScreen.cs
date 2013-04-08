@@ -38,6 +38,7 @@ namespace WindowsGame2.Screens
         List<Car> Cars, AllCars;
         List<PlayerIndex> playerIndexes;
         Color[] carColors = { Color.Red, Color.Blue, Color.Green, Color.Brown };
+        string[] paperEffects = { "redCarPos", "blueCarPos", "greenCarPos", "pinkCarPos" };
 
         List<PolygonPhysicsObject> polygonsList;
         VertexPositionColorTexture[][] trails = new VertexPositionColorTexture[4][];
@@ -86,13 +87,21 @@ namespace WindowsGame2.Screens
             }
             set
             {
-                //Cars.Clear();
+                // AllCars contains the 4 cars
+                // When changing the players count we just remove all cars from the Cars list
+                // and add the chosen number of cars taking them from the AllCars list (this avoids creating new Car objects during the game)
+                // When we create the GameScreen the PlayersCount is set to 4 (the maximum number of players) and this setter method is called.
+                // Since the ScreenRenderer and AllCars are not initialized yet, we skip this first call with an if-statement.
+                Cars.Clear();
                 _playersCount = value;
-                //screenRenderer.PlayersCount = value;
-                //for (int i = 0; i < value; i++)
-                //{
-                //    Cars.Add(AllCars[i]);
-                //}
+                if (screenRenderer != null)
+                {
+                    screenRenderer.PlayersCount = value;
+                    for (int i = 0; i < value; i++)
+                    {
+                        Cars.Add(AllCars[i]);
+                    }
+                }
             }
         }
 
@@ -476,25 +485,11 @@ namespace WindowsGame2.Screens
             paperEffect.Parameters["View"].SetValue(view);
 
             paperEffect.CurrentTechnique.Passes["TrailPass"].Apply();
-            if (PlayersCount > 0)
-            {
-                paperEffect.Parameters["redCarPos"].SetValue(Cars[0]._compound.Position);
-            }
-            if (PlayersCount > 1)
-            {
-                paperEffect.Parameters["blueCarPos"].SetValue(Cars[1]._compound.Position);
-            }
-            if (PlayersCount > 2)
-            {
-                paperEffect.Parameters["greenCarPos"].SetValue(Cars[2]._compound.Position);
-            }
-            if (PlayersCount > 3)
-            {
-                paperEffect.Parameters["pinkCarPos"].SetValue(Cars[3]._compound.Position);
-            }
+
             for (int i = 0; i < Cars.Count; i++)
             {
                 //cars[i].Draw(spriteBatch, out trails[i]);
+                paperEffect.Parameters[paperEffects[i]].SetValue(Cars[i]._compound.Position);
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, 130 * 2);
             }
 
