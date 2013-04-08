@@ -105,7 +105,7 @@ namespace WindowsGame2
             Position = position;
             Zoom = 1.0f;
             Rotation = 0;
-            random = new Random(new DateTime().Millisecond);
+            random = new Random(DateTime.Now.Millisecond);
             FocusPoint = new Vector2(view.Width / 2, view.Height / 2);
             _screenCenter = new Vector2(View.Width / 2f, View.Height / 2f);
 
@@ -133,7 +133,7 @@ namespace WindowsGame2
             Position = position;
             Zoom = zoom;
             Rotation = rotation;
-            random = new Random(new DateTime().Millisecond);
+            random = new Random(DateTime.Now.Millisecond);
             FocusPoint = focus;
             _screenCenter = new Vector2(View.Width / 2f, View.Height / 2f);
 

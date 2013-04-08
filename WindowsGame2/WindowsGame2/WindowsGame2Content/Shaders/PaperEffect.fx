@@ -8,6 +8,8 @@ Texture2D objectSketch;
 Texture2D random;
 Texture2D ink;
 
+float randomSeed;
+
 float objetAlpha = 0.2;
 
 sampler trailSketchSampler = sampler_state
@@ -182,12 +184,12 @@ float4 PixelShaderFunctionTrail(TrailVertexShaderOutput input) : COLOR0
 
 float4 PixelShaderFunctionInk(InkVertexShaderOutput input) : COLOR0
 {
-    float4 texCol = tex2D(inkSampler, input.uv);
-	float rand = tex2D(randomSampler, input.xy)[0];
-	//float alpha = 1;
-	//if(texCol[0] > 0.5) alpha = 0;
-    return float4(texCol[0] * rand,texCol[1]* rand,texCol[2]* rand,texCol[3]);
-	return texCol;
+	float dist = 1 - input.xy[0];
+    float2 randomAccessor = float2(input.xy[0] / 10, input.xy[1] / 10);
+	float rand = tex2D(randomSampler, randomAccessor)[0];
+	rand = 1 - input.uv[0] + rand / 2;
+	if(rand < 0.3) rand = 0;
+    return float4(0,0.05,0.1, rand);
 }
 
 technique DoodleTechinque

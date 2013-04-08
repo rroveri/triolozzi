@@ -225,7 +225,6 @@ namespace WindowsGame2.GameElements
             }
             */
 
-
             myArray = new VertexPositionColorTexture[(curvePointsExternal.Count) * 6 + (curvePointsInternal.Count) * 6];
             for (int i = 0; i < curvePointsExternal.Count; i++)
             {
@@ -242,7 +241,7 @@ namespace WindowsGame2.GameElements
                 myArray[i * 6 + 4].Position = new Vector3(curvePointsExternal[preIndex] + normals[preIndex] / pathWidth, -0.1f);
                 myArray[i * 6 + 5].Position = new Vector3(curvePointsExternal[i] + normals[i] / pathWidth,-0.1f);
 
-                myArray[i * 6].TextureCoordinate = new Vector2(0,1);
+                myArray[i * 6].TextureCoordinate = new Vector2(0, 1);
                 myArray[i * 6 + 1].TextureCoordinate = new Vector2(0, 0);
                 myArray[i * 6 + 2].TextureCoordinate = new Vector2(1, 1);
 
