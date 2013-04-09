@@ -94,6 +94,8 @@ namespace WindowsGame2
         public Vector2 oldPosition;
         private bool firstTime=true;
 
+        public bool raceCanStart;
+
         /// <summary>
         /// Initialize a new Camera object
         /// </summary>
@@ -116,7 +118,7 @@ namespace WindowsGame2
                 carsPositions.Add(Sources[i].Position);
             }
 
-
+            raceCanStart = true;
         }
 
         /// <summary>
@@ -146,6 +148,8 @@ namespace WindowsGame2
                 carsPositions.Add(Sources[i].Position);
             }
              */
+
+            raceCanStart = true;
         }
 
         
@@ -180,7 +184,10 @@ namespace WindowsGame2
                 firstTime = false;
             }
 
-            
+            if (Vector2.Distance(oldPosition, objectPosition_) < 0.6f)
+            {
+                raceCanStart = true;
+            }
 
             //interpolate
             Vector2 objectPosition = new Vector2();

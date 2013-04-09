@@ -80,6 +80,8 @@ namespace WindowsGame2.Screens
         int[] orderToExit;
         private int currentExitIndex;
 
+        public bool readyToStart;
+
         private int _playersCount;
         public int PlayersCount
         {
@@ -135,6 +137,8 @@ namespace WindowsGame2.Screens
             orderToExit = new int[3];
             startingPos = new Vertices();
             currentExitIndex = 0;
+
+            readyToStart = false;
         }
 
         public override void LoadContent()
@@ -191,9 +195,7 @@ namespace WindowsGame2.Screens
                 Cars.Add(aCar);
             }
 
-            //generate starting positions and angles
-            int startingPoint = 0;
-            positionCars(startingPoint);
+            
 
             assetCreator = new AssetCreator(graphics.GraphicsDevice);
             assetCreator.LoadContent(this.Content);
@@ -202,6 +204,10 @@ namespace WindowsGame2.Screens
 
             // Single screen mode only
             cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f, Cars);
+
+            //generate starting positions and angles
+            int startingPoint = 0;
+            positionCars(startingPoint);
 
             _debugView = new DebugViewXNA(world);
             _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Shape);
@@ -254,8 +260,24 @@ namespace WindowsGame2.Screens
 
                 Cars[i].resetBoost();
 
+
+                Cars[i].isActive = false;
             }
-            
+
+            readyToStart = true;
+            cameraFollowing.raceCanStart = false;
+        }
+
+        public bool checkIfCameraIsReady()
+        {
+            if (cameraFollowing.raceCanStart)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public override void Unload()
@@ -268,6 +290,18 @@ namespace WindowsGame2.Screens
         {
             // TODO: should this be executed before?
             base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
+
+
+            if (checkIfCameraIsReady() && readyToStart)
+            {
+                readyToStart = false;
+                for (int i = 0; i < Cars.Count; i++)
+                {
+                    Cars[i].isActive = true;
+                }
+            }
+
+
 
             // Gradually fade in or out depending on whether we are covered by the pause screen.
             if (coveredByOtherScreen)
@@ -403,9 +437,6 @@ namespace WindowsGame2.Screens
                     if (Cars[i].isActive)
                     {
                         winnerIndex=i;
-                    }
-                    else{
-                        Cars[i].isActive=true;
                     }
                 }
 
