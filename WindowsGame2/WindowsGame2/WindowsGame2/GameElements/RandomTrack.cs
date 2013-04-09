@@ -30,6 +30,7 @@ namespace WindowsGame2.GameElements
         Body internalBody;
         List<Vector2> normals;
         List<Vector2> normalsInternal;
+        int[] normalsLengths;
         public List<int> internalCorrispondances;
         Texture2D bgTexture;
 
@@ -67,6 +68,8 @@ namespace WindowsGame2.GameElements
             normalsInternal = new List<Vector2>();
             ContentManager Content = GameServices.GetService<ContentManager>();
             bgTexture = Content.Load<Texture2D>("Images/bgNew");
+
+            
         }
     
         public void buildRandomTrack(){
@@ -135,9 +138,14 @@ namespace WindowsGame2.GameElements
                     //slow like an old kurva!!! 
                     //0.01 margin della vita!!
                     
-                    if (Vector2.Distance(newPoint, curvePointsInternal[j]) < pathWidth && j!=i)
+                    if (Vector2.Distance(newPoint, curvePointsInternal[j]) < pathWidth -0.05f && j!=i)
                     {
                         okToAdd = false;
+                        if (j > 0)
+                        {
+                            
+                        }
+
                     }
                     
                     /*

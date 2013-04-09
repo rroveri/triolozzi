@@ -42,6 +42,8 @@ namespace WindowsGame2.Screens
 
         List<PolygonPhysicsObject> polygonsList;
         VertexPositionColorTexture[][] trails = new VertexPositionColorTexture[4][];
+        VertexPositionColorTexture[][] burnouts = new VertexPositionColorTexture[4][];
+
 
         KeyboardState prevKeyboardState;
         Random Random;
@@ -218,6 +220,8 @@ namespace WindowsGame2.Screens
             basicVert = new VertexPositionColorTexture[maxNumberOfTriangles];
             for (int i = 0; i < maxNumberOfTriangles; i++) basicVert[i].TextureCoordinate = new Vector2(-1);
                 triangleListIndices = new short[maxNumberOfTriangles * 3];
+
+              
         }
 
         public void positionCars(int startingPoint)
@@ -481,7 +485,7 @@ namespace WindowsGame2.Screens
             // draw cars and their trails
             for (int i = 0; i < Cars.Count; i++)
             {
-                Cars[i].Draw(spriteBatch, out trails[i]);
+                Cars[i].Draw(spriteBatch, out trails[i], out burnouts[i]);
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
             }
 
@@ -502,6 +506,9 @@ namespace WindowsGame2.Screens
                 //cars[i].Draw(spriteBatch, out trails[i]);
                 paperEffect.Parameters[paperEffects[i]].SetValue(Cars[i]._compound.Position);
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, 130 * 2);
+
+                if (Cars[i].burnoutCounter>0)
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, burnouts[i], 0, Cars[i].burnoutCounter * 2);
             }
 
 
