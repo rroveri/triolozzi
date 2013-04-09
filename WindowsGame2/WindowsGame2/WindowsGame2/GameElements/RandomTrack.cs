@@ -33,6 +33,9 @@ namespace WindowsGame2.GameElements
         int[] normalsLengths;
         public List<int> internalCorrispondances;
         Texture2D bgTexture;
+        Texture2D bgTextureEasterEgg;
+        Texture2D currentTexture;
+        int currentTextureIndex;
 
         float left = 10000000;
         float right = -10000000;
@@ -68,7 +71,9 @@ namespace WindowsGame2.GameElements
             normalsInternal = new List<Vector2>();
             ContentManager Content = GameServices.GetService<ContentManager>();
             bgTexture = Content.Load<Texture2D>("Images/bgNew");
-
+            bgTextureEasterEgg = Content.Load<Texture2D>("Images/bgNew2");
+            currentTexture = bgTexture;
+            currentTextureIndex = 0;
             
         }
     
@@ -329,7 +334,18 @@ namespace WindowsGame2.GameElements
             return (float)((Math.Pow((double)(1 - t), 3) * p0.Y) + (3 * Math.Pow((double)(1 - t), 2) * t * p1.Y) + (3 * (1 - t) * (t * t) * p2.Y) + ((t * t * t) * p3.Y));
         }   
 
-
+        public void swapTexture(){
+            if (currentTextureIndex==0){
+                currentTexture = bgTextureEasterEgg;
+                currentTextureIndex = 1;
+            }
+            else if (currentTextureIndex == 1)
+            {
+                currentTexture = bgTexture;
+                currentTextureIndex = 0;
+            }
+            
+        }
 
         void DrawLine(SpriteBatch batch, float width, Color color, Vector2 point1, Vector2 point2)
         {
@@ -344,11 +360,11 @@ namespace WindowsGame2.GameElements
         {
 
             //draw background
-            for (int y = (int)Math.Ceiling(down); y < (int)Math.Ceiling(up); y = y + bgTexture.Height * textureScale)
+            for (int y = (int)Math.Ceiling(down); y < (int)Math.Ceiling(up); y = y + currentTexture.Height * textureScale)
             {
-                for (int x = (int)Math.Floor(left); x < (int)Math.Ceiling(right); x = x + bgTexture.Width * textureScale)
+                for (int x = (int)Math.Floor(left); x < (int)Math.Ceiling(right); x = x + currentTexture.Width * textureScale)
                 {
-                    spriteBatch.Draw(bgTexture, new Vector2(x, y), null, Color.White, 0.0f, Vector2.Zero, Vector2.One*textureScale, SpriteEffects.None, 1f);
+                    spriteBatch.Draw(currentTexture, new Vector2(x, y), null, Color.White, 0.0f, Vector2.Zero, Vector2.One * textureScale, SpriteEffects.None, 1f);
                 }
             }
 

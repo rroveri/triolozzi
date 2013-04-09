@@ -83,6 +83,8 @@ namespace WindowsGame2.GameElements
 
         private float wheelsDistance=0.13f;
 
+        private bool freeToSwap;
+
         public Car(World world, Color Color, RandomTrack _randomTrack)
             : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/small_white_penis"), new Vector2(65.0f, 40.0f), Color)
         {
@@ -143,6 +145,8 @@ namespace WindowsGame2.GameElements
             currentMaxVel = maxVel;
 
             burnoutCounter = 0;
+
+            freeToSwap = true;
         }
 
         public Vector2 ProjectedPosition
@@ -362,6 +366,18 @@ namespace WindowsGame2.GameElements
             }
 
             projectedPosition = computeMiddleTrackProjection();
+        
+            //easter egg
+            if (gps.Triggers.Left > 0 && gps.Buttons.Y== ButtonState.Pressed && freeToSwap)
+            {
+                randomTrack.swapTexture();
+                freeToSwap = false;
+            }
+            else if (gps.Buttons.Y == ButtonState.Released)
+            {
+                freeToSwap = true;
+            }
+        
         }
 
         public void KillOrthogonalVelocity(Car car, float drift)
