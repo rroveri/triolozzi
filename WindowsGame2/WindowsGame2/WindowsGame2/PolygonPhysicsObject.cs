@@ -84,6 +84,7 @@ namespace WindowsGame2
                 IsValid = false;
                 return;
             }
+           // Console.WriteLine(vertices.Count);
 
             IsValid = true;
             // compute comvex shape
@@ -103,8 +104,18 @@ namespace WindowsGame2
             if (canCreate)
             {
                 compound = BodyFactory.CreateCompoundPolygon(world, list, 1f, BodyType.Dynamic);
-                compound.BodyType = BodyType.Dynamic;
-                compound.CollisionGroup = -1;
+
+                if (compound.Mass < 1f)
+                {
+                    compound.Enabled = false;
+                   
+                    IsValid = false;
+                }
+                else
+                {
+                    compound.BodyType = BodyType.Dynamic;
+                    compound.CollisionGroup = -1;
+                }
             }
             else
             {

@@ -312,7 +312,7 @@ namespace WindowsGame2.GameElements
             tdPos.Y = _compound.Position.Y;
 
             // Add a trail point if the player is drawing
-            if ((ks.IsKeyDown(Keys.F) && blueOnly || gps.Triggers.Right > 0) && !justStarted)
+            if (((ks.IsKeyDown(Keys.F) && blueOnly || gps.Triggers.Right > 0) || true) && !justStarted)
             {
                if (mTrailPoints >= mMaximumTrailPoints)
                 {
@@ -397,8 +397,6 @@ namespace WindowsGame2.GameElements
                 oldEVertBurnoutRight = newEVertBurnoutRight;
 
                 burnoutCounter++;
-
-
 
 
                 newWVertBurnoutLeft.X = tdPos.X - mDirection.Y * offset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
