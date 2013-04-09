@@ -365,7 +365,8 @@ namespace WindowsGame2.Screens
                 }
                 else
                 {
-                    polygonsList[i].compound.Enabled = true;
+                    if (polygonsList[i].IsValid)
+                        polygonsList[i].compound.Enabled = true;
                 }
             }
         }

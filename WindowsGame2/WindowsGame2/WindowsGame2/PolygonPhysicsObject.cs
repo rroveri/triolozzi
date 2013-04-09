@@ -88,8 +88,17 @@ namespace WindowsGame2
 
             IsValid = true;
             // compute comvex shape
-
-            List<Vertices> list = EarclipDecomposer.ConvexPartition(vertices);
+            List<Vertices> list;
+            try
+            {
+                list = EarclipDecomposer.ConvexPartition(vertices);
+            }
+            catch (Exception)
+            {
+                // Non fare un cip
+                IsValid = false;
+                return;
+            }
 
             // scale vertices
             Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1)) * 1f;
