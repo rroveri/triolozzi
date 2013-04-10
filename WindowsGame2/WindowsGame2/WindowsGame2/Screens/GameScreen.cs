@@ -203,7 +203,7 @@ namespace WindowsGame2.Screens
             defaultViewport = GraphicsDevice.Viewport;
 
             // Single screen mode only
-            cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f, Cars);
+            cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f);
 
             //generate starting positions and angles
             int startingPoint = 0;
@@ -348,7 +348,7 @@ namespace WindowsGame2.Screens
 
             }
             
-            cameraFollowing.Update(gameTime);
+            cameraFollowing.Update(gameTime, Cars);
 
             gameLogic();
 

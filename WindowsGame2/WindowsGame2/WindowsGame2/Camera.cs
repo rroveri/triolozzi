@@ -69,13 +69,6 @@ namespace WindowsGame2
             private set;
         }
 
-        //The source object to follow
-        public List<Car> Sources
-        {
-            get;
-            private set;
-        }
-
         //Used to matching the rotation of the object, or any value you wish
         public float SourceRotationOffset
         {
@@ -86,7 +79,6 @@ namespace WindowsGame2
         Random random;
 
         Vector2 _screenCenter;
-        Vertices carsPositions;
 
         public int firstCarIndex;
         public int lastCarIndex;
@@ -100,36 +92,11 @@ namespace WindowsGame2
         /// Initialize a new Camera object
         /// </summary>
         /// <param name="view">The viewport we want the camera to use (holds dimensions and so on)</param>
-        /// <param name="position">Where to point the center of the camera (0x0 will be the center of the viewport)</param>
-        public Camera(Viewport view, Vector2 position, List<Car> cars)
-        {
-            View = view;
-            Position = position;
-            Zoom = 1.0f;
-            Rotation = 0;
-            random = new Random(DateTime.Now.Millisecond);
-            FocusPoint = new Vector2(view.Width / 2, view.Height / 2);
-            _screenCenter = new Vector2(View.Width / 2f, View.Height / 2f);
-
-            Sources = cars;
-            this.carsPositions = new Vertices();
-            for (int i = 0; i < Sources.Count; i++)
-            {
-                carsPositions.Add(Sources[i].Position);
-            }
-
-            raceCanStart = true;
-        }
-
-        /// <summary>
-        /// Initialize a new Camera object
-        /// </summary>
-        /// <param name="view">The viewport we want the camera to use (holds dimensions and so on)</param>
         /// <param name="position">Where to position our camera relative to the focus point</param>
         /// <param name="focus">Where to point the center of the camera (0x0 will be the center of the viewport)</param>
         /// <param name="zoom">How much we want the camera zoomed by default</param>
         /// <param name="rotation">How much we want the camera to be rotated by default</param>
-        public Camera(Viewport view, Vector2 position, Vector2 focus, float zoom, float rotation, List<Car> cars)
+        public Camera(Viewport view, Vector2 position, Vector2 focus, float zoom, float rotation)
         {
             View = view;
             Position = position;
@@ -139,44 +106,34 @@ namespace WindowsGame2
             FocusPoint = focus;
             _screenCenter = new Vector2(View.Width / 2f, View.Height / 2f);
 
-            Sources = cars;
-            this.carsPositions = new Vertices();
-
-            /*
-            for (int i = 0; i < Sources.Count; i++)
-            {
-                carsPositions.Add(Sources[i].Position);
-            }
-             */
-
             raceCanStart = true;
         }
 
         
-        public void Update(GameTime gametime)
+        public void Update(GameTime gametime, List<Car> Cars)
         {
 
             //choose interpolation weight and cars weights depending on the number of players
             float interpWeight = 0.1f;
             float firstCarWeight = 0.5f;
-            if (Sources.Count == 4)
+            if (Cars.Count == 4)
             {
                 interpWeight = 0.1f;
                 firstCarWeight = 0.6f;
             }
-            else if (Sources.Count == 3)
+            else if (Cars.Count == 3)
             {
                 interpWeight = 0.1f;
                 firstCarWeight = 0.55f;
             }
-            else if (Sources.Count == 2)
+            else if (Cars.Count == 2)
             {
                 interpWeight = 1f;
                 firstCarWeight = 0.5f;
             }
 
             //set taget position
-            Vector2 objectPosition_ = ConvertUnits.ToDisplayUnits(firstCarWeight*Sources[firstCarIndex]._compound.Position + (1-firstCarWeight)*Sources[lastCarIndex]._compound.Position);
+            Vector2 objectPosition_ = ConvertUnits.ToDisplayUnits(firstCarWeight * Cars[firstCarIndex]._compound.Position + (1 - firstCarWeight) * Cars[lastCarIndex]._compound.Position);
 
             //initialize old position
             if (firstTime){
@@ -216,31 +173,6 @@ namespace WindowsGame2
             ProjectionMatrix = Matrix.CreateOrthographicOffCenter(0f, ConvertUnits.ToSimUnits(View.Width) * (1 / (float)Math.Pow(Zoom, 10)),
                                                               ConvertUnits.ToSimUnits(View.Height) * (1 / (float)Math.Pow(Zoom, 10)), 0f, 0f,1f);
             ViewMatrix = Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(objectPosition) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(Zoom, 10)), 0f));
-
-       
         }
-
-        
-
-     
-
-        /// <summary>
-        /// Resets the camera to default values
-        /// </summary>
-        private void Reset()
-        {
-            Position = Vector2.Zero;
-            Rotation = 0;
-            Zoom = 1.0f;
-            Sources= null;
-        }
-
-
-        public void Follow(List<Car> sources, float rotationOffset)
-        {
-            Sources = sources;
-            SourceRotationOffset = rotationOffset;
-        }
-
     }
 }
