@@ -185,11 +185,11 @@ float4 PixelShaderFunctionTrail(TrailVertexShaderOutput input) : COLOR0
 float4 PixelShaderFunctionInk(InkVertexShaderOutput input) : COLOR0
 {
 	float dist = 1 - input.xy[0];
-    float2 randomAccessor = float2(input.xy[0] / 10, input.xy[1] / 10);
+    float2 randomAccessor = float2(input.xy[0] / 7, input.xy[1] / 7);
 	float rand = tex2D(randomSampler, randomAccessor)[0];
 	rand = 1 - input.uv[0] + rand / 2;
 	if(rand < 0.3) rand = 0;
-    return float4(0,0.05,0.1, rand);
+    return float4(0,0.00,0.0, rand);
 }
 
 technique DoodleTechinque

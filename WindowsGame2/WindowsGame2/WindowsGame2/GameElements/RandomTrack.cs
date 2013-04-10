@@ -45,6 +45,13 @@ namespace WindowsGame2.GameElements
         int textureScale = 3;
 
         public VertexPositionColorTexture[] myArray;
+
+        public List<Texture2D> texturesArray;
+
+        public List<float> internalNormalsCoefficients;
+        public List<float> externalNormalsCoefficients;
+
+
         
         public static RandomTrack createTrack()
         {
@@ -74,7 +81,19 @@ namespace WindowsGame2.GameElements
             bgTextureEasterEgg = Content.Load<Texture2D>("Images/bgNew2");
             currentTexture = bgTexture;
             currentTextureIndex = 0;
-            
+
+            texturesArray = new List<Texture2D>();
+            texturesArray.Add(bgTexture);          
+            texturesArray.Add(Content.Load<Texture2D>("Images/ColinComm2"));
+            texturesArray.Add(Content.Load<Texture2D>("Images/asd"));
+            texturesArray.Add(Content.Load<Texture2D>("Images/BlackNight_o_o"));
+            texturesArray.Add(Content.Load<Texture2D>("Images/cina"));
+            texturesArray.Add(Content.Load<Texture2D>("Images/q"));
+            texturesArray.Add(bgTextureEasterEgg);
+
+            internalNormalsCoefficients = new List<float>();
+            externalNormalsCoefficients = new List<float>();
+
         }
     
         public void buildRandomTrack(){
@@ -115,13 +134,15 @@ namespace WindowsGame2.GameElements
                 curvePointsInternal.Add(newPoint);
             }
 
-            
-            
-            
-            
+
+
             //generate external, middle points and normals
+
+            bool hasToRemoveLast = false;
             for (int i = 0; i < curvePointsInternal.Count; i++)
             {
+                
+
                 int preIndex = i - 1;
                 int postIndex = i + 1;
                 if (preIndex < 0)
@@ -137,42 +158,74 @@ namespace WindowsGame2.GameElements
                 Vector2 normalVector = Vector2.Normalize(new Vector2(-tangentVector.Y, tangentVector.X))*pathWidth;
                 normalsInternal.Add(-normalVector);
                 Vector2 newPoint=curvePointsInternal[i] + normalVector;
+
+                float randomizedRadius = (float)MathHelper.Lerp(0f, tangentVector.Length(), (float)random.NextDouble());
+                internalNormalsCoefficients.Add(Math.Min( tangentVector.Length() * tangentVector.Length(), pathWidth/2f));
+
+
                 bool okToAdd=true;
+                bool notAdded = false;
+                
                 for (int j = 0; j < curvePointsInternal.Count - 1; j++)
                 {
+                    
+
                     //slow like an old kurva!!! 
                     //0.01 margin della vita!!
                     
                     if (Vector2.Distance(newPoint, curvePointsInternal[j]) < pathWidth -0.05f && j!=i)
                     {
                         okToAdd = false;
-                        if (j > 0)
-                        {
-                            
-                        }
-
+                       
                     }
-                    
-                    /*
-                    if (Vector2.Distance(newPoint, curvePointsInternal[j]) < pathWidth-0.01f)
-                    {
-                        okToAdd = false;
-                    }
-                     */ 
+ 
                 }
                 if (okToAdd)
                 {
-                    curvePointsExternal.Add(newPoint);
-                    normals.Add(normalVector);
-                    curvePointsMiddle.Add(curvePointsInternal[i] + (newPoint - curvePointsInternal[i])/2f);
-                    internalCorrispondances.Add(i);
+                    if (notAdded)
+                    {
+                        notAdded = false;
+                        if (curvePointsExternal.Count > 0)
+                        {
+                            curvePointsExternal.RemoveAt(curvePointsExternal.Count - 1);
+                            normals.RemoveAt(curvePointsExternal.Count - 1);
+                            curvePointsMiddle.RemoveAt(curvePointsExternal.Count - 1);
+                            internalCorrispondances.RemoveAt(curvePointsExternal.Count - 1);
+
+                        }
+                        else {
+                            hasToRemoveLast = true;
+                        }
+                    }
+                    else
+                    {
+                        curvePointsExternal.Add(newPoint);
+                        normals.Add(normalVector);
+                        curvePointsMiddle.Add(curvePointsInternal[i] + (newPoint - curvePointsInternal[i]) / 2f);
+                        internalCorrispondances.Add(i);
+
+                    }
                 }
+                else
+                {
+                    notAdded = true;
+                }
+                
+            }
+
+            if (hasToRemoveLast)
+            {
+                curvePointsExternal.RemoveAt(curvePointsExternal.Count - 1);
+                normals.RemoveAt(curvePointsExternal.Count - 1);
+                curvePointsMiddle.RemoveAt(curvePointsExternal.Count - 1);
+                internalCorrispondances.RemoveAt(curvePointsExternal.Count - 1);
             }
             
 
 
             externalBody = BodyFactory.CreateLoopShape(world, curvePointsExternal);
             internalBody = BodyFactory.CreateLoopShape(world, curvePointsInternal);
+
 
             //compute bounding box in screen coordinates
             
@@ -195,49 +248,18 @@ namespace WindowsGame2.GameElements
                     up = ConvertUnits.ToDisplayUnits(curvePointsExternal[i].Y);
                 }
             }
-            
 
-            /*
-            //generate external points with external controlPoints
-            Vertices externalControlPoints = new Vertices();
-            List<int> externalControlPointsIndices = new List<int>();
-            for (int i = 0; i < curvePointsInternal.Count; i=i+100)
+            //create external normal coefficients, and interpolate the first ones to get a smooth ink width at the start
+            externalNormalsCoefficients = internalNormalsCoefficients;
+            int startingVertices=5;
+            for (int i = 0; i < startingVertices; i++)
             {
-                externalControlPointsIndices.Add(i);
+                externalNormalsCoefficients[i] = MathHelper.Lerp(internalNormalsCoefficients[internalNormalsCoefficients.Count - 1], internalNormalsCoefficients[i], 1 / startingVertices*i);
             }
-            for (int i = 1; i < externalControlPointsIndices.Count - 1; i++)
-            {
-                Vector2 tangentVector = curvePointsInternal[externalControlPointsIndices[i] + 1] - curvePointsInternal[externalControlPointsIndices[i] - 1];
-                Vector2 normalVector = Vector2.Normalize(new Vector2(-tangentVector.Y, tangentVector.X)) * pathWidth;
 
-                externalControlPoints.Add(curvePointsInternal[externalControlPointsIndices[i]] + normalVector);
-            }
-            //create bezier curve
-            for (int i = 0; i <= externalControlPoints.Count - 4; i++)
-            {
-                for (int t = 0; t <= 100; t++)
-                {
-                    Vector2 newPoint = Vector2.CatmullRom(externalControlPoints[i], externalControlPoints[i + 1], externalControlPoints[i + 2], externalControlPoints[i + 3], t / 100f);
-                    curvePointsExternal.Add(newPoint);
-                }
-            }
-            for (int t = 0; t <= 100; t++)
-            {
-                Vector2 newPoint = Vector2.CatmullRom(externalControlPoints[externalControlPoints.Count - 3], externalControlPoints[externalControlPoints.Count - 2], externalControlPoints[externalControlPoints.Count - 1], externalControlPoints[0], t / 100f);
-                curvePointsExternal.Add(newPoint);
-            }
-            for (int t = 0; t <= 100; t++)
-            {
-                Vector2 newPoint = Vector2.CatmullRom(externalControlPoints[externalControlPoints.Count - 2], externalControlPoints[externalControlPoints.Count - 1], externalControlPoints[0], externalControlPoints[1], t / 100f);
-                curvePointsExternal.Add(newPoint);
-            }
-            for (int t = 0; t <= 100; t++)
-            {
-                Vector2 newPoint = Vector2.CatmullRom(externalControlPoints[externalControlPoints.Count - 1], externalControlPoints[0], externalControlPoints[1], externalControlPoints[2], t / 100f);
-                curvePointsExternal.Add(newPoint);
-            }
-            */
 
+            //set borders triangles for shaders
+            //external borders
             myArray = new VertexPositionColorTexture[(curvePointsExternal.Count) * 6 + (curvePointsInternal.Count) * 6];
             for (int i = 0; i < curvePointsExternal.Count; i++)
             {
@@ -246,13 +268,17 @@ namespace WindowsGame2.GameElements
                 {
                     preIndex = curvePointsExternal.Count-1;
                 }
+
+                //TO NOTICE: i am NOT taking the corrispondent external point for the externalNormalsCoefficent on purpose (i should use externalNormalsCoefficients[internalCorrispondences[preIndex]] and so on)!!
+                //I left it like this in order to have asymmetry between the two borders!!!!!
+
                 myArray[i * 6].Position = new Vector3(curvePointsExternal[preIndex], -0.1f);
                 myArray[i * 6 + 1].Position = new Vector3(curvePointsExternal[i], -0.1f);
-                myArray[i * 6 + 2].Position = new Vector3(curvePointsExternal[preIndex] + normals[preIndex] / pathWidth, -0.1f);
+                myArray[i * 6 + 2].Position = new Vector3(curvePointsExternal[preIndex] + normals[preIndex] / pathWidth * externalNormalsCoefficients[preIndex], -0.1f);
 
                 myArray[i * 6 + 3].Position = new Vector3(curvePointsExternal[i], -0.1f);
-                myArray[i * 6 + 4].Position = new Vector3(curvePointsExternal[preIndex] + normals[preIndex] / pathWidth, -0.1f);
-                myArray[i * 6 + 5].Position = new Vector3(curvePointsExternal[i] + normals[i] / pathWidth,-0.1f);
+                myArray[i * 6 + 4].Position = new Vector3(curvePointsExternal[preIndex] + normals[preIndex] / pathWidth * externalNormalsCoefficients[preIndex], -0.1f);
+                myArray[i * 6 + 5].Position = new Vector3(curvePointsExternal[i] + normals[i] / pathWidth * externalNormalsCoefficients[i], -0.1f);
 
                 myArray[i * 6].TextureCoordinate = new Vector2(0, 1);
                 myArray[i * 6 + 1].TextureCoordinate = new Vector2(0, 0);
@@ -264,6 +290,7 @@ namespace WindowsGame2.GameElements
 
              }
 
+            //internal borders
             for (int i = 0; i < curvePointsInternal.Count; i++)
             {
                 int preIndex = i - 1;
@@ -274,11 +301,11 @@ namespace WindowsGame2.GameElements
 
                 myArray[(i + curvePointsExternal.Count) * 6].Position = new Vector3(curvePointsInternal[preIndex], -0.1f);
                 myArray[(i + curvePointsExternal.Count) * 6 + 1].Position = new Vector3(curvePointsInternal[i], -0.1f);
-                myArray[(i + curvePointsExternal.Count) * 6 + 2].Position = new Vector3(curvePointsInternal[preIndex] + normalsInternal[preIndex] / pathWidth, -0.1f);
+                myArray[(i + curvePointsExternal.Count) * 6 + 2].Position = new Vector3(curvePointsInternal[preIndex] + normalsInternal[preIndex] / pathWidth * internalNormalsCoefficients[preIndex], -0.1f);
 
                 myArray[(i + curvePointsExternal.Count) * 6 + 3].Position = new Vector3(curvePointsInternal[i], -0.1f);
-                myArray[(i + curvePointsExternal.Count) * 6 + 4].Position = new Vector3(curvePointsInternal[preIndex] + normalsInternal[preIndex] / pathWidth, -0.1f);
-                myArray[(i + curvePointsExternal.Count) * 6 + 5].Position = new Vector3(curvePointsInternal[i] + normalsInternal[i] / pathWidth, -0.1f);
+                myArray[(i + curvePointsExternal.Count) * 6 + 4].Position = new Vector3(curvePointsInternal[preIndex] + normalsInternal[preIndex] / pathWidth * internalNormalsCoefficients[preIndex], -0.1f);
+                myArray[(i + curvePointsExternal.Count) * 6 + 5].Position = new Vector3(curvePointsInternal[i] + normalsInternal[i] / pathWidth * internalNormalsCoefficients[i], -0.1f);
 
                 myArray[(i + curvePointsExternal.Count) * 6].TextureCoordinate = new Vector2(0, 1);
                 myArray[(i + curvePointsExternal.Count) * 6 + 1].TextureCoordinate = new Vector2(0, 0);
@@ -335,13 +362,11 @@ namespace WindowsGame2.GameElements
         }   
 
         public void swapTexture(){
-            if (currentTextureIndex==0){
-                currentTexture = bgTextureEasterEgg;
-                currentTextureIndex = 1;
-            }
-            else if (currentTextureIndex == 1)
+
+            currentTexture =texturesArray[currentTextureIndex];
+            currentTextureIndex++;
+            if (currentTextureIndex > texturesArray.Count - 1)
             {
-                currentTexture = bgTexture;
                 currentTextureIndex = 0;
             }
             
@@ -369,17 +394,52 @@ namespace WindowsGame2.GameElements
             }
 
                 
-
             //draw starting line
             DrawLine(spriteBatch, 100, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
 
-            /*
-            //draw connections between internal and external points for debugging
+            
+            //draw triangulation of the track for debugging 
             for (int i = 0; i < curvePointsExternal.Count; i++)
             {
-                DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[i]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
+                int nextIndex = i + 1;
+                if (nextIndex > curvePointsExternal.Count-1)
+                {
+                    nextIndex = 0;
+                }
+
+                int a=internalCorrispondances[i];
+                int b=internalCorrispondances[nextIndex];
+                if (b - a == 1 )
+                {
+                    //for each "rectangle" there are two triangles
+                    DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[a]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
+                    DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[b]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
+                    DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[b]), ConvertUnits.ToDisplayUnits(curvePointsInternal[a]));
+
+                    DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[b]), ConvertUnits.ToDisplayUnits(curvePointsExternal[nextIndex]));
+                    DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[b]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
+                    DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsExternal[nextIndex]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
+                }
+                else
+                {
+                   for (int j = a; j < b; j++)
+                   {
+                       DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsInternal[j]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
+                       DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsInternal[j]), ConvertUnits.ToDisplayUnits(curvePointsInternal[j+1]));
+                       DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsInternal[j+1]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
+                   }
+                   DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsInternal[b]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
+                   DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsInternal[b]), ConvertUnits.ToDisplayUnits(curvePointsExternal[nextIndex]));
+                   DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsExternal[nextIndex]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
+                }
             }
-             */
+            /*
+             //draw connections between internal and external points for debugging
+             for (int i = 0; i < curvePointsExternal.Count; i++)
+             {
+                 DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[i]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
+             }
+            */
 
 
             //// draw track
