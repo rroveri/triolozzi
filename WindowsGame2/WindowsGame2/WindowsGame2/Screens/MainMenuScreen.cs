@@ -82,7 +82,6 @@ namespace WindowsGame2.Screens
         //void PlayGameMenuEntrySelected(object sender, PlayerIndexEventArgs e)
         //{
         //    // TODO: start game here
-        //    ScreenManager.GetScreen<GameScreen>().GameMode = 0;
         //    ScreenManager.GetScreen<GameScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
         //    ScreenManager.ShowScreen<GameScreen>();
         //}
@@ -90,8 +89,6 @@ namespace WindowsGame2.Screens
 
         void PlayGameMenuSingleModeEntrySelected(object sender, PlayerIndexEventArgs e)
         {
-            // TODO: start game here
-            ScreenManager.GetScreen<GameScreen>().GameMode = 1;
             ScreenManager.GetScreen<GameScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
             ScreenManager.ShowScreen<GameScreen>();
         }

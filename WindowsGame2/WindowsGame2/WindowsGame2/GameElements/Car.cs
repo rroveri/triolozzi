@@ -155,12 +155,6 @@ namespace WindowsGame2.GameElements
             set { projectedPosition = value * ConvertUnits.ToSimUnits(1); }
         }
 
-
-        private int mod(int index)
-        {
-            return (index + mMaximumTrailPoints) % mMaximumTrailPoints;
-        }
-
         private void resetTrail()
         {
             for (int i = 0; i < trailVertices.Count(); i++)

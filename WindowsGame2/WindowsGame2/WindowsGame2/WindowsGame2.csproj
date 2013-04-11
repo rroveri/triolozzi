@@ -118,6 +118,7 @@
     <Compile Include="DebugViewXNA.cs" />
     <Compile Include="DrawablePhysicsObject.cs" />
     <Compile Include="FrameRateCounter.cs" />
+    <Compile Include="GameElements\GameLogic.cs" />
     <Compile Include="GameElements\RandomTrack.cs" />
     <Compile Include="ScreenManagement\GameServices.cs" />
     <Compile Include="ScreenManagement\InputAction.cs" />
