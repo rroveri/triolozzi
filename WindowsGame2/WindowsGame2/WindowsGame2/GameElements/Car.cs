@@ -52,7 +52,7 @@ namespace WindowsGame2.GameElements
         private Vector3 oldWVertBurnoutRight, newWVertBurnoutRight, oldEVertBurnoutRight, newEVertBurnoutRight;
         private Vector3 oldWVertBurnoutLeft, newWVertBurnoutLeft, oldEVertBurnoutLeft, newEVertBurnoutLeft;
         private Vector2 texNW, texNE, texOW, texOE;
-        private float offset = 0.3f, tailOffset = 0.2f;
+        private float offset = 0.3f, tailOffset = 0.2f, burnoutOffset = 0.1f;
         private Random seed = new Random( DateTime.Now.Millisecond);
 
         private float acc = 0.4f;
@@ -389,11 +389,11 @@ namespace WindowsGame2.GameElements
 
             if (drift != 0 && rightVelocity.Length() > 5f)
             {
-                newWVertBurnoutRight.X = tdPos.X - mDirection.Y * offset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
-                newWVertBurnoutRight.Y = tdPos.Y + mDirection.X * offset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.Y * wheelsDistance;
+                newWVertBurnoutRight.X = tdPos.X - mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
+                newWVertBurnoutRight.Y = tdPos.Y + mDirection.X * burnoutOffset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.Y * wheelsDistance;
 
-                newEVertBurnoutRight.X = tdPos.X + mDirection.Y * offset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
-                newEVertBurnoutRight.Y = tdPos.Y - mDirection.X * offset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.Y * wheelsDistance;
+                newEVertBurnoutRight.X = tdPos.X + mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
+                newEVertBurnoutRight.Y = tdPos.Y - mDirection.X * burnoutOffset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.Y * wheelsDistance;
 
                 burnoutsVertices[burnoutCounter * 6 + 0].Position = newWVertBurnoutRight;
                 burnoutsVertices[burnoutCounter * 6 + 1].Position = newEVertBurnoutRight;
@@ -415,11 +415,11 @@ namespace WindowsGame2.GameElements
                 burnoutCounter++;
 
 
-                newWVertBurnoutLeft.X = tdPos.X - mDirection.Y * offset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
-                newWVertBurnoutLeft.Y = tdPos.Y + mDirection.X * offset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.Y * wheelsDistance;
+                newWVertBurnoutLeft.X = tdPos.X - mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
+                newWVertBurnoutLeft.Y = tdPos.Y + mDirection.X * burnoutOffset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.Y * wheelsDistance;
 
-                newEVertBurnoutLeft.X = tdPos.X + mDirection.Y * offset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
-                newEVertBurnoutLeft.Y = tdPos.Y - mDirection.X * offset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.Y * wheelsDistance;
+                newEVertBurnoutLeft.X = tdPos.X + mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
+                newEVertBurnoutLeft.Y = tdPos.Y - mDirection.X * burnoutOffset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.Y * wheelsDistance;
 
                 burnoutsVertices[burnoutCounter * 6 + 0].Position = newWVertBurnoutLeft;
                 burnoutsVertices[burnoutCounter * 6 + 1].Position = newEVertBurnoutLeft;
@@ -443,17 +443,17 @@ namespace WindowsGame2.GameElements
             }
             else
             {
-                oldWVertBurnoutRight.X = tdPos.X - mDirection.Y * offset + rightVector.X * wheelsDistance;
-                oldWVertBurnoutRight.Y = tdPos.Y + mDirection.X * offset + rightVector.Y * wheelsDistance;
+                oldWVertBurnoutRight.X = tdPos.X - mDirection.Y * burnoutOffset + rightVector.X * wheelsDistance;
+                oldWVertBurnoutRight.Y = tdPos.Y + mDirection.X * burnoutOffset + rightVector.Y * wheelsDistance;
 
-                oldEVertBurnoutRight.X = tdPos.X + mDirection.Y * offset + rightVector.X * wheelsDistance;
-                oldEVertBurnoutRight.Y = tdPos.Y - mDirection.X * offset + rightVector.Y * wheelsDistance;
+                oldEVertBurnoutRight.X = tdPos.X + mDirection.Y * burnoutOffset + rightVector.X * wheelsDistance;
+                oldEVertBurnoutRight.Y = tdPos.Y - mDirection.X * burnoutOffset + rightVector.Y * wheelsDistance;
 
-                oldWVertBurnoutLeft.X = tdPos.X - mDirection.Y * offset - rightVector.X * wheelsDistance;
-                oldWVertBurnoutLeft.Y = tdPos.Y + mDirection.X * offset - rightVector.Y * wheelsDistance;
+                oldWVertBurnoutLeft.X = tdPos.X - mDirection.Y * burnoutOffset - rightVector.X * wheelsDistance;
+                oldWVertBurnoutLeft.Y = tdPos.Y + mDirection.X * burnoutOffset - rightVector.Y * wheelsDistance;
 
-                oldEVertBurnoutLeft.X = tdPos.X + mDirection.Y * offset - rightVector.X * wheelsDistance;
-                oldEVertBurnoutLeft.Y = tdPos.Y - mDirection.X * offset - rightVector.Y * wheelsDistance;
+                oldEVertBurnoutLeft.X = tdPos.X + mDirection.Y * burnoutOffset - rightVector.X * wheelsDistance;
+                oldEVertBurnoutLeft.Y = tdPos.Y - mDirection.X * burnoutOffset - rightVector.Y * wheelsDistance;
             }
             
         }

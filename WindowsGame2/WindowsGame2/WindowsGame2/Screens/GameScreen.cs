@@ -548,6 +548,7 @@ namespace WindowsGame2.Screens
                     GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, burnouts[i], 0, Cars[i].burnoutCounter * 2);
             }
 
+
             //now draw 3D (shaders)
 
             //reset GraphicsDevice states (might be slow)
@@ -558,7 +559,6 @@ namespace WindowsGame2.Screens
             paperEffect.CurrentTechnique.Passes["ObjectPass"].Apply();
 
             
-
             // draw polygons
             for (int i = 0; i < polygonsList.Count; i++)
             {
