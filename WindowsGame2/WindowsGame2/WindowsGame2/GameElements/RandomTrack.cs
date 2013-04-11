@@ -109,7 +109,7 @@ namespace WindowsGame2.GameElements
             }
 
             //create bezier curve
-            int timeStep = 3;
+            int timeStep = 1;
             for (int i = 0; i <= controlPointsCount - 4; i++)
             {
                 for (int t = timeStep; t <= 100; t = t + timeStep)
@@ -173,7 +173,7 @@ namespace WindowsGame2.GameElements
                     //slow like an old kurva!!! 
                     //0.01 margin della vita!!
                     
-                    if (Vector2.Distance(newPoint, curvePointsInternal[j]) < pathWidth -0.05f && j!=i)
+                    if (Vector2.Distance(newPoint, curvePointsInternal[j]) < pathWidth  && j!=i)
                     {
                         okToAdd = false;
                        
@@ -226,6 +226,9 @@ namespace WindowsGame2.GameElements
             externalBody = BodyFactory.CreateLoopShape(world, curvePointsExternal);
             internalBody = BodyFactory.CreateLoopShape(world, curvePointsInternal);
 
+            externalBody.CollisionGroup = -1;
+            internalBody.CollisionGroup = -1;
+
 
             //compute bounding box in screen coordinates
             
@@ -250,17 +253,36 @@ namespace WindowsGame2.GameElements
             }
 
             //create external normal coefficients, and interpolate the first ones to get a smooth ink width at the start
-            externalNormalsCoefficients = internalNormalsCoefficients;
-            int startingVertices=5;
+            for (int i = 0; i < curvePointsExternal.Count; i++)
+            {
+                externalNormalsCoefficients.Add(internalNormalsCoefficients[i]);
+            }
+            int startingVertices=10;
             for (int i = 0; i < startingVertices; i++)
             {
-                externalNormalsCoefficients[i] = MathHelper.Lerp(internalNormalsCoefficients[internalNormalsCoefficients.Count - 1], internalNormalsCoefficients[i], 1 / startingVertices*i);
+                float lastCoeff = externalNormalsCoefficients[externalNormalsCoefficients.Count-1];
+                float targetCoeff=externalNormalsCoefficients[startingVertices-1];
+                externalNormalsCoefficients[i] = MathHelper.Lerp(lastCoeff, targetCoeff, 1f / startingVertices * i);
+            }
+
+            //create normals for drawing ink
+            List<Vector2> normalExternalInk = new List<Vector2>();
+            float inkWidth = 5f;
+            for (int j = 0; j < curvePointsExternal.Count; j++)
+            {
+                normalExternalInk.Add(Vector2.Normalize(curvePointsExternal[j]) * pathWidth * inkWidth);
+            }
+
+            List<Vector2> normalInternalInk = new List<Vector2>();
+            for (int j = 0; j < curvePointsInternal.Count; j++)
+            {
+                normalInternalInk.Add(-Vector2.Normalize(curvePointsInternal[j]) * pathWidth * inkWidth);
             }
 
 
-            //set borders triangles for shaders
-            //external borders
-            myArray = new VertexPositionColorTexture[(curvePointsExternal.Count) * 6 + (curvePointsInternal.Count) * 6];
+                //set borders triangles for shaders
+                //external borders
+                myArray = new VertexPositionColorTexture[(curvePointsExternal.Count) * 6 + (curvePointsInternal.Count) * 6];
             for (int i = 0; i < curvePointsExternal.Count; i++)
             {
                 int preIndex = i - 1;
@@ -274,11 +296,11 @@ namespace WindowsGame2.GameElements
 
                 myArray[i * 6].Position = new Vector3(curvePointsExternal[preIndex], -0.1f);
                 myArray[i * 6 + 1].Position = new Vector3(curvePointsExternal[i], -0.1f);
-                myArray[i * 6 + 2].Position = new Vector3(curvePointsExternal[preIndex] + normals[preIndex] / pathWidth * externalNormalsCoefficients[preIndex], -0.1f);
+                myArray[i * 6 + 2].Position = new Vector3(curvePointsExternal[preIndex] + normalExternalInk[preIndex] / pathWidth * externalNormalsCoefficients[preIndex], -0.1f);
 
                 myArray[i * 6 + 3].Position = new Vector3(curvePointsExternal[i], -0.1f);
-                myArray[i * 6 + 4].Position = new Vector3(curvePointsExternal[preIndex] + normals[preIndex] / pathWidth * externalNormalsCoefficients[preIndex], -0.1f);
-                myArray[i * 6 + 5].Position = new Vector3(curvePointsExternal[i] + normals[i] / pathWidth * externalNormalsCoefficients[i], -0.1f);
+                myArray[i * 6 + 4].Position = new Vector3(curvePointsExternal[preIndex] + normalExternalInk[preIndex] / pathWidth * externalNormalsCoefficients[preIndex], -0.1f);
+                myArray[i * 6 + 5].Position = new Vector3(curvePointsExternal[i] + normalExternalInk[i] / pathWidth * externalNormalsCoefficients[i], -0.1f);
 
                 myArray[i * 6].TextureCoordinate = new Vector2(0, 1);
                 myArray[i * 6 + 1].TextureCoordinate = new Vector2(0, 0);
@@ -301,11 +323,11 @@ namespace WindowsGame2.GameElements
 
                 myArray[(i + curvePointsExternal.Count) * 6].Position = new Vector3(curvePointsInternal[preIndex], -0.1f);
                 myArray[(i + curvePointsExternal.Count) * 6 + 1].Position = new Vector3(curvePointsInternal[i], -0.1f);
-                myArray[(i + curvePointsExternal.Count) * 6 + 2].Position = new Vector3(curvePointsInternal[preIndex] + normalsInternal[preIndex] / pathWidth * internalNormalsCoefficients[preIndex], -0.1f);
+                myArray[(i + curvePointsExternal.Count) * 6 + 2].Position = new Vector3(curvePointsInternal[preIndex] + normalInternalInk[preIndex] / pathWidth * internalNormalsCoefficients[preIndex], -0.1f);
 
                 myArray[(i + curvePointsExternal.Count) * 6 + 3].Position = new Vector3(curvePointsInternal[i], -0.1f);
-                myArray[(i + curvePointsExternal.Count) * 6 + 4].Position = new Vector3(curvePointsInternal[preIndex] + normalsInternal[preIndex] / pathWidth * internalNormalsCoefficients[preIndex], -0.1f);
-                myArray[(i + curvePointsExternal.Count) * 6 + 5].Position = new Vector3(curvePointsInternal[i] + normalsInternal[i] / pathWidth * internalNormalsCoefficients[i], -0.1f);
+                myArray[(i + curvePointsExternal.Count) * 6 + 4].Position = new Vector3(curvePointsInternal[preIndex] + normalInternalInk[preIndex] / pathWidth * internalNormalsCoefficients[preIndex], -0.1f);
+                myArray[(i + curvePointsExternal.Count) * 6 + 5].Position = new Vector3(curvePointsInternal[i] + normalInternalInk[i] / pathWidth * internalNormalsCoefficients[i], -0.1f);
 
                 myArray[(i + curvePointsExternal.Count) * 6].TextureCoordinate = new Vector2(0, 1);
                 myArray[(i + curvePointsExternal.Count) * 6 + 1].TextureCoordinate = new Vector2(0, 0);
@@ -397,7 +419,7 @@ namespace WindowsGame2.GameElements
             //draw starting line
             DrawLine(spriteBatch, 100, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
 
-            
+            /*
             //draw triangulation of the track for debugging 
             for (int i = 0; i < curvePointsExternal.Count; i++)
             {
@@ -433,6 +455,8 @@ namespace WindowsGame2.GameElements
                    DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsExternal[nextIndex]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
                 }
             }
+             *
+             */
             /*
              //draw connections between internal and external points for debugging
              for (int i = 0; i < curvePointsExternal.Count; i++)

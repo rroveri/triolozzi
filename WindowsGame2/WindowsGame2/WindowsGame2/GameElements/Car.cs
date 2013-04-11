@@ -468,7 +468,7 @@ namespace WindowsGame2.GameElements
 
             float distBack = Vector2.Distance(this._compound.Position, randomTrack.curvePointsInternal[randomTrack.internalCorrispondances[currentMiddlePoint % randomTrack.curvePointsMiddle.Count]]) + Vector2.Distance(this._compound.Position, randomTrack.curvePointsExternal[currentMiddlePoint % randomTrack.curvePointsMiddle.Count]);
             float distFront = Vector2.Distance(this._compound.Position, randomTrack.curvePointsInternal[randomTrack.internalCorrispondances[nextMiddlePoint % randomTrack.curvePointsMiddle.Count]]) + Vector2.Distance(this._compound.Position, randomTrack.curvePointsExternal[nextMiddlePoint % randomTrack.curvePointsMiddle.Count]);
-            float margin = 0.2f;
+            float margin = 15f; //0.2 for step=3
 
             float totalDist = (distBack - randomTrack.pathWidth) + (distFront - randomTrack.pathWidth);
             float ratio = (distBack - randomTrack.pathWidth) / totalDist;
@@ -486,6 +486,10 @@ namespace WindowsGame2.GameElements
         {
             vertices = trailVertices;
             _burnoutsVertices = burnoutsVertices;
+
+            spriteBatch.Draw(mDummyTexture,ConvertUnits.ToDisplayUnits( projectedPosition),
+                                           null, mColor, 0, Vector2.Zero, Vector2.One*10, SpriteEffects.None,
+                                           0.9f);
 
             base.Draw(spriteBatch);
         }

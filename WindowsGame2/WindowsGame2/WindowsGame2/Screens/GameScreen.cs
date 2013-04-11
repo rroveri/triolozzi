@@ -539,10 +539,14 @@ namespace WindowsGame2.Screens
                 paperEffect.Parameters[paperEffects[i]].SetValue(Cars[i]._compound.Position);
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, 130 * 2);
 
-                if (Cars[i].burnoutCounter>0)
-                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, burnouts[i], 0, Cars[i].burnoutCounter * 2);
+                
             }
 
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                if (Cars[i].burnoutCounter > 0)
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, burnouts[i], 0, Cars[i].burnoutCounter * 2);
+            }
 
             //now draw 3D (shaders)
 
@@ -552,6 +556,9 @@ namespace WindowsGame2.Screens
             int counter = 0;
 
             paperEffect.CurrentTechnique.Passes["ObjectPass"].Apply();
+
+            
+
             // draw polygons
             for (int i = 0; i < polygonsList.Count; i++)
             {
