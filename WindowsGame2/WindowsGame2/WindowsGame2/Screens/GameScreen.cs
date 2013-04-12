@@ -437,7 +437,8 @@ namespace WindowsGame2.Screens
 
             if (Logic.isMiniRaceOver)
             {
-                positionCars(Cars[Logic.Ranking[0]].currentMiddlePoint % randomRaceTrack.curvePointsMiddle.Count);
+                int newMiddlePoint = findACloserMiddlePoint();
+                positionCars(newMiddlePoint % randomRaceTrack.curvePointsMiddle.Count);
             }
 
             //set camera parameters
@@ -460,6 +461,28 @@ namespace WindowsGame2.Screens
             //{
             //    cameraFollowing.lastCarIndex=ranking[0];
             //}
+        }
+
+        public int findACloserMiddlePoint()
+        {
+            int farAwayMiddlePoint=Cars[Logic.Ranking[0]].currentMiddlePoint;
+            int pointsToCheck=100;
+            float minDist = Vector2.Distance(Cars[Logic.Ranking[0]]._compound.Position, randomRaceTrack.curvePointsMiddle[farAwayMiddlePoint % randomRaceTrack.curvePointsMiddle.Count]);
+            int closestMiddlePoint = farAwayMiddlePoint;
+            for (int i = farAwayMiddlePoint; i > farAwayMiddlePoint - pointsToCheck; i--)
+            {
+                if (i < 0)
+                {
+                    break;
+                }
+                float newDist = Vector2.Distance(Cars[Logic.Ranking[0]]._compound.Position, randomRaceTrack.curvePointsMiddle[i % randomRaceTrack.curvePointsMiddle.Count]);
+                if (newDist < minDist)
+                {
+                    minDist = newDist;
+                    closestMiddlePoint = i;
+                }
+            }
+            return closestMiddlePoint;
         }
 
         //public void updateScore(int winnerIndex)

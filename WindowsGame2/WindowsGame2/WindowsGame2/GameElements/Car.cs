@@ -310,7 +310,7 @@ namespace WindowsGame2.GameElements
             tdPos.Y = _compound.Position.Y;
 
             // Add a trail point if the player is drawing
-            if (((ks.IsKeyDown(Keys.F) && blueOnly || gps.Triggers.Right > 0) || true) && !justStarted)
+            if ((((ks.IsKeyDown(Keys.F) && blueOnly || gps.Triggers.Right > 0) || true) && !hasBoost) && !justStarted)
             {
                if (mTrailPoints >= mMaximumTrailPoints)
                 {
@@ -472,7 +472,7 @@ namespace WindowsGame2.GameElements
             {
                 currentMiddlePoint = nextMiddlePoint;
             }
-
+    
             return _projectedPosition;
         }
 

@@ -457,13 +457,15 @@ namespace WindowsGame2.GameElements
             }
              *
              */
+            
             /*
              //draw connections between internal and external points for debugging
              for (int i = 0; i < curvePointsExternal.Count; i++)
              {
                  DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[i]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
              }
-            */
+             */ 
+            
 
 
             //// draw track
@@ -500,7 +502,7 @@ namespace WindowsGame2.GameElements
             {
                 spriteBatch.Draw(dummyTexture, ConvertUnits.ToDisplayUnits(curvePointsMiddle[i]), null, Color.Green, 0f, Vector2.Zero, new Vector2(20,20), SpriteEffects.None, 0);
             }
-             */ 
+            */
             
               
 
