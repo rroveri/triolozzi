@@ -249,8 +249,9 @@ namespace WindowsGame2.Screens
                 Cars[i].currentMiddlePoint = startingPoint;
                 //set rotation
                 Cars[i]._compound.Rotation = angle;
-                //erase velocity
+                //erase velocities
                 Cars[i]._compound.LinearVelocity = Vector2.Zero;
+                Cars[i]._compound.AngularVelocity = 0.0f;
 
                 //clear trail
 
@@ -556,9 +557,13 @@ namespace WindowsGame2.Screens
 
             int counter = 0;
 
+            paperEffect.CurrentTechnique.Passes["BorderPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
+
             paperEffect.CurrentTechnique.Passes["ObjectPass"].Apply();
 
             
+
             // draw polygons
             for (int i = 0; i < polygonsList.Count; i++)
             {
@@ -573,8 +578,7 @@ namespace WindowsGame2.Screens
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
             }
 
-            paperEffect.CurrentTechnique.Passes["BorderPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
+            
 
             screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, PlayersCount * 2);
