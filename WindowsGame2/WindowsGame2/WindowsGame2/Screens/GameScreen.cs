@@ -243,14 +243,17 @@ namespace WindowsGame2.Screens
             
             for (int i = 0; i < Cars.Count; i++)
             {
+                Cars[i].isActive = true;
+                
+                //erase velocities
+                Cars[i]._compound.ResetDynamics();
+
                 Cars[i]._compound.Position = startingPos[i];
                 //set current middle point
                 Cars[i].currentMiddlePoint = startingPoint;
                 //set rotation
                 Cars[i]._compound.Rotation = angle;
-                //erase velocities
-                Cars[i]._compound.LinearVelocity = Vector2.Zero;
-                Cars[i]._compound.AngularVelocity = 0.0f;
+                
 
                 //clear trail
                 Cars[i].mIsTrailLoop = false;
@@ -260,8 +263,9 @@ namespace WindowsGame2.Screens
                 Cars[i].resetBoost();
 
                 Cars[i].isActive = false;
+                Cars[i]._compound.Enabled = false;
             }
-
+            
             readyToStart = true;
             cameraFollowing.raceCanStart = false;
         }
@@ -282,6 +286,7 @@ namespace WindowsGame2.Screens
                 for (int i = 0; i < Cars.Count; i++)
                 {
                     Cars[i].isActive = true;
+                    Cars[i]._compound.Enabled = true;
                 }
             }
 
@@ -518,6 +523,9 @@ namespace WindowsGame2.Screens
                 Cars[i].Draw(spriteBatch, out trails[i], out burnouts[i]);
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
             }
+
+
+            
 
             spriteBatch.End();
 
