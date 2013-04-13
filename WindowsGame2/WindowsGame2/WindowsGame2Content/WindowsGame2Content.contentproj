@@ -277,7 +277,13 @@
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Images\Dreams\postitFree.png">
+      <Name>postitFree</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Images\Dreams\Nightmares\Diavolo.png">
       <Name>Diavolo</Name>

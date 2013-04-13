@@ -54,6 +54,8 @@ namespace WindowsGame2.GameElements
         public List<float> internalNormalsCoefficients;
         public List<float> externalNormalsCoefficients;
 
+        private Vector2 postItSize;
+
 
         
         public static RandomTrack createTrack()
@@ -95,12 +97,29 @@ namespace WindowsGame2.GameElements
             texturesArray.Add(bgTextureEasterEgg);
 
             dreamsArray = new List<Texture2D>();
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/postitFree"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/postitFree"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/postitFree"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/postitFree"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/postitFree"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/postitFree"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/postitFree"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/postitFree"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/postitFree"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/postitFree"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/postitFree"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/postitFree"));
+
+            postItSize = new Vector2(0.5f,0.8f);
+
+            /*
             dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/Wishes/CupCake"));
             dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/Wishes/Ali"));
             dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/Wishes/Pony"));
             dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/Nightmares/Diavolo"));
             dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/Nightmares/fantasma"));
             dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/Nightmares/Frankenstein"));
+             */
 
             dreamsPositions = new List<Vector2>();
             dreamsRotations = new List<float>();
@@ -443,7 +462,7 @@ namespace WindowsGame2.GameElements
             //draw dreams
             for (int i = 0; i < dreamsArray.Count; i++)
             {
-                spriteBatch.Draw(dreamsArray[i], ConvertUnits.ToDisplayUnits(dreamsPositions[i]), null, Color.Yellow, dreamsRotations[i], Vector2.Zero, Vector2.One * 0.5f, SpriteEffects.None, 1f);
+                spriteBatch.Draw(dreamsArray[i], ConvertUnits.ToDisplayUnits(dreamsPositions[i]), null, Color.Yellow, dreamsRotations[i], Vector2.Zero, postItSize, SpriteEffects.None, 1f);
             }
 
 

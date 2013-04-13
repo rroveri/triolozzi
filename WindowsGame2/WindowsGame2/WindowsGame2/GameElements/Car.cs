@@ -481,9 +481,9 @@ namespace WindowsGame2.GameElements
             vertices = trailVertices;
             _burnoutsVertices = burnoutsVertices;
 
-            spriteBatch.Draw(mDummyTexture,ConvertUnits.ToDisplayUnits( projectedPosition),
-                                           null, mColor, 0, Vector2.Zero, Vector2.One*10, SpriteEffects.None,
-                                           0.9f);
+         //   spriteBatch.Draw(mDummyTexture,ConvertUnits.ToDisplayUnits( projectedPosition),
+           //                                null, mColor, 0, Vector2.Zero, Vector2.One*10, SpriteEffects.None,
+           //                                0.9f);
 
             base.Draw(spriteBatch);
         }
