@@ -239,12 +239,13 @@ namespace WindowsGame2
         public void RemoveScreen(AbstractScreen screen)
         {
             // If we have a graphics device, tell the screen to unload content.
-            //if (isInitialized)
-            //{
-            //    screen.Unload();
-            //}
+            if (isInitialized)
+            {
+                screen.Unload();
+            }
 
             screens.Remove(screen);
+            GC.Collect();
         }
 
         public void ShowScreen<T>()

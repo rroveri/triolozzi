@@ -76,10 +76,6 @@ namespace WindowsGame2.Screens
         int maxNumberOfTriangles = 10000;
 
         Vertices startingPos;
-        int[] ranking;
-        int[] taken;
-        int[] orderToExit;
-        private int currentExitIndex;
 
         public bool readyToStart;
 
@@ -117,6 +113,9 @@ namespace WindowsGame2.Screens
             }
         }
 
+        private int _pauseTime;
+        private int kDefaultPauseTime = 3000;
+
         #endregion
 
         /// <summary>
@@ -140,11 +139,7 @@ namespace WindowsGame2.Screens
             Random = new Random(DateTime.Now.Millisecond);
 
             PlayersCount = 4;
-            ranking = new int[4];
-            taken = new int[4];
-            orderToExit = new int[3];
             startingPos = new Vertices();
-            currentExitIndex = 0;
 
             readyToStart = false;
             aabbVerts = new Vector2[4];
@@ -344,6 +339,33 @@ namespace WindowsGame2.Screens
         {
             base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
 
+            // Gradually fade in or out depending on whether we are covered by the pause screen.
+            if (coveredByOtherScreen)
+                pauseAlpha = Math.Min(pauseAlpha + 1f / 32, 1);
+            else
+                pauseAlpha = Math.Max(pauseAlpha - 1f / 32, 0);
+
+            if (!IsActive)
+                return;
+
+            //if (lastFrame == 5)
+            //{
+            //    randomIndex = (randomIndex + 1) % randomArray.Count();
+            //    lastFrame = 0;
+            //}
+            //lastFrame++;
+            //paperEffect.Parameters["randomSeed"].SetValue(randomArray[randomIndex]);
+
+            gps = GamePad.GetState(PlayerIndex.One);
+            ks = Keyboard.GetState();
+
+            // Allows the game to exit
+            if (gps.Buttons.Back == ButtonState.Pressed || ks.IsKeyDown(Keys.Escape))
+            {
+                ScreenManager.AddScreen(PauseScreen, null);
+                return;
+            }
+
             if (cameraFollowing.raceCanStart && readyToStart)
             {
                 readyToStart = false;
@@ -354,37 +376,23 @@ namespace WindowsGame2.Screens
                 }
             }
 
-            // Gradually fade in or out depending on whether we are covered by the pause screen.
-            if (coveredByOtherScreen)
-                pauseAlpha = Math.Min(pauseAlpha + 1f / 32, 1);
-            else
-                pauseAlpha = Math.Max(pauseAlpha - 1f / 32, 0);
+            UpdateCars();
 
-            if (!IsActive)
-                return;
+            UpdateObstacles();
 
-            if (lastFrame == 5)
-            {
-                randomIndex = (randomIndex + 1) % randomArray.Count();
-                lastFrame = 0;
-            }
-            lastFrame++;
-            paperEffect.Parameters["randomSeed"].SetValue(randomArray[randomIndex]);
+            UpdateGameLogic();
 
-            gps = GamePad.GetState(PlayerIndex.One);
-            ks = Keyboard.GetState();
-            PolygonPhysicsObject obstacle;
+            UpdateCamera(gameTime);
 
-            // Allows the game to exit
-            if (gps.Buttons.Back == ButtonState.Pressed || ks.IsKeyDown(Keys.Escape))
-            {
-                ScreenManager.AddScreen(PauseScreen, null);
-                return;
-                //ExitScreen();
-            }
+            world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
+        }
 
+        private void UpdateCars()
+        {
             for (int i = 0; i < Cars.Count; i++)
             {
+                // TODO: declare obstacle as instance variable and set it to null here?
+                PolygonPhysicsObject obstacle;
                 // Update the position of the car
                 Cars[i].Update(GamePad.GetState(playerIndexes[i]), ks);
                 // Find an obstacle (if any) drawn by the car and add it to the scene
@@ -398,19 +406,13 @@ namespace WindowsGame2.Screens
                 }
 
             }
+        }
 
-            cameraFollowing.Update(gameTime, Cars);
-
-            gameLogic();
-
-
-
-            world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
-
-
+        private void UpdateObstacles()
+        {
             //enable or disable polygons if off screen
             activeBodiesCount = 0;
-            
+
             for (int i = 0; i < polygonsList.Count; i++)
             {
                 bool foundInside = false;
@@ -423,13 +425,13 @@ namespace WindowsGame2.Screens
 
                     //compute bounding AABB bounding box of fixture !!! USE VERTICES INSTEAD IF NOT ENOUGH PRECISE !!!
                     polygonsList[i].compound.FixtureList[j].GetAABB(out aabb, 0);
-                    
+
                     aabbVerts[0] = new Vector2(aabb.LowerBound.X, aabb.LowerBound.Y);
                     aabbVerts[1] = new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y);
                     aabbVerts[2] = new Vector2(aabb.UpperBound.X, aabb.UpperBound.Y);
                     aabbVerts[3] = new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y);
 
-                    
+
                     for (int k = 0; k < 4; k++)
                     {
                         //check if vertices of the bounding box are inside or outside
@@ -448,7 +450,7 @@ namespace WindowsGame2.Screens
                             }
                         }
                     }
-                    
+
 
                 }
                 if (!foundInside)
@@ -457,10 +459,9 @@ namespace WindowsGame2.Screens
 
                 }
             }
-
         }
 
-        public bool checkIfOffScreen(Vector2 vec){
+        private bool checkIfOffScreen(Vector2 vec){
             Vector2 screenPosition = Vector2.Transform(ConvertUnits.ToDisplayUnits(vec), cameraFollowing.Transform);
             if (screenPosition.X < 0 || screenPosition.X > graphics.PreferredBackBufferWidth || screenPosition.Y < 0 || screenPosition.Y > graphics.PreferredBackBufferHeight)
             {
@@ -471,109 +472,31 @@ namespace WindowsGame2.Screens
             }
         }
 
-        public void gameLogic()
+        private void UpdateGameLogic()
         {
             Logic.Update(Cars, cameraFollowing.Transform, graphics);
-            //update ranking
-            //for (int i = 0; i < Cars.Count; i++)
-            //{
-            //    taken[i]=0;
-            //}
-            //for (int i = 0; i < Cars.Count; i++)
-            //{
-            //    int newMax=-1;
-            //    int newIndex = 0;
-            //    for (int ii = 0; ii < Cars.Count; ii++)
-            //    {
-            //        if (Cars[ii].isActive && Cars[ii].currentMiddlePoint > newMax && taken[ii] == 0)
-            //        {
-            //            newMax = Cars[ii].currentMiddlePoint;
-            //            newIndex = ii;
-            //        }
-            //    }
-            //    taken[newIndex] = 1;
-            //    ranking[i] = newIndex;
-            //}
-
-            //debug ranking
-            /*
-            for (int i = 0; i < cars.Count; i++)
-            {
-                Console.Write(ranking[i]+" ");
-            }
-            Console.WriteLine();
-            */
-
-            //loop the active cars and check if anybody is off screen
-            //for (int i = 0; i < Cars.Count; i++)
-            //{
-            //    if (Cars[i].isActive)
-            //    {
-            //        //compute screen coordinates
-            //        Vector2 screenPosition = Vector2.Transform(Cars[i].Position, cameraFollowing.Transform);
-
-            //        //check if off screen
-            //        if (screenPosition.X < 0 || screenPosition.X > graphics.PreferredBackBufferWidth || screenPosition.Y < 0 || screenPosition.Y > graphics.PreferredBackBufferHeight)
-            //        {
-            //            //check if car is in the last position
-            //            if (ranking[PlayersCount-1-currentExitIndex]==i){
-            //                //disactivate car and add index to the array with the order of exiting
-            //                Cars[i].isActive = false;
-            //                orderToExit[currentExitIndex] = i;
-            //                currentExitIndex++;
-            //                break;
-            //            }
-            //        }
-            //    }
-            //}
-
-            //check if only one player remains
-            //if (currentExitIndex == PlayersCount - 1)
-            //{
-            //    currentExitIndex=0;
-                
-            //    //look for the remaining car and activate the others
-            //    int winnerIndex = 0;
-            //    for (int i = 0; i < Cars.Count; i++)
-            //    {
-            //        if (Cars[i].isActive)
-            //        {
-            //            winnerIndex=i;
-            //        }
-            //    }
-
-            //    //start a new race and update score
-            //    positionCars(Cars[winnerIndex].currentMiddlePoint % randomRaceTrack.curvePointsMiddle.Count);
-            //    updateScore(winnerIndex);
- 
-            //}
 
             if (Logic.isMiniRaceOver)
             {
                 int newMiddlePoint = findACloserMiddlePoint();
                 positionCars(newMiddlePoint % randomRaceTrack.curvePointsMiddle.Count);
             }
+        }
+
+        private void UpdateCamera(GameTime gameTime)
+        {
+            cameraFollowing.Update(gameTime, Cars);
 
             //set camera parameters
             cameraFollowing.firstCarIndex = Logic.Ranking[0];
             if (PlayersCount > 1)
             {
-                // TODO: fix this!
-                cameraFollowing.lastCarIndex = Logic.LastCarIndex; //Ranking[PlayersCount - 1 - currentExitIndex];
+                cameraFollowing.lastCarIndex = Logic.LastCarIndex;
             }
             else
             {
                 cameraFollowing.lastCarIndex = Logic.Ranking[0];
             }
-            //cameraFollowing.firstCarIndex = ranking[0];
-            //if (PlayersCount > 1)
-            //{
-            //    cameraFollowing.lastCarIndex = ranking[PlayersCount - 1 - currentExitIndex];
-            //}
-            //else
-            //{
-            //    cameraFollowing.lastCarIndex=ranking[0];
-            //}
         }
 
         public int findACloserMiddlePoint()
@@ -598,26 +521,6 @@ namespace WindowsGame2.Screens
             return closestMiddlePoint;
         }
 
-        //public void updateScore(int winnerIndex)
-        //{
-        //    // update the score here, a mini race has just finished
-        //    // order in which the cars have fallen off screen is stored in the array orderToExit
-
-        //    int malus = 9;
-        //    for (int i = 0; i < PlayersCount - 1; i++)
-        //    {
-        //        int carIndex = orderToExit[i];
-
-        //        Cars[carIndex].score -= malus;
-        //        malus -= 3;
-
-        //        Cars[carIndex].score = Math.Max(1, Cars[carIndex].score);
-        //    }
-
-        //    Cars[winnerIndex].score += 3;
-        //    Cars[winnerIndex].score = Math.Min(27 * 2, Cars[winnerIndex].score);
-        //}
-
 
         public override void Draw(GameTime gameTime)
         {
@@ -633,7 +536,6 @@ namespace WindowsGame2.Screens
 
                 ScreenManager.FadeBackBufferToBlack(alpha);
             }
-
             base.Draw(gameTime);
         }
 
@@ -659,9 +561,6 @@ namespace WindowsGame2.Screens
                 Cars[i].Draw(spriteBatch, out trails[i], out burnouts[i]);
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
             }
-
-
-            
 
             spriteBatch.End();
 
@@ -718,8 +617,6 @@ namespace WindowsGame2.Screens
 
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
             }
-
-            
 
             screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, PlayersCount * 2);

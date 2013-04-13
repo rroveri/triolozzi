@@ -63,16 +63,24 @@ namespace WindowsGame2.GameElements
         {
             Laps = 0;
 
+            // Set up the reference points in the track
             _crucialPoints = crucialPoints;
+            _pointsCount = pointsCount;
             didReachCrucialPoint = new Dictionary<int, bool>(4);
             ResetCrucialPoints();
 
+            // Set up the ranking and elimination lists
             taken = new int[kMaximumPlayers];
             _eliminatedCars = 0;
-            _pointsCount = pointsCount;
             //_eliminationRanking = new int[kMaximumPlayers];
 
             Ranking = new int[kMaximumPlayers];
+            isMiniRaceOver = false;
+        }
+
+        public void RestartMiniRace()
+        {
+            isMiniRaceOver = false;
         }
 
         #endregion
@@ -108,11 +116,14 @@ namespace WindowsGame2.GameElements
             return (Laps >= kMaximumLaps);
         }
 
+        /// <summary>
+        /// The index of the last car that is still racing (not eliminated yet).
+        /// </summary>
         public int LastCarIndex { get; private set; }
 
         #endregion
 
-        #region Private Methods
+        #region Update Game Logic
 
         private void UpdateRankings(List<Car> Cars)
         {
@@ -174,7 +185,7 @@ namespace WindowsGame2.GameElements
                 didReachCrucialPoint[point] = true;
             }
 
-            if ((point % _pointsCount) == 0 && !didReachCrucialPoint.ContainsValue(false))
+            if ((point % (_pointsCount + 40)) == 0 && !didReachCrucialPoint.ContainsValue(false))
             {
                 // We completed a lap
                 Laps++;
