@@ -59,7 +59,7 @@ namespace WindowsGame2.GameElements
         private float rotVel = 0.12f; //0.12
         private float maxVel = 11.5f; //5
         private float linearVel = 0;
-        private float boostAcc = 10f;
+        private float boostAcc = 4f;
         private float boostMaxVel = 21f;
         private float currentAcc;
         private float currentMaxVel;
@@ -462,7 +462,7 @@ namespace WindowsGame2.GameElements
 
             float distBack = Vector2.Distance(this._compound.Position, randomTrack.curvePointsInternal[randomTrack.internalCorrispondances[currentMiddlePoint % randomTrack.curvePointsMiddle.Count]]) + Vector2.Distance(this._compound.Position, randomTrack.curvePointsExternal[currentMiddlePoint % randomTrack.curvePointsMiddle.Count]);
             float distFront = Vector2.Distance(this._compound.Position, randomTrack.curvePointsInternal[randomTrack.internalCorrispondances[nextMiddlePoint % randomTrack.curvePointsMiddle.Count]]) + Vector2.Distance(this._compound.Position, randomTrack.curvePointsExternal[nextMiddlePoint % randomTrack.curvePointsMiddle.Count]);
-            float margin = 15f; //0.2 for step=3
+            float margin = 8f; //0.2 for step=3
 
             float totalDist = (distBack - randomTrack.pathWidth) + (distFront - randomTrack.pathWidth);
             float ratio = (distBack - randomTrack.pathWidth) / totalDist;

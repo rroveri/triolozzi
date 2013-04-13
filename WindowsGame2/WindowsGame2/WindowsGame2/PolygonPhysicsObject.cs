@@ -38,7 +38,7 @@ namespace WindowsGame2
         public bool IsValid
         {
             get;
-            private set;
+            set;
         }
 
         public Color Color { get; set; }

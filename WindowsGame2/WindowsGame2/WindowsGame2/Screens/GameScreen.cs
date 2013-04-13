@@ -87,6 +87,9 @@ namespace WindowsGame2.Screens
         Vector2[] aabbVerts;
         int activeBodiesCount;
 
+        AABB startingPosAabb;
+        Vector2[] startingPosAabbVerts;
+
         private int _playersCount;
         public int PlayersCount
         {
@@ -146,6 +149,7 @@ namespace WindowsGame2.Screens
             readyToStart = false;
             aabbVerts = new Vector2[4];
             activeBodiesCount = 0;
+            startingPosAabbVerts = new Vector2[4];
         }
 
         public override void LoadContent()
@@ -246,6 +250,59 @@ namespace WindowsGame2.Screens
 
             //compute cars positions
             startingPos = randomRaceTrack.computeStartingPositions(startingPoint);
+
+            //clear part of track where cars are positioned
+            float distMargin=2f;
+            for (int i = 0; i < polygonsList.Count; i++)
+            {
+                bool foundTooClose = false;
+                for (int j = 0; j < polygonsList[i].compound.FixtureList.Count; j++)
+                {
+                    if (foundTooClose)
+                    {
+                        break;
+                    }
+
+                    //compute bounding AABB bounding box of fixture !!! USE VERTICES INSTEAD IF NOT ENOUGH PRECISE !!!
+                    polygonsList[i].compound.FixtureList[j].GetAABB(out aabb, 0);
+
+                    aabbVerts[0] = new Vector2(aabb.LowerBound.X, aabb.LowerBound.Y);
+                    aabbVerts[1] = new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y);
+                    aabbVerts[2] = new Vector2(aabb.UpperBound.X, aabb.UpperBound.Y);
+                    aabbVerts[3] = new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y);
+
+                    for (int u = 0; u < Cars.Count; u++)
+                    {
+                        if (Vector2.Distance(polygonsList[i].compound.LocalCenter, startingPos[u]) < distMargin)
+                        {
+                            foundTooClose = true;
+                            break;
+                        }
+                        for (int k = 0; k < 4; k++)
+                        {
+                            float dist = Vector2.Distance(aabbVerts[k], startingPos[u]);
+                            if (dist < distMargin)
+                            {
+                                foundTooClose = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (foundTooClose)
+                {
+                    //debug
+                    //polygonsList[i].Color = Color.Black;
+
+                    //don't want to screw up vertices, so just throw it far away like an old kurva
+                    polygonsList[i].compound.Position = new Vector2(100000,100000);
+                    polygonsList[i].compound.Enabled = false;
+                    polygonsList[i].IsValid = false;
+
+                }
+            }
+
+            //compute angle
             float angle = randomRaceTrack.computeStartingAngle(startingPoint) - 90;
             
             for (int i = 0; i < Cars.Count; i++)
