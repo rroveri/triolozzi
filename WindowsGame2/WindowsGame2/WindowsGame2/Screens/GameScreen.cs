@@ -20,6 +20,7 @@ using FarseerPhysics.Common.PolygonManipulation;
 using FarseerPhysics.SamplesFramework;
 using FarseerPhysics.DebugViews;
 using WindowsGame2.GameElements;
+using FarseerPhysics.Collision;
 
 namespace WindowsGame2.Screens
 {
@@ -82,6 +83,10 @@ namespace WindowsGame2.Screens
 
         public bool readyToStart;
 
+        AABB aabb;
+        Vector2[] aabbVerts;
+        int activeBodiesCount;
+
         private int _playersCount;
         public int PlayersCount
         {
@@ -139,6 +144,8 @@ namespace WindowsGame2.Screens
             currentExitIndex = 0;
 
             readyToStart = false;
+            aabbVerts = new Vector2[4];
+            activeBodiesCount = 0;
         }
 
         public override void LoadContent()
@@ -299,7 +306,7 @@ namespace WindowsGame2.Screens
             if (!IsActive)
                 return;
 
-            if (lastFrame == 5) 
+            if (lastFrame == 5)
             {
                 randomIndex = (randomIndex + 1) % randomArray.Count();
                 lastFrame = 0;
@@ -334,27 +341,76 @@ namespace WindowsGame2.Screens
                 }
 
             }
-            
+
             cameraFollowing.Update(gameTime, Cars);
 
             gameLogic();
 
-            
+
 
             world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
 
+
+            //enable or disable polygons if off screen
+            activeBodiesCount = 0;
+            
             for (int i = 0; i < polygonsList.Count; i++)
             {
-                Vector2 screenPosition = Vector2.Transform(ConvertUnits.ToDisplayUnits( polygonsList[i].compound.LocalCenter), cameraFollowing.Transform);
-                if (screenPosition.X < 0 || screenPosition.X > graphics.PreferredBackBufferWidth || screenPosition.Y < 0 || screenPosition.Y > graphics.PreferredBackBufferHeight)
+                bool foundInside = false;
+                for (int j = 0; j < polygonsList[i].compound.FixtureList.Count; j++)
+                {
+                    if (foundInside)
+                    {
+                        break;
+                    }
+
+                    //compute bounding AABB bounding box of fixture !!! USE VERTICES INSTEAD IF NOT ENOUGH PRECISE !!!
+                    polygonsList[i].compound.FixtureList[j].GetAABB(out aabb, 0);
+                    
+                    aabbVerts[0] = new Vector2(aabb.LowerBound.X, aabb.LowerBound.Y);
+                    aabbVerts[1] = new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y);
+                    aabbVerts[2] = new Vector2(aabb.UpperBound.X, aabb.UpperBound.Y);
+                    aabbVerts[3] = new Vector2(aabb.LowerBound.X, aabb.UpperBound.Y);
+
+                    
+                    for (int k = 0; k < 4; k++)
+                    {
+                        //check if vertices of the bounding box are inside or outside
+                        bool outside = checkIfOffScreen(aabbVerts[k]);
+
+                        if (!outside)
+                        {
+                            if (polygonsList[i].IsValid)
+                            {
+                                polygonsList[i].compound.Enabled = true;
+                                foundInside = true;
+
+                                //for debugging
+                                activeBodiesCount++;
+                                break;
+                            }
+                        }
+                    }
+                    
+
+                }
+                if (!foundInside)
                 {
                     polygonsList[i].compound.Enabled = false;
+
                 }
-                else
-                {
-                    if (polygonsList[i].IsValid)
-                        polygonsList[i].compound.Enabled = true;
-                }
+            }
+
+        }
+
+        public bool checkIfOffScreen(Vector2 vec){
+            Vector2 screenPosition = Vector2.Transform(ConvertUnits.ToDisplayUnits(vec), cameraFollowing.Transform);
+            if (screenPosition.X < 0 || screenPosition.X > graphics.PreferredBackBufferWidth || screenPosition.Y < 0 || screenPosition.Y > graphics.PreferredBackBufferHeight)
+            {
+                return true;
+            }
+            else{
+                return false;
             }
         }
 
