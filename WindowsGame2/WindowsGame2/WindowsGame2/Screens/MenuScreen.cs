@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using WindowsGame2;
+using Microsoft.Xna.Framework.Content;
 #endregion
 
 namespace WindowsGame2.Screens
@@ -37,6 +38,8 @@ namespace WindowsGame2.Screens
 
         private Vector2 position;
         private Vector2 titlePosition;
+
+        private Texture2D _backgroundTexture;
 
         #endregion
 
@@ -88,6 +91,11 @@ namespace WindowsGame2.Screens
             position = new Vector2(0f, 175f);
         }
 
+        public override void LoadContent()
+        {
+            base.LoadContent();
+            _backgroundTexture = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/bgNew");
+        }
 
         #endregion
 
@@ -234,6 +242,10 @@ namespace WindowsGame2.Screens
             SpriteBatch spriteBatch = ScreenManager.SpriteBatch;
             SpriteFont font = ScreenManager.Font;
 
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.Opaque, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
+            spriteBatch.Draw(_backgroundTexture, Vector2.Zero, ScreenManager.GraphicsDevice.Viewport.Bounds, Color.White, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1f);
+            spriteBatch.End();
+
             spriteBatch.Begin();
 
             // Draw each menu entry in turn.
@@ -254,7 +266,7 @@ namespace WindowsGame2.Screens
             // Draw the menu title centered on the screen
             titlePosition = new Vector2(graphics.Viewport.Width / 2, 80);
             Vector2 titleOrigin = font.MeasureString(menuTitle) / 2;
-            Color titleColor = Color.GhostWhite * TransitionAlpha;
+            Color titleColor = Color.Black * TransitionAlpha;
             float titleScale = 1.25f;
 
             titlePosition.Y -= transitionOffset * 100;
