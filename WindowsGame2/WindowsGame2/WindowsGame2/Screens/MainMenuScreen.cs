@@ -89,6 +89,10 @@ namespace WindowsGame2.Screens
 
         void PlayGameMenuSingleModeEntrySelected(object sender, PlayerIndexEventArgs e)
         {
+            if (ScreenManager.GetScreen<GameScreen>() == null)
+            {
+                ScreenManager.AddScreen(new GameScreen(), null);
+            }
             ScreenManager.GetScreen<GameScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
             ScreenManager.ShowScreen<GameScreen>();
         }

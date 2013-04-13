@@ -76,10 +76,6 @@ namespace WindowsGame2.Screens
         int maxNumberOfTriangles = 10000;
 
         Vertices startingPos;
-        int[] ranking;
-        int[] taken;
-        int[] orderToExit;
-        private int currentExitIndex;
 
         public bool readyToStart;
 
@@ -143,11 +139,7 @@ namespace WindowsGame2.Screens
             Random = new Random(DateTime.Now.Millisecond);
 
             PlayersCount = 4;
-            ranking = new int[4];
-            taken = new int[4];
-            orderToExit = new int[3];
             startingPos = new Vertices();
-            currentExitIndex = 0;
 
             readyToStart = false;
             aabbVerts = new Vector2[4];
