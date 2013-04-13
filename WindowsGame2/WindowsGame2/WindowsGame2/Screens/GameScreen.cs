@@ -49,10 +49,9 @@ namespace WindowsGame2.Screens
         KeyboardState prevKeyboardState;
         Random Random;
         float[] randomArray;
-        int lastFrame = 0, randomIndex = 0;
+        //int lastFrame = 0, randomIndex = 0;
 
         KeyboardState ks;
-        GamePadState gps;
 
         AssetCreator assetCreator;
 
@@ -83,7 +82,7 @@ namespace WindowsGame2.Screens
         Vector2[] aabbVerts;
         int activeBodiesCount;
 
-        AABB startingPosAabb;
+        //AABB startingPosAabb;
         Vector2[] startingPosAabbVerts;
 
         private int _playersCount;
@@ -113,8 +112,8 @@ namespace WindowsGame2.Screens
             }
         }
 
-        private int _pauseTime;
-        private int kDefaultPauseTime = 3000;
+        //private int _pauseTime;
+        //private int kDefaultPauseTime = 3000;
 
         #endregion
 
@@ -356,11 +355,7 @@ namespace WindowsGame2.Screens
             //lastFrame++;
             //paperEffect.Parameters["randomSeed"].SetValue(randomArray[randomIndex]);
 
-            gps = GamePad.GetState(PlayerIndex.One);
-            ks = Keyboard.GetState();
-
-            // Allows the game to exit
-            if (gps.Buttons.Back == ButtonState.Pressed || ks.IsKeyDown(Keys.Escape))
+            if (ShouldPauseGame())
             {
                 ScreenManager.AddScreen(PauseScreen, null);
                 return;
@@ -521,6 +516,24 @@ namespace WindowsGame2.Screens
             return closestMiddlePoint;
         }
 
+        private bool ShouldPauseGame()
+        {
+            // Check for keyboard 'Esc'
+            ks = Keyboard.GetState();
+            if (ks.IsKeyDown(Keys.Escape))
+            {
+                return true;
+            }
+            // Check if any players has pressed the back button
+            for (int i = 0; i < playerIndexes.Count; i++)
+            {
+                if (GamePad.GetState(playerIndexes[i]).Buttons.Back == ButtonState.Pressed)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public override void Draw(GameTime gameTime)
         {
