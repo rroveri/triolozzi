@@ -47,6 +47,9 @@ namespace WindowsGame2.GameElements
         public VertexPositionColorTexture[] myArray;
 
         public List<Texture2D> texturesArray;
+        public List<Texture2D> dreamsArray;
+        public List<Vector2> dreamsPositions;
+        public List<float> dreamsRotations;
 
         public List<float> internalNormalsCoefficients;
         public List<float> externalNormalsCoefficients;
@@ -90,6 +93,17 @@ namespace WindowsGame2.GameElements
             texturesArray.Add(Content.Load<Texture2D>("Images/cina"));
             texturesArray.Add(Content.Load<Texture2D>("Images/q"));
             texturesArray.Add(bgTextureEasterEgg);
+
+            dreamsArray = new List<Texture2D>();
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/Wishes/CupCake"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/Wishes/Ali"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/Wishes/Pony"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/Nightmares/Diavolo"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/Nightmares/fantasma"));
+            dreamsArray.Add(Content.Load<Texture2D>("Images/Dreams/Nightmares/Frankenstein"));
+
+            dreamsPositions = new List<Vector2>();
+            dreamsRotations = new List<float>();
 
             internalNormalsCoefficients = new List<float>();
             externalNormalsCoefficients = new List<float>();
@@ -340,6 +354,17 @@ namespace WindowsGame2.GameElements
             }
 
             
+            //put random dreams
+            for (int i = 0; i < dreamsArray.Count; i++)
+            {
+                int randomMiddlePoint= random.Next(0, curvePointsMiddle.Count);
+                Vertices possiblePositions = computeStartingPositions(randomMiddlePoint);
+                int randomIndex = random.Next(0, 1);
+                Vector2 finalPos=possiblePositions[randomIndex];
+                dreamsPositions.Add(finalPos);
+                float randomAngle = random.Next(-30, 30);
+                dreamsRotations.Add(randomAngle);
+            }
 
             
         }
@@ -415,7 +440,13 @@ namespace WindowsGame2.GameElements
                 }
             }
 
-                
+            //draw dreams
+            for (int i = 0; i < dreamsArray.Count; i++)
+            {
+                spriteBatch.Draw(dreamsArray[i], ConvertUnits.ToDisplayUnits(dreamsPositions[i]), null, Color.Yellow, dreamsRotations[i], Vector2.Zero, Vector2.One * 0.5f, SpriteEffects.None, 1f);
+            }
+
+
             //draw starting line
             DrawLine(spriteBatch, 100, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
 
