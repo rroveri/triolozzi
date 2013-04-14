@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace WindowsGame2.GameElements
 {
-    class GameLogic
+    public class GameLogic
     {
         #region Fields
 
@@ -209,7 +209,7 @@ namespace WindowsGame2.GameElements
         /// </summary>
         /// <param name="car"></param>
         /// <param name="position">Must be between [0, kMaximumPlayers-1]</param>
-        private void UpdateScore(Car car, int position)
+        public void UpdateScore(Car car, int position)
         {
             int newScore = (position == 0) ? 3 : -3*position;
 

@@ -18,7 +18,7 @@ namespace WindowsGame2
     public class TexturePhysicsObject
     {
         public Body _compound;
-        private Vector2 _origin;
+        public Vector2 _origin;
         private Texture2D _polygonTexture;
         private Vector2 textureScale;
         private Color color;

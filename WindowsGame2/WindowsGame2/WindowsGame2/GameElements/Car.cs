@@ -43,7 +43,7 @@ namespace WindowsGame2.GameElements
 
 
         private Texture2D mDummyTexture;
-        private Color mColor;
+        public Color mColor;
 
         private VertexPositionColorTexture[] trailVertices = new VertexPositionColorTexture[mMaximumTrailPoints * 6];
         private VertexPositionColorTexture[] burnoutsVertices = new VertexPositionColorTexture[100000];
@@ -147,7 +147,34 @@ namespace WindowsGame2.GameElements
             burnoutCounter = 0;
 
             freeToSwap = true;
+
+            //register collision
+            _compound.OnCollision += body_OnCollision;
+            
         }
+
+        bool body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
+        {
+            if (this.hasBoost)
+            {
+                return true;
+            }
+
+            // check if post it
+            if (fixtureB.Body.UserData != null)
+            {
+                //update color
+                int postItNumber = (int)fixtureB.Body.UserData;
+                if (randomTrack.dreamsArrayColors[postItNumber]==Color.White){
+                    randomTrack.changePostItColor(postItNumber, this);
+                }
+            }
+           
+            return true;
+        }
+
+  
+
 
         public Vector2 ProjectedPosition
         {
@@ -175,6 +202,7 @@ namespace WindowsGame2.GameElements
 
         public void Update(GamePadState gps, KeyboardState ks)
         {
+
             if (isActive == false)
             {
                 return;
@@ -227,6 +255,7 @@ namespace WindowsGame2.GameElements
             }
             else if (drivingMode == richMode)
             {
+                
                 // Move the car
                 if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0)
                 {

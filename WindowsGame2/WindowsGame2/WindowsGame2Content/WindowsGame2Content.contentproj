@@ -285,39 +285,88 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\Dreams\Nightmares\Diavolo.png">
-      <Name>Diavolo</Name>
+    <Compile Include="Images\Dreams\postitContour.png">
+      <Name>postitContour</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\Dreams\Wishes\Ali.png">
-      <Name>Ali</Name>
+    <Compile Include="Images\Dreams\Nightmares\Diavolo_Resized.png">
+      <Name>Diavolo_Resized</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\Dreams\Nightmares\Fantasma_Resized.png">
+      <Name>Fantasma_Resized</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\Dreams\Nightmares\Frankenstein_Resized.png">
+      <Name>Frankenstein_Resized</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\Dreams\Wishes\CupCake.png">
-      <Name>CupCake</Name>
+    <Compile Include="Images\Dreams\Wishes\Ali_Resized.png">
+      <Name>Ali_Resized</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Images\Dreams\Wishes\Pony.png">
-      <Name>Pony</Name>
+    <Compile Include="Images\Dreams\Wishes\Cupcake_Resized.png">
+      <Name>Cupcake_Resized</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\Dreams\Wishes\Pony_Resized.png">
+      <Name>Pony_Resized</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\Dreams\Nightmares\fantasma.png">
-      <Name>fantasma</Name>
+    <Compile Include="Images\Dreams\postitnightmare.png">
+      <Name>postitnightmare</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Images\Dreams\Nightmares\Frankenstein.png">
-      <Name>Frankenstein</Name>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\Dreams\postitwish.png">
+      <Name>postitwish</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\Dreams\Quotes\buyBeers.png">
+      <Name>buyBeers</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\Dreams\Quotes\buyMilk.png">
+      <Name>buyMilk</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\Dreams\Quotes\callLuigi.png">
+      <Name>callLuigi</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\Dreams\Quotes\mamaBDay.png">
+      <Name>mamaBDay</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\Dreams\Quotes\marketingMeeting.png">
+      <Name>marketingMeeting</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\Dreams\Quotes\todolist.png">
+      <Name>todolist</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

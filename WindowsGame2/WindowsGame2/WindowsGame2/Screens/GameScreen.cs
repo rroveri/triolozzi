@@ -169,6 +169,8 @@ namespace WindowsGame2.Screens
             crucialPoints[0] = 200; crucialPoints[1] = 400;
             Logic = new GameLogic(crucialPoints, randomRaceTrack.curvePointsMiddle.Count);
 
+            randomRaceTrack.gameLogic = Logic;
+
             prevKeyboardState = Keyboard.GetState();
 
 
