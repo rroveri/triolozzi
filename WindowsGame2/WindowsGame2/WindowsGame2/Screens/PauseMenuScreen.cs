@@ -56,7 +56,7 @@ namespace WindowsGame2.Screens
         /// <summary>
         /// Event handler for when the Quit Game menu entry is selected.
         /// </summary>
-        void QuitGameMenuEntrySelected(object sender, PlayerIndexEventArgs e)
+        void QuitGameMenuEntrySelected(object sender, PlayerIndex e)
         {
             ScreenManager.AddScreen(QuitDialog, ControllingPlayer);
         }
@@ -66,7 +66,7 @@ namespace WindowsGame2.Screens
         /// Event handler for when the user selects ok on the "are you sure
         /// you want to quit" message box. Go back to the main menu screen.
         /// </summary>
-        void ConfirmQuitMessageBoxAccepted(object sender, PlayerIndexEventArgs e)
+        void ConfirmQuitMessageBoxAccepted(object sender, PlayerIndex e)
         {
             ScreenManager.RemoveScreen(ScreenManager.GetScreen<GameScreen>());
             ScreenManager.RemoveScreen(this);

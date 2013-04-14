@@ -165,9 +165,9 @@ namespace WindowsGame2.Screens
         /// <summary>
         /// Helper overload makes it easy to use OnCancel as a MenuEntry event handler.
         /// </summary>
-        protected void OnCancel(object sender, PlayerIndexEventArgs e)
+        protected void OnCancel(object sender, PlayerIndex e)
         {
-            OnCancel(e.PlayerIndex);
+            OnCancel(e);
         }
 
 
