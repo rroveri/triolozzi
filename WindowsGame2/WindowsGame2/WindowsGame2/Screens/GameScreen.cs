@@ -63,6 +63,7 @@ namespace WindowsGame2.Screens
         private GameLogic Logic;
 
         PauseMenuScreen PauseScreen;
+        RankingScreen RankScreen;
         float pauseAlpha;
 
         Effect paperEffect, screenEffect;
@@ -128,6 +129,8 @@ namespace WindowsGame2.Screens
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
             PauseScreen = new PauseMenuScreen();
+            RankScreen = new RankingScreen("RANKINGS");
+            RankScreen.Accepted += RankScreenAccepted;
 
             polygonsList = new List<PolygonPhysicsObject>();
             AllCars = new List<Car>();
@@ -155,6 +158,7 @@ namespace WindowsGame2.Screens
             graphics = GameServices.GetService<GraphicsDeviceManager>();
 
             ScreenManager.AddScreen(PauseScreen, null);
+            ScreenManager.AddScreen(RankScreen, null);
 
             world = new World(new Vector2(0, 0));
             GameServices.AddService<World>(world);
@@ -360,6 +364,13 @@ namespace WindowsGame2.Screens
             if (ShouldPauseGame())
             {
                 ScreenManager.ShowScreen<PauseMenuScreen>();
+                return;
+            }
+
+            if (Logic.isGameOver())
+            {
+                RankScreen.UpdateRankings(Cars);
+                ScreenManager.ShowScreen<RankingScreen>();
                 return;
             }
 
@@ -650,6 +661,15 @@ namespace WindowsGame2.Screens
 
             //draw debug
             _debugView.RenderDebugData(ref projection, ref view);
+        }
+
+        void RankScreenAccepted(object sender, PlayerIndexEventArgs e)
+        {
+            ScreenManager.RemoveScreen(this);
+            ScreenManager.RemoveScreen(PauseScreen);
+            ScreenManager.RemoveScreen(RankScreen);
+            ScreenManager.AddScreen(new GameScreen(), null);
+            ScreenManager.ShowScreen<MainMenuScreen>();
         }
     }
 }
