@@ -79,7 +79,7 @@ namespace WindowsGame2.Screens
         /// <summary>
         /// Event raised when the menu entry is selected.
         /// </summary>
-        public event EventHandler<PlayerIndex> Selected;
+        public event EventHandler<PlayerIndexEventArgs> Selected;
 
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace WindowsGame2.Screens
         protected internal virtual void OnSelectEntry(PlayerIndex playerIndex)
         {
             if (Selected != null)
-                Selected(this, playerIndex);
+                Selected(this, new PlayerIndexEventArgs(playerIndex));
         }
 
 

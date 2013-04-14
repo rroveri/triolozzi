@@ -36,8 +36,8 @@ namespace WindowsGame2.Screens
 
         #region Events
 
-        public event EventHandler<PlayerIndex> Accepted;
-        public event EventHandler<PlayerIndex> Cancelled;
+        public event EventHandler<PlayerIndexEventArgs> Accepted;
+        public event EventHandler<PlayerIndexEventArgs> Cancelled;
 
         #endregion
 
@@ -117,7 +117,7 @@ namespace WindowsGame2.Screens
             {
                 // Raise the accepted event, then exit the message box.
                 if (Accepted != null)
-                    Accepted(this, playerIndex);
+                    Accepted(this, new PlayerIndexEventArgs(playerIndex));
 
                 ExitScreen();
             }
@@ -125,7 +125,7 @@ namespace WindowsGame2.Screens
             {
                 // Raise the cancelled event, then exit the message box.
                 if (Cancelled != null)
-                    Cancelled(this, playerIndex);
+                    Cancelled(this, new PlayerIndexEventArgs(playerIndex));
 
                 ExitScreen();
             }
