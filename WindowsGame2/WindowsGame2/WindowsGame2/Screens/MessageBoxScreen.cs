@@ -59,8 +59,8 @@ namespace WindowsGame2.Screens
         /// </summary>
         public MessageBoxScreen(string message, bool includeUsageText)
         {
-            const string usageText = "\nA button, Space, Enter = ok" +
-                                     "\nB button, Esc = cancel"; 
+            const string usageText = "\n(A)   YES" +
+                                     "\n(B)   NO"; 
             
             if (includeUsageText)
                 this.message = message + usageText;

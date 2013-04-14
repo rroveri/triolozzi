@@ -69,10 +69,15 @@ namespace WindowsGame2.Screens
         void ConfirmQuitMessageBoxAccepted(object sender, PlayerIndexEventArgs e)
         {
             ScreenManager.RemoveScreen(ScreenManager.GetScreen<GameScreen>());
+            ScreenManager.RemoveScreen(this);
             ScreenManager.AddScreen(new GameScreen(), null);
             ScreenManager.ShowScreen<MainMenuScreen>();
         }
 
+        protected override void OnCancel(PlayerIndex playerIndex)
+        {
+            ScreenManager.ShowScreen<GameScreen>();
+        }
 
         #endregion
     }

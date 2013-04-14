@@ -154,6 +154,8 @@ namespace WindowsGame2.Screens
             Content = GameServices.GetService<ContentManager>();
             graphics = GameServices.GetService<GraphicsDeviceManager>();
 
+            ScreenManager.AddScreen(PauseScreen, null);
+
             world = new World(new Vector2(0, 0));
             GameServices.AddService<World>(world);
 
@@ -357,7 +359,7 @@ namespace WindowsGame2.Screens
 
             if (ShouldPauseGame())
             {
-                ScreenManager.AddScreen(PauseScreen, null);
+                ScreenManager.ShowScreen<PauseMenuScreen>();
                 return;
             }
 
