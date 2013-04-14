@@ -59,8 +59,8 @@ namespace WindowsGame2.Screens
         /// </summary>
         public MessageBoxScreen(string message, bool includeUsageText)
         {
-            const string usageText = "\n(A)   YES" +
-                                     "\n(B)   NO"; 
+            const string usageText = "\n      YES" +
+                                     "\n      NO"; 
             
             if (includeUsageText)
                 this.message = message + usageText;
@@ -92,7 +92,7 @@ namespace WindowsGame2.Screens
         public override void LoadContent()
         {
             ContentManager content = ScreenManager.Game.Content;
-            gradientTexture = content.Load<Texture2D>("Images/gradient");
+            gradientTexture = content.Load<Texture2D>("Images/DialogBoxBG");
         }
 
 

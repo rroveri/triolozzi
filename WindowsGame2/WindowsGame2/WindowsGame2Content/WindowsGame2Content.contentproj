@@ -277,7 +277,6 @@
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Compile Include="Images\Dreams\Nightmares\Diavolo.png">
       <Name>Diavolo</Name>
@@ -312,6 +311,13 @@
     </Compile>
     <Compile Include="Images\Dreams\Nightmares\Frankenstein.png">
       <Name>Frankenstein</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\DialogBoxBG.png">
+      <Name>DialogBoxBG</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
