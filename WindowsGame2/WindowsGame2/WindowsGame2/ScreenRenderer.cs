@@ -28,10 +28,10 @@ namespace WindowsGame2
         private float barOffsetW, barOffsetH, barWidth, barHeight, pointLength;
 
         private float lapWidth = 0.15f, lapHeight = 0.1f;
-        private float lapOffset = 0.1f;
+        private float lapOffset = 0.03f;
 
-        private float nLapOffset = 0.1f;
-        private float nLapWidth = 0.10f, nLapHeight = 0.15f;
+        private float nLapOffsetW = 0.08f, nLapOffsetH = 0.015f;
+        private float nLapWidth = 0.06f, nLapHeight = 0.06f;
 
         public ScreenRenderer(int nPlayers)
         {
@@ -149,8 +149,8 @@ namespace WindowsGame2
             lapVertices[4].TextureCoordinate = texOE;
             lapVertices[5].TextureCoordinate = texOW;
 
-            initPoint.X = -nLapWidth / 2;
-            initPoint.Y = nLapOffset + lapOffset - 1;
+            initPoint.X = -lapWidth / 2 + nLapOffsetW;
+            initPoint.Y = lapOffset - 1 + nLapOffsetH;
 
             nLapsVertices[0].Position = new Vector3(initPoint.X, initPoint.Y, 0);
             nLapsVertices[1].Position = new Vector3(initPoint.X + nLapWidth, initPoint.Y, 0);

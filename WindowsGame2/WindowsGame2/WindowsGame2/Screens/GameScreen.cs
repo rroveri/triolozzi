@@ -205,8 +205,8 @@ namespace WindowsGame2.Screens
             screenEffect.Parameters["postitHappy"].SetValue(postitHappy);
             Texture2D postitSad = Content.Load<Texture2D>("Images/postitSad");
             screenEffect.Parameters["postitSad"].SetValue(postitSad);
-            Texture2D lap = Content.Load<Texture2D>("Images/racetrack");
-            screenEffect.Parameters["lap"].SetValue(lap);
+            Texture2D postitLap = Content.Load<Texture2D>("Images/postitLap");
+            screenEffect.Parameters["lap"].SetValue(postitLap);
             Texture2D numbers = Content.Load<Texture2D>("Images/numbers");
             screenEffect.Parameters["numbers"].SetValue(numbers);
             Logic.DidEliminateCar += screenRenderer.setSadToPlayer;
