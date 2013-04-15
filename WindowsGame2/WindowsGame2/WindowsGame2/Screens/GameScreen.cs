@@ -175,6 +175,7 @@ namespace WindowsGame2.Screens
             Logic = new GameLogic(crucialPoints, randomRaceTrack.curvePointsMiddle.Count, PlayersCount);
 
             randomRaceTrack.gameLogic = Logic;
+            Logic.DidFinishLap += randomRaceTrack.ResetStickyNotes;
 
             prevKeyboardState = Keyboard.GetState();
 

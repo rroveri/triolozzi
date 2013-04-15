@@ -128,8 +128,8 @@ namespace WindowsGame2
             }
             else if (Cars.Count == 2)
             {
-                interpWeight = 1f;
-                firstCarWeight = 0.5f;
+                interpWeight = 0.1f;
+                firstCarWeight = 0.55f;
             }
 
             //set taget position

@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using FarseerPhysics.SamplesFramework;
 using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework.Content;
+using WindowsGame2.Events;
 
 
 namespace WindowsGame2.GameElements
@@ -482,6 +483,14 @@ namespace WindowsGame2.GameElements
             return result;
         }
 
+        public void ResetStickyNotes(object sender, FinishedLapEventArgs e)
+        {
+            for (int i = 0; i < dreamsArrayColors.Count; i++)
+            {
+                dreamsArrayColors[i] = Color.White;
+            }
+        }
+
 
         private Vector2 Bezier(int t, Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
         {
@@ -652,7 +661,6 @@ namespace WindowsGame2.GameElements
 
 
         }
-
     
     }
 }
