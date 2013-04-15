@@ -6,6 +6,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using WindowsGame2.Events;
 
 namespace WindowsGame2
 {
@@ -22,17 +23,18 @@ namespace WindowsGame2
 
         private Color currentColor;
 
-        private float offset = 0.05f;
-        private float width = 0.25f, height = 0.20f;
-        private float barOffset, barWidth, barHeight = 0.025f, pointLength;
+        private float offset = 0.0f;
+        private float width = 0.25f, height = 0.30f;
+        private float barOffsetW, barOffsetH, barWidth, barHeight = 0.0205f, pointLength;
 
         public ScreenRenderer(int nPlayers)
         {
 
             PlayersCount = nPlayers;
 
-            barOffset = 0.03f;
-            barWidth = 0.15f;// barOffset;
+            barOffsetW = 0.025f;
+            barOffsetH = 0.062f;
+            barWidth = 0.179f;// barOffset;
             pointLength = barWidth / nPoints;
 
             texNW = new Vector2(0, 0);
@@ -99,8 +101,8 @@ namespace WindowsGame2
 
                 setHappyToAllPlayers();
 
-                initPoint.X += barOffset;
-                initPoint.Y += height - barOffset - barHeight;
+                initPoint.X += barOffsetW;
+                initPoint.Y += height - barOffsetH - barHeight;
 
                 for (int i = 0; i < nPoints; i++)
                 {
@@ -123,10 +125,10 @@ namespace WindowsGame2
             }
         }
 
-        public void setSadToPlayer(int player)
+        public void setSadToPlayer(object sender, EliminatedCarEventArgs e)
         {
             for (int c = 0; c < 6; c++)
-                postitVertices[player * 6 + c].Color = Color.Black;
+                postitVertices[e.EliminatedCarIndex * 6 + c].Color = Color.Black;
         }
 
         public void setHappyToPlayer(int player)
