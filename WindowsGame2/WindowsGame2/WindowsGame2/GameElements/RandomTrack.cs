@@ -547,7 +547,7 @@ namespace WindowsGame2.GameElements
             }
 
             //draw starting line
-            DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
+            DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
 
             //draw quotes (it uses post its rotations and origins...disgusting like a rotten kurva)
             for (int i = 0; i < quotesArray.Count; i++)
