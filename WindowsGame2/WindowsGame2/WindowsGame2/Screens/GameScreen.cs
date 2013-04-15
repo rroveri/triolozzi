@@ -130,7 +130,7 @@ namespace WindowsGame2.Screens
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
             PauseScreen = new PauseMenuScreen();
-            RankScreen = new RankingScreen("RANKINGS");
+            RankScreen = new RankingScreen("");
             RankScreen.Accepted += RankScreenAccepted;
 
             polygonsList = new List<PolygonPhysicsObject>();

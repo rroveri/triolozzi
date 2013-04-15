@@ -19,6 +19,7 @@ namespace WindowsGame2.Screens
         #region Fields
 
         string message;
+        const string longestString = "\n\n\n\n\n\nPress Start to return to the main menu";
         Texture2D gradientTexture;
 
         InputAction menuSelect;
@@ -63,7 +64,7 @@ namespace WindowsGame2.Screens
         public override void LoadContent()
         {
             ContentManager content = ScreenManager.Game.Content;
-            gradientTexture = content.Load<Texture2D>("Images/gradient");
+            gradientTexture = content.Load<Texture2D>("Images/rankingBG");
         }
 
         public void UpdateRankings(List<Car> Cars)
@@ -71,14 +72,15 @@ namespace WindowsGame2.Screens
             List<Car> sortedCars = Cars.OrderByDescending(c => c.score).ToList();
             _rankingText.Remove(0, _rankingText.Length);
             _rankingText.Append(message);
-            _rankingText.Append('\n');
+            _rankingText.Append("\n\n");
             for (int i = 0; i < sortedCars.Count; i++)
             {
+                _rankingText.Append("     ");
                 _rankingText.Append(_ranks[i]);
                 _rankingText.Append(_carColors[Cars.IndexOf(sortedCars[i])]);
                 _rankingText.Append('\n');
             }
-            _rankingText.Append("Press Start to return to the main menu");
+            //_rankingText.Append("Press Start to return to the main menu");
         }
 
 
@@ -129,7 +131,7 @@ namespace WindowsGame2.Screens
             // Center the message text in the viewport.
             Viewport viewport = ScreenManager.GraphicsDevice.Viewport;
             Vector2 viewportSize = new Vector2(viewport.Width, viewport.Height);
-            Vector2 textSize = font.MeasureString(_rankingText.ToString());
+            Vector2 textSize = font.MeasureString(longestString);
             Vector2 textPosition = (viewportSize - textSize) / 2;
 
             // The background includes a border somewhat larger than the text itself.
@@ -150,7 +152,7 @@ namespace WindowsGame2.Screens
             spriteBatch.Draw(gradientTexture, backgroundRectangle, color);
 
             // Draw the message box text.
-            spriteBatch.DrawString(font, _rankingText.ToString(), textPosition, color);
+            spriteBatch.DrawString(font, _rankingText.ToString(), textPosition, Color.Black);
 
             spriteBatch.End();
         }
