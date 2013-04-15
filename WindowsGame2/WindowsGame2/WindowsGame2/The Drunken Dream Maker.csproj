@@ -114,6 +114,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="Events\EliminatedCarEventArgs.cs" />
+    <Compile Include="Events\FinishedLapEventArgs.cs" />
     <Compile Include="GameElements\Car.cs" />
     <Compile Include="AssetCreator.cs" />
     <Compile Include="ConvertUnits.cs" />
