@@ -6,7 +6,7 @@ using WindowsGame2.GameElements;
 
 namespace WindowsGame2.Events
 {
-    class EliminatedCarEventArgs : EventArgs
+    public class EliminatedCarEventArgs : EventArgs
     {
         public EliminatedCarEventArgs(Car car)
         {
