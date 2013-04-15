@@ -448,7 +448,7 @@ namespace WindowsGame2.GameElements
             }
             else
             {
-                gameLogic.UpdateScore(car, 1);
+                gameLogic.UpdateScore(car,-1);
             }
         }
 
