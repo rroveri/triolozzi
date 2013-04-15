@@ -87,7 +87,7 @@ namespace WindowsGame2.GameElements
             isMiniRaceOver = false;
             this.nPlayers = nPlayers;
 
-            _eliminatedCarEvent = new EliminatedCarEventArgs(null);
+            _eliminatedCarEvent = new EliminatedCarEventArgs(0);
             _finishedLapEvent = new FinishedLapEventArgs(0);
         }
 
@@ -185,7 +185,7 @@ namespace WindowsGame2.GameElements
                             _eliminatedCars++;
 
                             // Fire event
-                            _eliminatedCarEvent.EliminatedCar = Cars[i];
+                            _eliminatedCarEvent.EliminatedCarIndex = i;
 
                             if (DidEliminateCar != null)
                             {

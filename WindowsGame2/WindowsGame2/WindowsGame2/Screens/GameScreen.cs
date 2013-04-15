@@ -176,7 +176,7 @@ namespace WindowsGame2.Screens
 
             randomRaceTrack.gameLogic = Logic;
             Logic.DidFinishLap += randomRaceTrack.ResetStickyNotes;
-
+            
             prevKeyboardState = Keyboard.GetState();
 
 
@@ -206,6 +206,7 @@ namespace WindowsGame2.Screens
             screenEffect.Parameters["postitSad"].SetValue(postitSad);
             Texture2D numbers = Content.Load<Texture2D>("Images/numbers");
             screenEffect.Parameters["numbers"].SetValue(numbers);
+            Logic.DidEliminateCar += screenRenderer.setSadToPlayer;
 
             for (int i = 0; i < 4; i++)
             {
@@ -491,6 +492,7 @@ namespace WindowsGame2.Screens
             {
                 int newMiddlePoint = findACloserMiddlePoint();
                 positionCars(newMiddlePoint % randomRaceTrack.curvePointsMiddle.Count);
+                screenRenderer.setHappyToAllPlayers();
             }
         }
 

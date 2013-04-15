@@ -8,11 +8,11 @@ namespace WindowsGame2.Events
 {
     public class EliminatedCarEventArgs : EventArgs
     {
-        public EliminatedCarEventArgs(Car car)
+        public EliminatedCarEventArgs(int carIndex)
         {
-            EliminatedCar = car;
+            EliminatedCarIndex = carIndex;
         }
 
-        public Car EliminatedCar { get; set; }
+        public int EliminatedCarIndex { get; set; }
     }
 }
