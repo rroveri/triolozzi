@@ -86,7 +86,7 @@ namespace WindowsGame2.GameElements
         private bool freeToSwap;
 
         public Car(World world, Color Color, RandomTrack _randomTrack)
-            : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/small_white_penis"), new Vector2(65.0f, 40.0f), Color)
+            : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/small_car"), new Vector2(65.0f, 40.0f), Color)
         {
 
             isActive = true;

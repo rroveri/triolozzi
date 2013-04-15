@@ -49,10 +49,9 @@ namespace WindowsGame2.Screens
         KeyboardState prevKeyboardState;
         Random Random;
         float[] randomArray;
-        int lastFrame = 0, randomIndex = 0;
+        //int lastFrame = 0, randomIndex = 0;
 
         KeyboardState ks;
-        GamePadState gps;
 
         AssetCreator assetCreator;
 
@@ -64,6 +63,7 @@ namespace WindowsGame2.Screens
         private GameLogic Logic;
 
         PauseMenuScreen PauseScreen;
+        RankingScreen RankScreen;
         float pauseAlpha;
 
         Effect paperEffect, screenEffect;
@@ -83,7 +83,7 @@ namespace WindowsGame2.Screens
         Vector2[] aabbVerts;
         int activeBodiesCount;
 
-        AABB startingPosAabb;
+        //AABB startingPosAabb;
         Vector2[] startingPosAabbVerts;
 
         private int _playersCount;
@@ -113,8 +113,8 @@ namespace WindowsGame2.Screens
             }
         }
 
-        private int _pauseTime;
-        private int kDefaultPauseTime = 3000;
+        //private int _pauseTime;
+        //private int kDefaultPauseTime = 3000;
 
         #endregion
 
@@ -129,6 +129,8 @@ namespace WindowsGame2.Screens
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
             PauseScreen = new PauseMenuScreen();
+            RankScreen = new RankingScreen("RANKINGS");
+            RankScreen.Accepted += RankScreenAccepted;
 
             polygonsList = new List<PolygonPhysicsObject>();
             AllCars = new List<Car>();
@@ -154,6 +156,9 @@ namespace WindowsGame2.Screens
             GraphicsDevice = GameServices.GetService<GraphicsDevice>();
             Content = GameServices.GetService<ContentManager>();
             graphics = GameServices.GetService<GraphicsDeviceManager>();
+
+            ScreenManager.AddScreen(PauseScreen, null);
+            ScreenManager.AddScreen(RankScreen, null);
 
             world = new World(new Vector2(0, 0));
             GameServices.AddService<World>(world);
@@ -358,13 +363,16 @@ namespace WindowsGame2.Screens
             //lastFrame++;
             //paperEffect.Parameters["randomSeed"].SetValue(randomArray[randomIndex]);
 
-            gps = GamePad.GetState(PlayerIndex.One);
-            ks = Keyboard.GetState();
-
-            // Allows the game to exit
-            if (gps.Buttons.Back == ButtonState.Pressed || ks.IsKeyDown(Keys.Escape))
+            if (ShouldPauseGame())
             {
-                ScreenManager.AddScreen(PauseScreen, null);
+                ScreenManager.ShowScreen<PauseMenuScreen>();
+                return;
+            }
+
+            if (Logic.isGameOver())
+            {
+                RankScreen.UpdateRankings(Cars);
+                ScreenManager.ShowScreen<RankingScreen>();
                 return;
             }
 
@@ -523,6 +531,24 @@ namespace WindowsGame2.Screens
             return closestMiddlePoint;
         }
 
+        private bool ShouldPauseGame()
+        {
+            // Check for keyboard 'Esc'
+            ks = Keyboard.GetState();
+            if (ks.IsKeyDown(Keys.Escape))
+            {
+                return true;
+            }
+            // Check if any players has pressed the back button
+            for (int i = 0; i < playerIndexes.Count; i++)
+            {
+                if (GamePad.GetState(playerIndexes[i]).Buttons.Back == ButtonState.Pressed)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public override void Draw(GameTime gameTime)
         {
@@ -637,6 +663,15 @@ namespace WindowsGame2.Screens
 
             //draw debug
             _debugView.RenderDebugData(ref projection, ref view);
+        }
+
+        void RankScreenAccepted(object sender, PlayerIndexEventArgs e)
+        {
+            ScreenManager.RemoveScreen(this);
+            ScreenManager.RemoveScreen(PauseScreen);
+            ScreenManager.RemoveScreen(RankScreen);
+            ScreenManager.AddScreen(new GameScreen(), null);
+            ScreenManager.ShowScreen<MainMenuScreen>();
         }
     }
 }

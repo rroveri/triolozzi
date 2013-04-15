@@ -326,6 +326,20 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Images\DialogBoxBG.png">
+      <Name>DialogBoxBG</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\small_car.png">
+      <Name>small_car</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Images\Dreams\postitnightmare.png">
       <Name>postitnightmare</Name>
       <Importer>TextureImporter</Importer>

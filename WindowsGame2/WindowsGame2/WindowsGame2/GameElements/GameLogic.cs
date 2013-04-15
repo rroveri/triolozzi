@@ -18,7 +18,7 @@ namespace WindowsGame2.GameElements
         /// <summary>
         /// The number of laps needed to finish the game.
         /// </summary>
-        private const int kMaximumLaps = 3;
+        private const int kMaximumLaps = 1;
 
         /// <summary>
         /// The crucial points in a track.

@@ -245,7 +245,6 @@ namespace WindowsGame2
             }
 
             screens.Remove(screen);
-            GC.Collect();
         }
 
         public void ShowScreen<T>()

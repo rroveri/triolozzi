@@ -1,28 +1,20 @@
-﻿#region File Description
-//-----------------------------------------------------------------------------
-// MessageBoxScreen.cs
-//
-// Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-#endregion
-
-#region Using Statements
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using WindowsGame2;
-#endregion
+using WindowsGame2.GameElements;
 
 namespace WindowsGame2.Screens
 {
     /// <summary>
-    /// A popup message box screen, used to display "are you sure?"
-    /// confirmation messages.
+    /// A screen that displays the final ranking of a race.
     /// </summary>
-    class MessageBoxScreen : AbstractScreen
+    class RankingScreen : AbstractScreen
     {
         #region Fields
 
@@ -30,14 +22,17 @@ namespace WindowsGame2.Screens
         Texture2D gradientTexture;
 
         InputAction menuSelect;
-        InputAction menuCancel;
+
+        private string[] _carColors = { "Red", "Blue", "Green", "Brown" };
+        private string[] _ranks = { "1st: ", "2nd: ", "3rd: ", "4th: " };
+
+        private StringBuilder _rankingText;
 
         #endregion
 
         #region Events
 
         public event EventHandler<PlayerIndexEventArgs> Accepted;
-        public event EventHandler<PlayerIndexEventArgs> Cancelled;
 
         #endregion
 
@@ -48,24 +43,9 @@ namespace WindowsGame2.Screens
         /// Constructor automatically includes the standard "A=ok, B=cancel"
         /// usage text prompt.
         /// </summary>
-        public MessageBoxScreen(string message)
-            : this(message, true)
-        { }
-
-
-        /// <summary>
-        /// Constructor lets the caller specify whether to include the standard
-        /// "A=ok, B=cancel" usage text prompt.
-        /// </summary>
-        public MessageBoxScreen(string message, bool includeUsageText)
+        public RankingScreen(string message)
         {
-            const string usageText = "\n      YES" +
-                                     "\n      NO"; 
-            
-            if (includeUsageText)
-                this.message = message + usageText;
-            else
-                this.message = message;
+            this.message = message;
 
             IsPopup = true;
 
@@ -76,23 +56,31 @@ namespace WindowsGame2.Screens
                 new Buttons[] { Buttons.A, Buttons.Start },
                 new Keys[] { Keys.Space, Keys.Enter },
                 true);
-            menuCancel = new InputAction(
-                new Buttons[] { Buttons.B, Buttons.Back },
-                new Keys[] { Keys.Escape, Keys.Back },
-                true);
+
+            _rankingText = new StringBuilder();
         }
 
-
-        /// <summary>
-        /// Loads graphics content for this screen. This uses the shared ContentManager
-        /// provided by the Game class, so the content will remain loaded forever.
-        /// Whenever a subsequent MessageBoxScreen tries to load this same content,
-        /// it will just get back another reference to the already loaded data.
-        /// </summary>
         public override void LoadContent()
         {
             ContentManager content = ScreenManager.Game.Content;
-            gradientTexture = content.Load<Texture2D>("Images/DialogBoxBG");
+            gradientTexture = content.Load<Texture2D>("Images/gradient");
+        }
+
+        public void UpdateRankings(List<Car> Cars)
+        {
+            List<Car> sortedCars = Cars.OrderByDescending(c => c.score).ToList();
+            _rankingText.Remove(0, _rankingText.Length);
+            _rankingText.Append(message);
+            _rankingText.Append('\n');
+            for (int i = 0; i < sortedCars.Count; i++)
+            {
+                _rankingText.Append(_ranks[i]);
+                _rankingText.Append(_carColors[Cars.IndexOf(sortedCars[i])]);
+                //_rankingText.Append(" - ");
+                //_rankingText.Append(sortedCars[i].score);
+                _rankingText.Append('\n');
+            }
+            _rankingText.Append("Press Start to return to the main menu");
         }
 
 
@@ -102,7 +90,7 @@ namespace WindowsGame2.Screens
 
 
         /// <summary>
-        /// Responds to user input, accepting or cancelling the message box.
+        /// Responds to user input when cancelling the ranking screen.
         /// </summary>
         public override void HandleInput(GameTime gameTime, InputState input)
         {
@@ -118,14 +106,6 @@ namespace WindowsGame2.Screens
                 // Raise the accepted event, then exit the message box.
                 if (Accepted != null)
                     Accepted(this, new PlayerIndexEventArgs(playerIndex));
-
-                ExitScreen();
-            }
-            else if (menuCancel.Evaluate(input, ControllingPlayer, out playerIndex))
-            {
-                // Raise the cancelled event, then exit the message box.
-                if (Cancelled != null)
-                    Cancelled(this, new PlayerIndexEventArgs(playerIndex));
 
                 ExitScreen();
             }
@@ -151,7 +131,7 @@ namespace WindowsGame2.Screens
             // Center the message text in the viewport.
             Viewport viewport = ScreenManager.GraphicsDevice.Viewport;
             Vector2 viewportSize = new Vector2(viewport.Width, viewport.Height);
-            Vector2 textSize = font.MeasureString(message);
+            Vector2 textSize = font.MeasureString(_rankingText.ToString());
             Vector2 textPosition = (viewportSize - textSize) / 2;
 
             // The background includes a border somewhat larger than the text itself.
@@ -172,7 +152,7 @@ namespace WindowsGame2.Screens
             spriteBatch.Draw(gradientTexture, backgroundRectangle, color);
 
             // Draw the message box text.
-            spriteBatch.DrawString(font, message, textPosition, color);
+            spriteBatch.DrawString(font, _rankingText.ToString(), textPosition, color);
 
             spriteBatch.End();
         }

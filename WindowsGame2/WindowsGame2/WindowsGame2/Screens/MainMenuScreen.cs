@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
+using System;
 #endregion
 
 namespace WindowsGame2.Screens
@@ -31,7 +32,7 @@ namespace WindowsGame2.Screens
         static int[] numberOfPlayers = { 2, 3, 4 };
         static string[] _playersText = {"2 Players", "3 Players", "4 Players" };
         static int _playersCountIndex = 2;
-        
+
         #endregion
 
 
@@ -76,34 +77,12 @@ namespace WindowsGame2.Screens
         #region Handle Input
 
 
-        /// <summary>
-        /// Event handler for when the Play Game menu entry is selected.
-        /// </summary>
-        //void PlayGameMenuEntrySelected(object sender, PlayerIndexEventArgs e)
-        //{
-        //    // TODO: start game here
-        //    ScreenManager.GetScreen<GameScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
-        //    ScreenManager.ShowScreen<GameScreen>();
-        //}
-
-
         void PlayGameMenuSingleModeEntrySelected(object sender, PlayerIndexEventArgs e)
         {
-            if (ScreenManager.GetScreen<GameScreen>() == null)
-            {
-                ScreenManager.AddScreen(new GameScreen(), null);
-            }
+            GC.Collect();
             ScreenManager.GetScreen<GameScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
             ScreenManager.ShowScreen<GameScreen>();
         }
-
-        /// <summary>
-        /// Event handler for when the Options menu entry is selected.
-        /// </summary>
-        //void OptionsMenuEntrySelected(object sender, PlayerIndexEventArgs e)
-        //{
-        //    ScreenManager.AddScreen(new OptionsMenuScreen(), e.PlayerIndex);
-        //}
 
         void PlayersMenuEntrySelected(object sender, PlayerIndexEventArgs e)
         {
@@ -123,7 +102,6 @@ namespace WindowsGame2.Screens
         protected override void OnCancel(PlayerIndex playerIndex)
         {
             ScreenManager.Game.Exit();
-            //ScreenManager.AddScreen(ExitDialog, playerIndex);
         }
 
 
