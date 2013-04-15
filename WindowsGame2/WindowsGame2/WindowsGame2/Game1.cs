@@ -28,8 +28,8 @@ namespace WindowsGame2
             GameServices.AddService<GraphicsDeviceManager>(graphics);
             Content.RootDirectory = "Content";
            
-            graphics.PreferredBackBufferHeight = 1000;
-            graphics.PreferredBackBufferWidth = 1800;
+            graphics.PreferredBackBufferHeight = 1080;
+            graphics.PreferredBackBufferWidth = 1920;
 
             graphics.IsFullScreen = false;
 
