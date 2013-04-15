@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using WindowsGame2.Events;
 
 namespace WindowsGame2.GameElements
 {
@@ -46,6 +47,19 @@ namespace WindowsGame2.GameElements
         public int Laps { get; private set; }
 
         /// <summary>
+        /// Events fired when a lap finished.
+        /// </summary>
+        public event EventHandler<FinishedLapEventArgs> DidFinishLap;
+
+        /// <summary>
+        /// Events fired when a player is eliminated.
+        /// </summary>
+        public event EventHandler<EliminatedCarEventArgs> DidEliminateCar;
+
+        private FinishedLapEventArgs _finishedLapEvent;
+        private EliminatedCarEventArgs _eliminatedCarEvent;
+
+        /// <summary>
         /// The ranking position for each car in the race.
         /// </summary>
         public int[] Ranking { get; private set; }
@@ -70,6 +84,9 @@ namespace WindowsGame2.GameElements
 
             Ranking = new int[kMaximumPlayers];
             isMiniRaceOver = false;
+
+            _eliminatedCarEvent = new EliminatedCarEventArgs(null);
+            _finishedLapEvent = new FinishedLapEventArgs(0);
         }
 
         public void RestartMiniRace()
@@ -164,6 +181,10 @@ namespace WindowsGame2.GameElements
                             UpdateScore(Cars[i], Cars.Count - 1 - _eliminatedCars);
 
                             _eliminatedCars++;
+
+                            // Fire event
+                            _eliminatedCarEvent.EliminatedCar = Cars[i];
+                            DidEliminateCar(this, _eliminatedCarEvent);
                             break;
                         }
                     }
@@ -190,6 +211,8 @@ namespace WindowsGame2.GameElements
             {
                 Laps++;
                 ResetCrucialPoints();
+                _finishedLapEvent.LapNumber = Laps;
+                DidFinishLap(this, _finishedLapEvent);
             }
         }
 
