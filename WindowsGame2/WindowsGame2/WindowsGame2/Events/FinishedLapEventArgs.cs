@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WindowsGame2.Events
 {
-    class FinishedLapEventArgs : EventArgs
+    public class FinishedLapEventArgs : EventArgs
     {
         public FinishedLapEventArgs(int lapNumber)
         {

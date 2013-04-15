@@ -184,7 +184,11 @@ namespace WindowsGame2.GameElements
 
                             // Fire event
                             _eliminatedCarEvent.EliminatedCar = Cars[i];
-                            DidEliminateCar(this, _eliminatedCarEvent);
+
+                            if (DidEliminateCar != null)
+                            {
+                                DidEliminateCar(this, _eliminatedCarEvent);
+                            }
                             break;
                         }
                     }
@@ -212,7 +216,10 @@ namespace WindowsGame2.GameElements
                 Laps++;
                 ResetCrucialPoints();
                 _finishedLapEvent.LapNumber = Laps;
-                DidFinishLap(this, _finishedLapEvent);
+                if (DidFinishLap != null)
+                {
+                    DidFinishLap(this, _finishedLapEvent);
+                }
             }
         }
 
