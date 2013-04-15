@@ -137,6 +137,8 @@ namespace WindowsGame2.GameElements
             quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/mamaBDay"));
             quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/marketingMeeting"));
             quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/todolist"));
+            quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/aameeting"));
+            quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/feedTheCat"));
             quotesPositions = new List<Vector2>();
             
             postItSize = new Vector2(500f,500f);
@@ -536,21 +538,21 @@ namespace WindowsGame2.GameElements
             
 
             //draw background
-            for (int y = (int)Math.Ceiling(down); y < (int)Math.Ceiling(up); y = y + currentTexture.Height * textureScale)
+            for (int y = (int)Math.Ceiling(down - 2*currentTexture.Height * textureScale); y < (int)Math.Ceiling(up + 2*currentTexture.Height * textureScale); y = y + currentTexture.Height * textureScale)
             {
-                for (int x = (int)Math.Floor(left); x < (int)Math.Ceiling(right); x = x + currentTexture.Width * textureScale)
+                for (int x = (int)Math.Floor(left - 2*currentTexture.Width * textureScale); x < (int)Math.Ceiling(right + 2*currentTexture.Width * textureScale); x = x + currentTexture.Width * textureScale)
                 {
                     spriteBatch.Draw(currentTexture, new Vector2(x, y), null, Color.White, 0.0f, Vector2.Zero, Vector2.One * textureScale, SpriteEffects.None, 1f);
                 }
             }
 
             //draw starting line
-            DrawLine(spriteBatch, 100, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
+            DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
 
             //draw quotes (it uses post its rotations and origins...disgusting like a rotten kurva)
             for (int i = 0; i < quotesArray.Count; i++)
             {
-                spriteBatch.Draw(quotesArray[i], ConvertUnits.ToDisplayUnits(quotesPositions[i]), null, Color.Yellow, dreamsRotations[(i + 3) % quotesArray.Count], postItBodiesList[(i + 3) % quotesArray.Count]._origin, textureScaleVec, SpriteEffects.None, 1f);
+                spriteBatch.Draw(quotesArray[i], ConvertUnits.ToDisplayUnits(quotesPositions[i]), null, Color.Yellow, dreamsRotations[(i + 3) % dreamsRotations.Count], postItBodiesList[(i + 3) % dreamsRotations.Count]._origin, textureScaleVec, SpriteEffects.None, 1f);
             }
 
             //draw dreams

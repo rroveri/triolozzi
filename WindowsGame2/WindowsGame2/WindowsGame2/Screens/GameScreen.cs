@@ -257,7 +257,7 @@ namespace WindowsGame2.Screens
             {
                 tooClose = false;
                 for (int i=0; i<randomRaceTrack.dreamsMiddlePoints.Count; i++){
-                    if (Math.Abs(startingPoint - randomRaceTrack.dreamsMiddlePoints[i]) < 10)
+                    if (Math.Abs(startingPoint - randomRaceTrack.dreamsMiddlePoints[i]) < 20)
                     {
                         tooClose = true;
                         startingPoint++;
