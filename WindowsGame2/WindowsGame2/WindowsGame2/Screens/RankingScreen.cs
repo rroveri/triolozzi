@@ -76,8 +76,6 @@ namespace WindowsGame2.Screens
             {
                 _rankingText.Append(_ranks[i]);
                 _rankingText.Append(_carColors[Cars.IndexOf(sortedCars[i])]);
-                //_rankingText.Append(" - ");
-                //_rankingText.Append(sortedCars[i].score);
                 _rankingText.Append('\n');
             }
             _rankingText.Append("Press Start to return to the main menu");

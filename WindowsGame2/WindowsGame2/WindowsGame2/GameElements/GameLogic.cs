@@ -18,7 +18,7 @@ namespace WindowsGame2.GameElements
         /// <summary>
         /// The number of laps needed to finish the game.
         /// </summary>
-        private const int kMaximumLaps = 1;
+        private const int kMaximumLaps = 5;
 
         /// <summary>
         /// The crucial points in a track.
@@ -33,11 +33,6 @@ namespace WindowsGame2.GameElements
         /// The number of cars that have been eleminated during a short race.
         /// </summary>
         private int _eliminatedCars;
-
-        /// <summary>
-        /// The order in which the cars have been eliminated during a short race.
-        /// </summary>
-        //private int[] _eliminationRanking;
 
         /// <summary>
         /// A list that tells whether a crucial point has been reached or not during one lap.
@@ -72,7 +67,6 @@ namespace WindowsGame2.GameElements
             // Set up the ranking and elimination lists
             taken = new int[kMaximumPlayers];
             _eliminatedCars = 0;
-            //_eliminationRanking = new int[kMaximumPlayers];
 
             Ranking = new int[kMaximumPlayers];
             isMiniRaceOver = false;
@@ -179,15 +173,21 @@ namespace WindowsGame2.GameElements
 
         private void UpdateTrackAdvancement(List<Car> Cars)
         {
-            int point = Cars[Ranking[0]].currentMiddlePoint;
-            if (didReachCrucialPoint.ContainsKey(point))
+            int point = 0;
+            for (int i = 0; i < Cars.Count; i++)
             {
-                didReachCrucialPoint[point] = true;
+                point = Cars[i].currentMiddlePoint;
+                if (didReachCrucialPoint.ContainsKey(point))
+                {
+                    didReachCrucialPoint[point] = true;
+                }
             }
 
-            if ((point % (_pointsCount + 40)) == 0 && !didReachCrucialPoint.ContainsValue(false))
+            // Transform the point for 1-Lap computation
+            point = point % (_pointsCount + 40);
+
+            if (point == 0 && !didReachCrucialPoint.ContainsValue(false))
             {
-                // We completed a lap
                 Laps++;
                 ResetCrucialPoints();
             }
