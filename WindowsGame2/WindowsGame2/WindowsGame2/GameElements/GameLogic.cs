@@ -208,19 +208,19 @@ namespace WindowsGame2.GameElements
                 {
                     didReachCrucialPoint[point] = true;
                 }
-            }
 
-            // Transform the point for 1-Lap computation
-            point = point % (_pointsCount + 40);
+                // Transform the point for 1-Lap computation
+                point = point % (_pointsCount + 20);
 
-            if (point == 0 && !didReachCrucialPoint.ContainsValue(false))
-            {
-                Laps++;
-                ResetCrucialPoints();
-                _finishedLapEvent.LapNumber = Laps;
-                if (DidFinishLap != null)
+                if (point <= 50 && !didReachCrucialPoint.ContainsValue(false))
                 {
-                    DidFinishLap(this, _finishedLapEvent);
+                    Laps++;
+                    ResetCrucialPoints();
+                    _finishedLapEvent.LapNumber = Laps;
+                    if (DidFinishLap != null)
+                    {
+                        DidFinishLap(this, _finishedLapEvent);
+                    }
                 }
             }
         }
