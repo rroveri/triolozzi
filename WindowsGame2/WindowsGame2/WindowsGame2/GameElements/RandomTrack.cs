@@ -68,7 +68,7 @@ namespace WindowsGame2.GameElements
         List<TexturePhysicsObject> postItBodiesList;
         Vector2 textureScaleVec;
 
-        List<int> dreamsMiddlePoints;
+        public List<int> dreamsMiddlePoints;
         
         public static RandomTrack createTrack()
         {
@@ -455,7 +455,7 @@ namespace WindowsGame2.GameElements
             int randomMiddlePoint = random.Next(20, curvePointsMiddle.Count - 20);
             for (int i = 0; i < dreamsMiddlePoints.Count; i++)
             {
-                if (Math.Abs(randomMiddlePoint - dreamsMiddlePoints[i]) < 40)
+                if (Math.Abs(randomMiddlePoint - dreamsMiddlePoints[i]) < 20)
                 {
                     return computeRandomDreamMiddlePoint();
                 }

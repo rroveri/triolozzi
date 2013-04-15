@@ -247,9 +247,23 @@ namespace WindowsGame2.Screens
               
         }
 
-        public void positionCars(int startingPoint)
+        public void positionCars(int startingPointToCheck)
         {
-            //GC.Collect();
+            GC.Collect();
+
+            int startingPoint = startingPointToCheck;
+            bool tooClose=true;
+            while (tooClose)
+            {
+                tooClose = false;
+                for (int i=0; i<randomRaceTrack.dreamsMiddlePoints.Count; i++){
+                    if (Math.Abs(startingPoint - randomRaceTrack.dreamsMiddlePoints[i]) < 10)
+                    {
+                        tooClose = true;
+                        startingPoint++;
+                    }
+                }      
+            }
 
             //compute cars positions
             startingPos = randomRaceTrack.computeStartingPositions(startingPoint);
