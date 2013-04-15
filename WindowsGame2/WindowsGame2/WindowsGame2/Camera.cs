@@ -84,7 +84,7 @@ namespace WindowsGame2
         public int lastCarIndex;
 
         public Vector2 oldPosition;
-        private bool firstTime=true;
+        private bool firstTime;
 
         public bool raceCanStart;
 
@@ -107,6 +107,7 @@ namespace WindowsGame2
             _screenCenter = new Vector2(View.Width / 2f, View.Height / 2f);
 
             raceCanStart = true;
+            firstTime = true;
         }
 
         
@@ -137,7 +138,8 @@ namespace WindowsGame2
 
             //initialize old position
             if (firstTime){
-                oldPosition=objectPosition_;
+
+                oldPosition = objectPosition_+new Vector2(3000);
                 firstTime = false;
             }
 

@@ -227,7 +227,8 @@ namespace WindowsGame2.GameElements
            // linearVel = _compound.LinearVelocity.Length();
           //  if(linearVel > maxVel) linearVel = maxVel;
 
-            bool blueOnly = mColor == Color.Blue || true;
+            bool blueOnly = mColor == Color.Green;// || true;
+            bool brownOnly = mColor == Color.Brown;
 
             if (drivingMode == vicksMode)
             {
@@ -282,22 +283,22 @@ namespace WindowsGame2.GameElements
             else if (drivingMode == unityMode)
             {
                 float newAcc = 0.0f;
-                if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0)
+                if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0 || ks.IsKeyDown(Keys.D) && brownOnly)
                 {
                     _compound.AngularVelocity = 0;
                     _compound.Rotation += rotVel;
                 }
-                if (ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0)
+                if (ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0 || ks.IsKeyDown(Keys.A) && brownOnly)
                 {
                     _compound.AngularVelocity = 0;
                     _compound.Rotation -= rotVel;
                 }
 
-                if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0)
+                if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0 || ks.IsKeyDown(Keys.W) && brownOnly) 
                 {
                     newAcc = currentAcc;
                 }
-                if (ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0)
+                if (ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0 || ks.IsKeyDown(Keys.S) && brownOnly)
                 {
                     newAcc = -currentAcc;
                 }
