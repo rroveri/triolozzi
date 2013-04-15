@@ -205,9 +205,12 @@ namespace WindowsGame2.Screens
             screenEffect.Parameters["postitHappy"].SetValue(postitHappy);
             Texture2D postitSad = Content.Load<Texture2D>("Images/postitSad");
             screenEffect.Parameters["postitSad"].SetValue(postitSad);
+            Texture2D postitLap = Content.Load<Texture2D>("Images/postitLap");
+            screenEffect.Parameters["lap"].SetValue(postitLap);
             Texture2D numbers = Content.Load<Texture2D>("Images/numbers");
             screenEffect.Parameters["numbers"].SetValue(numbers);
             Logic.DidEliminateCar += screenRenderer.setSadToPlayer;
+            Logic.DidFinishLap += screenRenderer.setLap;
 
             for (int i = 0; i < 4; i++)
             {
@@ -666,6 +669,12 @@ namespace WindowsGame2.Screens
 
             screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, PlayersCount * 2);
+
+            screenEffect.CurrentTechnique.Passes["LapPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.lapVertices, 0, 2);
+
+            screenEffect.CurrentTechnique.Passes["NLapPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.nLapsVertices, 0, 2);
 
             screenEffect.CurrentTechnique.Passes["BarPass"].Apply();
             for (int i = 0; i < PlayersCount; i++)

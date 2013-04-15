@@ -217,13 +217,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\numbers.jpg">
-      <Name>numbers</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Images\postitSad.png">
       <Name>postitSad</Name>
       <Importer>TextureImporter</Importer>
@@ -393,6 +386,25 @@
     </Compile>
     <Compile Include="Images\Dreams\Quotes\feedTheCat.png">
       <Name>feedTheCat</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\racetrack.png">
+      <Name>racetrack</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\numbers.png">
+      <Name>numbers</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\postitLap.png">
+      <Name>postitLap</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

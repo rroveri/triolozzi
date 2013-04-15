@@ -1,7 +1,7 @@
 
 Texture2D postitHappy, postitSad, lap, numbers;
 
-float4 ranking, nLaps;
+float4 nLaps;
 
 sampler postitHappySampler = sampler_state
 {
