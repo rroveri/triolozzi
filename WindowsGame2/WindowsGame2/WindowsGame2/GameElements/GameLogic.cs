@@ -15,7 +15,6 @@ namespace WindowsGame2.GameElements
         /// The maximum number of players.
         /// </summary>
         private const int kMaximumPlayers = 4;
-        private int nPlayers;
 
         /// <summary>
         /// The number of laps needed to finish the game.
@@ -65,11 +64,13 @@ namespace WindowsGame2.GameElements
         /// </summary>
         public int[] Ranking { get; private set; }
 
+        public int PlayersCount { get; set; }
+
         #endregion
 
         #region Initialization
 
-        public GameLogic(int[] crucialPoints, int pointsCount, int nPlayers)
+        public GameLogic(int[] crucialPoints, int pointsCount)
         {
             Laps = 0;
 
@@ -85,7 +86,6 @@ namespace WindowsGame2.GameElements
 
             Ranking = new int[kMaximumPlayers];
             isMiniRaceOver = false;
-            this.nPlayers = nPlayers;
 
             _eliminatedCarEvent = new EliminatedCarEventArgs(0);
             _finishedLapEvent = new FinishedLapEventArgs(0);
@@ -204,23 +204,24 @@ namespace WindowsGame2.GameElements
             for (int i = 0; i < Cars.Count; i++)
             {
                 point = Cars[i].currentMiddlePoint;
+
+                // Transform the point for 1-Lap computation
+                point = point % (_pointsCount + 20);
+
                 if (didReachCrucialPoint.ContainsKey(point))
                 {
                     didReachCrucialPoint[point] = true;
                 }
-            }
 
-            // Transform the point for 1-Lap computation
-            point = point % (_pointsCount + 40);
-
-            if (point == 0 && !didReachCrucialPoint.ContainsValue(false))
-            {
-                Laps++;
-                ResetCrucialPoints();
-                _finishedLapEvent.LapNumber = Laps;
-                if (DidFinishLap != null)
+                if (point <= 50 && !didReachCrucialPoint.ContainsValue(false))
                 {
-                    DidFinishLap(this, _finishedLapEvent);
+                    Laps++;
+                    ResetCrucialPoints();
+                    _finishedLapEvent.LapNumber = Laps;
+                    if (DidFinishLap != null)
+                    {
+                        DidFinishLap(this, _finishedLapEvent);
+                    }
                 }
             }
         }
@@ -243,8 +244,13 @@ namespace WindowsGame2.GameElements
         /// <param name="position">Must be between [0, kMaximumPlayers-1]</param>
         public void UpdateScore(Car car, int position)
         {
+            // -1: last position
+            if (position == -1)
+            {
+                position = PlayersCount - 1;
+            }
             int scoreMultiplier = 3;
-            int newScore = (position == 0) ? scoreMultiplier*nPlayers : -scoreMultiplier * position;
+            int newScore = (position == 0) ? scoreMultiplier * (PlayersCount - 1) : -scoreMultiplier * position;
 
             newScore += car.score;
             car.score = Math.Min(Math.Max(1, newScore), 54); // Score must be between [1,54]

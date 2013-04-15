@@ -386,6 +386,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Images\Dreams\Quotes\aameeting.png">
+      <Name>aameeting</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\Dreams\Quotes\feedTheCat.png">
+      <Name>feedTheCat</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Images\racetrack.png">
       <Name>racetrack</Name>
       <Importer>TextureImporter</Importer>
