@@ -13,7 +13,7 @@ namespace WindowsGame2
     {
         public int PlayersCount { get; set; }
 
-        private float nPoints = 27;
+        private float nPoints = 54;
         public VertexPositionColorTexture[] postitVertices, lapVertices, numberLapsVertices;
         public VertexPositionColorTexture[][] barVertices;
 
@@ -93,9 +93,9 @@ namespace WindowsGame2
                 postitVertices[p * 6 + 0].TextureCoordinate = texNW;
                 postitVertices[p * 6 + 1].TextureCoordinate = texNE;
                 postitVertices[p * 6 + 2].TextureCoordinate = texOW;
-                postitVertices[p * 6 + 3].TextureCoordinate = texOW;
+                postitVertices[p * 6 + 3].TextureCoordinate = texNE;
                 postitVertices[p * 6 + 4].TextureCoordinate = texOE;
-                postitVertices[p * 6 + 5].TextureCoordinate = texNE;
+                postitVertices[p * 6 + 5].TextureCoordinate = texOW;
 
                 setHappyToAllPlayers();
 

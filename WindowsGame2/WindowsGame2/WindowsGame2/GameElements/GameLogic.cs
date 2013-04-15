@@ -15,6 +15,7 @@ namespace WindowsGame2.GameElements
         /// The maximum number of players.
         /// </summary>
         private const int kMaximumPlayers = 4;
+        private int nPlayers;
 
         /// <summary>
         /// The number of laps needed to finish the game.
@@ -68,7 +69,7 @@ namespace WindowsGame2.GameElements
 
         #region Initialization
 
-        public GameLogic(int[] crucialPoints, int pointsCount)
+        public GameLogic(int[] crucialPoints, int pointsCount, int nPlayers)
         {
             Laps = 0;
 
@@ -84,6 +85,7 @@ namespace WindowsGame2.GameElements
 
             Ranking = new int[kMaximumPlayers];
             isMiniRaceOver = false;
+            this.nPlayers = nPlayers;
 
             _eliminatedCarEvent = new EliminatedCarEventArgs(null);
             _finishedLapEvent = new FinishedLapEventArgs(0);
@@ -241,7 +243,8 @@ namespace WindowsGame2.GameElements
         /// <param name="position">Must be between [0, kMaximumPlayers-1]</param>
         public void UpdateScore(Car car, int position)
         {
-            int newScore = (position == 0) ? 3 : -3*position;
+            int scoreMultiplier = 3;
+            int newScore = (position == 0) ? scoreMultiplier*nPlayers : -scoreMultiplier * position;
 
             newScore += car.score;
             car.score = Math.Min(Math.Max(1, newScore), 54); // Score must be between [1,54]
