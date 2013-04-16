@@ -186,9 +186,11 @@ namespace WindowsGame2.Screens
             Texture2D trailSketch = Content.Load<Texture2D>("Materials/trailSketch");
             Texture2D objectSketch = Content.Load<Texture2D>("Materials/objectSketch");
             Texture2D ink = Content.Load<Texture2D>("Materials/ink_texture");
+            Texture2D startLine = Content.Load<Texture2D>("Materials/squares");
             paperEffect.Parameters["trailSketch"].SetValue(trailSketch);
             paperEffect.Parameters["objectSketch"].SetValue(objectSketch);
             paperEffect.Parameters["ink"].SetValue(ink);
+            paperEffect.Parameters["startLine"].SetValue(startLine);
             randomArray = new float[16 * 16];
             Color[] randomCol = new Color[16 * 16];
             randomArray[0] = 0.5f;
@@ -645,6 +647,9 @@ namespace WindowsGame2.Screens
 
 
             int counter = 0;
+
+            paperEffect.CurrentTechnique.Passes["StartLinePass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.startLineVertices, 0, 2);
 
             paperEffect.CurrentTechnique.Passes["BorderPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);

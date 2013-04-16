@@ -46,6 +46,7 @@ namespace WindowsGame2.GameElements
         int textureScale = 3;
 
         public VertexPositionColorTexture[] myArray;
+        public VertexPositionColorTexture[] startLineVertices;
 
         public List<Texture2D> texturesArray;
         public List<Texture2D> dreamsArray;
@@ -436,6 +437,16 @@ namespace WindowsGame2.GameElements
                 Vector2 finalPos = curvePointsMiddle[randomMiddlePoint] - normals[randomMiddlePoint] * randomOffset;
                 quotesPositions.Add(finalPos);
             }
+
+            startLineVertices= new VertexPositionColorTexture[6];
+            Vector2 startingLine = (curvePointsInternal[internalCorrispondances[0]] + curvePointsExternal[0]) / 2f;
+            Vector2 normalLine = Vector2.Normalize(new Vector2(-startingLine.Y, startingLine.X))*1.5f;
+            startLineVertices[0].Position = new Vector3(curvePointsInternal[internalCorrispondances[0]], -0.1f);
+            startLineVertices[1].Position = new Vector3(curvePointsExternal[0], -0.1f);
+            startLineVertices[2].Position = new Vector3(curvePointsInternal[internalCorrispondances[0]]+ normalLine, -0.1f);
+            startLineVertices[3].Position = new Vector3(curvePointsExternal[0]+ normalLine, -0.1f);
+            startLineVertices[4].Position = new Vector3(curvePointsInternal[internalCorrispondances[0]] + normalLine, -0.1f);
+            startLineVertices[5].Position = new Vector3(curvePointsExternal[0], -0.1f);
         }
 
         public void changePostItColor(int index, Car car)
@@ -547,7 +558,14 @@ namespace WindowsGame2.GameElements
             }
 
             //draw starting line
-            DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
+            //Vector2 startingLine=(ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]])+ ConvertUnits.ToDisplayUnits(curvePointsExternal[0]))/2f;
+            //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
+            //Vector2 normalLine = Vector2.Normalize( new Vector2(-startingLine.Y,startingLine.X))*100f;
+            //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]])+normalLine, ConvertUnits.ToDisplayUnits(curvePointsExternal[0])+normalLine);
+            //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]) + normalLine, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normalLine);
+            //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]) + normalLine, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]));
+            //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normalLine);
+            //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]), ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]) + normalLine);
 
             //draw quotes (it uses post its rotations and origins...disgusting like a rotten kurva)
             for (int i = 0; i < quotesArray.Count; i++)

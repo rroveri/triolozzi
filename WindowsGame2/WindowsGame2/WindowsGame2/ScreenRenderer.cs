@@ -14,7 +14,7 @@ namespace WindowsGame2
     {
         public int PlayersCount { get; set; }
 
-        private float nPoints = 27;
+        private float nPoints = 54;
         public VertexPositionColorTexture[] postitVertices, lapVertices, nLapsVertices;
         public VertexPositionColorTexture[][] barVertices;
 
