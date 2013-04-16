@@ -68,6 +68,7 @@ namespace WindowsGame2.Screens
 
         Effect paperEffect, screenEffect;
         ScreenRenderer screenRenderer;
+        StringWriter stringWriter = new StringWriter();
         Matrix projection;
         Matrix view;
 
@@ -187,10 +188,12 @@ namespace WindowsGame2.Screens
             Texture2D objectSketch = Content.Load<Texture2D>("Materials/objectSketch");
             Texture2D ink = Content.Load<Texture2D>("Materials/ink_texture");
             Texture2D startLine = Content.Load<Texture2D>("Materials/squares");
+            Texture2D alphabet = Content.Load<Texture2D>("Images/alphabet");
             paperEffect.Parameters["trailSketch"].SetValue(trailSketch);
             paperEffect.Parameters["objectSketch"].SetValue(objectSketch);
             paperEffect.Parameters["ink"].SetValue(ink);
             paperEffect.Parameters["startLine"].SetValue(startLine);
+            paperEffect.Parameters["alphabet"].SetValue(alphabet);
             randomArray = new float[16 * 16];
             Color[] randomCol = new Color[16 * 16];
             randomArray[0] = 0.5f;
@@ -407,6 +410,8 @@ namespace WindowsGame2.Screens
                     Cars[i]._compound.Enabled = true;
                 }
             }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Space)) stringWriter.addString("anal jerk",Color.YellowGreen,1,Cars[2]._compound.Position,new Vector2(1,-1));
 
             UpdateCars();
 
@@ -653,6 +658,9 @@ namespace WindowsGame2.Screens
 
             paperEffect.CurrentTechnique.Passes["BorderPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
+
+            paperEffect.CurrentTechnique.Passes["AlphabetPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, stringWriter.stringVertices, 0, stringWriter.stringVertices.Count() / 3);
 
             paperEffect.CurrentTechnique.Passes["ObjectPass"].Apply();
 

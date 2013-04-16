@@ -8,10 +8,21 @@ Texture2D objectSketch;
 Texture2D random;
 Texture2D ink;
 Texture2D startLine;
+Texture2D alphabet;
 
 float randomSeed;
 
 float objetAlpha = 0.2;
+
+sampler alphabetSampler = sampler_state
+{
+    Texture = <alphabet>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
 
 sampler startLineSampler = sampler_state
 {
@@ -121,6 +132,21 @@ ObjectVertexShaderOutput VertexShaderFunctionObject(ObjectVertexShaderInput inpu
     return output;
 }
 
+ObjectVertexShaderOutput VertexShaderFunctionAlphabet(ObjectVertexShaderInput input)
+{
+    ObjectVertexShaderOutput output;
+
+    //float4 worldPosition = mul(input.Position, World);
+    float4 viewPosition = mul(input.Position, View);
+    output.Position = mul(viewPosition, Projection);
+	output.Color = input.Color;
+	output.xy = float2(input.Position[0],input.Position[1]);
+    output.uv = input.uv;
+
+    return output;
+}
+
+
 ObjectVertexShaderOutput VertexShaderFunctionStartLine(ObjectVertexShaderInput input)
 {
     ObjectVertexShaderOutput output;
@@ -227,6 +253,14 @@ float4 PixelShaderFunctionInk(InkVertexShaderOutput input) : COLOR0
     return float4(0,0.00,0.0, rand);
 }
 
+float4 PixelShaderFunctionAlphabet(ObjectVertexShaderOutput input) : COLOR0
+{
+    float2 uv = float2(input.uv[0], input.uv[1]);
+    float4 texCol = tex2D(alphabetSampler, uv);
+	//texCol *= input.Color;
+    return texCol;
+}
+
 technique DoodleTechinque
 {
     pass ObjectPass
@@ -246,10 +280,16 @@ technique DoodleTechinque
 		VertexShader = compile vs_3_0 VertexShaderFunctionInk();
         PixelShader = compile ps_3_0 PixelShaderFunctionInk();
 	}
+
 	pass StartLinePass
 	{
         VertexShader = compile vs_3_0 VertexShaderFunctionStartLine();
         PixelShader = compile ps_3_0 PixelShaderFunctionStartLine();
     }
 
+	pass AlphabetPass
+	{
+        VertexShader = compile vs_3_0 VertexShaderFunctionAlphabet();
+        PixelShader = compile ps_3_0 PixelShaderFunctionAlphabet();
+    }
 }
