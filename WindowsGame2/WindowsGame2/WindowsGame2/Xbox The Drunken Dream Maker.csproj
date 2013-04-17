@@ -99,6 +99,7 @@
     <Compile Include="Screens\PlayerIndexEventArgs.cs" />
     <Compile Include="Screens\RankingScreen.cs" />
     <Compile Include="Sprite.cs" />
+    <Compile Include="StringWriter.cs" />
     <Compile Include="TexturePhysicsObject.cs" />
   </ItemGroup>
   <ItemGroup>
