@@ -17,6 +17,12 @@ namespace WindowsGame2.GameElements
     public class RandomTrack
     {
 
+        public List<PostItDream> postItDreamsList;
+        public List<Texture2D> listWishesTextures;
+        public List<Texture2D> listNightmaresTextures;
+        public List<PostItQuote> postItQuotesList;
+        public List<Texture2D> listQuotesTextures;
+
         World world;
         Vertices controlPoints;
         public Vertices curvePointsInternal;
@@ -29,7 +35,7 @@ namespace WindowsGame2.GameElements
         float initialRadius = 35f;
         Body externalBody;
         Body internalBody;
-        List<Vector2> normals;
+        public List<Vector2> normals;
         List<Vector2> normalsInternal;
         int[] normalsLengths;
         public List<int> internalCorrispondances;
@@ -49,15 +55,6 @@ namespace WindowsGame2.GameElements
         public VertexPositionColorTexture[] startLineVertices;
 
         public List<Texture2D> texturesArray;
-        public List<Texture2D> dreamsArray;
-        public List<Vector2> dreamsPositions;
-        public List<float> dreamsRotations;
-        public List<Texture2D> dreamsArrayFigures;
-        public List<Color> dreamsArrayColors;
-        public List<bool> dreamsArrayState;
-        public List<Texture2D> quotesArray;
-        public List<Vector2> quotesPositions;
-        public List<int> carsNumber;
 
         public List<float> internalNormalsCoefficients;
         public List<float> externalNormalsCoefficients;
@@ -65,9 +62,6 @@ namespace WindowsGame2.GameElements
         private Vector2 postItSize;
 
         public GameLogic gameLogic;
-
-        List<TexturePhysicsObject> postItBodiesList;
-        Vector2 textureScaleVec;
 
         public List<int> dreamsMiddlePoints;
         
@@ -109,53 +103,33 @@ namespace WindowsGame2.GameElements
             texturesArray.Add(Content.Load<Texture2D>("Images/q"));
             texturesArray.Add(bgTextureEasterEgg);
 
-            dreamsArray = new List<Texture2D>();
-            dreamsArrayFigures = new List<Texture2D>();
-            dreamsArrayColors = new List<Color>();
-            dreamsArrayState=new List<bool>();
+            postItDreamsList = new List<PostItDream>();
+            listNightmaresTextures = new List<Texture2D>();
+            listWishesTextures = new List<Texture2D>();
 
-            Texture2D postItTex = Content.Load<Texture2D>("Images/Dreams/postitFree");
-            Texture2D postItTexWish = Content.Load<Texture2D>("Images/Dreams/postitwish");
-            Texture2D postItTexNightmare = Content.Load<Texture2D>("Images/Dreams/postitnightmare");
+            listWishesTextures.Add(Content.Load<Texture2D>("Images/Dreams/Wishes/Ali_Resized"));
+            listWishesTextures.Add(Content.Load<Texture2D>("Images/Dreams/Wishes/Pony_Resized"));
+            listWishesTextures.Add(Content.Load<Texture2D>("Images/Dreams/Wishes/Cupcake_Resized"));
+            listNightmaresTextures.Add(Content.Load<Texture2D>("Images/Dreams/Nightmares/Diavolo_Resized"));
+            listNightmaresTextures.Add(Content.Load<Texture2D>("Images/Dreams/Nightmares/Fantasma_Resized"));
+            listNightmaresTextures.Add(Content.Load<Texture2D>("Images/Dreams/Nightmares/Frankenstein_Resized"));
 
-            dreamsArrayFigures.Add(Content.Load<Texture2D>("Images/Dreams/Wishes/Ali_Resized"));
-            dreamsArray.Add(postItTexWish);
-            dreamsArrayFigures.Add(Content.Load<Texture2D>("Images/Dreams/Wishes/Cupcake_Resized"));
-            dreamsArray.Add(postItTexWish);
-            dreamsArrayFigures.Add(Content.Load<Texture2D>("Images/Dreams/Wishes/Pony_Resized"));
-            dreamsArray.Add(postItTexWish);
-            dreamsArrayFigures.Add(Content.Load<Texture2D>("Images/Dreams/Nightmares/Diavolo_Resized"));
-            dreamsArray.Add(postItTexNightmare);
-            dreamsArrayFigures.Add(Content.Load<Texture2D>("Images/Dreams/Nightmares/Fantasma_Resized"));
-            dreamsArray.Add(postItTexNightmare);
-            dreamsArrayFigures.Add(Content.Load<Texture2D>("Images/Dreams/Nightmares/Frankenstein_Resized"));
-            dreamsArray.Add(postItTexNightmare);
-
-            quotesArray=new List<Texture2D>();
-            quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/buyBeers"));
-            quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/buyMilk"));
-            quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/callLuigi"));
-            quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/mamaBDay"));
-            quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/marketingMeeting"));
-            quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/todolist"));
-            quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/aameeting"));
-            quotesArray.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/feedTheCat"));
-            quotesPositions = new List<Vector2>();
+            postItQuotesList=new List<PostItQuote>();
+            listQuotesTextures = new List<Texture2D>();
+            listQuotesTextures.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/buyBeers"));
+            listQuotesTextures.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/buyMilk"));
+            listQuotesTextures.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/callLuigi"));
+            listQuotesTextures.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/mamaBDay"));
+            listQuotesTextures.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/marketingMeeting"));
+            listQuotesTextures.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/todolist"));
+            listQuotesTextures.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/aameeting"));
+            listQuotesTextures.Add(Content.Load<Texture2D>("Images/Dreams/Quotes/feedTheCat"));
             
             postItSize = new Vector2(500f,500f);
-            textureScaleVec = new Vector2(postItSize.X / (float)postItTex.Width, postItSize.Y / (float)postItTex.Height);
-            postItBodiesList = new List<TexturePhysicsObject>();
-
-            
-
-            dreamsPositions = new List<Vector2>();
-            dreamsRotations = new List<float>();
             dreamsMiddlePoints = new List<int>();
 
             internalNormalsCoefficients = new List<float>();
             externalNormalsCoefficients = new List<float>();
-
-            carsNumber = new List<int>();
 
         }
     
@@ -403,39 +377,38 @@ namespace WindowsGame2.GameElements
             }
 
             
-            //put random dreams
-            for (int i = 0; i < dreamsArray.Count; i++)
-            {
-                int randomMiddlePoint= computeRandomDreamMiddlePoint();
-                dreamsMiddlePoints.Add(randomMiddlePoint);
-                float randomOffset = (float)MathHelper.Lerp(-0.30f, 0.30f, (float)random.NextDouble());
-                Vector2 finalPos = curvePointsMiddle[randomMiddlePoint] - normals[randomMiddlePoint] * randomOffset;
-                dreamsPositions.Add(finalPos);
-
-                float randomAngle = (float)MathHelper.Lerp(-MathHelper.Pi / 4f, MathHelper.Pi / 4f, (float)random.NextDouble());
-                dreamsRotations.Add(randomAngle);
-
-                TexturePhysicsObject newBody = new TexturePhysicsObject(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Dreams/postitContour"), postItSize, Color.White);
-                newBody._compound.Position = finalPos;
-                newBody._compound.Rotation = randomAngle;
-                newBody._compound.UserData = i;
-
-                postItBodiesList.Add(newBody);
-                newBody._compound.IsSensor = true;
-
-                dreamsArrayColors.Add(Color.White);
-                dreamsArrayState.Add(true);
-
-                carsNumber.Add(0);
-            }
-
-            //put random quotes
-            for (int i = 0; i < quotesArray.Count; i++)
+            //create random dreams
+            //nightmares
+            int nightmaresCount=5;
+            for (int i = 0; i < nightmaresCount; i++)
             {
                 int randomMiddlePoint = computeRandomDreamMiddlePoint();
-                float randomOffset = (float)MathHelper.Lerp(-0.30f, 0.30f, (float)random.NextDouble());
-                Vector2 finalPos = curvePointsMiddle[randomMiddlePoint] - normals[randomMiddlePoint] * randomOffset;
-                quotesPositions.Add(finalPos);
+                dreamsMiddlePoints.Add(randomMiddlePoint);
+
+                PostItDream newDream = new PostItDream(randomMiddlePoint, postItSize, 1, this, world, listNightmaresTextures[i % listNightmaresTextures.Count], i, random);
+                postItDreamsList.Add(newDream);
+            }
+            //wishes
+            int wishesCount = 5;
+            for (int i = 0; i < wishesCount; i++)
+            {
+                int randomMiddlePoint = computeRandomDreamMiddlePoint();
+                dreamsMiddlePoints.Add(randomMiddlePoint);
+
+                PostItDream newDream = new PostItDream(randomMiddlePoint, postItSize, 0, this, world, listWishesTextures[i % listWishesTextures.Count], i + nightmaresCount, random);
+                postItDreamsList.Add(newDream);
+            }
+
+       
+
+            //create random quotes
+            int quotesCount = 100;
+            for (int i = 0; i < quotesCount; i++)
+            {
+                int randomMiddlePoint = computeRandomDreamMiddlePoint();
+
+                PostItQuote newQuote = new PostItQuote(randomMiddlePoint, postItSize, this, listQuotesTextures[i % listQuotesTextures.Count], random);
+                postItQuotesList.Add(newQuote);
             }
 
             startLineVertices= new VertexPositionColorTexture[6];
@@ -452,8 +425,8 @@ namespace WindowsGame2.GameElements
         public void changePostItColor(int index, Car car)
         {
             //color the post it and update car score
-            dreamsArrayColors[index] = car.mColor;
-            if (index < 3)
+            postItDreamsList[index].color = car.mColor;
+            if (postItDreamsList[index].isNightmare!=1)
             {
                 gameLogic.UpdateScore(car, 0);
             }
@@ -498,9 +471,9 @@ namespace WindowsGame2.GameElements
 
         public void ResetStickyNotes(object sender, FinishedLapEventArgs e)
         {
-            for (int i = 0; i < dreamsArrayColors.Count; i++)
+            for (int i = 0; i < postItDreamsList.Count; i++)
             {
-                dreamsArrayColors[i] = Color.White;
+                postItDreamsList[i].color = Color.White;
             }
         }
 
@@ -567,17 +540,16 @@ namespace WindowsGame2.GameElements
             //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normalLine);
             //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]), ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]) + normalLine);
 
-            //draw quotes (it uses post its rotations and origins...disgusting like a rotten kurva)
-            for (int i = 0; i < quotesArray.Count; i++)
+            //draw quotes
+            for (int i = 0; i < postItQuotesList.Count; i++)
             {
-                spriteBatch.Draw(quotesArray[i], ConvertUnits.ToDisplayUnits(quotesPositions[i]), null, Color.Yellow, dreamsRotations[(i + 3) % dreamsRotations.Count], postItBodiesList[(i + 3) % dreamsRotations.Count]._origin, textureScaleVec, SpriteEffects.None, 1f);
+                postItQuotesList[i].Draw(spriteBatch);
             }
 
             //draw dreams
-            for (int i = 0; i < dreamsArray.Count; i++)
+            for (int i = 0; i < postItDreamsList.Count; i++)
             {
-                spriteBatch.Draw(dreamsArray[i], ConvertUnits.ToDisplayUnits(dreamsPositions[i]), null, Color.Yellow, dreamsRotations[i], postItBodiesList[i]._origin, textureScaleVec, SpriteEffects.None, 1f);
-                spriteBatch.Draw(dreamsArrayFigures[i], ConvertUnits.ToDisplayUnits(dreamsPositions[i]), null, dreamsArrayColors[i], dreamsRotations[i], postItBodiesList[i]._origin, textureScaleVec, SpriteEffects.None, 1f);
+                postItDreamsList[i].Draw(spriteBatch);
             }
 
 

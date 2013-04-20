@@ -165,7 +165,7 @@ namespace WindowsGame2.GameElements
             {
                 //update color
                 int postItNumber = (int)fixtureB.Body.UserData;
-                if (randomTrack.dreamsArrayColors[postItNumber]==Color.White){
+                if (randomTrack.postItDreamsList[postItNumber].color==Color.White){
                     randomTrack.changePostItColor(postItNumber, this);
                 }
             }

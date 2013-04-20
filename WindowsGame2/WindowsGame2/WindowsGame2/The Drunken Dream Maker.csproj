@@ -123,6 +123,8 @@
     <Compile Include="DrawablePhysicsObject.cs" />
     <Compile Include="FrameRateCounter.cs" />
     <Compile Include="GameElements\GameLogic.cs" />
+    <Compile Include="GameElements\PostItDream.cs" />
+    <Compile Include="GameElements\PostItQuote.cs" />
     <Compile Include="GameElements\RandomTrack.cs" />
     <Compile Include="ScreenManagement\GameServices.cs" />
     <Compile Include="ScreenManagement\InputAction.cs" />
@@ -147,7 +149,7 @@
     <Compile Include="Screens\PlayerIndexEventArgs.cs" />
     <Compile Include="Screens\RankingScreen.cs" />
     <Compile Include="Sprite.cs" />
-    <Compile Include="StringWriter.cs" />
+    <Compile Include="Screens\StringWriter.cs" />
     <Compile Include="TexturePhysicsObject.cs" />
   </ItemGroup>
   <ItemGroup>

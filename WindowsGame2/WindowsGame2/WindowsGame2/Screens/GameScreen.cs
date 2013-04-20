@@ -23,11 +23,13 @@ using WindowsGame2.GameElements;
 using FarseerPhysics.Collision;
 
 namespace WindowsGame2.Screens
+
 {
     class GameScreen : AbstractScreen
     {
 
         #region Fields
+
 
         DebugViewXNA _debugView;
         World world;
@@ -65,6 +67,7 @@ namespace WindowsGame2.Screens
         PauseMenuScreen PauseScreen;
         RankingScreen RankScreen;
         float pauseAlpha;
+
 
         Effect paperEffect, screenEffect;
         ScreenRenderer screenRenderer;
@@ -254,7 +257,7 @@ namespace WindowsGame2.Screens
             for (int i = 0; i < maxNumberOfTriangles; i++) basicVert[i].TextureCoordinate = new Vector2(-1);
                 triangleListIndices = new short[maxNumberOfTriangles * 3];
 
-              
+
         }
 
         public void positionCars(int startingPointToCheck)
@@ -411,7 +414,7 @@ namespace WindowsGame2.Screens
                 }
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space)) stringWriter.addString("anal jerk",Color.YellowGreen,1,Cars[2]._compound.Position,new Vector2(1,-1));
+            if (Keyboard.GetState().IsKeyDown(Keys.Space)) stringWriter.addString("imma kavliaris",Color.YellowGreen,0.5f,Cars[2]._compound.Position,new Vector2(1,-1));
 
             UpdateCars();
 
@@ -597,6 +600,10 @@ namespace WindowsGame2.Screens
 
         public void DrawSprites(Camera camera)
         {
+
+
+
+
 
             //compute camera matrices
             projection = camera.ProjectionMatrix;
