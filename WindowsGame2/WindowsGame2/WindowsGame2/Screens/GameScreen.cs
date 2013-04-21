@@ -21,6 +21,7 @@ using FarseerPhysics.SamplesFramework;
 using FarseerPhysics.DebugViews;
 using WindowsGame2.GameElements;
 using FarseerPhysics.Collision;
+using FarseerPhysics.Dynamics.Contacts;
 
 namespace WindowsGame2.Screens
 
@@ -167,6 +168,8 @@ namespace WindowsGame2.Screens
 
             world = new World(new Vector2(0, 0));
             GameServices.AddService<World>(world);
+
+            this.world.ContactManager.PostSolve += new PostSolveDelegate(PostSolve);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -580,6 +583,33 @@ namespace WindowsGame2.Screens
             }
             return false;
         }
+
+
+        public void PostSolve(Contact contact, ContactConstraint impulse)
+        {
+            for (int i=0; i<Cars.Count; i++){
+                if (Cars[i]._compound.FixtureList.Contains(contact.FixtureA) || Cars[i]._compound.FixtureList.Contains(contact.FixtureB)){
+                    float maxImpulse = 0.0f;
+                    int count = contact.Manifold.PointCount;
+
+                    for (int j = 0; j < count; ++j)
+                    {
+                        maxImpulse = Math.Max(maxImpulse, impulse.Points[j].NormalImpulse);
+                    }
+                    if (maxImpulse > 1)
+                    {
+                        Vector2 carTail =Cars[i]._compound.Position - Cars[i].mDirection * Cars[i].tailOffset *4;
+                        Vector2 carDir = Cars[i].projectedPosition - Cars[i].Position;
+                        Vector2 carDirNormal = new Vector2(- carDir.Y,carDir.X);
+                        stringWriter.addString("ouch", Color.YellowGreen, maxImpulse / 5f, carTail, carDirNormal);           
+                    }
+                }
+            }
+
+  
+        }
+
+
 
         public override void Draw(GameTime gameTime)
         {

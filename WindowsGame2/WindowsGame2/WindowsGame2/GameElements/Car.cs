@@ -11,6 +11,7 @@ using FarseerPhysics.Dynamics;
 using FarseerPhysics.Common;
 using FarseerPhysics.SamplesFramework;
 using Microsoft.Xna.Framework.Content;
+using FarseerPhysics.Dynamics.Contacts;
 
 namespace WindowsGame2.GameElements
 {
@@ -52,7 +53,7 @@ namespace WindowsGame2.GameElements
         private Vector3 oldWVertBurnoutRight, newWVertBurnoutRight, oldEVertBurnoutRight, newEVertBurnoutRight;
         private Vector3 oldWVertBurnoutLeft, newWVertBurnoutLeft, oldEVertBurnoutLeft, newEVertBurnoutLeft;
         private Vector2 texNW, texNE, texOW, texOE;
-        private float offset = 0.3f, tailOffset = 0.2f, burnoutOffset = 0.1f;
+        public float offset = 0.3f, tailOffset = 0.2f, burnoutOffset = 0.1f;
         private Random seed = new Random( DateTime.Now.Millisecond);
 
         private float acc = 0.4f;
@@ -150,6 +151,7 @@ namespace WindowsGame2.GameElements
 
             //register collision
             _compound.OnCollision += body_OnCollision;
+           
             
         }
 
@@ -172,6 +174,7 @@ namespace WindowsGame2.GameElements
            
             return true;
         }
+
 
   
 
