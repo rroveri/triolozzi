@@ -21,7 +21,7 @@ namespace WindowsGame2.GameElements
 
             postItSize = _postItSize;
 
-            float randomOffset = (float)MathHelper.Lerp(-0.30f, 0.30f, (float)random.NextDouble());
+            float randomOffset = (float)MathHelper.Lerp(-0.90f, 0.90f, (float)random.NextDouble());
             position = randomTrack.curvePointsMiddle[middlePoint] - randomTrack.normals[middlePoint] * randomOffset;
             rotation = (float)MathHelper.Lerp(-MathHelper.Pi / 4f, MathHelper.Pi / 4f, (float)random.NextDouble());
 

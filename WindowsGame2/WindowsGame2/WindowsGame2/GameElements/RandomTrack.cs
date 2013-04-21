@@ -402,7 +402,7 @@ namespace WindowsGame2.GameElements
        
 
             //create random quotes
-            int quotesCount = 100;
+            int quotesCount = 15;
             for (int i = 0; i < quotesCount; i++)
             {
                 int randomMiddlePoint = computeRandomDreamMiddlePoint();
@@ -412,8 +412,8 @@ namespace WindowsGame2.GameElements
             }
 
             startLineVertices= new VertexPositionColorTexture[6];
-            Vector2 startingLine = (curvePointsInternal[internalCorrispondances[0]] + curvePointsExternal[0]) / 2f;
-            Vector2 normalLine = Vector2.Normalize(new Vector2(-startingLine.Y, startingLine.X))*1.5f;
+            Vector2 startingLine = (curvePointsInternal[internalCorrispondances[0]] - curvePointsExternal[0]);
+            Vector2 normalLine = Vector2.Normalize(new Vector2(-startingLine.Y, startingLine.X))*1f;
             startLineVertices[0].Position = new Vector3(curvePointsInternal[internalCorrispondances[0]], -0.1f);
             startLineVertices[1].Position = new Vector3(curvePointsExternal[0], -0.1f);
             startLineVertices[2].Position = new Vector3(curvePointsInternal[internalCorrispondances[0]]+ normalLine, -0.1f);
