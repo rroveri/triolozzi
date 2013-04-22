@@ -245,6 +245,7 @@ namespace WindowsGame2.Screens
 
             // Single screen mode only
             cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f);
+            GameServices.AddService<Camera>(cameraFollowing);
 
             //generate starting positions and angles
             int startingPoint = 0;
@@ -269,27 +270,31 @@ namespace WindowsGame2.Screens
                 triangleListIndices = new short[maxNumberOfTriangles * 3];
 
 
-
-                particleComponent.particleEmitterList.Add(
-                        new Emitter()
-                        {
-                            Active = true,
-                            TextureList = new List<Texture2D>() {
+                for (int i = 0; i < Cars.Count; i++)
+                {
+                    particleComponent.particleEmitterList.Add(
+                            new Emitter()
+                            {
+                                Active = true,
+                                TextureList = new List<Texture2D>() {
 			            Content.Load<Texture2D>("Sprites\\flower_orange"),
 			            Content.Load<Texture2D>("Sprites\\flower_green"),
 			            Content.Load<Texture2D>("Sprites\\flower_yellow"),
 			            Content.Load<Texture2D>("Sprites\\flower_purple")
 			    },
-                            RandomEmissionInterval = new RandomMinMax(8.0d),
-                            ParticleLifeTime = 2000,
-                            ParticleDirection = new RandomMinMax(0, 359),
-                            ParticleSpeed = new RandomMinMax(0.1f, 1.0f),
-                            ParticleRotation = new RandomMinMax(0, 100),
-                            RotationSpeed = new RandomMinMax(0.015f),
-                            ParticleFader = new ParticleFader(false, true, 1350),
-                            ParticleScaler = new ParticleScaler(false, 0.3f)
-                        }
-                );
+                                RandomEmissionInterval = new RandomMinMax(8.0d),
+                                ParticleLifeTime = 2000,
+                                ParticleDirection = new RandomMinMax(0, 359),
+                                ParticleSpeed = new RandomMinMax(0.1f, 1.0f),
+                                ParticleRotation = new RandomMinMax(0, 100),
+                                RotationSpeed = new RandomMinMax(0.015f),
+                                ParticleFader = new ParticleFader(false, true, 1350),
+                                ParticleScaler = new ParticleScaler(false, 0.3f)
+                            }
+                    );
+                }
+
+                    
 
         }
 
@@ -447,7 +452,7 @@ namespace WindowsGame2.Screens
                 }
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space)) stringWriter.addString("imma kavliaris",Color.YellowGreen,0.5f,Cars[2]._compound.Position,new Vector2(1,-1));
+            if (Keyboard.GetState().IsKeyDown(Keys.Space)) stringWriter.addString("cazzo anale",Color.YellowGreen,0.5f,Cars[2]._compound.Position,new Vector2(1,-1));
 
             UpdateCars();
 
@@ -460,8 +465,21 @@ namespace WindowsGame2.Screens
             world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
 
             // Particle modification
-            particleComponent.particleEmitterList[0].Position = Cars[2].Position;
-            particleComponent.particleEmitterList[0].Active = true;
+
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                particleComponent.particleEmitterList[i].Position = Cars[i].Position;
+                if (Cars[i].hasBoost)
+                {
+                    particleComponent.particleEmitterList[i].Active = true;
+                }
+                else
+                {
+                    particleComponent.particleEmitterList[i].Active = false;
+                }
+            }
+
+                
         }
 
         private void UpdateCars()
@@ -635,7 +653,7 @@ namespace WindowsGame2.Screens
                         Vector2 carTail =Cars[i]._compound.Position - Cars[i].mDirection * Cars[i].tailOffset *4 ;
                         Vector2 carDir = Cars[i].mDirection;
                         Vector2 carDirNormal = Vector2.Normalize( new Vector2(- carDir.Y,carDir.X));
-                        stringWriter.addString("kavliaris!",Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);           
+                        stringWriter.addString("scrofa", Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);           
                     }
                 }
             }
