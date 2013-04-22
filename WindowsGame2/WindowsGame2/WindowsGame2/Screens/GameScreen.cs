@@ -33,6 +33,11 @@ namespace WindowsGame2.Screens
 
         #region Fields
 
+        string[] collisionsQuotes;
+        string[] collisionsQuotesNormal = {"ouch!", "bam", "boom", "crash!", "toc", "bang bang", "splat!", "ka pow!", "pow!", "thud!", "bong", "bonk!", "ka rack!", "rat tat tat" };
+        string[] collisionsQuotesSerbian = { "kurva!", "jebem ti mater", "bolime kurac", "najebo si!", "peechka", "pushie kurac", "odjebi" };
+        string[] collisionsQuotesGreek = { "kavliaris", "vuruna!", "puchos", "imma egghios", "paracalo", "effretikon" };
+        string[] collisionsQuotesItalian = { "zio borghiano", "scrofa!", "porcano", "oca!", "sbocco anale", "asilo nido" };
 
         DebugViewXNA _debugView;
         World world;
@@ -159,7 +164,8 @@ namespace WindowsGame2.Screens
             startingPosAabbVerts = new Vector2[4];
 
             particleComponent = GameServices.GetService<ParticleComponent>();
-
+            
+            collisionsQuotes = collisionsQuotesNormal;
            
         }
 
@@ -395,6 +401,7 @@ namespace WindowsGame2.Screens
                 Cars[i].justStarted = true;
 
                 Cars[i].resetBoost();
+                Cars[i].resetTrail();
 
                 Cars[i].isActive = false;
                 Cars[i]._compound.Enabled = false;
@@ -658,8 +665,8 @@ namespace WindowsGame2.Screens
                         Vector2 carTail = Cars[i]._compound.Position - Cars[i].mDirection * Cars[i].tailOffset * 4;
                         Vector2 carDir = Cars[i].mDirection;
                         Vector2 carDirNormal = Vector2.Normalize(new Vector2(-carDir.Y, carDir.X));
-                        stringWriter.addString("scrofa", Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);
-
+                        stringWriter.addString(collisionsQuotes[Random.Next(collisionsQuotes.Count() - 1)], Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);
+                        Cars[i].resetTrail();
                         
                     }
                     else

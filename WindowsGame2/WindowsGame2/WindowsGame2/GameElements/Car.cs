@@ -185,8 +185,11 @@ namespace WindowsGame2.GameElements
             set { projectedPosition = value * ConvertUnits.ToSimUnits(1); }
         }
 
-        private void resetTrail()
+        public void resetTrail()
         {
+            mIsTrailLoop = false;
+            mTrailPoints = 0;
+
             for (int i = 0; i < trailVertices.Count(); i++)
             {
                 trailVertices[i].Position = tdPos;
@@ -379,8 +382,7 @@ namespace WindowsGame2.GameElements
             }
             else
             {
-                mIsTrailLoop = false;
-                mTrailPoints = 0;
+                
 
                 oldWVert.X = tdPos.X - mDirection.Y * offset;
                 oldWVert.Y = tdPos.Y + mDirection.X * offset;
