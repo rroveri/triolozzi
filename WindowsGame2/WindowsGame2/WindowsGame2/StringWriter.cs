@@ -142,6 +142,19 @@ namespace WindowsGame2
                 }
                 if (exit) break;
             }
+            
+            
+            chars[6, 2] = '?';
+            chars[7, 2] = '%';
+            chars[8, 2] = '!';
+            chars[9, 2] = '&';
+
+            c = '0';
+            for (int i = 0; i < 10; i++)
+            {
+                chars[i,3] = c;
+                c++;
+            }
         }
     }
 }

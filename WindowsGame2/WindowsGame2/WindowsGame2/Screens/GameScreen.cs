@@ -199,7 +199,7 @@ namespace WindowsGame2.Screens
             paperEffect = Content.Load<Effect>("Shaders/PaperEffect");
             paperEffect.CurrentTechnique = paperEffect.Techniques["DoodleTechinque"];
             Texture2D trailSketch = Content.Load<Texture2D>("Materials/trailSketch");
-            Texture2D objectSketch = Content.Load<Texture2D>("Materials/objectSketch");
+            Texture2D objectSketch = Content.Load<Texture2D>("Materials/pencil");
             Texture2D ink = Content.Load<Texture2D>("Materials/ink_texture");
             Texture2D startLine = Content.Load<Texture2D>("Materials/squares");
             Texture2D alphabet = Content.Load<Texture2D>("Images/alphabet");
@@ -447,8 +447,6 @@ namespace WindowsGame2.Screens
                 }
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space)) stringWriter.addString("imma kavliaris",Color.YellowGreen,0.5f,Cars[2]._compound.Position,new Vector2(1,-1));
-
             UpdateCars();
 
             UpdateObstacles();
@@ -635,7 +633,7 @@ namespace WindowsGame2.Screens
                         Vector2 carTail =Cars[i]._compound.Position - Cars[i].mDirection * Cars[i].tailOffset *4 ;
                         Vector2 carDir = Cars[i].mDirection;
                         Vector2 carDirNormal = Vector2.Normalize( new Vector2(- carDir.Y,carDir.X));
-                        stringWriter.addString("kavliaris!",Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);           
+                        stringWriter.addString("zio boyandrika & co",Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);           
                     }
                 }
             }
@@ -741,9 +739,6 @@ namespace WindowsGame2.Screens
             paperEffect.CurrentTechnique.Passes["BorderPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
 
-            paperEffect.CurrentTechnique.Passes["AlphabetPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, stringWriter.stringVertices, 0, stringWriter.stringVertices.Count() / 3);
-
             paperEffect.CurrentTechnique.Passes["ObjectPass"].Apply();
 
             
@@ -761,6 +756,9 @@ namespace WindowsGame2.Screens
 
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
             }
+
+            paperEffect.CurrentTechnique.Passes["AlphabetPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, stringWriter.stringVertices, 0, stringWriter.stringVertices.Count() / 3);
 
             screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, PlayersCount * 2);

@@ -191,7 +191,7 @@ InkVertexShaderOutput VertexShaderFunctionInk(InkVertexShaderInput input)
 float4 PixelShaderFunctionObject(ObjectVertexShaderOutput input) : COLOR0
 {
     float4 texCol = tex2D(objectSketchSampler, input.uv / 4);
-    float alpha = texCol[0] + objetAlpha;
+    float alpha = texCol[0];
     texCol *= input.Color;
 	texCol += input.Color * objetAlpha;
     float rand = tex2D(randomSampler, input.xy)[0];
@@ -255,9 +255,7 @@ float4 PixelShaderFunctionInk(InkVertexShaderOutput input) : COLOR0
 
 float4 PixelShaderFunctionAlphabet(ObjectVertexShaderOutput input) : COLOR0
 {
-    float2 uv = float2(input.uv[0], input.uv[1]);
-    float4 texCol = tex2D(alphabetSampler, uv);
-	
+    float4 texCol = tex2D(alphabetSampler, input.uv);
 	float alpha = texCol[0];
 	texCol *= input.Color;
     return float4(texCol[0],texCol[1],texCol[2],alpha);
