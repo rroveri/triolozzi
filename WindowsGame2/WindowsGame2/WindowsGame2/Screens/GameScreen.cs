@@ -269,6 +269,7 @@ namespace WindowsGame2.Screens
             for (int i = 0; i < maxNumberOfTriangles; i++) basicVert[i].TextureCoordinate = new Vector2(-1);
                 triangleListIndices = new short[maxNumberOfTriangles * 3];
 
+            /*
 
                 for (int i = 0; i < Cars.Count; i++)
                 {
@@ -277,12 +278,13 @@ namespace WindowsGame2.Screens
                             {
                                 Active = true,
                                 TextureList = new List<Texture2D>() {
+                                //    Content.Load<Texture2D>("Sprites\\smoke"),
 			            Content.Load<Texture2D>("Sprites\\flower_orange"),
 			            Content.Load<Texture2D>("Sprites\\flower_green"),
 			            Content.Load<Texture2D>("Sprites\\flower_yellow"),
 			            Content.Load<Texture2D>("Sprites\\flower_purple")
 			    },
-                                RandomEmissionInterval = new RandomMinMax(8.0d),
+                                RandomEmissionInterval = new RandomMinMax(10d),
                                 ParticleLifeTime = 2000,
                                 ParticleDirection = new RandomMinMax(0, 359),
                                 ParticleSpeed = new RandomMinMax(0.1f, 1.0f),
@@ -294,7 +296,7 @@ namespace WindowsGame2.Screens
                     );
                 }
 
-                    
+                    */
 
         }
 
@@ -406,6 +408,7 @@ namespace WindowsGame2.Screens
         {
             base.Unload();
             GameServices.DeleteService<World>();
+            GameServices.DeleteService<Camera>();
         }
 
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
@@ -466,9 +469,10 @@ namespace WindowsGame2.Screens
 
             // Particle modification
 
+            /*
             for (int i = 0; i < Cars.Count; i++)
             {
-                particleComponent.particleEmitterList[i].Position = Cars[i].Position;
+                particleComponent.particleEmitterList[i].Position = Cars[i].Position - Cars[i].mDirection * Cars[i].tailOffset * 200;
                 if (Cars[i].hasBoost)
                 {
                     particleComponent.particleEmitterList[i].Active = true;
@@ -478,7 +482,7 @@ namespace WindowsGame2.Screens
                     particleComponent.particleEmitterList[i].Active = false;
                 }
             }
-
+            */
                 
         }
 
@@ -640,9 +644,12 @@ namespace WindowsGame2.Screens
         public void PostSolve(Contact contact, ContactConstraint impulse)
         {
             for (int i=0; i<Cars.Count; i++){
-                if (Cars[i]._compound.FixtureList.Contains(contact.FixtureA) || Cars[i]._compound.FixtureList.Contains(contact.FixtureB)){
+                if (Cars[i]._compound.FixtureList.Contains(contact.FixtureA) || Cars[i]._compound.FixtureList.Contains(contact.FixtureB))
+                {
                     float maxImpulse = 0.0f;
                     int count = contact.Manifold.PointCount;
+
+                    
 
                     for (int j = 0; j < count; ++j)
                     {
@@ -650,11 +657,21 @@ namespace WindowsGame2.Screens
                     }
                     if (maxImpulse > 1)
                     {
-                        Vector2 carTail =Cars[i]._compound.Position - Cars[i].mDirection * Cars[i].tailOffset *4 ;
+                        Vector2 carTail = Cars[i]._compound.Position - Cars[i].mDirection * Cars[i].tailOffset * 4;
                         Vector2 carDir = Cars[i].mDirection;
-                        Vector2 carDirNormal = Vector2.Normalize( new Vector2(- carDir.Y,carDir.X));
-                        stringWriter.addString("scrofa", Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);           
+                        Vector2 carDirNormal = Vector2.Normalize(new Vector2(-carDir.Y, carDir.X));
+                        stringWriter.addString("scrofa", Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);
+
+                        
                     }
+                    else
+                    {
+                        
+                    }
+                }
+                else
+                {
+                    
                 }
             }
 
