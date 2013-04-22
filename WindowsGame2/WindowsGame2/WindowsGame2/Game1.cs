@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using WindowsGame2.GameElements;
 using WindowsGame2.Screens;
 using FarseerPhysics;
+using X2DPE;
 
 
 namespace WindowsGame2
@@ -21,6 +22,7 @@ namespace WindowsGame2
         GraphicsDeviceManager graphics;
 
         ScreenManager ScreenManager;
+        ParticleComponent particleComponent;
 
         public Game1()
         {
@@ -37,6 +39,9 @@ namespace WindowsGame2
 
             ScreenManager = new ScreenManager(this);
             Components.Add(ScreenManager);
+
+            particleComponent = new ParticleComponent(this);
+            Components.Add(particleComponent);
 
            // FrameRateCounter myFrameCounter = new FrameRateCounter(this, new Vector2(25, 25), Color.White, Color.Black);
            // Components.Add(myFrameCounter);
@@ -71,6 +76,7 @@ namespace WindowsGame2
             // without having to pass them explicitly every time.
             GameServices.AddService<GraphicsDevice>(GraphicsDevice);
             GameServices.AddService<ContentManager>(Content);
+            GameServices.AddService<ParticleComponent>(particleComponent);
 
             //ScreenManager.AddScreen(new BackgroundScreen(), null);
             ScreenManager.AddScreen(new GameScreen(), null);

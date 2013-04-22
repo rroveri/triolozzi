@@ -257,8 +257,10 @@ float4 PixelShaderFunctionAlphabet(ObjectVertexShaderOutput input) : COLOR0
 {
     float2 uv = float2(input.uv[0], input.uv[1]);
     float4 texCol = tex2D(alphabetSampler, uv);
-	//texCol *= input.Color;
-    return texCol;
+	
+	float alpha = texCol[0];
+	texCol *= input.Color;
+    return float4(texCol[0],texCol[1],texCol[2],alpha);
 }
 
 technique DoodleTechinque

@@ -20,7 +20,7 @@ namespace WindowsGame2
         private Vector2 initPosition, upDirection, texCoords, vecDx, vecDy;
         private Vector3 initPosition3d, upDirection3d, direction3d;
         private float texDx, texDy;
-        private int nCharX = 9, nCharY = 4;
+        private int nCharX = 10, nCharY = 4;
 
         private char[,] chars;
 
@@ -38,9 +38,9 @@ namespace WindowsGame2
             upDirection = new Vector2();
             texCoords = new Vector2();
 
-            initPosition = new Vector2(-0.1f);
-            upDirection = new Vector2(-0.1f);
-            texCoords = new Vector2(-0.1f);
+            initPosition = new Vector2(-0.2f);
+            upDirection = new Vector2(-0.2f);
+            texCoords = new Vector2(-0.2f);
 
             vecDx = new Vector2(texDx, 0);
             vecDy = new Vector2(0, texDy);
@@ -51,7 +51,7 @@ namespace WindowsGame2
         public void addString(string sentence, Color color, float fontSize, Vector2 position, Vector2 direction)
         {
             direction.Normalize();
-            direction.Y *= -1;
+          
             direction *= fontSize;
             upDirection3d.X = -direction.Y;
             upDirection3d.Y = direction.X;

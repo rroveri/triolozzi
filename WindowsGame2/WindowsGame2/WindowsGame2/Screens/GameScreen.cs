@@ -22,6 +22,8 @@ using FarseerPhysics.DebugViews;
 using WindowsGame2.GameElements;
 using FarseerPhysics.Collision;
 using FarseerPhysics.Dynamics.Contacts;
+using X2DPE;
+using X2DPE.Helpers;
 
 namespace WindowsGame2.Screens
 
@@ -91,6 +93,8 @@ namespace WindowsGame2.Screens
         //AABB startingPosAabb;
         Vector2[] startingPosAabbVerts;
 
+        ParticleComponent particleComponent;
+
         private int _playersCount;
         public int PlayersCount
         {
@@ -153,6 +157,10 @@ namespace WindowsGame2.Screens
             aabbVerts = new Vector2[4];
             activeBodiesCount = 0;
             startingPosAabbVerts = new Vector2[4];
+
+            particleComponent = GameServices.GetService<ParticleComponent>();
+
+           
         }
 
         public override void LoadContent()
@@ -260,6 +268,28 @@ namespace WindowsGame2.Screens
             for (int i = 0; i < maxNumberOfTriangles; i++) basicVert[i].TextureCoordinate = new Vector2(-1);
                 triangleListIndices = new short[maxNumberOfTriangles * 3];
 
+
+
+                particleComponent.particleEmitterList.Add(
+                        new Emitter()
+                        {
+                            Active = true,
+                            TextureList = new List<Texture2D>() {
+			            Content.Load<Texture2D>("Sprites\\flower_orange"),
+			            Content.Load<Texture2D>("Sprites\\flower_green"),
+			            Content.Load<Texture2D>("Sprites\\flower_yellow"),
+			            Content.Load<Texture2D>("Sprites\\flower_purple")
+			    },
+                            RandomEmissionInterval = new RandomMinMax(8.0d),
+                            ParticleLifeTime = 2000,
+                            ParticleDirection = new RandomMinMax(0, 359),
+                            ParticleSpeed = new RandomMinMax(0.1f, 1.0f),
+                            ParticleRotation = new RandomMinMax(0, 100),
+                            RotationSpeed = new RandomMinMax(0.015f),
+                            ParticleFader = new ParticleFader(false, true, 1350),
+                            ParticleScaler = new ParticleScaler(false, 0.3f)
+                        }
+                );
 
         }
 
@@ -428,6 +458,10 @@ namespace WindowsGame2.Screens
             UpdateCamera(gameTime);
 
             world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
+
+            // Particle modification
+            particleComponent.particleEmitterList[0].Position = Cars[2].Position;
+            particleComponent.particleEmitterList[0].Active = true;
         }
 
         private void UpdateCars()
@@ -598,11 +632,10 @@ namespace WindowsGame2.Screens
                     }
                     if (maxImpulse > 1)
                     {
-                        Vector2 carTail =Cars[i]._compound.Position - Cars[i].mDirection * Cars[i].tailOffset *4;
-                        Vector2 carDir = Cars[i].projectedPosition - Cars[i].Position;
-                        carDir = Cars[i].mDirection;
+                        Vector2 carTail =Cars[i]._compound.Position - Cars[i].mDirection * Cars[i].tailOffset *4 ;
+                        Vector2 carDir = Cars[i].mDirection;
                         Vector2 carDirNormal = Vector2.Normalize( new Vector2(- carDir.Y,carDir.X));
-                        stringWriter.addString("kavliaris", Color.YellowGreen, maxImpulse / 5f, carTail, carDir);           
+                        stringWriter.addString("kavliaris!",Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);           
                     }
                 }
             }
@@ -614,6 +647,12 @@ namespace WindowsGame2.Screens
 
         public override void Draw(GameTime gameTime)
         {
+            int activeParticles = 0;
+            foreach (Emitter activeEmitters in particleComponent.particleEmitterList)
+            {
+                activeParticles += activeEmitters.ParticleList.Count();
+            }
+
             GraphicsDevice.Clear(Color.White);
 
             GraphicsDevice.Viewport = defaultViewport;
@@ -656,7 +695,12 @@ namespace WindowsGame2.Screens
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
             }
 
+
+
+
+       
             spriteBatch.End();
+
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -730,6 +774,8 @@ namespace WindowsGame2.Screens
             screenEffect.CurrentTechnique.Passes["BarPass"].Apply();
             for (int i = 0; i < PlayersCount; i++)
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.barVertices[i], 0, Cars[i].score * 2);
+
+
         }
 
         public void DrawSpritesDebug(Camera camera)

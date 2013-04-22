@@ -99,10 +99,6 @@
     </Reference>
     <Reference Include="mscorlib.Behaviors, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="mscorlib.Moles, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0ae41878053f6703, processorArchitecture=MSIL" />
-    <Reference Include="ProjectMercury, Version=3.1.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ParticlesEngine\ProjectMercury.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
@@ -117,6 +113,10 @@
     </Reference>
     <Reference Include="System.Net">
       <Private>False</Private>
+    </Reference>
+    <Reference Include="X86_ProjectMercury, Version=3.1.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\x86\X86_ProjectMercury.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +158,13 @@
     <Compile Include="Sprite.cs" />
     <Compile Include="StringWriter.cs" />
     <Compile Include="TexturePhysicsObject.cs" />
+    <Compile Include="X2DPE\Emitter.cs" />
+    <Compile Include="X2DPE\Helpers\EmitterHelper.cs" />
+    <Compile Include="X2DPE\Helpers\ParticleFader.cs" />
+    <Compile Include="X2DPE\Helpers\ParticleScaler.cs" />
+    <Compile Include="X2DPE\Helpers\RandomMinMax.cs" />
+    <Compile Include="X2DPE\Particle.cs" />
+    <Compile Include="X2DPE\ParticleGameComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
