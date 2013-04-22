@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using X2DPE.Helpers;
+using WindowsGame2;
 
 namespace X2DPE
 {
@@ -115,8 +116,9 @@ namespace X2DPE
 		{
 			foreach (Particle particle in ParticleList)
 			{
+                Vector2 screenPosition = Vector2.Transform(particle.Position, GameServices.GetService<Camera>().Transform);
 				spriteBatch.Draw(particle.Texture,
-												 particle.Position,
+                                                 screenPosition,
 												 null,
 												 particle.Color,
 												 particle.Rotation,

@@ -68,7 +68,7 @@ namespace WindowsGame2.GameElements
         private int mIndex;
 
         private int boostFrames;
-        private bool hasBoost;
+        public bool hasBoost;
 
         private RandomTrack randomTrack;
         public int currentMiddlePoint;
