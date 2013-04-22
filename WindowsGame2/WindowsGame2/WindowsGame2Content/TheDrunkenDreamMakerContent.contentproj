@@ -417,18 +417,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\alphabet.jpg">
-      <Name>alphabet</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Images\Dreams\Quotes\bobovieri.jpg">
       <Name>bobovieri</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\alphabet.jpg">
+      <Name>alphabet</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

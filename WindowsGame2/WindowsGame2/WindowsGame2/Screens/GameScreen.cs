@@ -600,8 +600,9 @@ namespace WindowsGame2.Screens
                     {
                         Vector2 carTail =Cars[i]._compound.Position - Cars[i].mDirection * Cars[i].tailOffset *4;
                         Vector2 carDir = Cars[i].projectedPosition - Cars[i].Position;
-                        Vector2 carDirNormal = new Vector2(- carDir.Y,carDir.X);
-                        stringWriter.addString("ouch", Color.YellowGreen, maxImpulse / 5f, carTail, carDirNormal);           
+                        carDir = Cars[i].mDirection;
+                        Vector2 carDirNormal = Vector2.Normalize( new Vector2(- carDir.Y,carDir.X));
+                        stringWriter.addString("kavliaris", Color.YellowGreen, maxImpulse / 5f, carTail, carDir);           
                     }
                 }
             }
