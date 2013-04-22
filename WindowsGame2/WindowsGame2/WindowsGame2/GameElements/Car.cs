@@ -316,8 +316,11 @@ namespace WindowsGame2.GameElements
                     Vector2 tempVel=_compound.LinearVelocity;
                     _compound.LinearVelocity = Vector2.Normalize(tempVel) * currentMaxVel;
                 }
-                
 
+                if ( _compound.LinearVelocity.Length() < 0.1f)
+                {
+                    resetTrail();
+                }
             }
             else if (drivingMode == microMode)
             {

@@ -662,7 +662,13 @@ namespace WindowsGame2.Screens
                     }
                     if (maxImpulse > 1)
                     {
-                        Vector2 carTail = Cars[i]._compound.Position - Cars[i].mDirection * Cars[i].tailOffset * 4;
+                        //randomly choose whether front or back
+                        int sign = 3;
+                        if (Random.Next(2)==1)
+                        {
+                            sign = -1;
+                        }
+                        Vector2 carTail = Cars[i]._compound.Position + sign* Cars[i].mDirection * Cars[i].tailOffset * 4;
                         Vector2 carDir = Cars[i].mDirection;
                         Vector2 carDirNormal = Vector2.Normalize(new Vector2(-carDir.Y, carDir.X));
                         stringWriter.addString(collisionsQuotes[Random.Next(collisionsQuotes.Count() - 1)], Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);
