@@ -275,34 +275,35 @@ namespace WindowsGame2.Screens
             for (int i = 0; i < maxNumberOfTriangles; i++) basicVert[i].TextureCoordinate = new Vector2(-1);
                 triangleListIndices = new short[maxNumberOfTriangles * 3];
 
-            /*
+            
 
                 for (int i = 0; i < Cars.Count; i++)
                 {
                     particleComponent.particleEmitterList.Add(
                             new Emitter()
                             {
-                                Active = true,
+                                Active = false,
                                 TextureList = new List<Texture2D>() {
-                                //    Content.Load<Texture2D>("Sprites\\smoke"),
-			            Content.Load<Texture2D>("Sprites\\flower_orange"),
-			            Content.Load<Texture2D>("Sprites\\flower_green"),
-			            Content.Load<Texture2D>("Sprites\\flower_yellow"),
-			            Content.Load<Texture2D>("Sprites\\flower_purple")
-			    },
-                                RandomEmissionInterval = new RandomMinMax(10d),
-                                ParticleLifeTime = 2000,
+                                Content.Load<Texture2D>("Images\\whiteStar"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_orange"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_green"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_yellow"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_purple")
+			                    },
+                                RandomEmissionInterval = new RandomMinMax(2d),
+                                ParticleLifeTime = 1500,
                                 ParticleDirection = new RandomMinMax(0, 359),
-                                ParticleSpeed = new RandomMinMax(0.1f, 1.0f),
+                                ParticleSpeed = new RandomMinMax(9.1f, 13.0f),
                                 ParticleRotation = new RandomMinMax(0, 100),
                                 RotationSpeed = new RandomMinMax(0.015f),
                                 ParticleFader = new ParticleFader(false, true, 1350),
-                                ParticleScaler = new ParticleScaler(false, 0.3f)
+                                ParticleScaler = new ParticleScaler(false, 0.3f),
+                                TextureColor = Cars[i].mColor
                             }
                     );
                 }
 
-                    */
+                    
 
         }
 
@@ -493,8 +494,13 @@ namespace WindowsGame2.Screens
 
         private void UpdateCars()
         {
+
+
             for (int i = 0; i < Cars.Count; i++)
             {
+
+                particleComponent.particleEmitterList[i].Active = false;
+
                 // TODO: declare obstacle as instance variable and set it to null here?
                 PolygonPhysicsObject obstacle;
                 // Update the position of the car
@@ -671,19 +677,19 @@ namespace WindowsGame2.Screens
                         Vector2 carTail = Cars[i]._compound.Position + sign* Cars[i].mDirection * Cars[i].tailOffset * 4;
                         Vector2 carDir = Cars[i].mDirection;
                         Vector2 carDirNormal = Vector2.Normalize(new Vector2(-carDir.Y, carDir.X));
-                        stringWriter.addString(collisionsQuotes[Random.Next(collisionsQuotes.Count() - 1)], Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);
+                        stringWriter.addString(collisionsQuotes[Random.Next(collisionsQuotes.Count())], Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);
                         Cars[i].resetTrail();
-                        
+
+                        particleComponent.particleEmitterList[i].Position = Cars[i].Position;
+                        particleComponent.particleEmitterList[i].Active = true;
+
                     }
                     else
                     {
                         
                     }
                 }
-                else
-                {
-                    
-                }
+                
             }
 
   

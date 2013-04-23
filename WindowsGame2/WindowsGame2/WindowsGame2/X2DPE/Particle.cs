@@ -40,7 +40,7 @@ namespace X2DPE
 			Scale = 1.0f;
 			Fade = opacity;
 			InitialOpacity = opacity;
-			Color = new Color(Fade, Fade, Fade, Fade);
+			Color =  new Color(Fade, Fade, Fade, Fade);
 		}
 	}
 }

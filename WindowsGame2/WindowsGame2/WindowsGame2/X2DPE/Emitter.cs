@@ -34,6 +34,7 @@ namespace X2DPE
 		public ParticleFader ParticleFader { get; set; } // Fader settings
 		public ParticleScaler ParticleScaler { get; set; } // scale settings
 		public int Opacity { get; set; }
+        public Color TextureColor { get; set; }
 
 		private int i = 0;
 		private double emitterFrequency = 0;	// in ms
@@ -85,7 +86,8 @@ namespace X2DPE
 					particle.Rotation += particle.RotationSpeed;
 					ParticleScaler.Scale(particle, ParticleLifeTime);
 					particle.Fade = ParticleFader.Fade(particle, ParticleLifeTime);
-					particle.Color = new Color(particle.Fade, particle.Fade, particle.Fade, particle.Fade);
+                    //  particle.Color = new Color(particle.Fade * TextureColor.R, particle.Fade * TextureColor.G, particle.Fade * TextureColor.B, particle.Fade * TextureColor.A);
+                    particle.Color = new Color(TextureColor.R, TextureColor.G, TextureColor.B, particle.Fade);
 
 					if (particle.TotalLifetime > ParticleLifeTime)
 					{
