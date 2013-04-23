@@ -36,9 +36,10 @@ namespace WindowsGame2.Screens
         string[] collisionsQuotes;
         string[] collisionsQuotesNormal = {"ouch!", "bam", "boom", "crash!", "toc", "bang bang", "splat!", "ka pow!", "pow!", "thud!", "bong", "bonk!", "ka rack!", "rat tat tat" };
         string[] collisionsQuotesSerbian = { "kurva!", "jebem ti mater", "bolime kurac", "najebo si!", "peechka", "pushie kurac", "odjebi" };
-        string[] collisionsQuotesGreek = { "kavliaris", "vuruna!", "puchos", "imma egghios", "paracalo", "effretikon" };
+        string[] collisionsQuotesGreek = { "kavliaris", "gourouna!", "poutsos", "eimai eggios", "parakalo?", "effretikon" };
         string[] collisionsQuotesItalian = { "zio borghiano", "scrofa!", "porcano", "oca!", "sbocco anale", "asilo nido" };
-
+        
+ 
         DebugViewXNA _debugView;
         World world;
         GraphicsDevice GraphicsDevice;
@@ -165,10 +166,11 @@ namespace WindowsGame2.Screens
 
             particleComponent = GameServices.GetService<ParticleComponent>();
             
-            collisionsQuotes = collisionsQuotesNormal;
+            collisionsQuotes = collisionsQuotesGreek;
            
         }
-
+ 
+           
         public override void LoadContent()
         {
             // We add to the GameServices objects that we want to be able to use accross different classes
@@ -395,7 +397,6 @@ namespace WindowsGame2.Screens
                 //set rotation
                 Cars[i]._compound.Rotation = angle;
                 
-
                 //clear trail
                 Cars[i].mIsTrailLoop = false;
                 Cars[i].mTrailPoints = 0;
@@ -677,7 +678,8 @@ namespace WindowsGame2.Screens
                         Vector2 carTail = Cars[i]._compound.Position + sign* Cars[i].mDirection * Cars[i].tailOffset * 4;
                         Vector2 carDir = Cars[i].mDirection;
                         Vector2 carDirNormal = Vector2.Normalize(new Vector2(-carDir.Y, carDir.X));
-                        stringWriter.addString(collisionsQuotes[Random.Next(collisionsQuotes.Count())], Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);
+                        int newIndex = Random.Next(collisionsQuotes.Count());
+                        stringWriter.addString(collisionsQuotes[newIndex], Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);
                         Cars[i].resetTrail();
 
                         particleComponent.particleEmitterList[i].Position = Cars[i].Position;

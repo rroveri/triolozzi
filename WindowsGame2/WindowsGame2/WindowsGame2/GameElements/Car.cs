@@ -86,6 +86,8 @@ namespace WindowsGame2.GameElements
 
         private bool freeToSwap;
 
+        public Vector2 messageImagePos;
+
         public Car(World world, Color Color, RandomTrack _randomTrack)
             : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/small_car"), new Vector2(65.0f, 40.0f), Color)
         {
@@ -151,6 +153,8 @@ namespace WindowsGame2.GameElements
 
             //register collision
             _compound.OnCollision += body_OnCollision;
+
+            messageImagePos = ConvertUnits.ToDisplayUnits( _compound.Position);// +new Vector2(1, 1));
            
             
         }
@@ -208,9 +212,12 @@ namespace WindowsGame2.GameElements
 
         public void Update(GamePadState gps, KeyboardState ks)
         {
-
+            
             if (isActive == false)
             {
+                //do nothing except for moving the message position on the screen
+                //ATTENTION: at the beginning of the match the inverse of the camera matrix will return NAN, therefore check for NAN when you position the message!!!
+                moveMessageImage();
                 return;
             }
 
@@ -409,7 +416,54 @@ namespace WindowsGame2.GameElements
             {
                 freeToSwap = true;
             }
-        
+
+            //move the message position
+            moveMessageImage();
+            
+        }
+
+        public void moveMessageImage()
+        {
+            //move the message
+
+            //compute direction of the message
+            Vector2 dirVec = Vector2.Normalize(GameServices.GetService<Camera>().oldPosition - Position)*250;
+            //interpolate position
+            messageImagePos = Vector2.Lerp( messageImagePos, Position+dirVec, 0.5f);
+            //transform it to screen position
+            Vector2 screenPosition = Vector2.Transform(messageImagePos, GameServices.GetService<Camera>().Transform);
+
+            //check if still on screen, if not bring it back to screen!
+            //set a margin
+            int offset=100;
+            if (screenPosition.X < offset) 
+            {
+                screenPosition.X = offset;
+            }
+            else if (screenPosition.X > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth -offset)
+            {
+                screenPosition.X =GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth -offset;
+            }
+            if (screenPosition.Y < offset)
+            {
+                screenPosition.Y = offset;
+            }
+            else if ( screenPosition.Y >GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight -offset)
+            {
+                screenPosition.Y =GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight -offset;
+            }
+            //compute inverse matrix
+            Matrix inverse = GameServices.GetService<Camera>().inverseTransformMatrix();
+            //re-transform the vector in world coordinated
+            Vector2 croppedPos = Vector2.Transform(screenPosition, inverse);
+            messageImagePos = croppedPos;
+
+            // check if Nan, since a the beginning the inverse of the matrix will be NAN, and interpolation won't work afterwards
+            if (messageImagePos.X != messageImagePos.X || messageImagePos.Y != messageImagePos.Y)
+            {
+                messageImagePos = Vector2.Zero;
+            }
+           
         }
 
         public void KillOrthogonalVelocity(Car car, float drift)
@@ -522,6 +576,11 @@ namespace WindowsGame2.GameElements
          //   spriteBatch.Draw(mDummyTexture,ConvertUnits.ToDisplayUnits( projectedPosition),
            //                                null, mColor, 0, Vector2.Zero, Vector2.One*10, SpriteEffects.None,
            //                                0.9f);
+            spriteBatch.Draw(mDummyTexture, messageImagePos,
+                                           null, mColor, 0, Vector2.Zero, Vector2.One*10, SpriteEffects.None,
+                                           0.9f);
+
+            
 
             base.Draw(spriteBatch);
         }
