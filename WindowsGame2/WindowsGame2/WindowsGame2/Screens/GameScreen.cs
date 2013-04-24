@@ -165,8 +165,8 @@ namespace WindowsGame2.Screens
             startingPosAabbVerts = new Vector2[4];
 
             particleComponent = GameServices.GetService<ParticleComponent>();
-            
-            collisionsQuotes = collisionsQuotesGreek;
+
+            collisionsQuotes = collisionsQuotesNormal;
            
         }
  
@@ -329,7 +329,7 @@ namespace WindowsGame2.Screens
                                 RotationSpeed = new RandomMinMax(0.015f),
                                 ParticleFader = new ParticleFader(false, true, 1350),
                                 ParticleScaler = new ParticleScaler(false, 0.3f),
-                                TextureColor = Color.White
+                                TextureColor = Color.Gray
                             }
                     );
                 }
@@ -342,11 +342,11 @@ namespace WindowsGame2.Screens
                             {
                                 Active = false,
                                 TextureList = new List<Texture2D>() {
-                                
-			                    Content.Load<Texture2D>("Sprites\\flower_orange"),
-			                    Content.Load<Texture2D>("Sprites\\flower_green"),
-			                    Content.Load<Texture2D>("Sprites\\flower_yellow"),
-			                    Content.Load<Texture2D>("Sprites\\flower_purple")
+                                Content.Load<Texture2D>("Sprites\\smokeWhite"),
+			                    //Content.Load<Texture2D>("Sprites\\flower_orange"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_green"),
+			                    //Content.Load<Texture2D>("Sprites\\flower_yellow"),
+			                    //Content.Load<Texture2D>("Sprites\\flower_purple")
 			                    },
                                 RandomEmissionInterval = new RandomMinMax(0.5d),
                                 ParticleLifeTime = 1000,
