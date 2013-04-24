@@ -166,7 +166,7 @@ namespace WindowsGame2.Screens
 
             particleComponent = GameServices.GetService<ParticleComponent>();
 
-            collisionsQuotes = collisionsQuotesGreek;
+            collisionsQuotes = collisionsQuotesSerbian;
            
         }
  
@@ -329,7 +329,7 @@ namespace WindowsGame2.Screens
                                 RotationSpeed = new RandomMinMax(0.015f),
                                 ParticleFader = new ParticleFader(false, true, 1350),
                                 ParticleScaler = new ParticleScaler(false, 0.3f),
-                                TextureColor = Color.Gray
+                                TextureColor = Color.Black
                             }
                     );
                 }
