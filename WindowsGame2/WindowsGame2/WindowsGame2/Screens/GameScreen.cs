@@ -166,7 +166,7 @@ namespace WindowsGame2.Screens
 
             particleComponent = GameServices.GetService<ParticleComponent>();
 
-            collisionsQuotes = collisionsQuotesSerbian;
+            collisionsQuotes = collisionsQuotesGreek;
            
         }
  

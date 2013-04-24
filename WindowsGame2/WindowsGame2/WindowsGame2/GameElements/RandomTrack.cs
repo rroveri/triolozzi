@@ -431,6 +431,7 @@ namespace WindowsGame2.GameElements
             {
                 gameLogic.UpdateScore(car, 0);
                 car.message.activate("!",0);
+                car.message.currentTexture = car.message.thumbsUp;
 
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
 
@@ -441,6 +442,8 @@ namespace WindowsGame2.GameElements
             {
                 gameLogic.UpdateScore(car,-1);
                 car.message.activate("?",0);
+                car.message.currentTexture = car.message.thumbsDown;
+                
 
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
                 GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + 4].Position = postitCenter;

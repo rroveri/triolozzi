@@ -26,20 +26,37 @@ namespace WindowsGame2.GameElements
         private double popupTimeNormal;
         private double popupTimeDead;
 
+        public Texture2D thumbsUp;
+        public Texture2D thumbsDown;
+        public Texture2D currentTexture;
+
+        private Vector2 oldPos;
+        private bool firstTime;
+
+
         public PopupMessage(Car _car)
         {
             car = _car;
-            textureScale = 0.3f;
+            textureScale = 0.4f;
             textureBg = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/onomatopeeBg");
+            thumbsDown= GameServices.GetService<ContentManager>().Load<Texture2D>("Images/thumbs_down");
+            thumbsUp = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/thumbs_up");
+
             origin = new Vector2(textureBg.Width, textureBg.Height) * textureScale / 2f;
 
             stringWriter.nCharacters = 1;
             bgTextureVertices = new VertexPositionColorTexture[6];
 
             timer = 0.0f;
-            popupTimeNormal = 1500f;
+            popupTimeNormal = 1000f;
             popupTimeDead = 4000;
             popupTime = popupTimeNormal;
+
+            currentTexture = thumbsUp;
+
+            firstTime = true;
+
+
         }
 
 
@@ -87,10 +104,13 @@ namespace WindowsGame2.GameElements
                 popupTime = popupTimeNormal;
             }
 
+            firstTime = true;
+
         }
 
         public void disactivate(){
             isActive = false;
+            
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -98,11 +118,24 @@ namespace WindowsGame2.GameElements
 
             if (isActive)
             {
-                stringWriter.addString(messageString, Color.Black, 1f, ConvertUnits.ToSimUnits(car.messageImagePos), new Vector2(1, 0));
+               // stringWriter.addString(messageString, Color.Black, 1f, ConvertUnits.ToSimUnits(car.messageImagePos), new Vector2(1, 0));
 
-                spriteBatch.Draw(textureBg, car.messageImagePos,
+                if (firstTime)
+                {
+                    oldPos = car.messageImagePos;
+                    firstTime = false;
+                }
+
+                Vector2 newPos = Vector2.Lerp(oldPos, car.messageImagePos,0.1f);
+
+                spriteBatch.Draw(textureBg, newPos,
                                                null, car.mColor, 0, origin, Vector2.One * textureScale, SpriteEffects.None,
                                                0.0f);
+                spriteBatch.Draw(currentTexture, newPos,
+                                               null, Color.White, 0, origin, Vector2.One * textureScale, SpriteEffects.None,
+                                               0.0f);
+
+                oldPos = car.messageImagePos;
             }
         }
     }
