@@ -33,6 +33,8 @@ namespace WindowsGame2.GameElements
         private Vector2 oldPos;
         private bool firstTime;
 
+        public Texture2D rainbowTex;
+
 
         public PopupMessage(Car _car)
         {
@@ -41,6 +43,7 @@ namespace WindowsGame2.GameElements
             textureBg = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/onomatopeeBg");
             thumbsDown= GameServices.GetService<ContentManager>().Load<Texture2D>("Images/thumbs_down");
             thumbsUp = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/thumbs_up");
+            rainbowTex = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/rainbow_texture");
 
             origin = new Vector2(textureBg.Width, textureBg.Height) * textureScale / 2f;
 
@@ -134,7 +137,12 @@ namespace WindowsGame2.GameElements
                 spriteBatch.Draw(currentTexture, newPos,
                                                null, Color.White, 0, origin, Vector2.One * textureScale, SpriteEffects.None,
                                                0.0f);
-
+                /*
+                Color transp = new Color(1, 1, 1, 0.4f);
+                spriteBatch.Draw(rainbowTex, car.Position,
+                                               null, transp, 0, origin, new Vector2(1,10000) * textureScale, SpriteEffects.None,
+                                               0.0f);
+                */
                 oldPos = car.messageImagePos;
             }
         }

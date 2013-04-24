@@ -547,6 +547,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Images\rainbow_texture.jpg">
+      <Name>rainbow_texture</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="Images\brush.png">
       <Name>brush</Name>
       <Importer>TextureImporter</Importer>
