@@ -9,9 +9,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace WindowsGame2
 {
-    class StringWriter
+    public class StringWriter
     {
-        private int nCharacters = 500;
+        public int nCharacters = 500;
 
         public VertexPositionColorTexture[] stringVertices;
 

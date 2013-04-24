@@ -211,11 +211,13 @@ namespace WindowsGame2.Screens
             Texture2D ink = Content.Load<Texture2D>("Materials/ink_texture");
             Texture2D startLine = Content.Load<Texture2D>("Materials/squares");
             Texture2D alphabet = Content.Load<Texture2D>("Images/alphabet");
+            Texture2D messageBg = Content.Load<Texture2D>("Images/onomatopeeBg");
             paperEffect.Parameters["trailSketch"].SetValue(trailSketch);
             paperEffect.Parameters["objectSketch"].SetValue(objectSketch);
             paperEffect.Parameters["ink"].SetValue(ink);
             paperEffect.Parameters["startLine"].SetValue(startLine);
             paperEffect.Parameters["alphabet"].SetValue(alphabet);
+            paperEffect.Parameters["popupMessage"].SetValue(messageBg);
             randomArray = new float[16 * 16];
             Color[] randomCol = new Color[16 * 16];
             randomArray[0] = 0.5f;
@@ -407,6 +409,8 @@ namespace WindowsGame2.Screens
 
                 Cars[i].isActive = false;
                 Cars[i]._compound.Enabled = false;
+
+                Cars[i].message.disactivate();
             }
             
             readyToStart = true;
@@ -464,7 +468,7 @@ namespace WindowsGame2.Screens
                 }
             }
 
-            UpdateCars();
+            UpdateCars(gameTime);
 
             UpdateObstacles();
 
@@ -493,7 +497,7 @@ namespace WindowsGame2.Screens
                 
         }
 
-        private void UpdateCars()
+        private void UpdateCars(GameTime gameTime)
         {
 
 
@@ -505,7 +509,7 @@ namespace WindowsGame2.Screens
                 // TODO: declare obstacle as instance variable and set it to null here?
                 PolygonPhysicsObject obstacle;
                 // Update the position of the car
-                Cars[i].Update(GamePad.GetState(playerIndexes[i]), ks);
+                Cars[i].Update(GamePad.GetState(playerIndexes[i]), ks, gameTime);
                 // Find an obstacle (if any) drawn by the car and add it to the scene
                 if (Cars[i].TrailObstacle(world))
                 {
@@ -813,8 +817,22 @@ namespace WindowsGame2.Screens
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
             }
 
+            paperEffect.CurrentTechnique.Passes["PopupMessagePass"].Apply();
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.bgTextureVertices, 0, 2);
+            }
+
             paperEffect.CurrentTechnique.Passes["AlphabetPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, stringWriter.stringVertices, 0, stringWriter.stringVertices.Count() / 3);
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                if (Cars[i].message.isActive)
+                {
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.stringWriter.stringVertices, 0, Cars[i].message.stringWriter.stringVertices.Count() / 3);
+                }
+            }
+
 
             screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, PlayersCount * 2);

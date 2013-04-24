@@ -429,10 +429,13 @@ namespace WindowsGame2.GameElements
             if (postItDreamsList[index].isNightmare!=1)
             {
                 gameLogic.UpdateScore(car, 0);
+
+                car.message.activate("!",0);
             }
             else
             {
                 gameLogic.UpdateScore(car,-1);
+                car.message.activate("?",0);
             }
         }
 

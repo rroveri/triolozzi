@@ -130,6 +130,7 @@
     <Compile Include="DrawablePhysicsObject.cs" />
     <Compile Include="FrameRateCounter.cs" />
     <Compile Include="GameElements\GameLogic.cs" />
+    <Compile Include="GameElements\PopupMessage.cs" />
     <Compile Include="GameElements\PostItDream.cs" />
     <Compile Include="GameElements\PostItQuote.cs" />
     <Compile Include="GameElements\RandomTrack.cs" />

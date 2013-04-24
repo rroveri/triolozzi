@@ -88,9 +88,13 @@ namespace WindowsGame2.GameElements
 
         public Vector2 messageImagePos;
 
+        public PopupMessage message;
+
         public Car(World world, Color Color, RandomTrack _randomTrack)
             : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/small_car"), new Vector2(65.0f, 40.0f), Color)
         {
+
+            message = new PopupMessage(this);
 
             isActive = true;
 
@@ -210,14 +214,14 @@ namespace WindowsGame2.GameElements
             driftValue = 0;
         }
 
-        public void Update(GamePadState gps, KeyboardState ks)
+        public void Update(GamePadState gps, KeyboardState ks, GameTime gameTime)
         {
             
             if (isActive == false)
             {
                 //do nothing except for moving the message position on the screen
                 //ATTENTION: at the beginning of the match the inverse of the camera matrix will return NAN, therefore check for NAN when you position the message!!!
-                moveMessageImage();
+                moveMessageImage(gameTime);
                 return;
             }
 
@@ -418,16 +422,18 @@ namespace WindowsGame2.GameElements
             }
 
             //move the message position
-            moveMessageImage();
+            moveMessageImage(gameTime);
             
         }
 
-        public void moveMessageImage()
+        public void moveMessageImage(GameTime gameTime)
         {
-            //move the message
+            //move the message and udpate its string
+            message.Update(gameTime);
 
             //compute direction of the message
-            Vector2 dirVec = Vector2.Normalize(GameServices.GetService<Camera>().oldPosition - Position)*250;
+            float distance = 150f;
+            Vector2 dirVec = Vector2.Normalize(GameServices.GetService<Camera>().oldPosition - Position) * distance;
             //interpolate position
             messageImagePos = Vector2.Lerp( messageImagePos, Position+dirVec, 0.5f);
             //transform it to screen position
@@ -435,7 +441,7 @@ namespace WindowsGame2.GameElements
 
             //check if still on screen, if not bring it back to screen!
             //set a margin
-            int offset=100;
+            int offset=300;
             if (screenPosition.X < offset) 
             {
                 screenPosition.X = offset;
@@ -573,13 +579,18 @@ namespace WindowsGame2.GameElements
             vertices = trailVertices;
             _burnoutsVertices = burnoutsVertices;
 
-         //   spriteBatch.Draw(mDummyTexture,ConvertUnits.ToDisplayUnits( projectedPosition),
+            //draw projected position
+           //   spriteBatch.Draw(mDummyTexture,ConvertUnits.ToDisplayUnits( projectedPosition),
            //                                null, mColor, 0, Vector2.Zero, Vector2.One*10, SpriteEffects.None,
            //                                0.9f);
-            spriteBatch.Draw(mDummyTexture, messageImagePos,
-                                           null, mColor, 0, Vector2.Zero, Vector2.One*10, SpriteEffects.None,
-                                           0.9f);
 
+            // draw message position
+           // spriteBatch.Draw(mDummyTexture, messageImagePos,
+           //                                null, mColor, 0, Vector2.Zero, Vector2.One*10, SpriteEffects.None,
+           //                                0.9f);
+
+
+            message.Draw(spriteBatch);
             
 
             base.Draw(spriteBatch);
