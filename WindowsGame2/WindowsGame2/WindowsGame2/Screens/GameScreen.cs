@@ -35,8 +35,8 @@ namespace WindowsGame2.Screens
 
         string[] collisionsQuotes;
         string[] collisionsQuotesNormal = {"ouch!", "bam", "boom", "crash!", "toc", "bang bang", "splat!", "ka pow!", "pow!", "thud!", "bong", "bonk!", "ka rack!", "rat tat tat" };
-        string[] collisionsQuotesSerbian = { "kurva!", "jebem ti mater", "bolime kurac", "najebo si!", "peechka", "pushie kurac", "odjebi" };
-        string[] collisionsQuotesGreek = { "kavliaris", "gourouna!", "poutsos", "eimai eggios", "parakalo?", "effretikon" };
+        string[] collisionsQuotesSerbian = { "kurvo!", "jebem ti mater bre!!", "boli me kurac!", "najebo si!", "picko!", "pusi kurac bre!!", "odjebi bre!!" };
+        string[] collisionsQuotesGreek = { "kavliaris", "gourouna!", "poutsos", "eimai eggios", "parakalo?", "putses ble!", "ore pusti!!", "ta mu klasis ta arhidia", "effretikon" };
         string[] collisionsQuotesItalian = { "zio borghiano", "scrofa!", "porcano", "oca!", "sbocco anale", "asilo nido" };
         
  
@@ -166,7 +166,7 @@ namespace WindowsGame2.Screens
 
             particleComponent = GameServices.GetService<ParticleComponent>();
 
-            collisionsQuotes = collisionsQuotesNormal;
+            collisionsQuotes = collisionsQuotesSerbian;
            
         }
  
