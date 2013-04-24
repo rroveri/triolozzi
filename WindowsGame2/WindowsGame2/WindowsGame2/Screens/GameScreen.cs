@@ -243,7 +243,7 @@ namespace WindowsGame2.Screens
 
             for (int i = 0; i < 4; i++)
             {
-                Car aCar = new Car(world, carColors[i], randomRaceTrack);
+                Car aCar = new Car(world, carColors[i], randomRaceTrack, i);
                 AllCars.Add(aCar);
                 Cars.Add(aCar);
             }
@@ -280,7 +280,7 @@ namespace WindowsGame2.Screens
                 triangleListIndices = new short[maxNumberOfTriangles * 3];
 
             
-
+                //add particles for collisions with walls and cars
                 for (int i = 0; i < Cars.Count; i++)
                 {
                     particleComponent.particleEmitterList.Add(
@@ -303,6 +303,60 @@ namespace WindowsGame2.Screens
                                 ParticleFader = new ParticleFader(false, true, 1350),
                                 ParticleScaler = new ParticleScaler(false, 0.3f),
                                 TextureColor = Cars[i].mColor
+                            }
+                    );
+                }
+
+            //add particles for collisions with nightmares
+                for (int i = 0; i < Cars.Count; i++)
+                {
+                    particleComponent.particleEmitterList.Add(
+                            new Emitter()
+                            {
+                                Active = false,
+                                TextureList = new List<Texture2D>() {
+                                Content.Load<Texture2D>("Sprites\\smoke"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_orange"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_green"),
+			                  //  Content.Load<Texture2D>("Sprites\\flower_yellow"),
+			                  //  Content.Load<Texture2D>("Sprites\\flower_purple")
+			                    },
+                                RandomEmissionInterval = new RandomMinMax(0.5d),
+                                ParticleLifeTime = 1000,
+                                ParticleDirection = new RandomMinMax(0, 359),
+                                ParticleSpeed = new RandomMinMax(5.1f, 7.0f),
+                                ParticleRotation = new RandomMinMax(0, 100),
+                                RotationSpeed = new RandomMinMax(0.015f),
+                                ParticleFader = new ParticleFader(false, true, 1350),
+                                ParticleScaler = new ParticleScaler(false, 0.3f),
+                                TextureColor = Color.White
+                            }
+                    );
+                }
+
+                //add particles for collisions with wishes
+                for (int i = 0; i < Cars.Count; i++)
+                {
+                    particleComponent.particleEmitterList.Add(
+                            new Emitter()
+                            {
+                                Active = false,
+                                TextureList = new List<Texture2D>() {
+                                
+			                    Content.Load<Texture2D>("Sprites\\flower_orange"),
+			                    Content.Load<Texture2D>("Sprites\\flower_green"),
+			                    Content.Load<Texture2D>("Sprites\\flower_yellow"),
+			                    Content.Load<Texture2D>("Sprites\\flower_purple")
+			                    },
+                                RandomEmissionInterval = new RandomMinMax(0.5d),
+                                ParticleLifeTime = 1000,
+                                ParticleDirection = new RandomMinMax(0, 359),
+                                ParticleSpeed = new RandomMinMax(5.1f, 7.0f),
+                                ParticleRotation = new RandomMinMax(0, 100),
+                                RotationSpeed = new RandomMinMax(0.015f),
+                                ParticleFader = new ParticleFader(false, true, 1350),
+                                ParticleScaler = new ParticleScaler(false, 0.3f),
+                                TextureColor = Color.White
                             }
                     );
                 }
@@ -520,6 +574,15 @@ namespace WindowsGame2.Screens
                     }
                 }
 
+            }
+
+            for (int i = Cars.Count; i < Cars.Count * 2; i++ )
+            {
+                particleComponent.particleEmitterList[i].Active = false;
+            }
+            for (int i = Cars.Count*2; i < Cars.Count * 3; i++)
+            {
+                particleComponent.particleEmitterList[i].Active = false;
             }
         }
 

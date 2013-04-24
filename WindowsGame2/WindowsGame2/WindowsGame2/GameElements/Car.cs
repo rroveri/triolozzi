@@ -90,9 +90,13 @@ namespace WindowsGame2.GameElements
 
         public PopupMessage message;
 
-        public Car(World world, Color Color, RandomTrack _randomTrack)
+        public int index;
+
+        public Car(World world, Color Color, RandomTrack _randomTrack, int _index)
             : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/small_car"), new Vector2(65.0f, 40.0f), Color)
         {
+
+            index = _index;
 
             message = new PopupMessage(this);
 

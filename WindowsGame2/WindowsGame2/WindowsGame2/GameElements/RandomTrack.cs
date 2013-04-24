@@ -10,6 +10,7 @@ using FarseerPhysics.SamplesFramework;
 using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework.Content;
 using WindowsGame2.Events;
+using X2DPE;
 
 
 namespace WindowsGame2.GameElements
@@ -301,7 +302,7 @@ namespace WindowsGame2.GameElements
                 float targetCoeff=externalNormalsCoefficients[startingVertices-1];
                 externalNormalsCoefficients[i] = MathHelper.Lerp(lastCoeff, targetCoeff, 1f / startingVertices * i);
             }
-
+            
             //create normals for drawing ink
             List<Vector2> normalExternalInk = new List<Vector2>();
             float inkWidth = 5f;
@@ -429,13 +430,21 @@ namespace WindowsGame2.GameElements
             if (postItDreamsList[index].isNightmare!=1)
             {
                 gameLogic.UpdateScore(car, 0);
-
                 car.message.activate("!",0);
+
+                Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
+
+                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + 8].Position = postitCenter;
+                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + 8].Active = true;
             }
             else
             {
                 gameLogic.UpdateScore(car,-1);
                 car.message.activate("?",0);
+
+                Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
+                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + 4].Position = postitCenter;
+                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index+4].Active = true;
             }
         }
 
