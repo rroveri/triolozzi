@@ -91,7 +91,7 @@ namespace WindowsGame2.GameElements
 
         public void disactivate(){
             //messageString = "";
-            isActive = false;
+           // isActive = false;
         }
 
         public void Draw(SpriteBatch spriteBatch)

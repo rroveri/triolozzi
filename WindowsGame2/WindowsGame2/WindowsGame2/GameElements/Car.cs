@@ -445,23 +445,50 @@ namespace WindowsGame2.GameElements
 
             //check if still on screen, if not bring it back to screen!
             //set a margin
-            int offset=300;
-            if (screenPosition.X < offset) 
+            int offsetRight=100;
+            int offsetUp = 30;
+            int offsetDown = 100;
+            int offsetLeft = 30;
+            if (screenPosition.X < offsetLeft) 
             {
-                screenPosition.X = offset;
+                screenPosition.X = offsetLeft;
             }
-            else if (screenPosition.X > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth -offset)
+            else if (screenPosition.X > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - offsetRight)
             {
-                screenPosition.X =GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth -offset;
+                screenPosition.X = GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - offsetRight;
             }
-            if (screenPosition.Y < offset)
+            if (screenPosition.Y < offsetUp)
             {
-                screenPosition.Y = offset;
+                screenPosition.Y = offsetUp;
             }
-            else if ( screenPosition.Y >GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight -offset)
+            else if (screenPosition.Y > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight - offsetDown)
             {
-                screenPosition.Y =GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight -offset;
+                screenPosition.Y = GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight - offsetDown;
             }
+
+            //avoid corner postits 
+            //TODO: interpolation!
+
+            int postitLength = 250;
+            int postitHeight = 150;
+            if (screenPosition.Y > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight - postitHeight - offsetDown && screenPosition.X < postitLength)
+            {
+                screenPosition.X = MathHelper.Lerp(screenPosition.X, postitLength, 1f);
+            }
+            else if (screenPosition.Y > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight - postitHeight - offsetDown && screenPosition.X > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - postitLength - offsetRight)
+            {
+                screenPosition.X = MathHelper.Lerp(screenPosition.X, GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - postitLength - offsetRight, 1f);
+            }
+            else if (screenPosition.Y < postitHeight && screenPosition.X > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - postitLength - offsetRight)
+            {
+                screenPosition.X = MathHelper.Lerp(screenPosition.X, GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - postitLength - offsetRight, 1f);
+            }
+            else if (screenPosition.Y < postitHeight && screenPosition.X < postitLength)
+            {
+                screenPosition.X = MathHelper.Lerp(screenPosition.X, postitLength, 1f);
+            }
+            
+
             //compute inverse matrix
             Matrix inverse = GameServices.GetService<Camera>().inverseTransformMatrix();
             //re-transform the vector in world coordinated
