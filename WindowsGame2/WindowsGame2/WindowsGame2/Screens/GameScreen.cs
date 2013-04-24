@@ -100,6 +100,7 @@ namespace WindowsGame2.Screens
         Vector2[] startingPosAabbVerts;
 
         ParticleComponent particleComponent;
+        Fluid fluid;
 
         private int _playersCount;
         public int PlayersCount
@@ -361,8 +362,8 @@ namespace WindowsGame2.Screens
                     );
                 }
 
-                    
 
+                fluid = new Fluid(Content,GraphicsDevice, spriteBatch);
         }
 
         public void positionCars(int startingPointToCheck)
@@ -815,13 +816,12 @@ namespace WindowsGame2.Screens
                 Cars[i].Draw(spriteBatch, out trails[i], out burnouts[i]);
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
             }
-
-
-
-
        
             spriteBatch.End();
 
+
+            fluid.Update();
+            fluid.Draw();
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
