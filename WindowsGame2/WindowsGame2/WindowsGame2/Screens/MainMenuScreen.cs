@@ -31,7 +31,7 @@ namespace WindowsGame2.Screens
         //private MessageBoxScreen ExitDialog;
 
         static int[] numberOfPlayers = { 2, 3, 4 };
-        static string[] _playersText = {"2 Players", "3 Players", "4 Players" };
+        static string[] _playersText = {"< 2 Players >", "< 3 Players >", "< 4 Players >" };
         static int _playersCountIndex = 2;
 
         #endregion
@@ -55,6 +55,8 @@ namespace WindowsGame2.Screens
 
             playersMenuEntry = new MenuEntry("Players");
             playersMenuEntry.Selected += PlayersMenuEntrySelected;
+            playersMenuEntry.LeftClick += PlayersMenuEntryDecrement;
+            playersMenuEntry.RightClick += PlayersMenuEntryIncrement;
             MenuEntries.Add(playersMenuEntry);
 
             MenuEntry exitMenuEntry = new MenuEntry("Exit");
@@ -74,6 +76,24 @@ namespace WindowsGame2.Screens
             GC.Collect();
             ScreenManager.GetScreen<GameScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
             ScreenManager.ShowScreen<GameScreen>();
+        }
+
+        void PlayersMenuEntryDecrement(object sender, PlayerIndexEventArgs e)
+        {
+            if (_playersCountIndex > 0)
+            {
+                _playersCountIndex--;
+                UpdatePlayersCount();
+            }
+        }
+
+        void PlayersMenuEntryIncrement(object sender, PlayerIndexEventArgs e)
+        {
+            if (_playersCountIndex < numberOfPlayers.Length - 1)
+            {
+                _playersCountIndex++;
+                UpdatePlayersCount();
+            }
         }
 
         void PlayersMenuEntrySelected(object sender, PlayerIndexEventArgs e)

@@ -49,7 +49,7 @@ namespace WindowsGame2.Screens
 
         private Rectangle[][] _StringsPositions;
 
-        private bool[] _didSelectCar;
+        private bool[] _didSelectColor;
 
         private Color[] _availableColors;
         private int[] _selectedColors;
@@ -172,7 +172,7 @@ namespace WindowsGame2.Screens
             }
 
             // Initialize player selections
-            _didSelectCar = new bool[4];
+            _didSelectColor = new bool[4];
 
             // Initialize colors
             _availableColors = new Color[10];
@@ -217,15 +217,32 @@ namespace WindowsGame2.Screens
                 // Go back to the Main Menu
                 if (input.CurrentGamePadStates[i].Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 {
+                    for (int j = 0; j < _didSelectColor.Length; j++)
+                    {
+                        _didSelectColor[j] = false;
+                        _selectedCars[j] = 0;
+                        _selectedColors[j] = 0;
+                    }
+
                     ScreenManager.ShowScreen<MainMenuScreen>();
+                    return;
+                }
+                // Ignore everything if color has been selected already
+                if (_didSelectColor[i])
+                {
+                    continue;
                 }
                 // Select the car and colors
                 if (input.CurrentGamePadStates[i].Buttons.A == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.A))
                 {
-                    // TODO: can i-th player select this color?
-                    // if not, beep or do something
-                    // else:
-                    _didSelectCar[i] = true;
+                    if (CanSelectColor(i, _selectedColors[i]))
+                    {
+                        _didSelectColor[i] = true;
+                    }
+                    else
+                    {
+                        //Console.WriteLine("Putative problem: " + i);
+                    }
                 }
                 if (input.CurrentGamePadStates[i].DPad.Right == ButtonState.Pressed || input.DidTouchKey(Keys.Right, i))
                 {
@@ -265,7 +282,7 @@ namespace WindowsGame2.Screens
                 ScreenManager.SpriteBatch.Draw(_availableCars[_selectedCars[i]], _CarsPositions[PlayersCount - 2][i], null, _availableColors[_selectedColors[i]]);
 
                 // Show "Done" or "Ready" string
-                if (_didSelectCar[i])
+                if (_didSelectColor[i])
                 {
                     ScreenManager.SpriteBatch.Draw(_readyToPlay, _StringsPositions[PlayersCount - 2][i], null, Color.White);
                 }
@@ -277,11 +294,31 @@ namespace WindowsGame2.Screens
             ScreenManager.SpriteBatch.End();
         }
 
-        //protected override void OnCancel(PlayerIndex playerIndex)
-        //{
-        //    ScreenManager.ShowScreen<MainMenuScreen>();
-        //}
+        
 
         #endregion
+
+        private bool CanSelectColor(int playerIndex, int colorIndex)
+        {
+            // Did the player already select a color?
+            if (_didSelectColor[playerIndex])
+            {
+                return false;
+            }
+            // Did any other player select the same color?
+            for (int i = 0; i < PlayersCount; i++)
+            {
+                if (i == playerIndex)
+                {
+                    continue;
+                }
+                if (_didSelectColor[i] && _selectedColors[i] == colorIndex)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
     }
 }

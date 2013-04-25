@@ -33,6 +33,8 @@ namespace WindowsGame2.Screens
 
         InputAction menuUp;
         InputAction menuDown;
+        InputAction menuLeft;
+        InputAction menuRight;
         InputAction menuSelect;
         InputAction menuCancel;
 
@@ -87,6 +89,16 @@ namespace WindowsGame2.Screens
                 new Buttons[] { Buttons.B, Buttons.Back },
                 new Keys[] { Keys.Escape },
                 true);
+            menuLeft = new InputAction(
+                new Buttons[] { Buttons.DPadLeft, Buttons.LeftThumbstickLeft },
+                new Keys[] { Keys.Left },
+                true
+                );
+            menuRight = new InputAction(
+                new Buttons[] { Buttons.DPadRight, Buttons.LeftThumbstickRight },
+                new Keys[] { Keys.Right },
+                true
+                );
 
             position = new Vector2(0f, 175f);
         }
@@ -141,6 +153,14 @@ namespace WindowsGame2.Screens
             {
                 OnCancel(playerIndex);
             }
+            else if (menuLeft.Evaluate(input, ControllingPlayer, out playerIndex))
+            {
+                OnLeftClick(selectedEntry, playerIndex);
+            }
+            else if (menuRight.Evaluate(input, ControllingPlayer, out playerIndex))
+            {
+                OnRightClick(selectedEntry, playerIndex);
+            }
         }
 
 
@@ -161,6 +181,15 @@ namespace WindowsGame2.Screens
             ExitScreen();
         }
 
+        protected virtual void OnLeftClick(int entryIndex, PlayerIndex playerIndex)
+        {
+            menuEntries[entryIndex].OnSelectLeft(playerIndex);
+        }
+
+        protected virtual void OnRightClick(int entryIndex, PlayerIndex playerIndex)
+        {
+            menuEntries[entryIndex].OnSelectRight(playerIndex);
+        }
 
         /// <summary>
         /// Helper overload makes it easy to use OnCancel as a MenuEntry event handler.

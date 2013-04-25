@@ -25,18 +25,13 @@ namespace WindowsGame2.Screens
         /// </summary>
         public PlayerIndexEventArgs(PlayerIndex playerIndex)
         {
-            this.playerIndex = playerIndex;
+            PlayerIndex = playerIndex;
         }
 
 
         /// <summary>
         /// Gets the index of the player who triggered this event.
         /// </summary>
-        public PlayerIndex PlayerIndex
-        {
-            get { return playerIndex; }
-        }
-
-        PlayerIndex playerIndex;
+        public PlayerIndex PlayerIndex { get; set; }
     }
 }
