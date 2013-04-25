@@ -61,7 +61,6 @@ namespace WindowsGame2.Screens
         KeyboardState prevKeyboardState;
         Random Random;
         float[] randomArray;
-        //int lastFrame = 0, randomIndex = 0;
 
         KeyboardState ks;
 
@@ -74,7 +73,6 @@ namespace WindowsGame2.Screens
         RandomTrack randomRaceTrack;
         private GameLogic Logic;
 
-        PauseMenuScreen PauseScreen;
         RankingScreen RankScreen;
         float pauseAlpha;
 
@@ -146,7 +144,7 @@ namespace WindowsGame2.Screens
         {
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
-            PauseScreen = new PauseMenuScreen();
+
             RankScreen = new RankingScreen("");
             RankScreen.Accepted += RankScreenAccepted;
 
@@ -181,7 +179,6 @@ namespace WindowsGame2.Screens
             Content = GameServices.GetService<ContentManager>();
             graphics = GameServices.GetService<GraphicsDeviceManager>();
 
-            ScreenManager.AddScreen(PauseScreen, null);
             ScreenManager.AddScreen(RankScreen, null);
 
             world = new World(new Vector2(0, 0));
@@ -491,14 +488,6 @@ namespace WindowsGame2.Screens
             if (!IsActive)
                 return;
 
-            //if (lastFrame == 5)
-            //{
-            //    randomIndex = (randomIndex + 1) % randomArray.Count();
-            //    lastFrame = 0;
-            //}
-            //lastFrame++;
-            //paperEffect.Parameters["randomSeed"].SetValue(randomArray[randomIndex]);
-
             if (ShouldPauseGame())
             {
                 ScreenManager.ShowScreen<PauseMenuScreen>();
@@ -553,11 +542,8 @@ namespace WindowsGame2.Screens
 
         private void UpdateCars(GameTime gameTime)
         {
-
-
             for (int i = 0; i < Cars.Count; i++)
             {
-
                 particleComponent.particleEmitterList[i].Active = false;
 
                 // TODO: declare obstacle as instance variable and set it to null here?
@@ -573,7 +559,6 @@ namespace WindowsGame2.Screens
                         polygonsList.Add(obstacle);
                     }
                 }
-
             }
 
             for (int i = Cars.Count; i < Cars.Count * 2; i++ )
@@ -628,13 +613,10 @@ namespace WindowsGame2.Screens
                             }
                         }
                     }
-
-
                 }
                 if (!foundInside)
                 {
                     polygonsList[i].compound.Enabled = false;
-
                 }
             }
         }
@@ -728,8 +710,6 @@ namespace WindowsGame2.Screens
                     float maxImpulse = 0.0f;
                     int count = contact.Manifold.PointCount;
 
-                    
-
                     for (int j = 0; j < count; ++j)
                     {
                         maxImpulse = Math.Max(maxImpulse, impulse.Points[j].NormalImpulse);
@@ -753,15 +733,8 @@ namespace WindowsGame2.Screens
                         particleComponent.particleEmitterList[i].Active = true;
 
                     }
-                    else
-                    {
-                        
-                    }
                 }
-                
             }
-
-  
         }
 
 
@@ -791,11 +764,6 @@ namespace WindowsGame2.Screens
 
         public void DrawSprites(Camera camera)
         {
-
-
-
-
-
             //compute camera matrices
             projection = camera.ProjectionMatrix;
             view = camera.ViewMatrix;
@@ -923,8 +891,10 @@ namespace WindowsGame2.Screens
             _debugView.RenderDebugData(ref projection, ref view);
         }
 
-        void RankScreenAccepted(object sender, PlayerIndexEventArgs e)
+        public void RankScreenAccepted(object sender, PlayerIndexEventArgs e)
         {
+            RankScreen.Accepted -= RankScreenAccepted;
+            ScreenManager.RemoveScreen(RankScreen);
             ScreenManager.QuitGame();
         }
 

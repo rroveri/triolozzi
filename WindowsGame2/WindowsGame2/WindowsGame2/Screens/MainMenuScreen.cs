@@ -22,13 +22,10 @@ namespace WindowsGame2.Screens
     /// </summary>
     class MainMenuScreen : MenuScreen
     {
-
         #region Fields
 
         private MenuEntry playersMenuEntry;
         private MenuEntry optionsMenuEntry;
-
-        //private MessageBoxScreen ExitDialog;
 
         static int[] numberOfPlayers = { 2, 3, 4 };
         static string[] _playersText = {"< 2 Players >", "< 3 Players >", "< 4 Players >" };
@@ -45,16 +42,11 @@ namespace WindowsGame2.Screens
         /// </summary>
         public MainMenuScreen() : base("The Drunken Dream Maker (With a Cold)")
         {
-            //MenuEntry singleScreenEntry = new MenuEntry("Single Screen Game");
-            //singleScreenEntry.Selected += PlayGameMenuSingleModeEntrySelected;
-            //MenuEntries.Add(singleScreenEntry);
-            
             optionsMenuEntry = new MenuEntry("Start New Game");
             optionsMenuEntry.Selected += OptionsMenuEntrySelected;
             MenuEntries.Add(optionsMenuEntry);
 
             playersMenuEntry = new MenuEntry("Players");
-            playersMenuEntry.Selected += PlayersMenuEntrySelected;
             playersMenuEntry.LeftClick += PlayersMenuEntryDecrement;
             playersMenuEntry.RightClick += PlayersMenuEntryIncrement;
             MenuEntries.Add(playersMenuEntry);
@@ -69,14 +61,6 @@ namespace WindowsGame2.Screens
         #endregion
 
         #region Handle Input
-
-
-        //void PlayGameMenuSingleModeEntrySelected(object sender, PlayerIndexEventArgs e)
-        //{
-        //    GC.Collect();
-        //    ScreenManager.GetScreen<GameScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
-        //    ScreenManager.ShowScreen<GameScreen>();
-        //}
 
         void PlayersMenuEntryDecrement(object sender, PlayerIndexEventArgs e)
         {
@@ -96,16 +80,9 @@ namespace WindowsGame2.Screens
             }
         }
 
-        void PlayersMenuEntrySelected(object sender, PlayerIndexEventArgs e)
-        {
-            _playersCountIndex = (_playersCountIndex + 1) % numberOfPlayers.Length;
-            UpdatePlayersCount();
-        }
-
         void OptionsMenuEntrySelected(object sender, PlayerIndexEventArgs e)
         {
-            ScreenManager.GetScreen<OptionsMenuScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
-            ScreenManager.GetScreen<OptionsMenuScreen>().ResetOptions();
+            ScreenManager.GetScreen<OptionsMenuScreen>().ShowOptions(numberOfPlayers[_playersCountIndex]);
             ScreenManager.ShowScreen<OptionsMenuScreen>();
         }
 

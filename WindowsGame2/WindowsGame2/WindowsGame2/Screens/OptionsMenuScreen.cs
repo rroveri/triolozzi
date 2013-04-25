@@ -14,7 +14,7 @@ namespace WindowsGame2.Screens
     {
         #region Fields
 
-        public int PlayersCount { get; set; }
+        private int PlayersCount { get; set; }
 
         private Texture2D _backgroundTexture;
 
@@ -62,6 +62,12 @@ namespace WindowsGame2.Screens
         public OptionsMenuScreen()
         {
             
+        }
+
+        public void ShowOptions(int playersCount)
+        {
+            PlayersCount = playersCount;
+            ResetOptions();
         }
 
         public override void LoadContent()
@@ -321,7 +327,7 @@ namespace WindowsGame2.Screens
             return true;
         }
 
-        public void ResetOptions()
+        private void ResetOptions()
         {
             for (int j = 0; j < _didSelectColor.Length; j++)
             {
