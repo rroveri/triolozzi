@@ -105,6 +105,7 @@ namespace WindowsGame2.Screens
         void OptionsMenuEntrySelected(object sender, PlayerIndexEventArgs e)
         {
             ScreenManager.GetScreen<OptionsMenuScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
+            ScreenManager.GetScreen<OptionsMenuScreen>().ResetOptions();
             ScreenManager.ShowScreen<OptionsMenuScreen>();
         }
 
