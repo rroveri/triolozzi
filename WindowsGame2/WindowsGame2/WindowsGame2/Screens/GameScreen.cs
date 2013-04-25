@@ -101,36 +101,7 @@ namespace WindowsGame2.Screens
         ParticleComponent particleComponent;
         Fluid fluid;
 
-        private int _playersCount;
-        public int PlayersCount
-        {
-            get
-            {
-                return _playersCount;
-            }
-            set
-            {
-                // AllCars contains the 4 cars
-                // When changing the players count we just remove all cars from the Cars list
-                // and add the chosen number of cars taking them from the AllCars list (this avoids creating new Car objects during the game)
-                // When we create the GameScreen the PlayersCount is set to 4 (the maximum number of players) and this setter method is called.
-                // Since the ScreenRenderer and AllCars are not initialized yet, we skip this first call with an if-statement.
-                Cars.Clear();
-                _playersCount = value;
-                if (screenRenderer != null)
-                {
-                    screenRenderer.PlayersCount = value;
-                    for (int i = 0; i < value; i++)
-                    {
-                        Cars.Add(AllCars[i]);
-                    }
-                    Logic.PlayersCount = value;
-                }
-            }
-        }
-
-        //private int _pauseTime;
-        //private int kDefaultPauseTime = 3000;
+        public int PlayersCount { get; set; }
 
         #endregion
 
@@ -226,7 +197,7 @@ namespace WindowsGame2.Screens
             randomTex.SetData(randomCol);
             paperEffect.Parameters["random"].SetValue(randomTex);
 
-            screenRenderer = new ScreenRenderer(4);
+            screenRenderer = new ScreenRenderer();
             screenEffect = Content.Load<Effect>("Shaders/ScreenEffect");
             screenEffect.CurrentTechnique = screenEffect.Techniques["ScreenTechinque"];
             Texture2D postitHappy = Content.Load<Texture2D>("Images/postitHappy");
@@ -901,7 +872,7 @@ namespace WindowsGame2.Screens
         public void InitializeGame(int playersCount, ref int[] selectedCars, ref Texture2D[] availableCars, ref int[] selectedColors, ref Color[] availableColors)
         {
             Cars.Clear();
-            _playersCount = playersCount;
+            PlayersCount = playersCount;
             screenRenderer.PlayersCount = playersCount;
             Logic.PlayersCount = playersCount;
 

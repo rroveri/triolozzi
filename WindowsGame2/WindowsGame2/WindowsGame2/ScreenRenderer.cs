@@ -12,6 +12,8 @@ namespace WindowsGame2
 {
     class ScreenRenderer
     {
+        private const int kMaximumPlayers = 4;
+
         public int PlayersCount { get; set; }
 
         private float nPoints = 54;
@@ -33,10 +35,10 @@ namespace WindowsGame2
         private float nLapOffsetW = 0.08f, nLapOffsetH = 0.015f;
         private float nLapWidth = 0.06f, nLapHeight = 0.06f;
 
-        public ScreenRenderer(int nPlayers)
+        public ScreenRenderer()
         {
 
-            PlayersCount = nPlayers;
+            PlayersCount = kMaximumPlayers;
 
             barHeight = height * 0.0675f;
             barOffsetW = width / 10;
@@ -49,9 +51,9 @@ namespace WindowsGame2
             texOW = new Vector2(0, 1);
             texOE = new Vector2(1, 1);
 
-            postitVertices = new VertexPositionColorTexture[6 * nPlayers];
-            barVertices = new VertexPositionColorTexture[nPlayers][];
-            for (int i = 0; i < nPlayers; i++)
+            postitVertices = new VertexPositionColorTexture[6 * kMaximumPlayers];
+            barVertices = new VertexPositionColorTexture[kMaximumPlayers][];
+            for (int i = 0; i < kMaximumPlayers; i++)
             {
                 barVertices[i] = new VertexPositionColorTexture[6 * (int)nPoints * 4];
             }
@@ -60,7 +62,7 @@ namespace WindowsGame2
             lapVertices = new VertexPositionColorTexture[6];
             nLapsVertices = new VertexPositionColorTexture[6];
 
-            for (int p = 0; p < nPlayers; p++) 
+            for (int p = 0; p < kMaximumPlayers; p++) 
             {
                 if (p == 0)
                 {

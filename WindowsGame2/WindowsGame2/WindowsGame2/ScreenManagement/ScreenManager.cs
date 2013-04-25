@@ -306,8 +306,8 @@ namespace WindowsGame2
         public void QuitGame()
         {
             RemoveScreen(GetScreen<GameScreen>());
-            ShowScreen<MainMenuScreen>();
             AddScreen(new GameScreen(), null);
+            ShowScreen<MainMenuScreen>();
         }
     }
 }
