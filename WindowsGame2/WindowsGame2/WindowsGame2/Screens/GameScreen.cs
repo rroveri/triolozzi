@@ -530,6 +530,9 @@ namespace WindowsGame2.Screens
                         polygonsList.Add(obstacle);
                     }
                 }
+                Vector2 screen = Vector2.Transform(Cars[i].Position, cameraFollowing.Transform);
+                float densValue = fluid.fluidLevelAtPosition(screen);
+                if (densValue > 0.09f) Cars[i]._compound.LinearVelocity *= 0.8f;
             }
 
             for (int i = Cars.Count; i < Cars.Count * 2; i++ )
@@ -540,6 +543,7 @@ namespace WindowsGame2.Screens
             {
                 particleComponent.particleEmitterList[i].Active = false;
             }
+            
         }
 
         private void UpdateObstacles()
@@ -735,6 +739,11 @@ namespace WindowsGame2.Screens
 
         public void DrawSprites(Camera camera)
         {
+
+            Vector2 greenPosition = Vector2.Transform(Cars[2].Position, cameraFollowing.Transform);
+            fluid.Update(greenPosition);
+
+
             //compute camera matrices
             projection = camera.ProjectionMatrix;
             view = camera.ViewMatrix;
@@ -758,8 +767,8 @@ namespace WindowsGame2.Screens
             spriteBatch.End();
 
 
-            //fluid.Update();
-            //fluid.Draw();
+            Vector2 brownPosition = Vector2.Transform(Cars[3].Position, cameraFollowing.Transform);
+            fluid.Draw(brownPosition);
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;

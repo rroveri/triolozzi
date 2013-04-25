@@ -28,6 +28,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
 
 namespace WindowsGame2
 {
@@ -42,6 +43,13 @@ namespace WindowsGame2
         Vector4 velocityColor = new Vector4();
 
         VertexPositionTexture[] mainQuad = new VertexPositionTexture[6];
+        Vector2 position = new Vector2(0), referencePosition = new Vector2(0);
+        int renderWidth = 256, renderHeight = 256;
+        float halfRenderWidth, halfRenderHeight;
+        int iterations = 5;
+        int gridSize = 128;
+        float velocityDiffusion = 0.3f;
+        float densityDiffusion = 0.9999f;
 
         // Render Targets
         RenderTarget2D InputVelocities, InputDensities;
@@ -49,6 +57,7 @@ namespace WindowsGame2
         RenderTarget2D Divergence, Pressure;
         RenderTarget2D Temp0, Temp1, Temp2, Temp3;
         public RenderTarget2D FinalRender;
+        Color[] finalData;
 
         // Spritebatch settings
         SpriteSortMode SortMode = SpriteSortMode.Immediate;
@@ -59,10 +68,9 @@ namespace WindowsGame2
         
         // Fluid shader and parameteres
         Effect Shader;
-        FluidParams Params = new FluidParams();
 
         MouseState ms;
-        Vector2 mouse, lastMouse;
+        Vector2 mouse, lastMouse, lastCarPos;
 
         Color colorMuco;
 
@@ -76,8 +84,6 @@ namespace WindowsGame2
             get { return pSplatColor.GetValueVector4(); }
             set { pSplatColor.SetValue(value); }
         }
-
-        private int width, height;
         private Vector2 texelSize;
 
         private int windowSize = 30;
@@ -93,7 +99,6 @@ namespace WindowsGame2
         private Texture2D HResolve, FinalBlur;
 
         private Effect GaussianEffect;
-        byte[] screenData;
 
         public Fluid(ContentManager c, GraphicsDevice gd, SpriteBatch sb)
         {
@@ -118,30 +123,34 @@ namespace WindowsGame2
                 graphicsDevice.SamplerStates[i] = Sampling;
 
             // Setup fluid parameters
-            Shader.Parameters["FluidSize"].SetValue(Params.GridSize);
-            Shader.Parameters["VelocityDiffusion"].SetValue(Params.VelocityDiffusion);
-            Shader.Parameters["DensityDiffusion"].SetValue(Params.DensityDiffusion);
+            Shader.Parameters["FluidSize"].SetValue(gridSize);
+            Shader.Parameters["VelocityDiffusion"].SetValue(velocityDiffusion);
+            Shader.Parameters["DensityDiffusion"].SetValue(densityDiffusion);
 
             // Setup RenderTarget2D's
-            InputVelocities = new RenderTarget2D(graphicsDevice, (int)Params.ScreenSize.X, (int)Params.ScreenSize.Y, false, ColorFormat, ZFormat);
-            InputDensities = new RenderTarget2D(graphicsDevice, (int)Params.ScreenSize.X, (int)Params.ScreenSize.Y, false, ColorFormat, ZFormat);
-            Velocity        = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            Density         = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            Pressure        = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            Divergence      = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            Temp0           = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            Temp1           = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            Temp2           = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            Temp3           = new RenderTarget2D(graphicsDevice, Params.GridSize, Params.GridSize, false, ColorFormat, ZFormat);
-            FinalRender = new RenderTarget2D(graphicsDevice, (int)Params.ScreenSize.X, (int)Params.ScreenSize.Y, false, ColorFormat, ZFormat);
+            InputVelocities = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, false, ColorFormat, ZFormat);
+            InputDensities = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, false, ColorFormat, ZFormat);
+            Velocity        = new RenderTarget2D(graphicsDevice, gridSize, gridSize, false, ColorFormat, ZFormat);
+            Density         = new RenderTarget2D(graphicsDevice, gridSize, gridSize, false, ColorFormat, ZFormat);
+            Pressure        = new RenderTarget2D(graphicsDevice, gridSize, gridSize, false, ColorFormat, ZFormat);
+            Divergence      = new RenderTarget2D(graphicsDevice, gridSize, gridSize, false, ColorFormat, ZFormat);
+            Temp0           = new RenderTarget2D(graphicsDevice, gridSize, gridSize, false, ColorFormat, ZFormat);
+            Temp1           = new RenderTarget2D(graphicsDevice, gridSize, gridSize, false, ColorFormat, ZFormat);
+            Temp2           = new RenderTarget2D(graphicsDevice, gridSize, gridSize, false, ColorFormat, ZFormat);
+            Temp3           = new RenderTarget2D(graphicsDevice, gridSize, gridSize, false, ColorFormat, ZFormat);
+            FinalRender = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, false, ColorFormat, ZFormat);
+            finalData = new Color[renderWidth * renderWidth];
 
-            mainQuad[0].Position = new Vector3(-1, -1, 0);
-            mainQuad[1].Position = new Vector3(1, 1, 0);
-            mainQuad[2].Position = new Vector3(-1, 1, 0);
+            halfRenderWidth = (float)renderWidth / (float)GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth;
+            halfRenderHeight = (float)renderHeight / (float)GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight;
 
-            mainQuad[3].Position = new Vector3(-1, -1, 0);
-            mainQuad[4].Position = new Vector3(1, -1, 0);
-            mainQuad[5].Position = new Vector3(1, 1, 0); 
+            mainQuad[0].Position = new Vector3(0);
+            mainQuad[1].Position = new Vector3(0);
+            mainQuad[2].Position = new Vector3(0);
+
+            mainQuad[3].Position = new Vector3(0);
+            mainQuad[4].Position = new Vector3(0);
+            mainQuad[5].Position = new Vector3(0); 
 
             mainQuad[0].TextureCoordinate = new Vector2(0, 0);
             mainQuad[1].TextureCoordinate = new Vector2(1, 1);
@@ -151,16 +160,13 @@ namespace WindowsGame2
             mainQuad[4].TextureCoordinate = new Vector2(1, 0);
             mainQuad[5].TextureCoordinate = new Vector2(1, 1);
 
-            width = (int)Params.ScreenSize.X;
-            height = (int)Params.ScreenSize.Y;
-
             GaussianEffect = c.Load<Effect>("Shaders/GaussianBlur");
 
-            backTex = new RenderTarget2D(graphicsDevice, this.width, this.height, true,
+            backTex = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, true,
                 SurfaceFormat.Color, graphicsDevice.PresentationParameters.DepthStencilFormat);
-            VTarget = new RenderTarget2D(graphicsDevice, this.width, this.height, true,
+            VTarget = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, true,
                 SurfaceFormat.Color, graphicsDevice.PresentationParameters.DepthStencilFormat);
-            HTarget = new RenderTarget2D(graphicsDevice, this.width, this.height, true,
+            HTarget = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, true,
                 SurfaceFormat.Color, graphicsDevice.PresentationParameters.DepthStencilFormat);
 
             sampleOffsetsH = new Vector2[windowSize];
@@ -169,7 +175,7 @@ namespace WindowsGame2
             sampleOffsetsV = new Vector2[windowSize];
             sampleWeightsV = new float[windowSize];
 
-            texelSize = new Vector2(1.0f / this.width, 1.0f / this.height);
+            texelSize = new Vector2(1.0f / renderWidth, 1.0f / renderHeight);
 
             SetBlurParameters(texelSize.X, 0, ref sampleOffsetsH, ref sampleWeightsH);
             SetBlurParameters(0, texelSize.Y, ref sampleOffsetsV, ref sampleWeightsV);
@@ -179,7 +185,7 @@ namespace WindowsGame2
         }
 
         // Starts the VelocitySplat pass
-        public void BeginVelocityPass()
+        private void BeginVelocityPass()
         {
             Shader.CurrentTechnique = Shader.Techniques["VelocityColorize"];
             graphicsDevice.SetRenderTarget(InputVelocities);
@@ -188,7 +194,7 @@ namespace WindowsGame2
         }
 
         // Starts the DensitySplat pass
-        public void BeginDensityPass()
+        private void BeginDensityPass()
         {
             Shader.CurrentTechnique = Shader.Techniques["VelocityColorize"];
             graphicsDevice.SetRenderTarget(InputDensities);
@@ -197,13 +203,32 @@ namespace WindowsGame2
         }
 
         // Ends either the VelocitySplat or DensitySplat passes
-        public void EndPass()
+        private void EndPass()
         {
             spriteBatch.End();
         }
 
+        private void updatePosition()
+        {
+            mainQuad[0].Position.X = position.X; mainQuad[0].Position.Y = position.Y;
+            mainQuad[1].Position.X = position.X + halfRenderWidth * 2; mainQuad[1].Position.Y = position.Y + halfRenderHeight * 2;
+            mainQuad[2].Position.X = position.X; mainQuad[2].Position.Y = position.Y + halfRenderHeight * 2;
+
+            mainQuad[3].Position.X = position.X; mainQuad[3].Position.Y = position.Y;
+            mainQuad[4].Position.X = position.X + halfRenderWidth * 2; mainQuad[4].Position.Y = position.Y;
+            mainQuad[5].Position.X = position.X + halfRenderWidth * 2; mainQuad[5].Position.Y = position.Y + halfRenderHeight * 2;
+        }
+
+        public float fluidLevelAtPosition(Vector2 position)
+        {
+            position -= referencePosition;
+            if (position.X < 0 || position.Y < 0 || position.X >= renderWidth - 1 || position.Y >= renderHeight - 1) return 0;
+            int index = (int)position.Y * renderHeight + (int)position.X;
+            return finalData[index].ToVector3().LengthSquared();
+        }
+
         // Render the fluid to the screen
-        public void Update()
+        public void Update(Vector2 carPos)
         {
             for (int i = 0; i < 16; i++)
                 graphicsDevice.SamplerStates[i] = Sampling;
@@ -216,9 +241,12 @@ namespace WindowsGame2
             if (Keyboard.GetState().IsKeyDown(Keys.F6)) brushColor = Color.White;
 
             ms = Mouse.GetState();
-            mouse = new Vector2(ms.X, ms.Y);
-            velocityColor = new Vector4(lastMouse - mouse, 0.0f, 1.0f);
+            mouse = new Vector2(ms.X, ms.Y) - referencePosition;
+            carPos -= referencePosition;
+            //velocityColor = new Vector4(lastMouse - mouse, 0.0f, 1.0f);
+            velocityColor = new Vector4(lastCarPos - carPos, 0.0f, 1.0f);
             lastMouse = mouse;
+            lastCarPos = carPos;
 
             BeginDensityPass();
             if (ms.LeftButton == ButtonState.Pressed)
@@ -226,11 +254,8 @@ namespace WindowsGame2
             EndPass();
 
             BeginVelocityPass();
-            if (ms.RightButton == ButtonState.Pressed || true)
-            {
-                SplatColor = velocityColor;
-                spriteBatch.Draw(brush, mouse, null, Color.White, 0.0f, new Vector2(32.0f, 32.0f), brushSize / 64.0f, SpriteEffects.None, 0.0f);
-            }
+            SplatColor = velocityColor;
+            spriteBatch.Draw(brush, carPos, null, Color.White, 0.0f, new Vector2(32.0f, 32.0f), brushSize / 64.0f, SpriteEffects.None, 0.0f);
             EndPass();
 
             // Add the velocity and density splats into the fluid
@@ -272,7 +297,7 @@ namespace WindowsGame2
 
             // Iterate over the grid calculating the pressure
             Shader.CurrentTechnique = Shader.Techniques["DoJacobi"];
-            for (int i = 0; i < Params.Iterations; i++)
+            for (int i = 0; i < iterations; i++)
             {
                 graphicsDevice.SetRenderTarget(Pressure);
                 graphicsDevice.Clear(Color.Black);
@@ -318,12 +343,18 @@ namespace WindowsGame2
 
             FinalBlur = VTarget;
 
+            FinalBlur.GetData(finalData);
+
             graphicsDevice.SetRenderTarget(null);
 
         }
 
-        public void Draw()
+        public void Draw(Vector2 position)
         {
+            referencePosition = position;
+            this.position.X = position.X / GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth * 2 - 1;
+            this.position.Y = position.Y / GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight * 2 - 1;
+            updatePosition();
             graphicsDevice.Clear(Color.White);
             Shader.CurrentTechnique = Shader.Techniques["Final"];
             Shader.CurrentTechnique.Passes["Final"].Apply();
@@ -382,35 +413,9 @@ namespace WindowsGame2
             graphicsDevice.SamplerStates[0] = Sampling;
 
             spriteBatch.Draw(BlurTexture,
-                new Microsoft.Xna.Framework.Rectangle(0, 0, this.width, this.height),
+                new Microsoft.Xna.Framework.Rectangle(0, 0, renderWidth, renderHeight),
                 Color.White);
             spriteBatch.End();
-        }
-    }
-
-    public class FluidParams
-    {
-        // Iterations to perform
-        public int Iterations;
-        // Size of the fluid grid  
-        public int GridSize;
-        // Size of the screen the fluid is to be rendered on
-        public Vector2 ScreenSize;
-        // Delta time, MARKED FOR REMOVAL
-        public float dT;
-        // Diffusion rate of velocity
-        public float VelocityDiffusion;
-        // Diffusion rate for density
-        public float DensityDiffusion;
-
-        public FluidParams()
-        {
-            Iterations = 20;
-            GridSize = 256;
-            ScreenSize = new Vector2(1024, 768);
-            dT = 1.0f;
-            VelocityDiffusion = 0.99f;
-            DensityDiffusion = 0.9999f;
         }
     }
 }

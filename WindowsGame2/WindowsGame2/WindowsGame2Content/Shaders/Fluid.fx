@@ -206,15 +206,16 @@ float4 PSFinal(FinalVertexOutput input) : COLOR0
 {
 	float4 final = QuadLerp(finalSampler,input.uv);
     float sum = final[0] + final[1] + final[2];
-    if(sum < 0.1)
+	/*float alpha = final[0];
+	final = float4(0.0,1,0.0,alpha);*/
+    if(sum < 0.3)
     {
         final[3] = sum*sum;
     }
     if(final[0] < 0.05) final[0] = 0.05;
     if(final[1] < 0.3) final[1] = 0.3;
     if(final[2] < 0.1) final[2] = 0.1;
-    final += 0;
-    //final[3] = final[0] + final[1] + final[2];
+    //return float4(1,1,0,1);
 	return final;
 }
 
@@ -284,8 +285,8 @@ Technique Final
 	pass Final
 	{
         AlphaBlendEnable = TRUE;
-        DestBlend = INVSRCALPHA;
-        SrcBlend = SRCALPHA;
+        //DestBlend = INVSRCALPHA;
+        //SrcBlend = SRCALPHA;
 		VertexShader = compile vs_2_0 VSFinal();
 		PixelShader = compile ps_2_0 PSFinal();
 	}
