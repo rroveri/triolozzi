@@ -203,7 +203,7 @@ namespace WindowsGame2.Screens
 
             if (IsEveryoneReady())
             {
-                ScreenManager.GetScreen<GameScreen>().PlayersCount = PlayersCount;
+                ScreenManager.GetScreen<GameScreen>().InitializeGame(PlayersCount, ref _selectedCars, ref _availableCars, ref _selectedColors, ref _availableColors);
                 ScreenManager.ShowScreen<GameScreen>();
                 return;
             }

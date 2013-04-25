@@ -45,11 +45,11 @@ namespace WindowsGame2.Screens
         /// </summary>
         public MainMenuScreen() : base("The Drunken Dream Maker (With a Cold)")
         {
-            MenuEntry singleScreenEntry = new MenuEntry("Single Screen Game");
-            singleScreenEntry.Selected += PlayGameMenuSingleModeEntrySelected;
-            MenuEntries.Add(singleScreenEntry);
+            //MenuEntry singleScreenEntry = new MenuEntry("Single Screen Game");
+            //singleScreenEntry.Selected += PlayGameMenuSingleModeEntrySelected;
+            //MenuEntries.Add(singleScreenEntry);
             
-            optionsMenuEntry = new MenuEntry("Options");
+            optionsMenuEntry = new MenuEntry("Start New Game");
             optionsMenuEntry.Selected += OptionsMenuEntrySelected;
             MenuEntries.Add(optionsMenuEntry);
 
@@ -71,12 +71,12 @@ namespace WindowsGame2.Screens
         #region Handle Input
 
 
-        void PlayGameMenuSingleModeEntrySelected(object sender, PlayerIndexEventArgs e)
-        {
-            GC.Collect();
-            ScreenManager.GetScreen<GameScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
-            ScreenManager.ShowScreen<GameScreen>();
-        }
+        //void PlayGameMenuSingleModeEntrySelected(object sender, PlayerIndexEventArgs e)
+        //{
+        //    GC.Collect();
+        //    ScreenManager.GetScreen<GameScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
+        //    ScreenManager.ShowScreen<GameScreen>();
+        //}
 
         void PlayersMenuEntryDecrement(object sender, PlayerIndexEventArgs e)
         {
