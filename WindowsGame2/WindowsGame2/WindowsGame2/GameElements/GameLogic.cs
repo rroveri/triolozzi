@@ -179,6 +179,10 @@ namespace WindowsGame2.GameElements
                             // Deactivate car and add index to the array with the order of elimination
                             Cars[i].isActive = false;
 
+                            //show message
+                            Cars[i].message.activate("?",1);
+                            Cars[i].message.currentTexture = Cars[i].message.thumbsDown;
+
                             // Immediately update the score of the eliminated car
                             UpdateScore(Cars[i], Cars.Count - 1 - _eliminatedCars);
 

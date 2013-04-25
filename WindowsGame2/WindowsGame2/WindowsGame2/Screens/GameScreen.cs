@@ -35,10 +35,11 @@ namespace WindowsGame2.Screens
 
         string[] collisionsQuotes;
         string[] collisionsQuotesNormal = {"ouch!", "bam", "boom", "crash!", "toc", "bang bang", "splat!", "ka pow!", "pow!", "thud!", "bong", "bonk!", "ka rack!", "rat tat tat" };
-        string[] collisionsQuotesSerbian = { "kurva!", "jebem ti mater", "bolime kurac", "najebo si!", "peechka", "pushie kurac", "odjebi" };
-        string[] collisionsQuotesGreek = { "kavliaris", "vuruna!", "puchos", "imma egghios", "paracalo", "effretikon" };
+        string[] collisionsQuotesSerbian = { "kurvo!", "jebem ti mater bre!!", "boli me kurac!", "najebo si!", "picko!", "pusi kurac bre!!", "odjebi bre!!" };
+        string[] collisionsQuotesGreek = { "kavliaris", "gourouna!", "poutsos", "eimai eggios", "parakalo?", "putses ble!", "ore pusti!!", "ta mu klasis ta arhidia", "effretikon" };
         string[] collisionsQuotesItalian = { "zio borghiano", "scrofa!", "porcano", "oca!", "sbocco anale", "asilo nido" };
-
+        
+ 
         DebugViewXNA _debugView;
         World world;
         GraphicsDevice GraphicsDevice;
@@ -99,6 +100,7 @@ namespace WindowsGame2.Screens
         Vector2[] startingPosAabbVerts;
 
         ParticleComponent particleComponent;
+        Fluid fluid;
 
         private int _playersCount;
         public int PlayersCount
@@ -164,11 +166,12 @@ namespace WindowsGame2.Screens
             startingPosAabbVerts = new Vector2[4];
 
             particleComponent = GameServices.GetService<ParticleComponent>();
-            
-            collisionsQuotes = collisionsQuotesNormal;
+
+            collisionsQuotes = collisionsQuotesSerbian;
            
         }
-
+ 
+           
         public override void LoadContent()
         {
             // We add to the GameServices objects that we want to be able to use accross different classes
@@ -209,11 +212,13 @@ namespace WindowsGame2.Screens
             Texture2D ink = Content.Load<Texture2D>("Materials/ink_texture");
             Texture2D startLine = Content.Load<Texture2D>("Materials/squares");
             Texture2D alphabet = Content.Load<Texture2D>("Images/alphabet");
+            Texture2D messageBg = Content.Load<Texture2D>("Images/onomatopeeBg");
             paperEffect.Parameters["trailSketch"].SetValue(trailSketch);
             paperEffect.Parameters["objectSketch"].SetValue(objectSketch);
             paperEffect.Parameters["ink"].SetValue(ink);
             paperEffect.Parameters["startLine"].SetValue(startLine);
             paperEffect.Parameters["alphabet"].SetValue(alphabet);
+            paperEffect.Parameters["popupMessage"].SetValue(messageBg);
             randomArray = new float[16 * 16];
             Color[] randomCol = new Color[16 * 16];
             randomArray[0] = 0.5f;
@@ -239,7 +244,7 @@ namespace WindowsGame2.Screens
 
             for (int i = 0; i < 4; i++)
             {
-                Car aCar = new Car(world, carColors[i], randomRaceTrack);
+                Car aCar = new Car(world, carColors[i], randomRaceTrack, i);
                 AllCars.Add(aCar);
                 Cars.Add(aCar);
             }
@@ -276,7 +281,7 @@ namespace WindowsGame2.Screens
                 triangleListIndices = new short[maxNumberOfTriangles * 3];
 
             
-
+                //add particles for collisions with walls and cars
                 for (int i = 0; i < Cars.Count; i++)
                 {
                     particleComponent.particleEmitterList.Add(
@@ -303,8 +308,62 @@ namespace WindowsGame2.Screens
                     );
                 }
 
-                    
+            //add particles for collisions with nightmares
+                for (int i = 0; i < Cars.Count; i++)
+                {
+                    particleComponent.particleEmitterList.Add(
+                            new Emitter()
+                            {
+                                Active = false,
+                                TextureList = new List<Texture2D>() {
+                                Content.Load<Texture2D>("Sprites\\smoke"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_orange"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_green"),
+			                  //  Content.Load<Texture2D>("Sprites\\flower_yellow"),
+			                  //  Content.Load<Texture2D>("Sprites\\flower_purple")
+			                    },
+                                RandomEmissionInterval = new RandomMinMax(0.5d),
+                                ParticleLifeTime = 1000,
+                                ParticleDirection = new RandomMinMax(0, 359),
+                                ParticleSpeed = new RandomMinMax(5.1f, 7.0f),
+                                ParticleRotation = new RandomMinMax(0, 100),
+                                RotationSpeed = new RandomMinMax(0.015f),
+                                ParticleFader = new ParticleFader(false, true, 1350),
+                                ParticleScaler = new ParticleScaler(false, 0.3f),
+                                TextureColor = Color.Black
+                            }
+                    );
+                }
 
+                //add particles for collisions with wishes
+                for (int i = 0; i < Cars.Count; i++)
+                {
+                    particleComponent.particleEmitterList.Add(
+                            new Emitter()
+                            {
+                                Active = false,
+                                TextureList = new List<Texture2D>() {
+                                Content.Load<Texture2D>("Sprites\\smokeWhite"),
+			                    //Content.Load<Texture2D>("Sprites\\flower_orange"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_green"),
+			                    //Content.Load<Texture2D>("Sprites\\flower_yellow"),
+			                    //Content.Load<Texture2D>("Sprites\\flower_purple")
+			                    },
+                                RandomEmissionInterval = new RandomMinMax(0.5d),
+                                ParticleLifeTime = 1000,
+                                ParticleDirection = new RandomMinMax(0, 359),
+                                ParticleSpeed = new RandomMinMax(5.1f, 7.0f),
+                                ParticleRotation = new RandomMinMax(0, 100),
+                                RotationSpeed = new RandomMinMax(0.015f),
+                                ParticleFader = new ParticleFader(false, true, 1350),
+                                ParticleScaler = new ParticleScaler(false, 0.3f),
+                                TextureColor = Color.White
+                            }
+                    );
+                }
+
+
+                fluid = new Fluid(Content,GraphicsDevice, spriteBatch);
         }
 
         public void positionCars(int startingPointToCheck)
@@ -395,7 +454,6 @@ namespace WindowsGame2.Screens
                 //set rotation
                 Cars[i]._compound.Rotation = angle;
                 
-
                 //clear trail
                 Cars[i].mIsTrailLoop = false;
                 Cars[i].mTrailPoints = 0;
@@ -406,6 +464,8 @@ namespace WindowsGame2.Screens
 
                 Cars[i].isActive = false;
                 Cars[i]._compound.Enabled = false;
+
+                Cars[i].message.disactivate();
             }
             
             readyToStart = true;
@@ -463,7 +523,7 @@ namespace WindowsGame2.Screens
                 }
             }
 
-            UpdateCars();
+            UpdateCars(gameTime);
 
             UpdateObstacles();
 
@@ -492,7 +552,7 @@ namespace WindowsGame2.Screens
                 
         }
 
-        private void UpdateCars()
+        private void UpdateCars(GameTime gameTime)
         {
 
 
@@ -504,7 +564,7 @@ namespace WindowsGame2.Screens
                 // TODO: declare obstacle as instance variable and set it to null here?
                 PolygonPhysicsObject obstacle;
                 // Update the position of the car
-                Cars[i].Update(GamePad.GetState(playerIndexes[i]), ks);
+                Cars[i].Update(GamePad.GetState(playerIndexes[i]), ks, gameTime);
                 // Find an obstacle (if any) drawn by the car and add it to the scene
                 if (Cars[i].TrailObstacle(world))
                 {
@@ -515,6 +575,15 @@ namespace WindowsGame2.Screens
                     }
                 }
 
+            }
+
+            for (int i = Cars.Count; i < Cars.Count * 2; i++ )
+            {
+                particleComponent.particleEmitterList[i].Active = false;
+            }
+            for (int i = Cars.Count*2; i < Cars.Count * 3; i++)
+            {
+                particleComponent.particleEmitterList[i].Active = false;
             }
         }
 
@@ -677,7 +746,8 @@ namespace WindowsGame2.Screens
                         Vector2 carTail = Cars[i]._compound.Position + sign* Cars[i].mDirection * Cars[i].tailOffset * 4;
                         Vector2 carDir = Cars[i].mDirection;
                         Vector2 carDirNormal = Vector2.Normalize(new Vector2(-carDir.Y, carDir.X));
-                        stringWriter.addString(collisionsQuotes[Random.Next(collisionsQuotes.Count())], Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);
+                        int newIndex = Random.Next(collisionsQuotes.Count());
+                        stringWriter.addString(collisionsQuotes[newIndex], Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);
                         Cars[i].resetTrail();
 
                         particleComponent.particleEmitterList[i].Position = Cars[i].Position;
@@ -746,13 +816,12 @@ namespace WindowsGame2.Screens
                 Cars[i].Draw(spriteBatch, out trails[i], out burnouts[i]);
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
             }
-
-
-
-
        
             spriteBatch.End();
 
+
+            fluid.Update();
+            fluid.Draw();
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -811,8 +880,22 @@ namespace WindowsGame2.Screens
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
             }
 
+            paperEffect.CurrentTechnique.Passes["PopupMessagePass"].Apply();
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.bgTextureVertices, 0, 2);
+            }
+
             paperEffect.CurrentTechnique.Passes["AlphabetPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, stringWriter.stringVertices, 0, stringWriter.stringVertices.Count() / 3);
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                if (Cars[i].message.isActive)
+                {
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.stringWriter.stringVertices, 0, Cars[i].message.stringWriter.stringVertices.Count() / 3);
+                }
+            }
+
 
             screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, PlayersCount * 2);
@@ -843,11 +926,7 @@ namespace WindowsGame2.Screens
 
         void RankScreenAccepted(object sender, PlayerIndexEventArgs e)
         {
-            ScreenManager.RemoveScreen(this);
-            ScreenManager.RemoveScreen(PauseScreen);
-            ScreenManager.RemoveScreen(RankScreen);
-            ScreenManager.AddScreen(new GameScreen(), null);
-            ScreenManager.ShowScreen<MainMenuScreen>();
+            ScreenManager.QuitGame();
         }
     }
 }

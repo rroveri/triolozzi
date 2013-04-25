@@ -9,6 +9,7 @@ Texture2D random;
 Texture2D ink;
 Texture2D startLine;
 Texture2D alphabet;
+Texture2D popupMessage;
 
 float randomSeed;
 
@@ -27,6 +28,16 @@ sampler alphabetSampler = sampler_state
 sampler startLineSampler = sampler_state
 {
     Texture = <startLine>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
+
+sampler popupMessageSampler = sampler_state
+{
+    Texture = <popupMessage>;
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
@@ -161,6 +172,20 @@ ObjectVertexShaderOutput VertexShaderFunctionStartLine(ObjectVertexShaderInput i
     return output;
 }
 
+ObjectVertexShaderOutput VertexShaderFunctionPopupMessage(ObjectVertexShaderInput input)
+{
+    ObjectVertexShaderOutput output;
+
+    //float4 worldPosition = mul(input.Position, World);
+    float4 viewPosition = mul(input.Position, View);
+    output.Position = mul(viewPosition, Projection);
+	output.Color = input.Color;
+	output.xy = float2(input.Position[0],input.Position[1]);
+    output.uv = input.uv;
+
+    return output;
+}
+
 TrailVertexShaderOutput VertexShaderFunctionTrail(TrailVertexShaderInput input)
 {
     TrailVertexShaderOutput output;
@@ -235,6 +260,17 @@ float4 PixelShaderFunctionStartLine(ObjectVertexShaderOutput input) : COLOR0
     return float4(grey,grey,grey,alpha*0.2);
 }
 
+float4 PixelShaderFunctionPopupMessage(ObjectVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(popupMessageSampler, input.xy);
+    float alpha = texCol[0];
+	if(alpha < 0.8) alpha = 0;
+    
+	float grey = 0.0;
+    return float4(grey,grey,grey,1);
+}
+
+
 float4 PixelShaderFunctionTrail(TrailVertexShaderOutput input) : COLOR0
 {
     float4 texCol = tex2D(trailSketchSampler, input.uv);
@@ -285,6 +321,12 @@ technique DoodleTechinque
 	{
         VertexShader = compile vs_3_0 VertexShaderFunctionStartLine();
         PixelShader = compile ps_3_0 PixelShaderFunctionStartLine();
+    }
+
+	pass PopupMessagePass
+	{
+        VertexShader = compile vs_3_0 VertexShaderFunctionPopupMessage();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPopupMessage();
     }
 
 	pass AlphabetPass

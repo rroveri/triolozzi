@@ -49,11 +49,11 @@ namespace WindowsGame2
         }
 
         //Our camera's transform matrix
-        public Matrix Transform
-        {
-            get;
-            private set;
-        }
+        public Matrix Transform;
+        //{
+        //    get;
+        //    private set;
+        //}
 
         //Our camera's transform matrix
         public Matrix ViewMatrix
@@ -166,15 +166,22 @@ namespace WindowsGame2
 
 
             Transform = Matrix.CreateTranslation(new Vector3(-objectPosition, 0)) *
-                Matrix.CreateScale(new Vector3((float)Math.Pow(Zoom, 10), (float)Math.Pow(Zoom, 10), 0)) *
+                Matrix.CreateScale(new Vector3((float)Math.Pow(Zoom, 10), (float)Math.Pow(Zoom, 10), 1)) *  // UUUUHHHH!!! BUGGG!!! THE LAST 1 WAS 0 IN CASE...Wrong? --> seems yes! http://xboxforums.create.msdn.com/forums/t/28476.aspx
                 Matrix.CreateRotationZ(-objectRotation + deltaRotation) *
                 Matrix.CreateTranslation(new Vector3(FocusPoint.X, FocusPoint.Y, 0));
-
+                
+            
             
             //create also projection and viewMatrix for the shaders
             ProjectionMatrix = Matrix.CreateOrthographicOffCenter(0f, ConvertUnits.ToSimUnits(View.Width) * (1 / (float)Math.Pow(Zoom, 10)),
                                                               ConvertUnits.ToSimUnits(View.Height) * (1 / (float)Math.Pow(Zoom, 10)), 0f, 0f,1f);
             ViewMatrix = Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(objectPosition) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(Zoom, 10)), 0f));
+        }
+
+        
+
+        public Matrix inverseTransformMatrix(){
+            return Matrix.Invert(Transform);
         }
     }
 }

@@ -88,9 +88,19 @@ namespace WindowsGame2.GameElements
 
         private bool freeToSwap;
 
-        public Car(World world, Color Color, RandomTrack _randomTrack)
+        public Vector2 messageImagePos;
+
+        public PopupMessage message;
+
+        public int index;
+
+        public Car(World world, Color Color, RandomTrack _randomTrack, int _index)
             : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/small_car"), new Vector2(65.0f, 40.0f), Color)
         {
+
+            index = _index;
+
+            message = new PopupMessage(this);
 
             isActive = true;
 
@@ -163,6 +173,8 @@ namespace WindowsGame2.GameElements
 
             //register collision
             _compound.OnCollision += body_OnCollision;
+
+            messageImagePos = ConvertUnits.ToDisplayUnits( _compound.Position);// +new Vector2(1, 1));
            
             
         }
@@ -218,11 +230,14 @@ namespace WindowsGame2.GameElements
             driftValue = 0;
         }
 
-        public void Update(GamePadState gps, KeyboardState ks)
+        public void Update(GamePadState gps, KeyboardState ks, GameTime gameTime)
         {
-
+            
             if (isActive == false)
             {
+                //do nothing except for moving the message position on the screen
+                //ATTENTION: at the beginning of the match the inverse of the camera matrix will return NAN, therefore check for NAN when you position the message!!!
+                moveMessageImage(gameTime);
                 return;
             }
 
@@ -421,7 +436,83 @@ namespace WindowsGame2.GameElements
             {
                 freeToSwap = true;
             }
-        
+
+            //move the message position
+            moveMessageImage(gameTime);
+            
+        }
+
+        public void moveMessageImage(GameTime gameTime)
+        {
+            //move the message and udpate its string
+            message.Update(gameTime);
+
+            //compute direction of the message
+            float distance = 250f;
+            Vector2 dirVec = Vector2.Normalize(GameServices.GetService<Camera>().oldPosition - Position) * distance;
+            //interpolate position
+            messageImagePos = Vector2.Lerp( messageImagePos, Position+dirVec, 0.5f);
+            //transform it to screen position
+            Vector2 screenPosition = Vector2.Transform(messageImagePos, GameServices.GetService<Camera>().Transform);
+
+            //check if still on screen, if not bring it back to screen!
+            //set a margin
+            int offsetRight=120;
+            int offsetUp = 70;
+            int offsetDown = 120;
+            int offsetLeft = 70;
+            if (screenPosition.X < offsetLeft) 
+            {
+                screenPosition.X = offsetLeft;
+            }
+            else if (screenPosition.X > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - offsetRight)
+            {
+                screenPosition.X = GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - offsetRight;
+            }
+            if (screenPosition.Y < offsetUp)
+            {
+                screenPosition.Y = offsetUp;
+            }
+            else if (screenPosition.Y > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight - offsetDown)
+            {
+                screenPosition.Y = GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight - offsetDown;
+            }
+
+            //avoid corner postits 
+            //TODO: interpolation!
+
+            int postitLength = 250;
+            int postitHeight = 150;
+            if (screenPosition.Y > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight - postitHeight - offsetDown && screenPosition.X < postitLength)
+            {
+                screenPosition.X = MathHelper.Lerp(screenPosition.X, postitLength, 1f);
+            }
+            else if (screenPosition.Y > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight - postitHeight - offsetDown && screenPosition.X > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - postitLength - offsetRight)
+            {
+                screenPosition.X = MathHelper.Lerp(screenPosition.X, GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - postitLength - offsetRight, 1f);
+            }
+            else if (screenPosition.Y < postitHeight && screenPosition.X > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - postitLength - offsetRight)
+            {
+                screenPosition.X = MathHelper.Lerp(screenPosition.X, GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - postitLength - offsetRight, 1f);
+            }
+            else if (screenPosition.Y < postitHeight && screenPosition.X < postitLength)
+            {
+                screenPosition.X = MathHelper.Lerp(screenPosition.X, postitLength, 1f);
+            }
+            
+
+            //compute inverse matrix
+            Matrix inverse = GameServices.GetService<Camera>().inverseTransformMatrix();
+            //re-transform the vector in world coordinated
+            Vector2 croppedPos = Vector2.Transform(screenPosition, inverse);
+            messageImagePos = croppedPos;
+
+            // check if Nan, since a the beginning the inverse of the matrix will be NAN, and interpolation won't work afterwards
+            if (messageImagePos.X != messageImagePos.X || messageImagePos.Y != messageImagePos.Y)
+            {
+                messageImagePos = Vector2.Zero;
+            }
+           
         }
 
         public void KillOrthogonalVelocity(Car car, float drift)
@@ -582,9 +673,19 @@ namespace WindowsGame2.GameElements
             vertices = trailVertices;
             _burnoutsVertices = burnoutsVertices;
 
-         //   spriteBatch.Draw(mDummyTexture,ConvertUnits.ToDisplayUnits( projectedPosition),
+            //draw projected position
+           //   spriteBatch.Draw(mDummyTexture,ConvertUnits.ToDisplayUnits( projectedPosition),
            //                                null, mColor, 0, Vector2.Zero, Vector2.One*10, SpriteEffects.None,
            //                                0.9f);
+
+            // draw message position
+           // spriteBatch.Draw(mDummyTexture, messageImagePos,
+           //                                null, mColor, 0, Vector2.Zero, Vector2.One*10, SpriteEffects.None,
+           //                                0.9f);
+
+
+            message.Draw(spriteBatch);
+            
 
             base.Draw(spriteBatch);
         }

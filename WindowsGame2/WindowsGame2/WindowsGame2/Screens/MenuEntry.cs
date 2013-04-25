@@ -70,6 +70,7 @@ namespace WindowsGame2.Screens
             set { position = value; }
         }
 
+        public PlayerIndexEventArgs PlayerIndexEvent { get; private set; }
 
         #endregion
 
@@ -81,14 +82,32 @@ namespace WindowsGame2.Screens
         /// </summary>
         public event EventHandler<PlayerIndexEventArgs> Selected;
 
+        public event EventHandler<PlayerIndexEventArgs> LeftClick;
+        public event EventHandler<PlayerIndexEventArgs> RightClick;
+
 
         /// <summary>
         /// Method for raising the Selected event.
         /// </summary>
         protected internal virtual void OnSelectEntry(PlayerIndex playerIndex)
         {
+            PlayerIndexEvent.PlayerIndex = playerIndex;
             if (Selected != null)
-                Selected(this, new PlayerIndexEventArgs(playerIndex));
+                Selected(this, PlayerIndexEvent);
+        }
+
+        protected internal virtual void OnSelectLeft(PlayerIndex playerIndex)
+        {
+            PlayerIndexEvent.PlayerIndex = playerIndex;
+            if (LeftClick != null)
+                LeftClick(this, PlayerIndexEvent);
+        }
+
+        protected internal virtual void OnSelectRight(PlayerIndex playerIndex)
+        {
+            PlayerIndexEvent.PlayerIndex = playerIndex;
+            if (RightClick != null)
+                RightClick(this, PlayerIndexEvent);
         }
 
 
@@ -104,6 +123,7 @@ namespace WindowsGame2.Screens
         {
             this.text = text;
             origin = new Vector2(0f, 0f);
+            PlayerIndexEvent = new PlayerIndexEventArgs(0);
         }
 
 

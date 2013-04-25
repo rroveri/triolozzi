@@ -18,6 +18,7 @@ using Microsoft.Xna.Framework.Input;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Xml.Linq;
+using WindowsGame2.Screens;
 #endregion
 
 namespace WindowsGame2
@@ -301,5 +302,14 @@ namespace WindowsGame2
         }
 
         #endregion
+
+        public void QuitGame()
+        {
+            RemoveScreen(GetScreen<GameScreen>());
+            RemoveScreen(GetScreen<PauseMenuScreen>());
+            RemoveScreen(GetScreen<RankingScreen>());
+            AddScreen(new GameScreen(), null);
+            ShowScreen<MainMenuScreen>();
+        }
     }
 }
