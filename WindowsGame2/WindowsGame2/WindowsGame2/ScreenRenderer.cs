@@ -39,7 +39,7 @@ namespace WindowsGame2
         {
 
             PlayersCount = kMaximumPlayers;
-
+            
             barHeight = height * 0.0675f;
             barOffsetW = width / 10;
             barOffsetH = height*0.2075f;//0.062f;
@@ -68,29 +68,21 @@ namespace WindowsGame2
                 {
                     initPoint.X = -1 + offset;
                     initPoint.Y = -1 + offset;
-
-                    currentColor = Color.Red;
                 }
                 else if (p == 1)
                 {
                     initPoint.X = 1 - offset - width;
                     initPoint.Y = -1 + offset;
-
-                    currentColor = Color.Blue;
                 }
                 else if (p == 2)
                 {
                     initPoint.X = -1 + offset;
                     initPoint.Y = 1 - offset - height;
-
-                    currentColor = Color.Green;
                 }
                 else if (p == 3)
                 {
                     initPoint.X = 1 - offset - width;
                     initPoint.Y = 1 - offset - height;
-
-                    currentColor = Color.Brown;
                 }
 
                 postitVertices[p * 6 + 0].Position = new Vector3(initPoint.X, initPoint.Y, 0);
@@ -129,7 +121,7 @@ namespace WindowsGame2
                     barVertices[p][i * 6 + 5].Position = new Vector3(initPoint.X, initPoint.Y + barHeight, 0);
 
                     for(int c = 0; c < 6; c++)
-                        barVertices[p][i * 6 + c].Color = currentColor;
+                        barVertices[p][i * 6 + c].Color = Color.White;
                 }
             }
 
@@ -169,6 +161,17 @@ namespace WindowsGame2
             nLapsVertices[4].TextureCoordinate = texOE / 3;
             nLapsVertices[5].TextureCoordinate = texOW / 3;
 
+        }
+
+        public void SetColor(Color color, int playerIndex)
+        {
+            for (int i = 0; i < nPoints; i++)
+            {
+                for (int c = 0; c < 6; c++)
+                {
+                    barVertices[playerIndex][i * 6 + c].Color = color;
+                }
+            }
         }
 
         public void setSadToPlayer(object sender, EliminatedCarEventArgs e)

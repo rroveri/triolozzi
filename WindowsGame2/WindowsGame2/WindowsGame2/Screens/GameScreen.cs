@@ -47,10 +47,9 @@ namespace WindowsGame2.Screens
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        List<Car> Cars, AllCars;
+        List<Car> Cars;
         List<PlayerIndex> playerIndexes;
 
-        Color[] carColors = { Color.Red, Color.Blue, Color.Green, Color.Brown };
         string[] paperEffects = { "redCarPos", "blueCarPos", "greenCarPos", "pinkCarPos" };
 
         List<PolygonPhysicsObject> polygonsList;
@@ -120,7 +119,6 @@ namespace WindowsGame2.Screens
             RankScreen.Accepted += RankScreenAccepted;
 
             polygonsList = new List<PolygonPhysicsObject>();
-            AllCars = new List<Car>();
             Cars = new List<Car>();
             playerIndexes = new List<PlayerIndex>();
             playerIndexes.Add(PlayerIndex.One); playerIndexes.Add(PlayerIndex.Two);
@@ -197,7 +195,6 @@ namespace WindowsGame2.Screens
             randomTex.SetData(randomCol);
             paperEffect.Parameters["random"].SetValue(randomTex);
 
-            screenRenderer = new ScreenRenderer();
             screenEffect = Content.Load<Effect>("Shaders/ScreenEffect");
             screenEffect.CurrentTechnique = screenEffect.Techniques["ScreenTechinque"];
             Texture2D postitHappy = Content.Load<Texture2D>("Images/postitHappy");
@@ -209,13 +206,13 @@ namespace WindowsGame2.Screens
             Texture2D numbers = Content.Load<Texture2D>("Images/numbers");
             screenEffect.Parameters["numbers"].SetValue(numbers);
 
+            screenRenderer = new ScreenRenderer();
             Logic.DidEliminateCar += screenRenderer.setSadToPlayer;
             Logic.DidFinishLap += screenRenderer.setLap;
 
             for (int i = 0; i < 4; i++)
             {
-                Car aCar = new Car(world, Content.Load<Texture2D>("Images/small_car"), carColors[i], randomRaceTrack, i);
-                AllCars.Add(aCar);
+                Car aCar = new Car(world, Content.Load<Texture2D>("Images/small_car"), Color.White, randomRaceTrack, i);
                 Cars.Add(aCar);
             }
             
@@ -767,8 +764,8 @@ namespace WindowsGame2.Screens
             spriteBatch.End();
 
 
-            Vector2 brownPosition = Vector2.Transform(Cars[3].Position, cameraFollowing.Transform);
-            fluid.Draw(brownPosition);
+            //Vector2 brownPosition = Vector2.Transform(Cars[3].Position, cameraFollowing.Transform);
+            //fluid.Draw(brownPosition);
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -889,6 +886,7 @@ namespace WindowsGame2.Screens
             {
                 Cars.Add(new Car(world, availableCars[selectedCars[i]], availableColors[selectedColors[i]], randomRaceTrack, i));
                 particleComponent.particleEmitterList[i].TextureColor = availableColors[selectedColors[i]];
+                screenRenderer.SetColor(availableColors[selectedColors[i]], i);
             }
             // Call the Jean Charles
             GC.Collect();
