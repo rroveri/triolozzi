@@ -94,8 +94,8 @@ namespace WindowsGame2.GameElements
 
         public int index;
 
-        public Car(World world, Color Color, RandomTrack _randomTrack, int _index)
-            : base(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/small_car"), new Vector2(65.0f, 40.0f), Color)
+        public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
+            : base(world, texture, new Vector2(65.0f, 40.0f), Color)
         {
 
             index = _index;
@@ -260,7 +260,7 @@ namespace WindowsGame2.GameElements
            // linearVel = _compound.LinearVelocity.Length();
           //  if(linearVel > maxVel) linearVel = maxVel;
 
-            bool blueOnly = mColor == Color.Green;// || true;
+            bool blueOnly = mColor == Color.Green || true;
             bool brownOnly = mColor == Color.Brown;
 
             if (drivingMode == vicksMode)

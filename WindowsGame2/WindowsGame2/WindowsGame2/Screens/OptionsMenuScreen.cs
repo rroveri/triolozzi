@@ -1,19 +1,7 @@
-﻿#region File Description
-//-----------------------------------------------------------------------------
-// OptionsMenuScreen.cs
-//
-// Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-#endregion
-
-#region Using Statements
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using System;
-#endregion
 
 namespace WindowsGame2.Screens
 {
@@ -26,7 +14,7 @@ namespace WindowsGame2.Screens
     {
         #region Fields
 
-        public int PlayersCount { get; set; }
+        private int PlayersCount { get; set; }
 
         private Texture2D _backgroundTexture;
 
@@ -74,6 +62,12 @@ namespace WindowsGame2.Screens
         public OptionsMenuScreen()
         {
             
+        }
+
+        public void ShowOptions(int playersCount)
+        {
+            PlayersCount = playersCount;
+            ResetOptions();
         }
 
         public override void LoadContent()
@@ -212,18 +206,19 @@ namespace WindowsGame2.Screens
         public override void HandleInput(GameTime gameTime, InputState input)
         {
             base.HandleInput(gameTime, input);
+
+            if (IsEveryoneReady())
+            {
+                ScreenManager.GetScreen<GameScreen>().InitializeGame(PlayersCount, ref _selectedCars, ref _availableCars, ref _selectedColors, ref _availableColors);
+                ScreenManager.ShowScreen<GameScreen>();
+                return;
+            }
+
             for (int i = 0; i < PlayersCount; i++)
             {
                 // Go back to the Main Menu
                 if (input.CurrentGamePadStates[i].Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 {
-                    for (int j = 0; j < _didSelectColor.Length; j++)
-                    {
-                        _didSelectColor[j] = false;
-                        _selectedCars[j] = 0;
-                        _selectedColors[j] = 0;
-                    }
-
                     ScreenManager.ShowScreen<MainMenuScreen>();
                     return;
                 }
@@ -244,19 +239,19 @@ namespace WindowsGame2.Screens
                         //Console.WriteLine("Putative problem: " + i);
                     }
                 }
-                if (input.CurrentGamePadStates[i].DPad.Right == ButtonState.Pressed || input.DidTouchKey(Keys.Right, i))
+                if (input.DidTouchButton(Buttons.DPadRight, i) || input.DidTouchKey(Keys.Right, i))
                 {
                     _selectedCars[i] = (_selectedCars[i] == _availableCars.Length - 1) ? 0 : _selectedCars[i] + 1;
                 }
-                if (input.CurrentGamePadStates[i].DPad.Left == ButtonState.Pressed || input.DidTouchKey(Keys.Left, i))
+                if (input.DidTouchButton(Buttons.DPadLeft, i) || input.DidTouchKey(Keys.Left, i))
                 {
                     _selectedCars[i] = (_selectedCars[i] == 0) ? _availableCars.Length - 1 : _selectedCars[i] - 1;
                 }
-                if (input.CurrentGamePadStates[i].DPad.Up == ButtonState.Pressed || input.DidTouchKey(Keys.Up, i))
+                if (input.DidTouchButton(Buttons.DPadUp, i) || input.DidTouchKey(Keys.Up, i))
                 {
                     _selectedColors[i] = (_selectedColors[i] == _availableColors.Length - 1) ? 0 : _selectedColors[i] + 1;
                 }
-                if (input.CurrentGamePadStates[i].DPad.Down == ButtonState.Pressed || input.DidTouchKey(Keys.Down, i))
+                if (input.DidTouchButton(Buttons.DPadDown, i) || input.DidTouchKey(Keys.Down, i))
                 {
                     _selectedColors[i] = (_selectedColors[i] == 0) ? _availableColors.Length - 1 : _selectedColors[i] - 1;
                 }
@@ -318,6 +313,28 @@ namespace WindowsGame2.Screens
                 }
             }
             return true;
+        }
+
+        private bool IsEveryoneReady()
+        {
+            for (int i = 0; i < PlayersCount; i++)
+            {
+                if (!_didSelectColor[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void ResetOptions()
+        {
+            for (int j = 0; j < _didSelectColor.Length; j++)
+            {
+                _didSelectColor[j] = false;
+                _selectedCars[j] = 0;
+                _selectedColors[j] = 0;
+            }
         }
 
     }
