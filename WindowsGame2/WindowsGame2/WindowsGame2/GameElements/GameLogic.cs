@@ -181,6 +181,7 @@ namespace WindowsGame2.GameElements
 
                             //show message
                             Cars[i].message.activate("?",1);
+                            Cars[i].message.currentTexture = Cars[i].message.thumbsDown;
 
                             // Immediately update the score of the eliminated car
                             UpdateScore(Cars[i], Cars.Count - 1 - _eliminatedCars);

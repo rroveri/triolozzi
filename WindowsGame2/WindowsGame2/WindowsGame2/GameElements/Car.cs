@@ -436,7 +436,7 @@ namespace WindowsGame2.GameElements
             message.Update(gameTime);
 
             //compute direction of the message
-            float distance = 150f;
+            float distance = 250f;
             Vector2 dirVec = Vector2.Normalize(GameServices.GetService<Camera>().oldPosition - Position) * distance;
             //interpolate position
             messageImagePos = Vector2.Lerp( messageImagePos, Position+dirVec, 0.5f);
@@ -445,10 +445,10 @@ namespace WindowsGame2.GameElements
 
             //check if still on screen, if not bring it back to screen!
             //set a margin
-            int offsetRight=100;
-            int offsetUp = 30;
-            int offsetDown = 100;
-            int offsetLeft = 30;
+            int offsetRight=120;
+            int offsetUp = 70;
+            int offsetDown = 120;
+            int offsetLeft = 70;
             if (screenPosition.X < offsetLeft) 
             {
                 screenPosition.X = offsetLeft;

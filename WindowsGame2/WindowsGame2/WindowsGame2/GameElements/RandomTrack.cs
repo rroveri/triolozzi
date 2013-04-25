@@ -65,6 +65,8 @@ namespace WindowsGame2.GameElements
         public GameLogic gameLogic;
 
         public List<int> dreamsMiddlePoints;
+
+        private Texture2D rainbowTex;
         
         public static RandomTrack createTrack()
         {
@@ -94,6 +96,8 @@ namespace WindowsGame2.GameElements
             bgTextureEasterEgg = Content.Load<Texture2D>("Images/bgNew2");
             currentTexture = bgTexture;
             currentTextureIndex = 0;
+
+            rainbowTex = Content.Load<Texture2D>("Images/rainbow_texture");
 
             texturesArray = new List<Texture2D>();
             texturesArray.Add(bgTexture);          
@@ -431,6 +435,7 @@ namespace WindowsGame2.GameElements
             {
                 gameLogic.UpdateScore(car, 0);
                 car.message.activate("!",0);
+                car.message.currentTexture = car.message.thumbsUp;
 
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
 
@@ -441,6 +446,8 @@ namespace WindowsGame2.GameElements
             {
                 gameLogic.UpdateScore(car,-1);
                 car.message.activate("?",0);
+                car.message.currentTexture = car.message.thumbsDown;
+                
 
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
                 GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + 4].Position = postitCenter;
@@ -528,6 +535,19 @@ namespace WindowsGame2.GameElements
             batch.Draw(dummyTexture, point1, null, color, angle, Vector2.Zero, lengthWidth, SpriteEffects.None, 0);
         }
 
+        void DrawRainbow(SpriteBatch batch, float width, Color color, Vector2 point1, Vector2 point2)
+        {
+            float angle = (float)Math.Atan2(point2.Y - point1.Y, point2.X - point1.X);
+            float length = Vector2.Distance(point1, point2);
+            Vector2 lengthWidth = new Vector2(length, width);
+
+            Color transp = new Color(1, 1, 1, 0.4f);
+
+            //batch.Draw(rainbowTex, point1,null, transp, 0, Vector2.Zero, new Vector2(1, 10000) * 0.3f, SpriteEffects.None,0.0f);
+
+            batch.Draw(rainbowTex, point1, null, transp, -angle, Vector2.Zero, new Vector2(1, 10000) * 0.3f, SpriteEffects.None, 0);
+        }
+
         public void DrawSprites(Camera camera, SpriteBatch spriteBatch)
         {
 
@@ -562,6 +582,9 @@ namespace WindowsGame2.GameElements
             for (int i = 0; i < postItDreamsList.Count; i++)
             {
                 postItDreamsList[i].Draw(spriteBatch);
+
+              //  DrawRainbow(spriteBatch, 0.2f, Color.White, ConvertUnits.ToDisplayUnits(postItDreamsList[i].position), ConvertUnits.ToDisplayUnits(new Vector2(0,0)));
+                
             }
 
 
