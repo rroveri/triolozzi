@@ -25,7 +25,8 @@ namespace WindowsGame2.Screens
 
         #region Fields
 
-        MenuEntry playersMenuEntry;
+        private MenuEntry playersMenuEntry;
+        private MenuEntry optionsMenuEntry;
 
         //private MessageBoxScreen ExitDialog;
 
@@ -44,17 +45,13 @@ namespace WindowsGame2.Screens
         /// </summary>
         public MainMenuScreen() : base("The Drunken Dream Maker (With a Cold)")
         {
-            //MenuEntry playGameMenuEntry = new MenuEntry("Split Screen Game");
-            //playGameMenuEntry.Selected += PlayGameMenuEntrySelected;
-            //MenuEntries.Add(playGameMenuEntry);
-
             MenuEntry singleScreenEntry = new MenuEntry("Single Screen Game");
             singleScreenEntry.Selected += PlayGameMenuSingleModeEntrySelected;
             MenuEntries.Add(singleScreenEntry);
             
-            //MenuEntry optionsMenuEntry = new MenuEntry("Options");
-            //optionsMenuEntry.Selected += OptionsMenuEntrySelected;
-            //MenuEntries.Add(optionsMenuEntry);
+            optionsMenuEntry = new MenuEntry("Options");
+            optionsMenuEntry.Selected += OptionsMenuEntrySelected;
+            MenuEntries.Add(optionsMenuEntry);
 
             playersMenuEntry = new MenuEntry("Players");
             playersMenuEntry.Selected += PlayersMenuEntrySelected;
@@ -65,11 +62,6 @@ namespace WindowsGame2.Screens
             MenuEntries.Add(exitMenuEntry);
 
             UpdatePlayersCount();
-
-            // Prepare the exit dialog.
-            //const string message = "Are you sure you want to exit the game?";
-            //ExitDialog = new MessageBoxScreen(message);
-            //ExitDialog.Accepted += ConfirmExitMessageBoxAccepted;
         }
 
         #endregion
@@ -90,29 +82,21 @@ namespace WindowsGame2.Screens
             UpdatePlayersCount();
         }
 
+        void OptionsMenuEntrySelected(object sender, PlayerIndexEventArgs e)
+        {
+            ScreenManager.GetScreen<OptionsMenuScreen>().PlayersCount = numberOfPlayers[_playersCountIndex];
+            ScreenManager.ShowScreen<OptionsMenuScreen>();
+        }
+
         private void UpdatePlayersCount()
         {
             playersMenuEntry.Text = _playersText[_playersCountIndex];
         }
 
-
-        /// <summary>
-        /// When the user cancels the main menu, ask if they want to exit the sample.
-        /// </summary>
         protected override void OnCancel(PlayerIndex playerIndex)
         {
             ScreenManager.Game.Exit();
         }
-
-
-        /// <summary>
-        /// Event handler for when the user selects ok on the "are you sure
-        /// you want to exit" message box.
-        /// </summary>
-        //void ConfirmExitMessageBoxAccepted(object sender, PlayerIndexEventArgs e)
-        //{
-        //    ScreenManager.Game.Exit();
-        //}
 
         #endregion
     }

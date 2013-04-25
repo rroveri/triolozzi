@@ -97,8 +97,6 @@
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
-    <Reference Include="mscorlib.Behaviors, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="mscorlib.Moles, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0ae41878053f6703, processorArchitecture=MSIL" />
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
@@ -113,10 +111,6 @@
     </Reference>
     <Reference Include="System.Net">
       <Private>False</Private>
-    </Reference>
-    <Reference Include="X86_ProjectMercury, Version=3.1.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libraries\x86\X86_ProjectMercury.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

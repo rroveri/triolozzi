@@ -926,11 +926,7 @@ namespace WindowsGame2.Screens
 
         void RankScreenAccepted(object sender, PlayerIndexEventArgs e)
         {
-            ScreenManager.RemoveScreen(this);
-            ScreenManager.RemoveScreen(PauseScreen);
-            ScreenManager.RemoveScreen(RankScreen);
-            ScreenManager.AddScreen(new GameScreen(), null);
-            ScreenManager.ShowScreen<MainMenuScreen>();
+            ScreenManager.QuitGame();
         }
     }
 }

@@ -79,6 +79,7 @@ namespace WindowsGame2
             GameServices.AddService<ParticleComponent>(particleComponent);
 
             //ScreenManager.AddScreen(new BackgroundScreen(), null);
+            ScreenManager.AddScreen(new OptionsMenuScreen(), null);
             ScreenManager.AddScreen(new GameScreen(), null);
             ScreenManager.AddScreen(new MainMenuScreen(), null);
         }
