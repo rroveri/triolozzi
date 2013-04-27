@@ -23,8 +23,6 @@ namespace WindowsGame2
         private Vector2 texNW, texNE, texOW, texOE;
         private Vector2 initPoint = new Vector2();
 
-        private Color currentColor;
-
         private float offset = 0.0f;
         private float width = 0.25f, height = 0.30f;
         private float barOffsetW, barOffsetH, barWidth, barHeight, pointLength;

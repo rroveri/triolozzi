@@ -26,6 +26,9 @@ namespace WindowsGame2.Screens
         private Texture2D _doneSelecting;
         private Texture2D _readyToPlay;
 
+        private Texture2D _backMainMenu;
+        private Rectangle _backMainMenuPosition;
+
         private Rectangle[] _2PostitsPositions;
         private Rectangle[] _3PostitsPositions;
         private Rectangle[] _4PostitsPositions;
@@ -52,6 +55,13 @@ namespace WindowsGame2.Screens
 
         private Rectangle[][] _CarsPositions;
 
+        // Handle Game Pad Actions
+        InputAction LeftPad;
+        InputAction RightPad;
+        InputAction UpPad;
+        InputAction DownPad;
+        InputAction BackAction;
+
         #endregion
 
         #region Initialization
@@ -62,7 +72,28 @@ namespace WindowsGame2.Screens
         /// </summary>
         public OptionsMenuScreen()
         {
-            
+            LeftPad = new InputAction(
+                new Buttons[] { Buttons.DPadLeft, Buttons.LeftThumbstickLeft },
+                new Keys[] { Keys.Left },
+                true
+                );
+            RightPad = new InputAction(
+                    new Buttons[] { Buttons.DPadRight, Buttons.LeftThumbstickRight },
+                    new Keys[] { Keys.Right },
+                    true
+                    );
+            UpPad = new InputAction(
+                    new Buttons[] { Buttons.DPadUp, Buttons.LeftThumbstickUp },
+                    new Keys[] { Keys.Up },
+                    true);
+            DownPad = new InputAction(
+                    new Buttons[] { Buttons.DPadDown, Buttons.LeftThumbstickDown },
+                    new Keys[] { Keys.Down },
+                    true);
+            BackAction = new InputAction(
+                    new Buttons[] { Buttons.X, Buttons.Back },
+                    new Keys[] { Keys.Escape },
+                    true);
         }
 
         public void ShowOptions(int playersCount)
@@ -82,6 +113,7 @@ namespace WindowsGame2.Screens
             _postIts = new Texture2D[4];
             _doneSelecting = Content.Load<Texture2D>("Images/PimpScreen/done_selecting");
             _readyToPlay = Content.Load<Texture2D>("Images/PimpScreen/ready_to_play");
+            _backMainMenu = Content.Load<Texture2D>("Images/PimpScreen/back_main_menu");
 
             _postIts[0] = Content.Load<Texture2D>("Images/PimpScreen/player1_postit");
             _postIts[1] = Content.Load<Texture2D>("Images/PimpScreen/player2_postit");
@@ -96,6 +128,7 @@ namespace WindowsGame2.Screens
             int verticalSize = 520;
 
             _titlePosition = new Rectangle(width - 450, 40, 900, 150);
+            _backMainMenuPosition = new Rectangle(50, height*2 - 120, 450, 100);
 
             // Initialize post it positions
             _2PostitsPositions = new Rectangle[2];
@@ -207,6 +240,7 @@ namespace WindowsGame2.Screens
         public override void HandleInput(GameTime gameTime, InputState input)
         {
             base.HandleInput(gameTime, input);
+            PlayerIndex playerIndex;
 
             if (IsEveryoneReady())
             {
@@ -218,7 +252,7 @@ namespace WindowsGame2.Screens
             for (int i = 0; i < PlayersCount; i++)
             {
                 // Go back to the Main Menu
-                if (input.CurrentGamePadStates[i].Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                if (BackAction.Evaluate(input, (PlayerIndex)i, out playerIndex))
                 {
                     ScreenManager.ShowScreen<MainMenuScreen>();
                     return;
@@ -241,19 +275,19 @@ namespace WindowsGame2.Screens
                     }
                 }
 
-                if (input.DidTouchButton(Buttons.DPadRight, i) || input.DidTouchKey(Keys.Right, i))
+                if (RightPad.Evaluate(input, (PlayerIndex)i, out playerIndex))
                 {
                     _selectedCars[i] = (_selectedCars[i] == _availableCars.Length - 1) ? 0 : _selectedCars[i] + 1;
                 }
-                if (input.DidTouchButton(Buttons.DPadLeft, i) || input.DidTouchKey(Keys.Left, i))
+                if (LeftPad.Evaluate(input, (PlayerIndex)i, out playerIndex))
                 {
                     _selectedCars[i] = (_selectedCars[i] == 0) ? _availableCars.Length - 1 : _selectedCars[i] - 1;
                 }
-                if (input.DidTouchButton(Buttons.DPadUp, i) || input.DidTouchKey(Keys.Up, i))
+                if (UpPad.Evaluate(input, (PlayerIndex)i, out playerIndex))
                 {
                     _selectedColors[i] = (_selectedColors[i] == _availableColors.Length - 1) ? 0 : _selectedColors[i] + 1;
                 }
-                if (input.DidTouchButton(Buttons.DPadDown, i) || input.DidTouchKey(Keys.Down, i))
+                if (DownPad.Evaluate(input, (PlayerIndex)i, out playerIndex))
                 {
                     _selectedColors[i] = (_selectedColors[i] == 0) ? _availableColors.Length - 1 : _selectedColors[i] - 1;
                 }
@@ -288,6 +322,7 @@ namespace WindowsGame2.Screens
                     ScreenManager.SpriteBatch.Draw(_doneSelecting, _StringsPositions[PlayersCount - 2][i], null, Color.White);
                 }
             }
+            ScreenManager.SpriteBatch.Draw(_backMainMenu, _backMainMenuPosition, null, Color.White);
             ScreenManager.SpriteBatch.End();
         }
 

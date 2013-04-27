@@ -38,7 +38,6 @@ namespace WindowsGame2.GameElements
         Body internalBody;
         public List<Vector2> normals;
         List<Vector2> normalsInternal;
-        int[] normalsLengths;
         public List<int> internalCorrispondances;
         Texture2D bgTexture;
         Texture2D bgTextureEasterEgg;
