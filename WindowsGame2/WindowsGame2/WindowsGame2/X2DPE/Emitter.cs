@@ -40,12 +40,15 @@ namespace X2DPE
 		private double emitterFrequency = 0;	// in ms
 		private double timeSinceLastEmission = 0;
 
+        private Camera camera;
+
 		public Emitter()
 		{
 			Active = true;
 			ParticleList = new List<Particle>();
 			TextureList = new List<Texture2D>();
 			Opacity = 255;
+            camera = GameServices.GetService<Camera>();
 		}
 
 		public void UpdateParticles(GameTime gameTime)
@@ -118,7 +121,7 @@ namespace X2DPE
 		{
 			foreach (Particle particle in ParticleList)
 			{
-                Vector2 screenPosition = Vector2.Transform(particle.Position, GameServices.GetService<Camera>().Transform);
+                Vector2 screenPosition = Vector2.Transform(particle.Position, camera.Transform);
 				spriteBatch.Draw(particle.Texture,
                                                  screenPosition,
 												 null,

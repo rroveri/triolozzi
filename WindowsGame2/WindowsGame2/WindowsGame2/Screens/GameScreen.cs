@@ -737,8 +737,8 @@ namespace WindowsGame2.Screens
         public void DrawSprites(Camera camera)
         {
 
-            Vector2 greenPosition = Vector2.Transform(Cars[2].Position, cameraFollowing.Transform);
-            fluid.Update(greenPosition);
+            //Vector2 greenPosition = Vector2.Transform(Cars[2].Position, cameraFollowing.Transform);
+            //fluid.Update(greenPosition);
 
 
             //compute camera matrices
