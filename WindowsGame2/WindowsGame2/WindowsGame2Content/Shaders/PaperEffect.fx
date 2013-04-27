@@ -274,9 +274,10 @@ float4 PixelShaderFunctionPopupMessage(ObjectVertexShaderOutput input) : COLOR0
 float4 PixelShaderFunctionTrail(TrailVertexShaderOutput input) : COLOR0
 {
     float4 texCol = tex2D(trailSketchSampler, input.uv);
-    float alpha = texCol[0];
+   // float alpha = texCol[0];
     texCol *= input.Color;
-    return float4(texCol[0],texCol[1],texCol[2],alpha);
+	//alpha=0.3;
+    return float4(texCol[0],texCol[1],texCol[2],texCol[3]);
 }
 
 float4 PixelShaderFunctionInk(InkVertexShaderOutput input) : COLOR0

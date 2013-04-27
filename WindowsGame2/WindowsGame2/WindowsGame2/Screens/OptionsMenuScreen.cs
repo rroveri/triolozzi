@@ -239,19 +239,19 @@ namespace WindowsGame2.Screens
                         //Console.WriteLine("Putative problem: " + i);
                     }
                 }
-                if (input.DidTouchButton(Buttons.DPadRight, i) || input.DidTouchKey(Keys.Right, i))
+                if (input.DidTouchButton(Buttons.B, i) || input.DidTouchKey(Keys.Right, i))
                 {
                     _selectedCars[i] = (_selectedCars[i] == _availableCars.Length - 1) ? 0 : _selectedCars[i] + 1;
                 }
-                if (input.DidTouchButton(Buttons.DPadLeft, i) || input.DidTouchKey(Keys.Left, i))
+                if (input.DidTouchButton(Buttons.LeftThumbstickLeft, i) || input.DidTouchKey(Keys.Left, i))
                 {
                     _selectedCars[i] = (_selectedCars[i] == 0) ? _availableCars.Length - 1 : _selectedCars[i] - 1;
                 }
-                if (input.DidTouchButton(Buttons.DPadUp, i) || input.DidTouchKey(Keys.Up, i))
+                if (input.DidTouchButton(Buttons.X, i) || input.DidTouchKey(Keys.Up, i))
                 {
                     _selectedColors[i] = (_selectedColors[i] == _availableColors.Length - 1) ? 0 : _selectedColors[i] + 1;
                 }
-                if (input.DidTouchButton(Buttons.DPadDown, i) || input.DidTouchKey(Keys.Down, i))
+                if (input.DidTouchButton(Buttons.LeftThumbstickDown, i) || input.DidTouchKey(Keys.Down, i))
                 {
                     _selectedColors[i] = (_selectedColors[i] == 0) ? _availableColors.Length - 1 : _selectedColors[i] - 1;
                 }

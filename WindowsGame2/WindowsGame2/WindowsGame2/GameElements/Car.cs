@@ -27,7 +27,7 @@ namespace WindowsGame2.GameElements
         private static string physicMode = "physic";
         private static string drivingMode = unityMode;
 
-        private static int mMaximumTrailPoints = 130;
+        public static int mMaximumTrailPoints = 130;
         public int mTrailPoints;
 
         public Vector2 mForceVector;
@@ -46,7 +46,7 @@ namespace WindowsGame2.GameElements
         private Texture2D mDummyTexture;
         public Color mColor;
 
-        private VertexPositionColorTexture[] trailVertices = new VertexPositionColorTexture[mMaximumTrailPoints * 6];
+        private VertexPositionColorTexture[] trailVertices = new VertexPositionColorTexture[mMaximumTrailPoints * 6 *paintersCount];
         private VertexPositionColorTexture[] burnoutsVertices = new VertexPositionColorTexture[100000];
         private Vector3 tdPos = new Vector3(0, 0, -0.1f);
         private Vector3 oldWVert, newWVert, oldEVert, newEVert;
@@ -93,6 +93,11 @@ namespace WindowsGame2.GameElements
         public PopupMessage message;
 
         public int index;
+
+      
+        public static int paintersCount = 10;
+
+        public List<Painter> painters;
 
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
             : base(world, texture, new Vector2(65.0f, 40.0f), Color)
@@ -175,7 +180,14 @@ namespace WindowsGame2.GameElements
             _compound.OnCollision += body_OnCollision;
 
             messageImagePos = ConvertUnits.ToDisplayUnits( _compound.Position);// +new Vector2(1, 1));
-           
+
+
+            painters = new List<Painter>();
+            for (int i = 0; i < paintersCount; i++)
+            {
+                Painter newPainter=new Painter(seed);
+                painters.Add(newPainter);
+            }
             
         }
 
@@ -385,40 +397,60 @@ namespace WindowsGame2.GameElements
                 }
                 mTrailPositions[mTrailPoints] = Position - mDirection * tailOffset;
 
-                newWVert.X = tdPos.X - mDirection.Y * offset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f;
-                newWVert.Y = tdPos.Y + mDirection.X * offset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f;
 
-                newEVert.X = tdPos.X + mDirection.Y * offset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f;
-                newEVert.Y = tdPos.Y - mDirection.X * offset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f;
+                for (int i = 0; i < painters.Count; i++)
+                {
 
-                trailVertices[mTrailPoints * 6 + 0].Position = newWVert;
-                trailVertices[mTrailPoints * 6 + 1].Position = newEVert;
-                trailVertices[mTrailPoints * 6 + 2].Position = oldWVert;
-                trailVertices[mTrailPoints * 6 + 3].Position = oldWVert;
-                trailVertices[mTrailPoints * 6 + 4].Position = oldEVert;
-                trailVertices[mTrailPoints * 6 + 5].Position = newEVert;
 
-                trailVertices[mTrailPoints * 6 + 0].TextureCoordinate = texNW;
-                trailVertices[mTrailPoints * 6 + 1].TextureCoordinate = texNE;
-                trailVertices[mTrailPoints * 6 + 2].TextureCoordinate = texOW;
-                trailVertices[mTrailPoints * 6 + 3].TextureCoordinate = texOW;
-                trailVertices[mTrailPoints * 6 + 4].TextureCoordinate = texOE;
-                trailVertices[mTrailPoints * 6 + 5].TextureCoordinate = texNE;
+                    painters[i].dx -= painters[i].ax;
+                    painters[i].ax = (painters[i].ax + (painters[i].dx - tdPos.X) * painters[i].div) * painters[i].ease;
+                    painters[i].dy -= painters[i].ay;
+                    painters[i].ay = (painters[i].ay + (painters[i].dy - tdPos.Y) * painters[i].div) * painters[i].ease;
 
-                oldWVert = newWVert;
-                oldEVert = newEVert;
+                    //tailOffset = 0;
+                    newWVert.X = painters[i].dx - mDirection.Y * burnoutOffset / 2f - mDirection.X * tailOffset;// + (float)seed.NextDouble() * 0.05f;
+                    newWVert.Y = painters[i].dy + mDirection.X * burnoutOffset / 2f - mDirection.Y * tailOffset;// + (float)seed.NextDouble() * 0.05f;
+                    newEVert.X = painters[i].dx + mDirection.Y * burnoutOffset / 2f - mDirection.X * tailOffset;// + (float)seed.NextDouble() * 0.05f;
+                    newEVert.Y = painters[i].dy - mDirection.X * burnoutOffset / 2f - mDirection.Y * tailOffset;// + (float)seed.NextDouble() * 0.05f;
+
+                    drawQuad(newWVert, newEVert, painters[i].oldWVert, painters[i].oldEVert, i);
+                    painters[i].oldWVert = newWVert;
+                    painters[i].oldEVert = newEVert;
+                }
+
+
+              //  newWVert.X = tdPos.X - mDirection.Y * offset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f;
+              //  newWVert.Y = tdPos.Y + mDirection.X * offset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f;
+
+              //  newEVert.X = tdPos.X + mDirection.Y * offset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f;
+              //  newEVert.Y = tdPos.Y - mDirection.X * offset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f;
+
+               // drawQuad(newWVert, newEVert, oldWVert, oldEVert);
+
+              //  oldWVert = newWVert;
+              //  oldEVert = newEVert;
 
                 mTrailPoints++;
             }
             else
             {
-                
 
-                oldWVert.X = tdPos.X - mDirection.Y * offset;
-                oldWVert.Y = tdPos.Y + mDirection.X * offset;
+                for (int i = 0; i < painters.Count; i++)
+                {
+                    painters[i].dx = tdPos.X;
+                    painters[i].dy = tdPos.Y;
+                    painters[i].oldWVert.X = painters[i].dx - mDirection.Y * burnoutOffset / 2f - mDirection.X * tailOffset;// +(float)seed.NextDouble() * 0.05f;
+                    painters[i].oldWVert.Y = painters[i].dy + mDirection.X * burnoutOffset / 2f - mDirection.Y * tailOffset;// + (float)seed.NextDouble() * 0.05f;
+                    painters[i].oldEVert.X = painters[i].dx + mDirection.Y * burnoutOffset / 2f - mDirection.X * tailOffset;// + (float)seed.NextDouble() * 0.05f;
+                    painters[i].oldEVert.Y = painters[i].dy - mDirection.X * burnoutOffset / 2f - mDirection.Y * tailOffset;// + (float)seed.NextDouble() * 0.05f;
+                }
 
-                oldEVert.X = tdPos.X + mDirection.Y * offset;
-                oldEVert.Y = tdPos.Y - mDirection.X * offset;
+
+               // oldWVert.X = tdPos.X - mDirection.Y * offset;
+               // oldWVert.Y = tdPos.Y + mDirection.X * offset;
+
+               // oldEVert.X = tdPos.X + mDirection.Y * offset;
+               // oldEVert.Y = tdPos.Y - mDirection.X * offset;
 
                 justStarted = false;
                 resetTrail();
@@ -440,6 +472,23 @@ namespace WindowsGame2.GameElements
             //move the message position
             moveMessageImage(gameTime);
             
+        }
+
+        public void drawQuad(Vector3 newWVert,Vector3 newEVert,Vector3 oldWVert,Vector3 oldEVert, int painterIndex)
+        {
+            trailVertices[mTrailPoints * 6 *paintersCount +6*painterIndex + 0].Position = newWVert;
+            trailVertices[mTrailPoints * 6 * paintersCount + 6 * painterIndex + 1].Position = newEVert;
+            trailVertices[mTrailPoints * 6 * paintersCount + 6 * painterIndex + 2].Position = oldWVert;
+            trailVertices[mTrailPoints * 6 * paintersCount + 6 * painterIndex + 3].Position = oldWVert;
+            trailVertices[mTrailPoints * 6 * paintersCount + 6 * painterIndex + 4].Position = oldEVert;
+            trailVertices[mTrailPoints * 6 * paintersCount + 6 * painterIndex + 5].Position = newEVert;
+
+            trailVertices[mTrailPoints * 6 * paintersCount + 6 * painterIndex + 0].TextureCoordinate = texNW;
+            trailVertices[mTrailPoints * 6 * paintersCount + 6 * painterIndex + 1].TextureCoordinate = texNE;
+            trailVertices[mTrailPoints * 6 * paintersCount + 6 * painterIndex + 2].TextureCoordinate = texOW;
+            trailVertices[mTrailPoints * 6 * paintersCount + 6 * painterIndex + 3].TextureCoordinate = texOW;
+            trailVertices[mTrailPoints * 6 * paintersCount + 6 * painterIndex + 4].TextureCoordinate = texOE;
+            trailVertices[mTrailPoints * 6 * paintersCount + 6 * painterIndex + 5].TextureCoordinate = texNE;
         }
 
         public void moveMessageImage(GameTime gameTime)
@@ -522,6 +571,7 @@ namespace WindowsGame2.GameElements
             Vector2 rightVelocity = rightVector * Vector2.Dot(car._compound.LinearVelocity,rightVector);
             car._compound.LinearVelocity = forwardVelocity + rightVelocity * drift;
 
+            /*
             if (drift != 0 && rightVelocity.Length() > 5f)
             {
                 newWVertBurnoutRight.X = tdPos.X - mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
@@ -641,6 +691,8 @@ namespace WindowsGame2.GameElements
                 oldEVertBurnoutLeft.X = tdPos.X + mDirection.Y * burnoutOffset - rightVector.X * wheelsDistance;
                 oldEVertBurnoutLeft.Y = tdPos.Y - mDirection.X * burnoutOffset - rightVector.Y * wheelsDistance;
             }
+             * 
+             * */
             
         }
 
