@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{FE5B9B16-E45F-4F83-BCF4-D3F310904DBF}</ProjectGuid>
+    <ProjectGuid>{463C0D25-A3EA-48C0-AE7D-9978E2C5BEA9}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">Xbox 360</Platform>
@@ -66,15 +66,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="Events\EliminatedCarEventArgs.cs" />
+    <Compile Include="Events\FinishedLapEventArgs.cs" />
+    <Compile Include="fluid\Fluid.cs" />
+    <Compile Include="GameElements\Car.cs" />
     <Compile Include="AssetCreator.cs" />
     <Compile Include="ConvertUnits.cs" />
     <Compile Include="DebugViewXNA.cs" />
     <Compile Include="DrawablePhysicsObject.cs" />
-    <Compile Include="Events\EliminatedCarEventArgs.cs" />
-    <Compile Include="Events\FinishedLapEventArgs.cs" />
     <Compile Include="FrameRateCounter.cs" />
-    <Compile Include="GameElements\Car.cs" />
     <Compile Include="GameElements\GameLogic.cs" />
+    <Compile Include="GameElements\PopupMessage.cs" />
+    <Compile Include="GameElements\PostItDream.cs" />
+    <Compile Include="GameElements\PostItQuote.cs" />
     <Compile Include="GameElements\RandomTrack.cs" />
     <Compile Include="ScreenManagement\GameServices.cs" />
     <Compile Include="ScreenManagement\InputAction.cs" />
@@ -101,11 +105,19 @@
     <Compile Include="Sprite.cs" />
     <Compile Include="StringWriter.cs" />
     <Compile Include="TexturePhysicsObject.cs" />
+    <Compile Include="X2DPE\Emitter.cs" />
+    <Compile Include="X2DPE\Helpers\EmitterHelper.cs" />
+    <Compile Include="X2DPE\Helpers\ParticleFader.cs" />
+    <Compile Include="X2DPE\Helpers\ParticleScaler.cs" />
+    <Compile Include="X2DPE\Helpers\RandomMinMax.cs" />
+    <Compile Include="X2DPE\Particle.cs" />
+    <Compile Include="X2DPE\ParticleGameComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
       <Visible>False</Visible>

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using System;
 
 namespace WindowsGame2.Screens
 {
@@ -228,7 +229,7 @@ namespace WindowsGame2.Screens
                     continue;
                 }
                 // Select the car and colors
-                if (input.CurrentGamePadStates[i].Buttons.A == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.A))
+                if (input.DidTouchButton(Buttons.A, i) || input.DidTouchKey(Keys.A, i))
                 {
                     if (CanSelectColor(i, _selectedColors[i]))
                     {
@@ -239,6 +240,7 @@ namespace WindowsGame2.Screens
                         //Console.WriteLine("Putative problem: " + i);
                     }
                 }
+
                 if (input.DidTouchButton(Buttons.DPadRight, i) || input.DidTouchKey(Keys.Right, i))
                 {
                     _selectedCars[i] = (_selectedCars[i] == _availableCars.Length - 1) ? 0 : _selectedCars[i] + 1;

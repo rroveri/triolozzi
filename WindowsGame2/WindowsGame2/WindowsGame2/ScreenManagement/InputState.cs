@@ -75,9 +75,8 @@ namespace WindowsGame2
 
         public bool DidTouchButton(Buttons button, int playerIndex)
         {
-            return CurrentGamePadStates[playerIndex].IsButtonDown(button) && !CurrentGamePadStates[playerIndex].IsButtonDown(button);
+            return LastGamePadStates[playerIndex].IsButtonUp(button) && CurrentGamePadStates[playerIndex].IsButtonDown(button);
         }
-
 
         /// <summary>
         /// Helper for checking if a key was pressed during this update. The
