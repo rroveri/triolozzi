@@ -22,6 +22,7 @@ namespace WindowsGame2
         GraphicsDeviceManager graphics;
 
         ScreenManager ScreenManager;
+        SoundManager SoundManager;
         ParticleComponent particleComponent;
 
         public Game1()
@@ -39,6 +40,9 @@ namespace WindowsGame2
 
             ScreenManager = new ScreenManager(this);
             Components.Add(ScreenManager);
+
+            SoundManager = new SoundManager(this);
+            Components.Add(SoundManager);
 
             particleComponent = new ParticleComponent(this);
             Components.Add(particleComponent);
@@ -77,6 +81,10 @@ namespace WindowsGame2
             GameServices.AddService<GraphicsDevice>(GraphicsDevice);
             GameServices.AddService<ContentManager>(Content);
             GameServices.AddService<ParticleComponent>(particleComponent);
+            GameServices.AddService<SoundManager>(SoundManager);
+
+            SoundManager.LoadSong("Cracks", "Sounds/Cracks");
+            SoundManager.LoadSound("crash", "Sounds/crash");
 
             //ScreenManager.AddScreen(new BackgroundScreen(), null);
             ScreenManager.AddScreen(new PauseMenuScreen(), null);

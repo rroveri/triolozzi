@@ -55,6 +55,8 @@ namespace WindowsGame2.Screens
 
         private Rectangle[][] _CarsPositions;
 
+        private SoundManager _soundManager;
+
         // Handle Game Pad Actions
         InputAction LeftPad;
         InputAction RightPad;
@@ -106,6 +108,7 @@ namespace WindowsGame2.Screens
         {
             base.LoadContent();
             ContentManager Content = GameServices.GetService<ContentManager>();
+            _soundManager = GameServices.GetService<SoundManager>();
 
             _backgroundTexture = Content.Load<Texture2D>("Images/bgNew");
             _title = Content.Load<Texture2D>("Images/PimpScreen/pimp_screen_title");
@@ -246,6 +249,7 @@ namespace WindowsGame2.Screens
             {
                 ScreenManager.GetScreen<GameScreen>().InitializeGame(PlayersCount, ref _selectedCars, ref _availableCars, ref _selectedColors, ref _availableColors);
                 ScreenManager.ShowScreen<GameScreen>();
+                //_soundManager.PlaySong("Cracks", false);
                 return;
             }
 
@@ -255,6 +259,7 @@ namespace WindowsGame2.Screens
                 if (BackAction.Evaluate(input, (PlayerIndex)i, out playerIndex))
                 {
                     ScreenManager.ShowScreen<MainMenuScreen>();
+                    _soundManager.StopSong();
                     return;
                 }
                 // Ignore everything if color has been selected already

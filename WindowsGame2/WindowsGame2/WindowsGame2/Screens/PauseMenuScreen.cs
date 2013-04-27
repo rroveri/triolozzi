@@ -69,11 +69,13 @@ namespace WindowsGame2.Screens
         void ConfirmQuitMessageBoxAccepted(object sender, PlayerIndexEventArgs e)
         {
             ScreenManager.QuitGame();
+            GameServices.GetService<SoundManager>().StopSong();
         }
 
         protected override void OnCancel(PlayerIndex playerIndex)
         {
             ScreenManager.ShowScreen<GameScreen>();
+            GameServices.GetService<SoundManager>().ResumeSong();
         }
 
         #endregion

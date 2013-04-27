@@ -102,6 +102,7 @@
     <Compile Include="Screens\PauseMenuScreen.cs" />
     <Compile Include="Screens\PlayerIndexEventArgs.cs" />
     <Compile Include="Screens\RankingScreen.cs" />
+    <Compile Include="SoundManager.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="StringWriter.cs" />
     <Compile Include="TexturePhysicsObject.cs" />

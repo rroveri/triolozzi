@@ -46,6 +46,7 @@ namespace WindowsGame2.Screens
         ContentManager Content;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        SoundManager soundManager;
 
         List<Car> Cars;
         List<PlayerIndex> playerIndexes;
@@ -147,6 +148,7 @@ namespace WindowsGame2.Screens
             GraphicsDevice = GameServices.GetService<GraphicsDevice>();
             Content = GameServices.GetService<ContentManager>();
             graphics = GameServices.GetService<GraphicsDeviceManager>();
+            soundManager = GameServices.GetService<SoundManager>();
 
             ScreenManager.AddScreen(RankScreen, null);
 
@@ -459,6 +461,7 @@ namespace WindowsGame2.Screens
             if (ShouldPauseGame())
             {
                 ScreenManager.ShowScreen<PauseMenuScreen>();
+                soundManager.PauseSong();
                 return;
             }
 
@@ -703,7 +706,9 @@ namespace WindowsGame2.Screens
 
                         particleComponent.particleEmitterList[i].Position = Cars[i].Position;
                         particleComponent.particleEmitterList[i].Active = true;
-
+                        
+                        // Play sound for car that crashed
+                        soundManager.PlaySound("crash");
                     }
                 }
             }
