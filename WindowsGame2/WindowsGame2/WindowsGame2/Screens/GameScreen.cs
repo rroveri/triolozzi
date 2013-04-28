@@ -264,85 +264,7 @@ namespace WindowsGame2.Screens
 
             verticesBorders = new VertexPositionColorTexture[randomRaceTrack.curvePointsInternal.Count];
             
-            //add particles for collisions with walls and cars
-            for (int i = 0; i < Cars.Count; i++)
-            {
-                particleComponent.particleEmitterList.Add(
-                        new Emitter()
-                        {
-                            Active = false,
-                            TextureList = new List<Texture2D>() {
-                                Content.Load<Texture2D>("Images\\whiteStar"),
-			                   // Content.Load<Texture2D>("Sprites\\flower_orange"),
-			                   // Content.Load<Texture2D>("Sprites\\flower_green"),
-			                   // Content.Load<Texture2D>("Sprites\\flower_yellow"),
-			                   // Content.Load<Texture2D>("Sprites\\flower_purple")
-			                    },
-                            RandomEmissionInterval = new RandomMinMax(2d),
-                            ParticleLifeTime = 1500,
-                            ParticleDirection = new RandomMinMax(0, 359),
-                            ParticleSpeed = new RandomMinMax(9.1f, 13.0f),
-                            ParticleRotation = new RandomMinMax(0, 100),
-                            RotationSpeed = new RandomMinMax(0.015f),
-                            ParticleFader = new ParticleFader(false, true, 1350),
-                            ParticleScaler = new ParticleScaler(false, 0.3f),
-                            TextureColor = Cars[i].mColor
-                        }
-                );
-            }
-            //add particles for collisions with nightmares
-            for (int i = 0; i < Cars.Count; i++)
-            {
-                particleComponent.particleEmitterList.Add(
-                        new Emitter()
-                        {
-                            Active = false,
-                            TextureList = new List<Texture2D>() {
-                                Content.Load<Texture2D>("Sprites\\smoke"),
-			                   // Content.Load<Texture2D>("Sprites\\flower_orange"),
-			                   // Content.Load<Texture2D>("Sprites\\flower_green"),
-			                  //  Content.Load<Texture2D>("Sprites\\flower_yellow"),
-			                  //  Content.Load<Texture2D>("Sprites\\flower_purple")
-			                    },
-                            RandomEmissionInterval = new RandomMinMax(0.5d),
-                            ParticleLifeTime = 1000,
-                            ParticleDirection = new RandomMinMax(0, 359),
-                            ParticleSpeed = new RandomMinMax(5.1f, 7.0f),
-                            ParticleRotation = new RandomMinMax(0, 100),
-                            RotationSpeed = new RandomMinMax(0.015f),
-                            ParticleFader = new ParticleFader(false, true, 1350),
-                            ParticleScaler = new ParticleScaler(false, 0.3f),
-                            TextureColor = Color.Black
-                        }
-                );
-            }
-
-            //add particles for collisions with wishes
-            for (int i = 0; i < Cars.Count; i++)
-            {
-                particleComponent.particleEmitterList.Add(
-                        new Emitter()
-                        {
-                            Active = false,
-                            TextureList = new List<Texture2D>() {
-                                Content.Load<Texture2D>("Sprites\\smokeWhite"),
-			                    //Content.Load<Texture2D>("Sprites\\flower_orange"),
-			                   // Content.Load<Texture2D>("Sprites\\flower_green"),
-			                    //Content.Load<Texture2D>("Sprites\\flower_yellow"),
-			                    //Content.Load<Texture2D>("Sprites\\flower_purple")
-			                    },
-                            RandomEmissionInterval = new RandomMinMax(0.5d),
-                            ParticleLifeTime = 1000,
-                            ParticleDirection = new RandomMinMax(0, 359),
-                            ParticleSpeed = new RandomMinMax(5.1f, 7.0f),
-                            ParticleRotation = new RandomMinMax(0, 100),
-                            RotationSpeed = new RandomMinMax(0.015f),
-                            ParticleFader = new ParticleFader(false, true, 1350),
-                            ParticleScaler = new ParticleScaler(false, 0.3f),
-                            TextureColor = Color.White
-                        }
-                );
-            }
+            
 
             fluid = new Fluid(Content,GraphicsDevice, spriteBatch);
         }
@@ -910,16 +832,105 @@ namespace WindowsGame2.Screens
         public void InitializeGame(int playersCount, ref int[] selectedCars, ref Texture2D[] availableCars, ref int[] selectedColors, ref Color[] availableColors)
         {
             Cars.Clear();
+            particleComponent.particleEmitterList.Clear();
+
             PlayersCount = playersCount;
             screenRenderer.PlayersCount = playersCount;
             Logic.PlayersCount = playersCount;
 
+            randomRaceTrack.carsCount = playersCount;
+
             for (int i = 0; i < playersCount; i++)
             {
                 Cars.Add(new Car(world, availableCars[selectedCars[i]], availableColors[selectedColors[i]], randomRaceTrack, i));
-                particleComponent.particleEmitterList[i].TextureColor = availableColors[selectedColors[i]];
+                //particleComponent.particleEmitterList[i].TextureColor = availableColors[selectedColors[i]];
                 screenRenderer.SetColor(availableColors[selectedColors[i]], i);
             }
+
+
+            //add particles for collisions with walls and cars
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                particleComponent.particleEmitterList.Add(
+                        new Emitter()
+                        {
+                            Active = false,
+                            TextureList = new List<Texture2D>() {
+                                Content.Load<Texture2D>("Images\\whiteStar"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_orange"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_green"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_yellow"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_purple")
+			                    },
+                            RandomEmissionInterval = new RandomMinMax(2d),
+                            ParticleLifeTime = 1500,
+                            ParticleDirection = new RandomMinMax(0, 359),
+                            ParticleSpeed = new RandomMinMax(9.1f, 13.0f),
+                            ParticleRotation = new RandomMinMax(0, 100),
+                            RotationSpeed = new RandomMinMax(0.015f),
+                            ParticleFader = new ParticleFader(false, true, 1350),
+                            ParticleScaler = new ParticleScaler(false, 0.3f),
+                            TextureColor = Cars[i].mColor
+                        }
+                );
+            }
+            //add particles for collisions with nightmares
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                particleComponent.particleEmitterList.Add(
+                        new Emitter()
+                        {
+                            Active = false,
+                            TextureList = new List<Texture2D>() {
+                                Content.Load<Texture2D>("Sprites\\smoke"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_orange"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_green"),
+			                  //  Content.Load<Texture2D>("Sprites\\flower_yellow"),
+			                  //  Content.Load<Texture2D>("Sprites\\flower_purple")
+			                    },
+                            RandomEmissionInterval = new RandomMinMax(0.5d),
+                            ParticleLifeTime = 1000,
+                            ParticleDirection = new RandomMinMax(0, 359),
+                            ParticleSpeed = new RandomMinMax(5.1f, 7.0f),
+                            ParticleRotation = new RandomMinMax(0, 100),
+                            RotationSpeed = new RandomMinMax(0.015f),
+                            ParticleFader = new ParticleFader(false, true, 1350),
+                            ParticleScaler = new ParticleScaler(false, 0.3f),
+                            TextureColor = Color.Black
+                        }
+                );
+            }
+
+            //add particles for collisions with wishes
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                particleComponent.particleEmitterList.Add(
+                        new Emitter()
+                        {
+                            Active = false,
+                            TextureList = new List<Texture2D>() {
+                                Content.Load<Texture2D>("Sprites\\smokeWhite"),
+			                    //Content.Load<Texture2D>("Sprites\\flower_orange"),
+			                   // Content.Load<Texture2D>("Sprites\\flower_green"),
+			                    //Content.Load<Texture2D>("Sprites\\flower_yellow"),
+			                    //Content.Load<Texture2D>("Sprites\\flower_purple")
+			                    },
+                            RandomEmissionInterval = new RandomMinMax(0.5d),
+                            ParticleLifeTime = 1000,
+                            ParticleDirection = new RandomMinMax(0, 359),
+                            ParticleSpeed = new RandomMinMax(5.1f, 7.0f),
+                            ParticleRotation = new RandomMinMax(0, 100),
+                            RotationSpeed = new RandomMinMax(0.015f),
+                            ParticleFader = new ParticleFader(false, true, 1350),
+                            ParticleScaler = new ParticleScaler(false, 0.3f),
+                            TextureColor = Color.White
+                        }
+                );
+            }
+
+
+
+
             // Call the Jean Charles
             GC.Collect();
         }

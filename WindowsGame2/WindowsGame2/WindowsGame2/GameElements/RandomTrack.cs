@@ -69,6 +69,8 @@ namespace WindowsGame2.GameElements
 
         public VertexPositionColorTexture[] verticesBordersInternal;
         public VertexPositionColorTexture[] verticesBordersExternal;
+
+        public int carsCount;
         
         public static RandomTrack createTrack()
         {
@@ -520,8 +522,8 @@ namespace WindowsGame2.GameElements
 
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
 
-                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + 8].Position = postitCenter;
-                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + 8].Active = true;
+                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount*2].Position = postitCenter;
+                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount * 2].Active = true;
             }
             else
             {
@@ -531,8 +533,8 @@ namespace WindowsGame2.GameElements
                 
 
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
-                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + 4].Position = postitCenter;
-                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index+4].Active = true;
+                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount].Position = postitCenter;
+                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount].Active = true;
             }
         }
 
