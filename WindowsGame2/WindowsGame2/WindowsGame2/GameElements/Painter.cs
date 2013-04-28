@@ -23,8 +23,13 @@ namespace WindowsGame2.GameElements
             dy = 0f;
             ax = 0f;
             ay = 0f;
-            div = 0.1f;
-            ease = (float)seed.NextDouble() * 0.2f + 0.5f;
+            //far away but nice
+            //div=0.1f
+            //ease = (float)seed.NextDouble() * 0.2f + 0.5f;
+            //close 
+            div = 0.2f; 
+            ease = (float)seed.NextDouble() * 0.4f + 0.5f;
+            
         }
     }
 }

@@ -10,6 +10,7 @@ Texture2D ink;
 Texture2D startLine;
 Texture2D alphabet;
 Texture2D popupMessage;
+Texture2D trailSketchBrush;
 
 float randomSeed;
 
@@ -48,6 +49,16 @@ sampler popupMessageSampler = sampler_state
 sampler trailSketchSampler = sampler_state
 {
     Texture = <trailSketch>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
+
+sampler trailSketchBrushSampler = sampler_state
+{
+    Texture = <trailSketchBrush>;
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
@@ -199,6 +210,19 @@ TrailVertexShaderOutput VertexShaderFunctionTrail(TrailVertexShaderInput input)
     return output;
 }
 
+TrailVertexShaderOutput VertexShaderFunctionTrailBrush(TrailVertexShaderInput input)
+{
+    TrailVertexShaderOutput output;
+
+    //float4 worldPosition = mul(input.Position, World);
+    float4 viewPosition = mul(input.Position, View);
+    output.Position = mul(viewPosition, Projection);
+	output.Color = input.Color;
+    output.uv = input.uv;
+
+    return output;
+}
+
 InkVertexShaderOutput VertexShaderFunctionInk(InkVertexShaderInput input)
 {
     InkVertexShaderOutput output;
@@ -274,10 +298,21 @@ float4 PixelShaderFunctionPopupMessage(ObjectVertexShaderOutput input) : COLOR0
 float4 PixelShaderFunctionTrail(TrailVertexShaderOutput input) : COLOR0
 {
     float4 texCol = tex2D(trailSketchSampler, input.uv);
-   // float alpha = texCol[0];
-    texCol *= input.Color;
-	//alpha=0.3;
-    return float4(texCol[0],texCol[1],texCol[2],texCol[3]);
+    float alpha = texCol[0];
+    //float alpha=texCol[3];
+	texCol *= input.Color;
+    return float4(texCol[0],texCol[1],texCol[2],alpha);
+
+}
+
+float4 PixelShaderFunctionTrailBrush(TrailVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(trailSketchBrushSampler, input.uv);
+    //float alpha = texCol[0];
+    float alpha=texCol[3];
+	texCol = input.Color;
+    return float4(texCol[0],texCol[1],texCol[2],alpha);
+
 }
 
 float4 PixelShaderFunctionInk(InkVertexShaderOutput input) : COLOR0
@@ -310,6 +345,12 @@ technique DoodleTechinque
     {
         VertexShader = compile vs_3_0 VertexShaderFunctionTrail();
         PixelShader = compile ps_3_0 PixelShaderFunctionTrail();
+    }
+
+	pass TrailPassBrush
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionTrailBrush();
+        PixelShader = compile ps_3_0 PixelShaderFunctionTrailBrush();
     }
 
 	pass BorderPass

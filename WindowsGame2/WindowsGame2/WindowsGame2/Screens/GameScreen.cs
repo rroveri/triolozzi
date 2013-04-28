@@ -35,7 +35,7 @@ namespace WindowsGame2.Screens
         #region Fields
 
         string[] collisionsQuotes;
-        string[] collisionsQuotesNormal = {"ouch!", "bam", "boom", "crash!", "toc", "bang bang", "splat!", "ka pow!", "pow!", "thud!", "bong", "bonk!", "ka rack!", "rat tat tat" };
+        string[] collisionsQuotesNormal = {"ouch!", "bam", "boom", "crash!", "toc", "bang", "splat!", "ka pow!", "pow!", "thud!", "bong", "bonk!", "ka rack!", "rat tat tat" };
         string[] collisionsQuotesSerbian = { "kurvo!", "jebem ti mater bre!!", "boli me kurac!", "najebo si!", "picko!", "pusi kurac bre!!", "odjebi bre!!" };
         string[] collisionsQuotesGreek = { "kavliaris", "gourouna!", "poutsos", "eimai eggios", "parakalo?", "ta mu klasis ta arhidia", "effretikon" };
         string[] collisionsQuotesItalian = { "zio borghiano", "scrofa!", "porcano", "oca!", "sbocco anale", "asilo nido" };
@@ -138,7 +138,7 @@ namespace WindowsGame2.Screens
 
             particleComponent = GameServices.GetService<ParticleComponent>();
 
-            collisionsQuotes = collisionsQuotesSerbian;
+            collisionsQuotes = collisionsQuotesNormal;
 
             dummyTexture = new Texture2D(GameServices.GetService<GraphicsDevice>(), 1, 1);
             Color dummyTextureColor = Color.White;
@@ -188,7 +188,8 @@ namespace WindowsGame2.Screens
             Texture2D startLine = Content.Load<Texture2D>("Materials/squares");
             Texture2D alphabet = Content.Load<Texture2D>("Images/alphabet");
             Texture2D messageBg = Content.Load<Texture2D>("Images/onomatopeeBg");
-            paperEffect.Parameters["trailSketch"].SetValue(dummyTexture);
+            paperEffect.Parameters["trailSketchBrush"].SetValue(dummyTexture);
+            paperEffect.Parameters["trailSketch"].SetValue(trailSketch);
             paperEffect.Parameters["objectSketch"].SetValue(objectSketch);
             paperEffect.Parameters["ink"].SetValue(ink);
             paperEffect.Parameters["startLine"].SetValue(startLine);
@@ -536,8 +537,8 @@ namespace WindowsGame2.Screens
                     }
                 }
                 Vector2 screen = Vector2.Transform(Cars[i].Position, cameraFollowing.Transform);
-              //  float densValue = fluid.fluidLevelAtPosition(screen);
-              //  if (densValue > 0.09f) Cars[i]._compound.LinearVelocity *= 0.8f;
+                //float densValue = fluid.fluidLevelAtPosition(screen);
+                //if (densValue > 0.09f) Cars[i]._compound.LinearVelocity *= 0.8f;
             }
 
             for (int i = Cars.Count; i < Cars.Count * 2; i++ )
@@ -745,8 +746,8 @@ namespace WindowsGame2.Screens
         public void DrawSprites(Camera camera)
         {
 
-            Vector2 greenPosition = Vector2.Transform(Cars[2].Position, cameraFollowing.Transform);
-           // fluid.Update(greenPosition);
+            //Vector2 greenPosition = Vector2.Transform(Cars[2].Position, cameraFollowing.Transform);
+            //fluid.Update(greenPosition);
 
 
             //compute camera matrices
@@ -783,17 +784,27 @@ namespace WindowsGame2.Screens
             paperEffect.Parameters["Projection"].SetValue(projection);
             paperEffect.Parameters["View"].SetValue(view);
 
-            paperEffect.CurrentTechnique.Passes["TrailPass"].Apply();
+            if (Car.isBrush)
+                paperEffect.CurrentTechnique.Passes["TrailPassBrush"].Apply();
+            else
+                paperEffect.CurrentTechnique.Passes["TrailPass"].Apply();
 
             for (int i = 0; i < Cars.Count; i++)
             {
                 //cars[i].Draw(spriteBatch, out trails[i]);
                 paperEffect.Parameters[paperEffects[i]].SetValue(Cars[i]._compound.Position);
-                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, Car.mMaximumTrailPoints *Car.paintersCount * 2);
-
+                if (Cars[i].mIsTrailLoop)
+                {
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, Car.mMaximumTrailPoints * Car.paintersCount * 2);
+                }
+                else if (Cars[i].mTrailPoints > 0)
+                {
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, Cars[i].mTrailPoints * Car.paintersCount * 2);
+                }
                 
             }
 
+            paperEffect.CurrentTechnique.Passes["TrailPass"].Apply();
             for (int i = 0; i < Cars.Count; i++)
             {
                 if (Cars[i].burnoutCounter > 0)
