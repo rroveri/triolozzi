@@ -24,6 +24,7 @@ using FarseerPhysics.Collision;
 using FarseerPhysics.Dynamics.Contacts;
 using X2DPE;
 using X2DPE.Helpers;
+//using fluid;
 
 namespace WindowsGame2.Screens
 
@@ -36,7 +37,7 @@ namespace WindowsGame2.Screens
         string[] collisionsQuotes;
         string[] collisionsQuotesNormal = {"ouch!", "bam", "boom", "crash!", "toc", "bang bang", "splat!", "ka pow!", "pow!", "thud!", "bong", "bonk!", "ka rack!", "rat tat tat" };
         string[] collisionsQuotesSerbian = { "kurvo!", "jebem ti mater bre!!", "boli me kurac!", "najebo si!", "picko!", "pusi kurac bre!!", "odjebi bre!!" };
-        string[] collisionsQuotesGreek = { "kavliaris", "gourouna!", "poutsos", "eimai eggios", "parakalo?", "putses ble!", "ore pusti!!", "ta mu klasis ta arhidia", "effretikon" };
+        string[] collisionsQuotesGreek = { "kavliaris", "gourouna!", "poutsos", "eimai eggios", "parakalo?", "ta mu klasis ta arhidia", "effretikon" };
         string[] collisionsQuotesItalian = { "zio borghiano", "scrofa!", "porcano", "oca!", "sbocco anale", "asilo nido" };
         
  
@@ -103,6 +104,8 @@ namespace WindowsGame2.Screens
 
         public int PlayersCount { get; set; }
 
+        private Texture2D dummyTexture;
+
         #endregion
 
         /// <summary>
@@ -137,7 +140,12 @@ namespace WindowsGame2.Screens
             particleComponent = GameServices.GetService<ParticleComponent>();
 
             collisionsQuotes = collisionsQuotesSerbian;
-           
+
+            dummyTexture = new Texture2D(GameServices.GetService<GraphicsDevice>(), 1, 1);
+            Color dummyTextureColor = Color.White;
+            dummyTextureColor.A = 50;
+            dummyTexture.SetData(new Color[] { dummyTextureColor });
+
         }
  
            
@@ -182,7 +190,7 @@ namespace WindowsGame2.Screens
             Texture2D startLine = Content.Load<Texture2D>("Materials/squares");
             Texture2D alphabet = Content.Load<Texture2D>("Images/alphabet");
             Texture2D messageBg = Content.Load<Texture2D>("Images/onomatopeeBg");
-            paperEffect.Parameters["trailSketch"].SetValue(trailSketch);
+            paperEffect.Parameters["trailSketch"].SetValue(dummyTexture);
             paperEffect.Parameters["objectSketch"].SetValue(objectSketch);
             paperEffect.Parameters["ink"].SetValue(ink);
             paperEffect.Parameters["startLine"].SetValue(startLine);
@@ -531,8 +539,8 @@ namespace WindowsGame2.Screens
                     }
                 }
                 Vector2 screen = Vector2.Transform(Cars[i].Position, cameraFollowing.Transform);
-                float densValue = fluid.fluidLevelAtPosition(screen);
-                if (densValue > 0.09f) Cars[i]._compound.LinearVelocity *= 0.8f;
+              //  float densValue = fluid.fluidLevelAtPosition(screen);
+              //  if (densValue > 0.09f) Cars[i]._compound.LinearVelocity *= 0.8f;
             }
 
             for (int i = Cars.Count; i < Cars.Count * 2; i++ )
@@ -786,7 +794,7 @@ namespace WindowsGame2.Screens
             {
                 //cars[i].Draw(spriteBatch, out trails[i]);
                 paperEffect.Parameters[paperEffects[i]].SetValue(Cars[i]._compound.Position);
-                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, 130 * 2);
+                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, Car.mMaximumTrailPoints *Car.paintersCount * 2);
 
                 
             }
