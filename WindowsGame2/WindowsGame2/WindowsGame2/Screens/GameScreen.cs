@@ -629,23 +629,30 @@ namespace WindowsGame2.Screens
                     if (maxImpulse > 1)
                     {
                         //randomly choose whether front or back
-                        int sign = 3;
-                        if (Random.Next(2)==1)
-                        {
-                            sign = -1;
-                        }
-                        Vector2 carTail = Cars[i]._compound.Position + sign* Cars[i].mDirection * Cars[i].tailOffset * 4;
-                        Vector2 carDir = Cars[i].mDirection;
-                        Vector2 carDirNormal = Vector2.Normalize(new Vector2(-carDir.Y, carDir.X));
-                        int newIndex = Random.Next(collisionsQuotes.Count());
-                        stringWriter.addString(collisionsQuotes[newIndex], Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);
-                        Cars[i].resetTrail();
 
-                        particleComponent.particleEmitterList[i].Position = Cars[i].Position;
-                        particleComponent.particleEmitterList[i].Active = true;
-                        
-                        // Play sound for car that crashed
-                        soundManager.PlaySound("crash");
+                        if (Cars[i]._compound.LinearVelocity.Length() > 2.0f)
+                        {
+
+                            int sign = 3;
+                            if (Random.Next(2) == 1)
+                            {
+                                sign = -1;
+                            }
+
+                            Vector2 carTail = Cars[i]._compound.Position + sign * Cars[i].mDirection * Cars[i].tailOffset * 4;
+                            Vector2 carDir = Cars[i].mDirection;
+                            Vector2 carDirNormal = Vector2.Normalize(new Vector2(-carDir.Y, carDir.X));
+                            int newIndex = Random.Next(collisionsQuotes.Count());
+                            stringWriter.addString(collisionsQuotes[newIndex], Cars[i].mColor, maxImpulse / 5f, carTail - carDirNormal, carDirNormal);
+                            Cars[i].resetTrail();
+
+                            particleComponent.particleEmitterList[i].Position = Cars[i].Position;
+                            particleComponent.particleEmitterList[i].Active = true;
+
+                            // Play sound for car that crashed
+                            soundManager.PlaySound("crash");
+
+                        }
                     }
                 }
             }
