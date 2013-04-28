@@ -88,6 +88,8 @@ namespace WindowsGame2.Screens
         short[] triangleListIndices;
         int maxNumberOfTriangles = 10000;
 
+        VertexPositionColorTexture[] verticesBorders;
+
         Vertices startingPos;
 
         public bool readyToStart;
@@ -190,6 +192,7 @@ namespace WindowsGame2.Screens
             Texture2D startLine = Content.Load<Texture2D>("Materials/squares");
             Texture2D alphabet = Content.Load<Texture2D>("Images/alphabet");
             Texture2D messageBg = Content.Load<Texture2D>("Images/onomatopeeBg");
+            Texture2D externalTex = Content.Load<Texture2D>("Images/external_bg");
             paperEffect.Parameters["trailSketchBrush"].SetValue(dummyTexture);
             paperEffect.Parameters["trailSketch"].SetValue(trailSketch);
             paperEffect.Parameters["objectSketch"].SetValue(objectSketch);
@@ -197,6 +200,7 @@ namespace WindowsGame2.Screens
             paperEffect.Parameters["startLine"].SetValue(startLine);
             paperEffect.Parameters["alphabet"].SetValue(alphabet);
             paperEffect.Parameters["popupMessage"].SetValue(messageBg);
+            paperEffect.Parameters["externalSketch"].SetValue(externalTex);
             randomArray = new float[16 * 16];
             Color[] randomCol = new Color[16 * 16];
             randomArray[0] = 0.5f;
@@ -257,6 +261,8 @@ namespace WindowsGame2.Screens
             basicVert = new VertexPositionColorTexture[maxNumberOfTriangles];
             for (int i = 0; i < maxNumberOfTriangles; i++) basicVert[i].TextureCoordinate = new Vector2(-1);
             triangleListIndices = new short[maxNumberOfTriangles * 3];
+
+            verticesBorders = new VertexPositionColorTexture[randomRaceTrack.curvePointsInternal.Count];
             
             //add particles for collisions with walls and cars
             for (int i = 0; i < Cars.Count; i++)
@@ -830,9 +836,12 @@ namespace WindowsGame2.Screens
             paperEffect.CurrentTechnique.Passes["BorderPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
 
-            paperEffect.CurrentTechnique.Passes["ObjectPass"].Apply();
 
+            paperEffect.CurrentTechnique.Passes["ExternalSketchPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.verticesBordersInternal, 0, randomRaceTrack.verticesBordersInternal.Count() / 3);
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.verticesBordersExternal, 0, randomRaceTrack.verticesBordersExternal.Count() / 3);
             
+            paperEffect.CurrentTechnique.Passes["ObjectPass"].Apply();
 
             // draw polygons
             for (int i = 0; i < polygonsList.Count; i++)
@@ -844,7 +853,6 @@ namespace WindowsGame2.Screens
             {
 
                 //draw shader
-
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
             }
 

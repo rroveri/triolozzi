@@ -11,6 +11,7 @@ Texture2D startLine;
 Texture2D alphabet;
 Texture2D popupMessage;
 Texture2D trailSketchBrush;
+Texture2D externalSketch;
 
 float randomSeed;
 
@@ -69,6 +70,16 @@ sampler trailSketchBrushSampler = sampler_state
 sampler objectSketchSampler = sampler_state
 {
     Texture = <objectSketch>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
+
+sampler externalSketchSampler = sampler_state
+{
+    Texture = <externalSketch>;
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
@@ -141,6 +152,20 @@ struct InkVertexShaderOutput
 };
 
 ObjectVertexShaderOutput VertexShaderFunctionObject(ObjectVertexShaderInput input)
+{
+    ObjectVertexShaderOutput output;
+
+    //float4 worldPosition = mul(input.Position, World);
+    float4 viewPosition = mul(input.Position, View);
+    output.Position = mul(viewPosition, Projection);
+	output.Color = input.Color;
+	output.xy = float2(input.Position[0],input.Position[1]);
+    output.uv = input.uv;
+
+    return output;
+}
+
+ObjectVertexShaderOutput VertexShaderFunctionExternalSketch(ObjectVertexShaderInput input)
 {
     ObjectVertexShaderOutput output;
 
@@ -274,6 +299,17 @@ float4 PixelShaderFunctionObject(ObjectVertexShaderOutput input) : COLOR0
     //return float4(texCol[0],texCol[1],texCol[2],alpha);
 }
 
+float4 PixelShaderFunctionExternalSketch(ObjectVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(externalSketchSampler, input.uv/24);
+    float alpha = texCol[0];
+    texCol *= input.Color;
+	texCol += input.Color * objetAlpha;
+    
+    return float4(texCol[0],texCol[1],texCol[2],alpha);
+
+}
+
 float4 PixelShaderFunctionStartLine(ObjectVertexShaderOutput input) : COLOR0
 {
     float4 texCol = tex2D(startLineSampler, input.xy);
@@ -340,6 +376,13 @@ technique DoodleTechinque
         VertexShader = compile vs_3_0 VertexShaderFunctionObject();
         PixelShader = compile ps_3_0 PixelShaderFunctionObject();
     }
+
+	pass ExternalSketchPass
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionExternalSketch();
+        PixelShader = compile ps_3_0 PixelShaderFunctionExternalSketch();
+    }
+
 
     pass TrailPass
     {

@@ -66,6 +66,9 @@ namespace WindowsGame2.GameElements
         public List<int> dreamsMiddlePoints;
 
         private Texture2D rainbowTex;
+
+        public VertexPositionColorTexture[] verticesBordersInternal;
+        public VertexPositionColorTexture[] verticesBordersExternal;
         
         public static RandomTrack createTrack()
         {
@@ -134,6 +137,8 @@ namespace WindowsGame2.GameElements
 
             internalNormalsCoefficients = new List<float>();
             externalNormalsCoefficients = new List<float>();
+
+            
 
         }
     
@@ -320,10 +325,15 @@ namespace WindowsGame2.GameElements
                 normalInternalInk.Add(-Vector2.Normalize(curvePointsInternal[j]) * pathWidth * inkWidth);
             }
 
+            verticesBordersExternal = new VertexPositionColorTexture[curvePointsExternal.Count * 6];
+            verticesBordersInternal = new VertexPositionColorTexture[curvePointsInternal.Count * 3];
+            for (int i = 0; i < curvePointsInternal.Count * 3; i++) verticesBordersInternal[i].TextureCoordinate = new Vector2(-1);
+            for (int i = 0; i < curvePointsExternal.Count * 6; i++) verticesBordersExternal[i].TextureCoordinate = new Vector2(-1);
 
-                //set borders triangles for shaders
-                //external borders
-                myArray = new VertexPositionColorTexture[(curvePointsExternal.Count) * 6 + (curvePointsInternal.Count) * 6];
+
+            //set borders triangles for shaders
+            //external borders
+            myArray = new VertexPositionColorTexture[(curvePointsExternal.Count) * 6 + (curvePointsInternal.Count) * 6];
             for (int i = 0; i < curvePointsExternal.Count; i++)
             {
                 int preIndex = i - 1;
@@ -351,6 +361,53 @@ namespace WindowsGame2.GameElements
                 myArray[i * 6 + 4].TextureCoordinate = new Vector2(1, 1);
                 myArray[i * 6 + 5].TextureCoordinate = new Vector2(1, 0);
 
+                //external texture background
+
+                float distance = 10;
+                verticesBordersExternal[i * 6].Position = new Vector3(curvePointsExternal[preIndex], -0.1f);
+                verticesBordersExternal[i * 6 + 1].Position = new Vector3(curvePointsExternal[i], -0.1f);
+                verticesBordersExternal[i * 6 + 2].Position = new Vector3(curvePointsExternal[preIndex] + normalExternalInk[preIndex] / pathWidth * distance, -0.1f);
+                verticesBordersExternal[i * 6 + 3].Position = new Vector3(curvePointsExternal[i], -0.1f);
+                verticesBordersExternal[i * 6 + 4].Position = new Vector3(curvePointsExternal[preIndex] + normalExternalInk[preIndex] / pathWidth * distance, -0.1f);
+                verticesBordersExternal[i * 6 + 5].Position = new Vector3(curvePointsExternal[i] + normalExternalInk[i] / pathWidth * distance, -0.1f);
+                verticesBordersExternal[i * 6].Color = Color.Black;
+                verticesBordersExternal[i * 6+1].Color = Color.Black;
+                verticesBordersExternal[i * 6+2].Color = Color.Black;
+                verticesBordersExternal[i * 6+3].Color = Color.Black;
+                verticesBordersExternal[i * 6+4].Color = Color.Black;
+                verticesBordersExternal[i * 6+5].Color = Color.Black;
+                if (verticesBordersExternal[i * 6].TextureCoordinate.X == -1)
+                {
+                    verticesBordersExternal[i * 6].TextureCoordinate.X = (new Vector3(curvePointsExternal[preIndex], -0.1f)).X;
+                    verticesBordersExternal[i * 6].TextureCoordinate.Y = (new Vector3(curvePointsExternal[preIndex], -0.1f)).Y;
+                }
+                if (verticesBordersExternal[i * 6 + 1].TextureCoordinate.X == -1)
+                {
+                    verticesBordersExternal[i * 6 + 1].TextureCoordinate.X = (new Vector3(curvePointsExternal[i], -0.1f)).X;
+                    verticesBordersExternal[i * 6 + 1].TextureCoordinate.Y = (new Vector3(curvePointsExternal[i], -0.1f)).Y;
+                }
+                if (verticesBordersExternal[i * 6 + 2].TextureCoordinate.X == -1)
+                {
+                    verticesBordersExternal[i * 6 + 2].TextureCoordinate.X = (new Vector3(curvePointsExternal[preIndex] + normalExternalInk[preIndex] / pathWidth * distance, -0.1f)).X;
+                    verticesBordersExternal[i * 6 + 2].TextureCoordinate.Y = (new Vector3(curvePointsExternal[preIndex] + normalExternalInk[preIndex] / pathWidth * distance, -0.1f)).Y;
+                }
+                if (verticesBordersExternal[i * 6 + 3].TextureCoordinate.X == -1)
+                {
+                    verticesBordersExternal[i * 6 + 3].TextureCoordinate.X = (new Vector3(curvePointsExternal[i], -0.1f)).X;
+                    verticesBordersExternal[i * 6 + 3].TextureCoordinate.Y = (new Vector3(curvePointsExternal[i], -0.1f)).Y;
+                }
+                if (verticesBordersExternal[i * 6 + 4].TextureCoordinate.X == -1)
+                {
+                    verticesBordersExternal[i * 6 + 4].TextureCoordinate.X = (new Vector3(curvePointsExternal[preIndex] + normalExternalInk[preIndex] / pathWidth * distance, -0.1f)).X;
+                    verticesBordersExternal[i * 6 + 4].TextureCoordinate.Y = (new Vector3(curvePointsExternal[preIndex] + normalExternalInk[preIndex] / pathWidth * distance, -0.1f)).Y;
+                }
+                if (verticesBordersExternal[i * 6 + 5].TextureCoordinate.X == -1)
+                {
+                    verticesBordersExternal[i * 6 + 5].TextureCoordinate.X = (new Vector3(curvePointsExternal[i] + normalExternalInk[i] / pathWidth * distance, -0.1f)).X;
+                    verticesBordersExternal[i * 6 + 5].TextureCoordinate.Y = (new Vector3(curvePointsExternal[i] + normalExternalInk[i] / pathWidth * distance, -0.1f)).Y;
+                }
+
+
              }
 
             //internal borders
@@ -377,6 +434,31 @@ namespace WindowsGame2.GameElements
                 myArray[(i + curvePointsExternal.Count) * 6 + 3].TextureCoordinate = new Vector2(0, 0);
                 myArray[(i + curvePointsExternal.Count) * 6 + 4].TextureCoordinate = new Vector2(1, 1);
                 myArray[(i + curvePointsExternal.Count) * 6 + 5].TextureCoordinate = new Vector2(1, 0);
+
+                
+                
+                //external texture background
+                verticesBordersInternal[i * 3].Position = new Vector3(curvePointsInternal[preIndex], -0.1f);
+                verticesBordersInternal[i * 3 + 1].Position = new Vector3(curvePointsInternal[i], -0.1f);
+                verticesBordersInternal[i * 3 + 2].Position = new Vector3(0,0, -0.1f);
+                verticesBordersInternal[i * 3].Color = Color.Black;
+                verticesBordersInternal[i * 3 + 1].Color = Color.Black;
+                verticesBordersInternal[i * 3 + 2].Color = Color.Black;
+                if (verticesBordersInternal[i * 3].TextureCoordinate.X == -1)
+                {
+                    verticesBordersInternal[i * 3].TextureCoordinate.X = (new Vector3(curvePointsInternal[preIndex], -0.1f)).X;
+                    verticesBordersInternal[i * 3].TextureCoordinate.Y = (new Vector3(curvePointsInternal[preIndex], -0.1f)).Y;
+                }
+                if (verticesBordersInternal[i * 3 + 1].TextureCoordinate.X == -1)
+                {
+                    verticesBordersInternal[i * 3 + 1].TextureCoordinate.X = (new Vector3(curvePointsInternal[i], -0.1f)).X;
+                    verticesBordersInternal[i * 3 + 1].TextureCoordinate.Y = (new Vector3(curvePointsInternal[i], -0.1f)).Y;
+                }
+                if (verticesBordersInternal[i * 3 + 2].TextureCoordinate.X == -1)
+                {
+                    verticesBordersInternal[i * 3 + 2].TextureCoordinate.X = (new Vector3(0, 0, -0.1f)).X;
+                    verticesBordersInternal[i * 3 + 2].TextureCoordinate.Y = (new Vector3(0, 0, -0.1f)).Y;
+                }
 
             }
 
@@ -523,6 +605,12 @@ namespace WindowsGame2.GameElements
                 currentTextureIndex = 0;
             }
             
+        }
+
+        public void createInternalTriangles(ref VertexPositionColorTexture[] verticesBorders)
+        {
+            //verticesBorders
+
         }
 
         void DrawLine(SpriteBatch batch, float width, Color color, Vector2 point1, Vector2 point2)
