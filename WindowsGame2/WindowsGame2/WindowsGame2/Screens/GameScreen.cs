@@ -103,6 +103,7 @@ namespace WindowsGame2.Screens
 
         ParticleComponent particleComponent;
         Fluid fluid;
+        Vector2 fluidPos = new Vector2(-1);
 
         public int PlayersCount { get; set; }
 
@@ -712,8 +713,9 @@ namespace WindowsGame2.Screens
        
             spriteBatch.End();
 
-
-            Vector2 brownPosition = Vector2.Transform(Cars[3].Position, cameraFollowing.Transform);
+            if (fluidPos.X == -1)
+                fluidPos = Cars[3].Position;
+            Vector2 brownPosition = Vector2.Transform(fluidPos, cameraFollowing.Transform);
             fluid.Draw(brownPosition);
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
