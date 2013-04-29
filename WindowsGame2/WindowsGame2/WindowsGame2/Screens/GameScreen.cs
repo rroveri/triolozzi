@@ -468,8 +468,8 @@ namespace WindowsGame2.Screens
                     }
                 }
                 Vector2 screen = Vector2.Transform(Cars[i].Position, cameraFollowing.Transform);
-                //float densValue = fluid.fluidLevelAtPosition(screen);
-                //if (densValue > 0.09f) Cars[i]._compound.LinearVelocity *= 0.8f;
+                float densValue = fluid.fluidLevelAtPosition(screen);
+                if (densValue > 0.09f) Cars[i]._compound.LinearVelocity *= 0.8f;
             }
 
             for (int i = Cars.Count; i < Cars.Count * 2; i++ )
@@ -686,8 +686,8 @@ namespace WindowsGame2.Screens
         public void DrawSprites(Camera camera)
         {
 
-            //Vector2 greenPosition = Vector2.Transform(Cars[2].Position, cameraFollowing.Transform);
-            //fluid.Update(greenPosition);
+            Vector2 greenPosition = Vector2.Transform(Cars[2].Position, cameraFollowing.Transform);
+            fluid.Update(greenPosition);
 
 
             //compute camera matrices
@@ -713,8 +713,8 @@ namespace WindowsGame2.Screens
             spriteBatch.End();
 
 
-            //Vector2 brownPosition = Vector2.Transform(Cars[3].Position, cameraFollowing.Transform);
-            //fluid.Draw(brownPosition);
+            Vector2 brownPosition = Vector2.Transform(Cars[3].Position, cameraFollowing.Transform);
+            fluid.Draw(brownPosition);
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;

@@ -29,6 +29,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
+using System.IO;
 
 namespace WindowsGame2
 {
@@ -58,6 +59,7 @@ namespace WindowsGame2
         RenderTarget2D Temp0, Temp1, Temp2, Temp3;
         public RenderTarget2D FinalRender;
         Color[] finalData;
+        HalfVector4[] densityData;
 
         // Spritebatch settings
         SpriteSortMode SortMode = SpriteSortMode.Immediate;
@@ -129,7 +131,7 @@ namespace WindowsGame2
 
             // Setup RenderTarget2D's
             InputVelocities = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, false, ColorFormat, ZFormat);
-            InputDensities = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, false, ColorFormat, ZFormat);
+            InputDensities  = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, false, ColorFormat, ZFormat);
             Velocity        = new RenderTarget2D(graphicsDevice, gridSize, gridSize, false, ColorFormat, ZFormat);
             Density         = new RenderTarget2D(graphicsDevice, gridSize, gridSize, false, ColorFormat, ZFormat);
             Pressure        = new RenderTarget2D(graphicsDevice, gridSize, gridSize, false, ColorFormat, ZFormat);
@@ -140,6 +142,7 @@ namespace WindowsGame2
             Temp3           = new RenderTarget2D(graphicsDevice, gridSize, gridSize, false, ColorFormat, ZFormat);
             FinalRender = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, false, ColorFormat, ZFormat);
             finalData = new Color[renderWidth * renderWidth];
+            densityData = new HalfVector4[gridSize*gridSize];
 
             halfRenderWidth = (float)renderWidth / (float)GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth;
             halfRenderHeight = (float)renderHeight / (float)GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight;
@@ -182,6 +185,11 @@ namespace WindowsGame2
 
             colorMuco = new Color(0.1f,0.6f,0.1f);
             brushColor = colorMuco;
+
+            Texture2D Densitytd = c.Load<Texture2D>("Images/mucus/color_scrofa");
+            Densitytd.GetData<HalfVector4>(densityData);
+            Density.SetData<HalfVector4>(densityData);
+            
         }
 
         // Starts the VelocitySplat pass
@@ -346,6 +354,14 @@ namespace WindowsGame2
             FinalBlur.GetData(finalData);
 
             graphicsDevice.SetRenderTarget(null);
+
+
+            if (Keyboard.GetState().IsKeyDown(Keys.T))
+            {
+                Stream pngFile = File.OpenWrite("color_" + "scrofa" + ".png");
+                Density.SaveAsPng(pngFile, Density.Width, Density.Height);
+                pngFile.Close();
+            }
 
         }
 

@@ -210,7 +210,7 @@ float4 PSFinal(FinalVertexOutput input) : COLOR0
 	final = float4(0.0,1,0.0,alpha);*/
     if(sum < 0.3)
     {
-        final[3] = sum*sum;
+        final[3] = sum*sum +0.3;
     }
     if(final[0] < 0.05) final[0] = 0.05;
     if(final[1] < 0.3) final[1] = 0.3;
