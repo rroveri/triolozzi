@@ -187,9 +187,7 @@ namespace WindowsGame2
             brushColor = colorMuco;
 
             Texture2D Densitytd = c.Load<Texture2D>("Images/mucus/color_scrofa");
-            Densitytd.GetData<HalfVector4>(densityData);
-            Density.SetData<HalfVector4>(densityData);
-            
+            resetWithDensityTexture(Densitytd);
         }
 
         // Starts the VelocitySplat pass
@@ -358,9 +356,7 @@ namespace WindowsGame2
 
             if (Keyboard.GetState().IsKeyDown(Keys.T))
             {
-                Stream pngFile = File.OpenWrite("color_" + "scrofa" + ".png");
-                Density.SaveAsPng(pngFile, Density.Width, Density.Height);
-                pngFile.Close();
+                saveDensityToTexture();
             }
 
         }
@@ -433,5 +429,26 @@ namespace WindowsGame2
                 Color.White);
             spriteBatch.End();
         }
+
+        public void resetWithDensityTexture(Texture2D densTex)
+        {
+            Color[] array = new Color[gridSize * gridSize];
+            densTex.GetData(array);
+            HalfVector4 hcol;
+            for (int i = 0; i < densityData.Count(); i++)
+            {
+                hcol = new HalfVector4(array[i].ToVector4());
+                densityData[i] = hcol;
+            }
+            Density.SetData(densityData);
+        }
+
+        private void saveDensityToTexture()
+        {
+            Stream pngFile = File.OpenWrite("color_" + "scrofa" + ".png");
+            Density.SaveAsPng(pngFile, Density.Width, Density.Height);
+            pngFile.Close();
+        }
+
     }
 }
