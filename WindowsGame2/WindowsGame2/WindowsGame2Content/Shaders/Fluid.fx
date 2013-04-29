@@ -285,8 +285,8 @@ Technique Final
 	pass Final
 	{
         AlphaBlendEnable = TRUE;
-        //DestBlend = INVSRCALPHA;
-        //SrcBlend = SRCALPHA;
+        DestBlend = INVSRCALPHA;
+        SrcBlend = SRCALPHA;
 		VertexShader = compile vs_2_0 VSFinal();
 		PixelShader = compile ps_2_0 PSFinal();
 	}

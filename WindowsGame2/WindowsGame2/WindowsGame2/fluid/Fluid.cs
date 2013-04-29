@@ -355,7 +355,7 @@ namespace WindowsGame2
             this.position.X = position.X / GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth * 2 - 1;
             this.position.Y = position.Y / GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight * 2 - 1;
             updatePosition();
-            graphicsDevice.Clear(Color.White);
+            //graphicsDevice.Clear(Color.White);
             Shader.CurrentTechnique = Shader.Techniques["Final"];
             Shader.CurrentTechnique.Passes["Final"].Apply();
             Shader.Parameters["finalTexture"].SetValue(FinalBlur);
