@@ -144,8 +144,8 @@ namespace WindowsGame2.Screens
             collisionsQuotes = collisionsQuotesNormal;
 
             dummyTexture = new Texture2D(GameServices.GetService<GraphicsDevice>(), 1, 1);
-            Color dummyTextureColor = Color.White;
-            dummyTextureColor.A = 50;
+            byte whiteAlpha = 50;
+            Color dummyTextureColor = new Color(whiteAlpha, whiteAlpha, whiteAlpha);
             dummyTexture.SetData(new Color[] { dummyTextureColor });
 
         }

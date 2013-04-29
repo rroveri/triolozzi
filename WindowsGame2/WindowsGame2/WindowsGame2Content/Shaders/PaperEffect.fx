@@ -344,9 +344,8 @@ float4 PixelShaderFunctionTrail(TrailVertexShaderOutput input) : COLOR0
 float4 PixelShaderFunctionTrailBrush(TrailVertexShaderOutput input) : COLOR0
 {
     float4 texCol = tex2D(trailSketchBrushSampler, input.uv);
-    //float alpha = texCol[0];
-    float alpha=texCol[3];
-	texCol = input.Color;
+    float alpha = texCol.r;
+	texCol *= input.Color;
     return float4(texCol[0],texCol[1],texCol[2],alpha);
 
 }
