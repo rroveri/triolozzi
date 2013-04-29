@@ -186,9 +186,9 @@ namespace WindowsGame2
             colorMuco = new Color(0.1f,0.6f,0.1f);
             brushColor = colorMuco;
 
-            Texture2D Densitytd = c.Load<Texture2D>("Images/mucus/color_scrofa");
-            Densitytd.GetData<HalfVector4>(densityData);
-            Density.SetData<HalfVector4>(densityData);
+            //Texture2D Densitytd = c.Load<Texture2D>("Images/mucus/color_scrofa");
+            //Densitytd.GetData<HalfVector4>(densityData);
+           // Density.SetData<HalfVector4>(densityData);
             
         }
 

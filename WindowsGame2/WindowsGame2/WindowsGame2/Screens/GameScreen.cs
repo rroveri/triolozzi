@@ -109,6 +109,8 @@ namespace WindowsGame2.Screens
 
         private Texture2D dummyTexture;
 
+        public SneezesManager mySneezesManager;
+
         #endregion
 
         /// <summary>
@@ -149,6 +151,7 @@ namespace WindowsGame2.Screens
             Color dummyTextureColor = new Color(whiteAlpha, whiteAlpha, whiteAlpha);
             dummyTexture.SetData(new Color[] { dummyTextureColor });
 
+            mySneezesManager = new SneezesManager();
         }
  
            
@@ -183,6 +186,8 @@ namespace WindowsGame2.Screens
             Logic.DidFinishLap += randomRaceTrack.ResetStickyNotes;
             
             prevKeyboardState = Keyboard.GetState();
+
+            mySneezesManager.randomTrack = randomRaceTrack;
 
 
             paperEffect = Content.Load<Effect>("Shaders/PaperEffect");
@@ -446,6 +451,8 @@ namespace WindowsGame2.Screens
                 }
             }
             */
+
+            mySneezesManager.Update(gameTime,Cars);
                 
         }
 
@@ -713,10 +720,11 @@ namespace WindowsGame2.Screens
        
             spriteBatch.End();
 
-            if (fluidPos.X == -1)
-                fluidPos = Cars[3].Position;
-            Vector2 brownPosition = Vector2.Transform(fluidPos, cameraFollowing.Transform);
-            fluid.Draw(brownPosition);
+            //if (fluidPos.X == -1)
+            //    fluidPos = Cars[3].Position;
+            //Vector2 brownPosition = Vector2.Transform(fluidPos, cameraFollowing.Transform);
+            Vector2 fluidScreenPosition = Vector2.Transform(mySneezesManager.sneezePosition, cameraFollowing.Transform);
+            fluid.Draw(fluidScreenPosition);
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
