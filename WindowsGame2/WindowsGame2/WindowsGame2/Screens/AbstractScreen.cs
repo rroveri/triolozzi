@@ -173,21 +173,6 @@ namespace WindowsGame2
         }
 
         PlayerIndex? controllingPlayer;
-
-        /// <summary>
-        /// Gets whether or not this screen is serializable. If this is true,
-        /// the screen will be recorded into the screen manager's state and
-        /// its Serialize and Deserialize methods will be called as appropriate.
-        /// If this is false, the screen will be ignored during serialization.
-        /// By default, all screens are assumed to be serializable.
-        /// </summary>
-        public bool IsSerializable
-        {
-            get { return isSerializable; }
-            protected set { isSerializable = value; }
-        }
-
-        bool isSerializable = true;
         
         
         /// <summary>
@@ -303,24 +288,9 @@ namespace WindowsGame2
         /// </summary>
         public virtual void Draw(GameTime gameTime) { }
 
-
-        /// <summary>
-        /// Tells the screen to go away. Unlike ScreenManager.RemoveScreen, which
-        /// instantly kills the screen, this method respects the transition timings
-        /// and will give the screen a chance to gradually transition off.
-        /// </summary>
         public void ExitScreen()
         {
-            //if (TransitionOffTime == TimeSpan.Zero)
-            //{
-            //    // If the screen has a zero transition time, remove it immediately.
-            //    ScreenManager.RemoveScreen(this);
-            //}
-            //else
-            {
-                // Otherwise flag that it should transition off and then exit.
-                isExiting = true;
-            }
+            isExiting = true;
         }
     }
 }

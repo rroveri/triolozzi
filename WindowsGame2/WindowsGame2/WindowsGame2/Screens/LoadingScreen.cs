@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace WindowsGame2
 {
@@ -8,11 +9,17 @@ namespace WindowsGame2
     {
         #region Fields
 
+        private Texture2D _backgroundTexture;
 
         #endregion
 
         #region Initialization
 
+        public override void LoadContent()
+        {
+            base.LoadContent();
+            _backgroundTexture = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/bgNew");
+        }
 
         #endregion
 
@@ -49,9 +56,13 @@ namespace WindowsGame2
 
             Color color = Color.White * TransitionAlpha;
 
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.Opaque, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone);
+            spriteBatch.Draw(_backgroundTexture, Vector2.Zero, ScreenManager.GraphicsDevice.Viewport.Bounds, Color.White, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1f);
+            spriteBatch.End();
+
             // Draw the text.
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, message, textPosition, color);
+            spriteBatch.DrawString(font, message, textPosition, Color.Black);
             spriteBatch.End();
         }
 
