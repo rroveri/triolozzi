@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using System;
 using System.Threading;
+using System.ComponentModel;
 
 namespace WindowsGame2.Screens
 {
@@ -237,6 +238,17 @@ namespace WindowsGame2.Screens
 
         #region Handle Input
 
+        private void StartGame(object sender, DoWorkEventArgs e)
+        {
+            ScreenManager.AddScreen(new GameScreen(), null, false);
+            ScreenManager.GetScreen<GameScreen>().InitializeGame(PlayersCount, ref _selectedCars, ref _availableCars, ref _selectedColors, ref _availableColors);
+        }
+
+        private void StartGameCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            ScreenManager.ShowScreen<GameScreen>();
+        }
+
         public override void HandleInput(GameTime gameTime, InputState input)
         {
             base.HandleInput(gameTime, input);
@@ -245,9 +257,12 @@ namespace WindowsGame2.Screens
             if (IsEveryoneReady())
             {
                 ScreenManager.ShowScreen<LoadingScreen>();
-                ScreenManager.AddScreen(new GameScreen(), null, false);
-                ScreenManager.GetScreen<GameScreen>().InitializeGame(PlayersCount, ref _selectedCars, ref _availableCars, ref _selectedColors, ref _availableColors);
-                ScreenManager.ShowScreen<GameScreen>();
+
+                BackgroundWorker worker = new BackgroundWorker();
+                worker.DoWork += StartGame;
+                worker.RunWorkerCompleted += StartGameCompleted;
+                worker.RunWorkerAsync();
+
                 //_soundManager.PlaySong("Cracks", false);
                 return;
             }
