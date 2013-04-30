@@ -33,7 +33,7 @@ using System.IO;
 
 namespace WindowsGame2
 {
-    class Fluid
+    public class Fluid
     {
         GraphicsDevice graphicsDevice;
         SpriteBatch spriteBatch;
@@ -60,6 +60,8 @@ namespace WindowsGame2
         public RenderTarget2D FinalRender;
         Color[] finalData;
         HalfVector4[] densityData;
+
+        Texture2D[] densityTextures = new Texture2D[1];
 
         // Spritebatch settings
         SpriteSortMode SortMode = SpriteSortMode.Immediate;
@@ -186,10 +188,13 @@ namespace WindowsGame2
             colorMuco = new Color(0.1f,0.6f,0.1f);
             brushColor = colorMuco;
 
-            //Texture2D Densitytd = c.Load<Texture2D>("Images/mucus/color_scrofa");
-            //Densitytd.GetData<HalfVector4>(densityData);
+           // Texture2D Densitytd = c.Load<Texture2D>("Images/mucus/color_scrofa");
+           // Densitytd.GetData<HalfVector4>(densityData);
            // Density.SetData<HalfVector4>(densityData);
             
+            Texture2D densTex = c.Load<Texture2D>("Images/mucus/color_scrofa");
+            densityTextures[0] = densTex;
+            resetDensity();
         }
 
         // Starts the VelocitySplat pass
@@ -229,10 +234,16 @@ namespace WindowsGame2
 
         public float fluidLevelAtPosition(Vector2 position)
         {
+            //position -= referencePosition;
+            //if (position.X < 0 || position.Y < 0 || position.X >= renderWidth - 1 || position.Y >= renderHeight - 1) return 0;
+            //int index = (int)position.Y * renderHeight + (int)position.X;
+            //return finalData[index].ToVector3().LengthSquared();
+
             position -= referencePosition;
-            if (position.X < 0 || position.Y < 0 || position.X >= renderWidth - 1 || position.Y >= renderHeight - 1) return 0;
-            int index = (int)position.Y * renderHeight + (int)position.X;
-            return finalData[index].ToVector3().LengthSquared();
+            if (position.X < 0 || position.Y < 0 || position.X >= gridSize - 1 || position.Y >= gridSize - 1) return 0;
+            int index = (int)position.Y * gridSize + (int)position.X;
+            Vector4 densityColor = densityData[index].ToVector4();
+            return densityColor.X * densityColor.X + densityColor.Y * densityColor.Y + densityColor.Z * densityColor.Z;
         }
 
         // Render the fluid to the screen
@@ -340,27 +351,27 @@ namespace WindowsGame2
             spriteBatch.End();
 
             // Gaussian Blurr
-            graphicsDevice.SetRenderTarget(HTarget);
-            Blur(Density, sampleOffsetsH, sampleWeightsH);
+            //graphicsDevice.SetRenderTarget(HTarget);
+            //Blur(Density, sampleOffsetsH, sampleWeightsH);
 
-            graphicsDevice.SetRenderTarget(VTarget);
-            HResolve = HTarget;
+            //graphicsDevice.SetRenderTarget(VTarget);
+            //HResolve = HTarget;
 
-            Blur(HResolve, sampleOffsetsV, sampleWeightsV);
-            graphicsDevice.SetRenderTarget(null);
+            //Blur(HResolve, sampleOffsetsV, sampleWeightsV);
+            //graphicsDevice.SetRenderTarget(null);
 
-            FinalBlur = VTarget;
+            //FinalBlur = VTarget;
 
-            FinalBlur.GetData(finalData);
+            //FinalBlur.GetData(finalData);
+
+            Density.GetData(densityData);
 
             graphicsDevice.SetRenderTarget(null);
 
 
             if (Keyboard.GetState().IsKeyDown(Keys.T))
             {
-                Stream pngFile = File.OpenWrite("color_" + "scrofa" + ".png");
-                Density.SaveAsPng(pngFile, Density.Width, Density.Height);
-                pngFile.Close();
+                saveDensityToTexture();
             }
 
         }
@@ -374,8 +385,10 @@ namespace WindowsGame2
             //graphicsDevice.Clear(Color.White);
             Shader.CurrentTechnique = Shader.Techniques["Final"];
             Shader.CurrentTechnique.Passes["Final"].Apply();
-            Shader.Parameters["finalTexture"].SetValue(FinalBlur);
+            //Shader.Parameters["finalTexture"].SetValue(FinalBlur);
+            graphicsDevice.Textures[7] = Density;
             graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, mainQuad, 0, 2);
+            graphicsDevice.Textures[7] = null;
         }
 
         private void SetBlurParameters(float dx, float dy, ref Vector2[] vSampleOffsets, ref float[] fSampleWeights)
@@ -433,5 +446,27 @@ namespace WindowsGame2
                 Color.White);
             spriteBatch.End();
         }
+
+        public void resetDensity()
+        {
+            //graphicsDevice.Textures[2] = null;
+            Color[] array = new Color[gridSize * gridSize];
+            densityTextures[0].GetData(array);
+            HalfVector4 hcol;
+            for (int i = 0; i < densityData.Count(); i++)
+            {
+                hcol = new HalfVector4(array[i].ToVector4());
+                densityData[i] = hcol;
+            }
+            Density.SetData(densityData);
+        }
+
+        private void saveDensityToTexture()
+        {
+            Stream pngFile = File.OpenWrite("color_" + "scrofa" + ".png");
+            Density.SaveAsPng(pngFile, Density.Width, Density.Height);
+            pngFile.Close();
+        }
+
     }
 }

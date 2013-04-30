@@ -46,8 +46,8 @@ namespace WindowsGame2.GameElements
         private Texture2D mDummyTexture;
         public Color mColor;
 
-        private VertexPositionColorTexture[] trailVertices = new VertexPositionColorTexture[mMaximumTrailPoints * 6 *paintersCount];
-        private VertexPositionColorTexture[] burnoutsVertices = new VertexPositionColorTexture[100000];
+        private VertexPositionColorTexture[] trailVertices = new VertexPositionColorTexture[mMaximumTrailPoints * 6 * paintersCount];
+        private VertexPositionColorTexture[] burnoutsVertices = new VertexPositionColorTexture[500*6*4];
         private Vector3 tdPos = new Vector3(0, 0, -0.1f);
         private Vector3 oldWVert, newWVert, oldEVert, newEVert;
         private Vector3 oldWVertBurnoutRight, newWVertBurnoutRight, oldEVertBurnoutRight, newEVertBurnoutRight;
@@ -591,7 +591,8 @@ namespace WindowsGame2.GameElements
             Vector2 rightVelocity = rightVector * Vector2.Dot(car._compound.LinearVelocity,rightVector);
             car._compound.LinearVelocity = forwardVelocity + rightVelocity * drift;
 
-            
+            if (burnoutCounter > 500 - 4) burnoutCounter = 0;
+
             if (drift != 0 && rightVelocity.Length() > 5f)
             {
                 newWVertBurnoutRight.X = tdPos.X - mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;

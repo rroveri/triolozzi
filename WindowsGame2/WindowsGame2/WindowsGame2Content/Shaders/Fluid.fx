@@ -24,7 +24,9 @@ sampler2D Divergence : register(s3);
 sampler2D Pressure : register(s4);
 sampler2D VelocitySources : register(s5);
 sampler2D DensitySources : register(s6);
+sampler2D finalSampler : register(s7);
 
+/*
 Texture2D finalTexture;
 
 sampler finalSampler = sampler_state
@@ -35,7 +37,7 @@ sampler finalSampler = sampler_state
     MagFilter = Point;
     AddressU  = Wrap;
     AddressV  = Wrap;
-};
+};*/
 
 // Dimensions of the textures making up the fluid stages
 float FluidSize = 256.0f;
@@ -210,7 +212,7 @@ float4 PSFinal(FinalVertexOutput input) : COLOR0
 	final = float4(0.0,1,0.0,alpha);*/
     if(sum < 0.3)
     {
-        final[3] = sum*sum +0.3;
+        final[3] = sum*sum;
     }
     if(final[0] < 0.05) final[0] = 0.05;
     if(final[1] < 0.3) final[1] = 0.3;

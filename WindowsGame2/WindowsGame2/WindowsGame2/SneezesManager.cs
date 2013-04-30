@@ -15,6 +15,7 @@ namespace WindowsGame2
         Random random;
         double nextSneezeTime;
         public RandomTrack randomTrack;
+        public Fluid fluid;
 
         public Vector2 sneezePosition;
         public bool drawFluid;
@@ -41,6 +42,7 @@ namespace WindowsGame2
                 sneezePosition = ConvertUnits.ToDisplayUnits(randomTrack.curvePointsMiddle[maxMiddlePoint%randomTrack.curvePointsMiddle.Count]);
                 timer = 0;
                 nextSneezeTime = random.NextDouble() * 10000;
+                fluid.resetDensity();
 
                 drawFluid = true;
             }
