@@ -68,15 +68,6 @@ namespace WindowsGame2
             get { return font; }
         }
 
-        /// <summary>
-        /// Gets a blank texture that can be used by the screens.
-        /// </summary>
-        public Texture2D BlankTexture
-        {
-            get { return blankTexture; }
-        }
-
-
         #endregion
 
         #region Initialization

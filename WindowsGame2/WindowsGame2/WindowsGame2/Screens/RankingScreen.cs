@@ -24,7 +24,7 @@ namespace WindowsGame2.Screens
 
         InputAction menuSelect;
 
-        private string[] _carColors = { "Red", "Blue", "Green", "Brown" };
+        private string[] _playersNumber = { "Player 1", "Player 2", "Player 3", "Player 4" };
         private string[] _ranks = { "1st: ", "2nd: ", "3rd: ", "4th: " };
 
         private StringBuilder _rankingText;
@@ -77,7 +77,7 @@ namespace WindowsGame2.Screens
             {
                 _rankingText.Append("     ");
                 _rankingText.Append(_ranks[i]);
-                _rankingText.Append(_carColors[Cars.IndexOf(sortedCars[i])]);
+                _rankingText.Append(_playersNumber[Cars.IndexOf(sortedCars[i])]);
                 _rankingText.Append('\n');
             }
         }
@@ -95,11 +95,6 @@ namespace WindowsGame2.Screens
         {
             PlayerIndex playerIndex;
 
-            // We pass in our ControllingPlayer, which may either be null (to
-            // accept input from any player) or a specific index. If we pass a null
-            // controlling player, the InputState helper returns to us which player
-            // actually provided the input. We pass that through to our Accepted and
-            // Cancelled events, so they can tell which player triggered them.
             if (menuSelect.Evaluate(input, ControllingPlayer, out playerIndex))
             {
                 // Raise the accepted event, then exit the message box.
@@ -115,10 +110,6 @@ namespace WindowsGame2.Screens
 
         #region Draw
 
-
-        /// <summary>
-        /// Draws the message box.
-        /// </summary>
         public override void Draw(GameTime gameTime)
         {
             SpriteBatch spriteBatch = ScreenManager.SpriteBatch;

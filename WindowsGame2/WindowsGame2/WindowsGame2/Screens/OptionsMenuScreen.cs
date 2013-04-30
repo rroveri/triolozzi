@@ -6,11 +6,7 @@ using System;
 
 namespace WindowsGame2.Screens
 {
-    /// <summary>
-    /// The options screen is brought up over the top of the main menu
-    /// screen, and gives the user a chance to configure the game
-    /// in various hopefully useful ways.
-    /// </summary>
+
     class OptionsMenuScreen : AbstractScreen
     {
         #region Fields
@@ -93,7 +89,7 @@ namespace WindowsGame2.Screens
                     new Keys[] { Keys.Down },
                     true);
             BackAction = new InputAction(
-                    new Buttons[] { Buttons.X, Buttons.Back },
+                    new Buttons[] { Buttons.B, Buttons.Back },
                     new Keys[] { Keys.Escape },
                     true);
         }
@@ -330,8 +326,6 @@ namespace WindowsGame2.Screens
             ScreenManager.SpriteBatch.Draw(_backMainMenu, _backMainMenuPosition, null, Color.White);
             ScreenManager.SpriteBatch.End();
         }
-
-        
 
         #endregion
 
