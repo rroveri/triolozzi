@@ -48,7 +48,7 @@ namespace WindowsGame2
         int renderWidth = 256, renderHeight = 256;
         float halfRenderWidth, halfRenderHeight;
         int iterations = 5;
-        int gridSize = 128;
+        int gridSize = 64;
         float velocityDiffusion = 0.3f;
         float densityDiffusion = 0.9999f;
 
@@ -59,7 +59,7 @@ namespace WindowsGame2
         RenderTarget2D Temp0, Temp1, Temp2, Temp3;
         public RenderTarget2D FinalRender;
         Color[] finalData;
-        HalfVector4[] densityData;
+        HalfVector4[] densityData, resetArray;
 
         HalfVector4[][] densityTextures = new HalfVector4[1][];
 
@@ -148,6 +148,7 @@ namespace WindowsGame2
             FinalRender = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, false, ColorFormat, ZFormat);
             finalData = new Color[renderWidth * renderWidth];
             densityData = new HalfVector4[gridSize*gridSize];
+            resetArray = new HalfVector4[gridSize * gridSize];
 
             halfRenderWidth = (float)renderWidth / (float)_graphicsManager.PreferredBackBufferWidth;
             halfRenderHeight = (float)renderHeight / (float)_graphicsManager.PreferredBackBufferHeight;
@@ -458,9 +459,9 @@ namespace WindowsGame2
             for (int i = 0; i < densityData.Count(); i++)
             {
                 hcol = new HalfVector4(array[i].ToVector4());
-                densityData[i] = hcol;
+                resetArray[i] = hcol;
             }
-            densityTextures[index] = densityData;
+            densityTextures[index] = resetArray;
         }
 
         public void resetDensity()
