@@ -79,6 +79,7 @@ namespace WindowsGame2.GameElements
             return result;
         }
 
+        private ParticleComponent _particleComponent;
 
         public RandomTrack()
         {
@@ -140,8 +141,7 @@ namespace WindowsGame2.GameElements
             internalNormalsCoefficients = new List<float>();
             externalNormalsCoefficients = new List<float>();
 
-            
-
+            _particleComponent = GameServices.GetService<ParticleComponent>();
         }
     
         public void buildRandomTrack(){
@@ -522,8 +522,8 @@ namespace WindowsGame2.GameElements
 
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
 
-                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount*2].Position = postitCenter;
-                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount * 2].Active = true;
+                _particleComponent.particleEmitterList[car.index + carsCount*2].Position = postitCenter;
+                _particleComponent.particleEmitterList[car.index + carsCount * 2].Active = true;
             }
             else
             {
@@ -533,8 +533,8 @@ namespace WindowsGame2.GameElements
                 
 
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
-                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount].Position = postitCenter;
-                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount].Active = true;
+                _particleComponent.particleEmitterList[car.index + carsCount].Position = postitCenter;
+                _particleComponent.particleEmitterList[car.index + carsCount].Active = true;
             }
         }
 
