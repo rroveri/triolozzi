@@ -74,9 +74,10 @@ namespace WindowsGame2.Screens
         RandomTrack randomRaceTrack;
         private GameLogic Logic;
 
-        RankingScreen RankScreen;
+        private RankingScreen RankScreen;
         float pauseAlpha;
 
+        private PauseMenuScreen PauseScreen;
 
         Effect paperEffect, screenEffect;
         ScreenRenderer screenRenderer;
@@ -127,6 +128,8 @@ namespace WindowsGame2.Screens
             RankScreen = new RankingScreen("");
             RankScreen.Accepted += RankScreenAccepted;
 
+            PauseScreen = new PauseMenuScreen();
+
             polygonsList = new List<PolygonPhysicsObject>();
             Cars = new List<Car>();
             playerIndexes = new List<PlayerIndex>();
@@ -164,7 +167,8 @@ namespace WindowsGame2.Screens
             graphics = GameServices.GetService<GraphicsDeviceManager>();
             soundManager = GameServices.GetService<SoundManager>();
 
-            ScreenManager.AddScreen(RankScreen, null);
+            ScreenManager.AddScreen(RankScreen, null, false);
+            ScreenManager.AddScreen(PauseScreen, null, false);
 
             world = new World(new Vector2(0, 0));
             GameServices.AddService<World>(world);

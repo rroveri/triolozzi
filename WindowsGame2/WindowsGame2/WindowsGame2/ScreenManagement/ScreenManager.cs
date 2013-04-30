@@ -142,11 +142,7 @@ namespace WindowsGame2
             // Make a copy of the master screen list, to avoid confusion if
             // the process of updating one screen adds or removes others.
             tempScreensList.Clear();
-
-            for (int i = 0; i < screens.Count; i++)
-            {
-                tempScreensList.Add(screens[i]);
-            }
+            tempScreensList.AddRange(screens);
 
             bool otherScreenHasFocus = !Game.IsActive;
             bool coveredByOtherScreen = false;
@@ -219,6 +215,27 @@ namespace WindowsGame2
             }
 
             screens.Add(screen);
+        }
+
+        /// <summary>
+        /// Adds a new screen to the screen manager.
+        /// </summary>
+        /// <param name="screen"></param>
+        /// <param name="controllingPlayer"></param>
+        /// <param name="visible">Should the new screen be visible?</param>
+        public void AddScreen(AbstractScreen screen, PlayerIndex? controllingPlayer, bool visible)
+        {
+            screen.ControllingPlayer = controllingPlayer;
+            screen.ScreenManager = this;
+            screen.IsExiting = false;
+
+            // If we have a graphics device, tell the screen to load content.
+            if (isInitialized)
+            {
+                screen.LoadContent();
+            }
+
+            screens.Insert(0, screen);
         }
 
 
@@ -297,7 +314,7 @@ namespace WindowsGame2
         public void QuitGame()
         {
             RemoveScreen(GetScreen<GameScreen>());
-            AddScreen(new GameScreen(), null);
+            RemoveScreen(GetScreen<PauseMenuScreen>());
             ShowScreen<MainMenuScreen>();
         }
     }
