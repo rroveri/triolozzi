@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using System;
+using System.Threading;
 
 namespace WindowsGame2.Screens
 {
@@ -243,6 +244,8 @@ namespace WindowsGame2.Screens
 
             if (IsEveryoneReady())
             {
+                ScreenManager.ShowScreen<LoadingScreen>();
+                ScreenManager.AddScreen(new GameScreen(), null, false);
                 ScreenManager.GetScreen<GameScreen>().InitializeGame(PlayersCount, ref _selectedCars, ref _availableCars, ref _selectedColors, ref _availableColors);
                 ScreenManager.ShowScreen<GameScreen>();
                 //_soundManager.PlaySong("Cracks", false);
@@ -357,7 +360,7 @@ namespace WindowsGame2.Screens
             {
                 if (!_didSelectColor[i])
                 {
-                    //return false;
+                    return false;
                 }
             }
             return true;

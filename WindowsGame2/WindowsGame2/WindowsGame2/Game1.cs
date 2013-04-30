@@ -86,10 +86,8 @@ namespace WindowsGame2
             SoundManager.LoadSong("Cracks", "Sounds/Cracks");
             SoundManager.LoadSound("crash", "Sounds/crash");
 
-            //ScreenManager.AddScreen(new BackgroundScreen(), null);
-            ScreenManager.AddScreen(new PauseMenuScreen(), null);
+            ScreenManager.AddScreen(new LoadingScreen(), null);
             ScreenManager.AddScreen(new OptionsMenuScreen(), null);
-            ScreenManager.AddScreen(new GameScreen(), null);
             ScreenManager.AddScreen(new MainMenuScreen(), null);
         }
 

@@ -138,7 +138,6 @@
     <Compile Include="ScreenManagement\ScreenManager.cs" />
     <Compile Include="ScreenRenderer.cs" />
     <Compile Include="Screens\AbstractScreen.cs" />
-    <Compile Include="Screens\BackgroundScreen.cs" />
     <Compile Include="Screens\GameScreen.cs" />
     <Compile Include="Screens\LoadingScreen.cs" />
     <Compile Include="Screens\MainMenuScreen.cs" />
