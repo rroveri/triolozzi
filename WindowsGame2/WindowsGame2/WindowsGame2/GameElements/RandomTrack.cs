@@ -522,8 +522,8 @@ namespace WindowsGame2.GameElements
 
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
 
-                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount*2].Position = postitCenter;
-                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount * 2].Active = true;
+                //GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount*2].Position = postitCenter;
+                //GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount * 2].Active = true;
             }
             else
             {
@@ -532,9 +532,9 @@ namespace WindowsGame2.GameElements
                 car.message.currentTexture = car.message.thumbsDown;
                 
 
-                Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
-                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount].Position = postitCenter;
-                GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount].Active = true;
+                //Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
+                //GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount].Position = postitCenter;
+                //GameServices.GetService<ParticleComponent>().particleEmitterList[car.index + carsCount].Active = true;
             }
         }
 

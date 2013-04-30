@@ -61,7 +61,7 @@ namespace WindowsGame2
         Color[] finalData;
         HalfVector4[] densityData;
 
-        Texture2D[] densityTextures = new Texture2D[1];
+        HalfVector4[][] densityTextures = new HalfVector4[1][];
 
         // Spritebatch settings
         SpriteSortMode SortMode = SpriteSortMode.Immediate;
@@ -165,25 +165,25 @@ namespace WindowsGame2
             mainQuad[4].TextureCoordinate = new Vector2(1, 0);
             mainQuad[5].TextureCoordinate = new Vector2(1, 1);
 
-            GaussianEffect = c.Load<Effect>("Shaders/GaussianBlur");
+            //GaussianEffect = c.Load<Effect>("Shaders/GaussianBlur");
 
-            backTex = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, true,
-                SurfaceFormat.Color, graphicsDevice.PresentationParameters.DepthStencilFormat);
-            VTarget = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, true,
-                SurfaceFormat.Color, graphicsDevice.PresentationParameters.DepthStencilFormat);
-            HTarget = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, true,
-                SurfaceFormat.Color, graphicsDevice.PresentationParameters.DepthStencilFormat);
+            //backTex = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, true,
+            //    SurfaceFormat.Color, graphicsDevice.PresentationParameters.DepthStencilFormat);
+            //VTarget = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, true,
+            //    SurfaceFormat.Color, graphicsDevice.PresentationParameters.DepthStencilFormat);
+            //HTarget = new RenderTarget2D(graphicsDevice, renderWidth, renderHeight, true,
+            //    SurfaceFormat.Color, graphicsDevice.PresentationParameters.DepthStencilFormat);
 
-            sampleOffsetsH = new Vector2[windowSize];
-            sampleWeightsH = new float[windowSize];
+            //sampleOffsetsH = new Vector2[windowSize];
+            //sampleWeightsH = new float[windowSize];
 
-            sampleOffsetsV = new Vector2[windowSize];
-            sampleWeightsV = new float[windowSize];
+            //sampleOffsetsV = new Vector2[windowSize];
+            //sampleWeightsV = new float[windowSize];
 
-            texelSize = new Vector2(1.0f / renderWidth, 1.0f / renderHeight);
+            //texelSize = new Vector2(1.0f / renderWidth, 1.0f / renderHeight);
 
-            SetBlurParameters(texelSize.X, 0, ref sampleOffsetsH, ref sampleWeightsH);
-            SetBlurParameters(0, texelSize.Y, ref sampleOffsetsV, ref sampleWeightsV);
+            //SetBlurParameters(texelSize.X, 0, ref sampleOffsetsH, ref sampleWeightsH);
+            //SetBlurParameters(0, texelSize.Y, ref sampleOffsetsV, ref sampleWeightsV);
 
             colorMuco = new Color(0.1f,0.6f,0.1f);
             brushColor = colorMuco;
@@ -193,7 +193,7 @@ namespace WindowsGame2
            // Density.SetData<HalfVector4>(densityData);
             
             Texture2D densTex = c.Load<Texture2D>("Images/mucus/color_scrofa");
-            densityTextures[0] = densTex;
+            initDensity(0,densTex);
             resetDensity();
         }
 
@@ -447,18 +447,22 @@ namespace WindowsGame2
             spriteBatch.End();
         }
 
-        public void resetDensity()
+        private void initDensity(int index, Texture2D densTex)
         {
-            //graphicsDevice.Textures[2] = null;
             Color[] array = new Color[gridSize * gridSize];
-            densityTextures[0].GetData(array);
+            densTex.GetData(array);
             HalfVector4 hcol;
             for (int i = 0; i < densityData.Count(); i++)
             {
                 hcol = new HalfVector4(array[i].ToVector4());
                 densityData[i] = hcol;
             }
-            Density.SetData(densityData);
+            densityTextures[index] = densityData;
+        }
+
+        public void resetDensity()
+        {
+            Density.SetData(densityTextures[0]);
         }
 
         private void saveDensityToTexture()

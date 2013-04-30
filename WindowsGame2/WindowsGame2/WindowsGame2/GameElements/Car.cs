@@ -508,6 +508,7 @@ namespace WindowsGame2.GameElements
 
         public void moveMessageImage(GameTime gameTime)
         {
+            return;
             //move the message and udpate its string
             message.Update(gameTime);
 
