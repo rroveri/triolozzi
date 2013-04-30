@@ -454,7 +454,8 @@ namespace WindowsGame2.Screens
             */
 
             mySneezesManager.Update(gameTime,Cars);
-                
+
+            fluid.start(3);
         }
 
         private void UpdateCars(GameTime gameTime)
@@ -671,6 +672,9 @@ namespace WindowsGame2.Screens
 
         public override void Draw(GameTime gameTime)
         {
+            while (fluid.inCriticalSection) { }
+            fluid.shouldWait = true;
+
             GraphicsDevice.Clear(Color.White);
 
             GraphicsDevice.Viewport = defaultViewport;
@@ -684,13 +688,16 @@ namespace WindowsGame2.Screens
                 ScreenManager.FadeBackBufferToBlack(alpha);
             }
             base.Draw(gameTime);
+
+            fluid.shouldWait = false;
         }
 
         public void DrawSprites(Camera camera)
         {
 
             Vector2 greenPosition = Vector2.Transform(Cars[0].Position, cameraFollowing.Transform);
-            fluid.Update(greenPosition);
+            fluid.carPos = greenPosition;
+            //fluid.Update();
 
 
             //compute camera matrices
@@ -699,6 +706,7 @@ namespace WindowsGame2.Screens
 
             //draw 2D (!keep DepthStencilState to None in order to see shaders!)
 
+            
             spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
 
             // Draw the race track and the starting line

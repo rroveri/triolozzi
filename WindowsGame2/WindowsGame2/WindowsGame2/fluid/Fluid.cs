@@ -33,7 +33,7 @@ using System.IO;
 
 namespace WindowsGame2
 {
-    public class Fluid
+    public class Fluid : Thread
     {
         GraphicsDevice graphicsDevice;
         SpriteBatch spriteBatch;
@@ -48,7 +48,7 @@ namespace WindowsGame2
         int renderWidth = 256, renderHeight = 256;
         float halfRenderWidth, halfRenderHeight;
         int iterations = 5;
-        int gridSize = 64;
+        int gridSize = 128;
         float velocityDiffusion = 0.3f;
         float densityDiffusion = 0.9999f;
 
@@ -74,7 +74,7 @@ namespace WindowsGame2
         Effect Shader;
 
         MouseState ms;
-        Vector2 mouse, lastMouse, lastCarPos;
+        public Vector2 carPos, lastCarPos;
 
         Color colorMuco;
 
@@ -88,23 +88,12 @@ namespace WindowsGame2
             get { return pSplatColor.GetValueVector4(); }
             set { pSplatColor.SetValue(value); }
         }
-        private Vector2 texelSize;
-
-        private int windowSize = 30;
-        private Vector2[] sampleOffsetsH;
-        private float[] sampleWeightsH;
-
-        private Vector2[] sampleOffsetsV;
-        private float[] sampleWeightsV;
-
-        private RenderTarget2D backTex;
-
-        private RenderTarget2D VTarget, HTarget;
-        private Texture2D HResolve, FinalBlur;
-
-        private Effect GaussianEffect;
 
         private GraphicsDeviceManager _graphicsManager;
+
+        public bool shouldResetDensity = false;
+        public bool shouldWait = false;
+        public bool inCriticalSection = false;
 
         public Fluid(ContentManager c, GraphicsDevice gd, SpriteBatch sb)
         {
@@ -196,7 +185,7 @@ namespace WindowsGame2
            // Densitytd.GetData<HalfVector4>(densityData);
            // Density.SetData<HalfVector4>(densityData);
             
-            Texture2D densTex = c.Load<Texture2D>("Images/mucus/color_scrofa");
+            Texture2D densTex = c.Load<Texture2D>("Images/mucus/color_scrofa" + gridSize);
             initDensity(0,densTex);
             resetDensity();
         }
@@ -251,30 +240,17 @@ namespace WindowsGame2
         }
 
         // Render the fluid to the screen
-        public void Update(Vector2 carPos)
+        public void Update()
         {
             for (int i = 0; i < 16; i++)
                 graphicsDevice.SamplerStates[i] = Sampling;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.F1)) brushColor = colorMuco;
-            if (Keyboard.GetState().IsKeyDown(Keys.F2)) brushColor = Color.Aqua;
-            if (Keyboard.GetState().IsKeyDown(Keys.F3)) brushColor = Color.Yellow;
-            if (Keyboard.GetState().IsKeyDown(Keys.F4)) brushColor = Color.Green;
-            if (Keyboard.GetState().IsKeyDown(Keys.F5)) brushColor = Color.Red;
-            if (Keyboard.GetState().IsKeyDown(Keys.F6)) brushColor = Color.White;
-
-            ms = Mouse.GetState();
-            mouse = new Vector2(ms.X, ms.Y) - referencePosition;
+            //ms = Mouse.GetState();
+            //mouse = new Vector2(ms.X, ms.Y) - referencePosition;
             carPos -= referencePosition;
             //velocityColor = new Vector4(lastMouse - mouse, 0.0f, 1.0f);
             velocityColor = new Vector4(lastCarPos - carPos, 0.0f, 1.0f);
-            lastMouse = mouse;
             lastCarPos = carPos;
-
-            BeginDensityPass();
-            if (ms.LeftButton == ButtonState.Pressed)
-                spriteBatch.Draw(brush, mouse, null, brushColor, 0.0f, new Vector2(32.0f, 32.0f), brushSize / 64.0f, SpriteEffects.None, 0.0f);
-            EndPass();
 
             BeginVelocityPass();
             SplatColor = velocityColor;
@@ -354,29 +330,9 @@ namespace WindowsGame2
             spriteBatch.Draw(Temp0, Vector2.Zero, Color.White);
             spriteBatch.End();
 
-            // Gaussian Blurr
-            //graphicsDevice.SetRenderTarget(HTarget);
-            //Blur(Density, sampleOffsetsH, sampleWeightsH);
-
-            //graphicsDevice.SetRenderTarget(VTarget);
-            //HResolve = HTarget;
-
-            //Blur(HResolve, sampleOffsetsV, sampleWeightsV);
-            //graphicsDevice.SetRenderTarget(null);
-
-            //FinalBlur = VTarget;
-
-            //FinalBlur.GetData(finalData);
-
             Density.GetData(densityData);
 
             graphicsDevice.SetRenderTarget(null);
-
-
-            if (Keyboard.GetState().IsKeyDown(Keys.T))
-            {
-                saveDensityToTexture();
-            }
 
         }
 
@@ -386,69 +342,11 @@ namespace WindowsGame2
             this.position.X = position.X / _graphicsManager.PreferredBackBufferWidth * 2 - 1;
             this.position.Y = position.Y / _graphicsManager.PreferredBackBufferHeight * 2 - 1;
             updatePosition();
-            //graphicsDevice.Clear(Color.White);
             Shader.CurrentTechnique = Shader.Techniques["Final"];
             Shader.CurrentTechnique.Passes["Final"].Apply();
-            //Shader.Parameters["finalTexture"].SetValue(FinalBlur);
             graphicsDevice.Textures[7] = Density;
             graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, mainQuad, 0, 2);
             graphicsDevice.Textures[7] = null;
-        }
-
-        private void SetBlurParameters(float dx, float dy, ref Vector2[] vSampleOffsets, ref float[] fSampleWeights)
-        {
-            fSampleWeights[0] = ComputeGaussian(0);
-            vSampleOffsets[0] = new Vector2(0);
-
-            float totalWeights = fSampleWeights[0];
-
-            for (int i = 0; i < 15 / 2; i++)
-            {
-                float weight = ComputeGaussian(i + 1);
-
-                fSampleWeights[i * 2 + 1] = weight;
-                fSampleWeights[i * 2 + 2] = weight;
-
-                totalWeights += weight * 2;
-
-                float sampleOffset = i * 2 + 1.5f;
-
-                Vector2 delta = new Vector2(dx, dy) * sampleOffset;
-
-                vSampleOffsets[i * 2 + 1] = delta;
-                vSampleOffsets[i * 2 + 2] = -delta;
-            }
-
-            for (int i = 0; i < fSampleWeights.Length; i++)
-            {
-                fSampleWeights[i] /= totalWeights;
-            }
-        }
-
-        private float ComputeGaussian(float n)
-        {
-            float theta = 2.0f + float.Epsilon;
-
-            return theta = (float)((1.0 / Math.Sqrt(2 * Math.PI * theta)) * Math.Exp(-(n * n) / (2 * theta * theta)));
-        }
-
-        private void Blur(Texture2D BlurTexture, Vector2[] sampleOffsets, float[] sampleWeights)
-        {
-            graphicsDevice.Clear(Color.White);
-
-            GaussianEffect.Parameters["sampleWeights"].SetValue(sampleWeights);
-            GaussianEffect.Parameters["sampleOffsets"].SetValue(sampleOffsets);
-
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
-
-            GaussianEffect.CurrentTechnique.Passes[0].Apply();
-
-            graphicsDevice.SamplerStates[0] = Sampling;
-
-            spriteBatch.Draw(BlurTexture,
-                new Microsoft.Xna.Framework.Rectangle(0, 0, renderWidth, renderHeight),
-                Color.White);
-            spriteBatch.End();
         }
 
         private void initDensity(int index, Texture2D densTex)
@@ -474,6 +372,15 @@ namespace WindowsGame2
             Stream pngFile = File.OpenWrite("color_" + "scrofa" + ".png");
             Density.SaveAsPng(pngFile, Density.Width, Density.Height);
             pngFile.Close();
+        }
+
+        protected override void threadFunction()
+        {
+            while (shouldWait) { }
+            inCriticalSection = true;
+            if (shouldResetDensity) resetDensity();
+            Update();
+            inCriticalSection = false;
         }
 
     }

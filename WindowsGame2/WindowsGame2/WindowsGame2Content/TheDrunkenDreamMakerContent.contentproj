@@ -649,8 +649,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\mucus\color_scrofa.png">
-      <Name>color_scrofa</Name>
+    <Compile Include="Images\mucus\color_scrofa128.png">
+      <Name>color_scrofa128</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\mucus\color_scrofa64.png">
+      <Name>color_scrofa64</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
