@@ -101,6 +101,9 @@ namespace WindowsGame2.GameElements
 
         public static bool isBrush = true;
 
+        private GraphicsDeviceManager _graphicsDevice;
+        private Camera _camera;
+
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
             : base(world, texture, new Vector2(65.0f, 40.0f), Color)
         {
@@ -190,7 +193,9 @@ namespace WindowsGame2.GameElements
                 Painter newPainter=new Painter(seed);
                 painters.Add(newPainter);
             }
-            
+
+            _graphicsDevice = GameServices.GetService<GraphicsDeviceManager>();
+            _camera = GameServices.GetService<Camera>();
         }
 
         bool body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
@@ -514,11 +519,11 @@ namespace WindowsGame2.GameElements
 
             //compute direction of the message
             float distance = 250f;
-            Vector2 dirVec = Vector2.Normalize(GameServices.GetService<Camera>().oldPosition - Position) * distance;
+            Vector2 dirVec = Vector2.Normalize(_camera.oldPosition - Position) * distance;
             //interpolate position
             messageImagePos = Vector2.Lerp( messageImagePos, Position+dirVec, 0.5f);
             //transform it to screen position
-            Vector2 screenPosition = Vector2.Transform(messageImagePos, GameServices.GetService<Camera>().Transform);
+            Vector2 screenPosition = Vector2.Transform(messageImagePos, _camera.Transform);
 
             //check if still on screen, if not bring it back to screen!
             //set a margin
@@ -530,17 +535,17 @@ namespace WindowsGame2.GameElements
             {
                 screenPosition.X = offsetLeft;
             }
-            else if (screenPosition.X > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - offsetRight)
+            else if (screenPosition.X > _graphicsDevice.PreferredBackBufferWidth - offsetRight)
             {
-                screenPosition.X = GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - offsetRight;
+                screenPosition.X = _graphicsDevice.PreferredBackBufferWidth - offsetRight;
             }
             if (screenPosition.Y < offsetUp)
             {
                 screenPosition.Y = offsetUp;
             }
-            else if (screenPosition.Y > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight - offsetDown)
+            else if (screenPosition.Y > _graphicsDevice.PreferredBackBufferHeight - offsetDown)
             {
-                screenPosition.Y = GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight - offsetDown;
+                screenPosition.Y = _graphicsDevice.PreferredBackBufferHeight - offsetDown;
             }
 
             //avoid corner postits 
@@ -548,17 +553,17 @@ namespace WindowsGame2.GameElements
 
             int postitLength = 250;
             int postitHeight = 150;
-            if (screenPosition.Y > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight - postitHeight - offsetDown && screenPosition.X < postitLength)
+            if (screenPosition.Y > _graphicsDevice.PreferredBackBufferHeight - postitHeight - offsetDown && screenPosition.X < postitLength)
             {
                 screenPosition.X = MathHelper.Lerp(screenPosition.X, postitLength, 1f);
             }
-            else if (screenPosition.Y > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight - postitHeight - offsetDown && screenPosition.X > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - postitLength - offsetRight)
+            else if (screenPosition.Y > _graphicsDevice.PreferredBackBufferHeight - postitHeight - offsetDown && screenPosition.X > _graphicsDevice.PreferredBackBufferWidth - postitLength - offsetRight)
             {
-                screenPosition.X = MathHelper.Lerp(screenPosition.X, GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - postitLength - offsetRight, 1f);
+                screenPosition.X = MathHelper.Lerp(screenPosition.X, _graphicsDevice.PreferredBackBufferWidth - postitLength - offsetRight, 1f);
             }
-            else if (screenPosition.Y < postitHeight && screenPosition.X > GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - postitLength - offsetRight)
+            else if (screenPosition.Y < postitHeight && screenPosition.X > _graphicsDevice.PreferredBackBufferWidth - postitLength - offsetRight)
             {
-                screenPosition.X = MathHelper.Lerp(screenPosition.X, GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth - postitLength - offsetRight, 1f);
+                screenPosition.X = MathHelper.Lerp(screenPosition.X, _graphicsDevice.PreferredBackBufferWidth - postitLength - offsetRight, 1f);
             }
             else if (screenPosition.Y < postitHeight && screenPosition.X < postitLength)
             {
@@ -567,7 +572,7 @@ namespace WindowsGame2.GameElements
             
 
             //compute inverse matrix
-            Matrix inverse = GameServices.GetService<Camera>().inverseTransformMatrix();
+            Matrix inverse = _camera.inverseTransformMatrix();
             //re-transform the vector in world coordinated
             Vector2 croppedPos = Vector2.Transform(screenPosition, inverse);
             messageImagePos = croppedPos;

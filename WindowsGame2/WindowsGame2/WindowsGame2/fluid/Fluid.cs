@@ -104,6 +104,8 @@ namespace WindowsGame2
 
         private Effect GaussianEffect;
 
+        private GraphicsDeviceManager _graphicsManager;
+
         public Fluid(ContentManager c, GraphicsDevice gd, SpriteBatch sb)
         {
             // Get the content manager and graphics device from the creating entity
@@ -112,6 +114,7 @@ namespace WindowsGame2
             Shader               = c.Load<Effect>("Shaders/Fluid");
             graphicsDevice       = gd;
             spriteBatch          = sb;
+            _graphicsManager = GameServices.GetService<GraphicsDeviceManager>();
 
             // Setup EffectParameters
             pSplatColor          = Shader.Parameters["VelocityColor"];
@@ -146,8 +149,8 @@ namespace WindowsGame2
             finalData = new Color[renderWidth * renderWidth];
             densityData = new HalfVector4[gridSize*gridSize];
 
-            halfRenderWidth = (float)renderWidth / (float)GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth;
-            halfRenderHeight = (float)renderHeight / (float)GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight;
+            halfRenderWidth = (float)renderWidth / (float)_graphicsManager.PreferredBackBufferWidth;
+            halfRenderHeight = (float)renderHeight / (float)_graphicsManager.PreferredBackBufferHeight;
 
             mainQuad[0].Position = new Vector3(0);
             mainQuad[1].Position = new Vector3(0);
@@ -379,8 +382,8 @@ namespace WindowsGame2
         public void Draw(Vector2 position)
         {
             referencePosition = position;
-            this.position.X = position.X / GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth * 2 - 1;
-            this.position.Y = position.Y / GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight * 2 - 1;
+            this.position.X = position.X / _graphicsManager.PreferredBackBufferWidth * 2 - 1;
+            this.position.Y = position.Y / _graphicsManager.PreferredBackBufferHeight * 2 - 1;
             updatePosition();
             //graphicsDevice.Clear(Color.White);
             Shader.CurrentTechnique = Shader.Techniques["Final"];
