@@ -246,7 +246,7 @@ namespace WindowsGame2.Screens
 
         private void StartGameCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            ScreenManager.ShowScreen<GameScreen>();
+            ScreenManager.GetScreen<LoadingScreen>().SetReady();
         }
 
         public override void HandleInput(GameTime gameTime, InputState input)
@@ -257,6 +257,7 @@ namespace WindowsGame2.Screens
             if (IsEveryoneReady())
             {
                 ScreenManager.ShowScreen<LoadingScreen>();
+                ScreenManager.GetScreen<LoadingScreen>().SetBusy();
 
                 BackgroundWorker worker = new BackgroundWorker();
                 worker.DoWork += StartGame;
