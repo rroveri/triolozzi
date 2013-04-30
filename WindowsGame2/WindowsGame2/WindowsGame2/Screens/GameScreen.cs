@@ -273,6 +273,7 @@ namespace WindowsGame2.Screens
             
 
             fluid = new Fluid(Content,GraphicsDevice, spriteBatch);
+            mySneezesManager.fluid = fluid;
         }
 
         public void positionCars(int startingPointToCheck)
@@ -694,7 +695,7 @@ namespace WindowsGame2.Screens
         public void DrawSprites(Camera camera)
         {
 
-            Vector2 greenPosition = Vector2.Transform(Cars[2].Position, cameraFollowing.Transform);
+            Vector2 greenPosition = Vector2.Transform(Cars[0].Position, cameraFollowing.Transform);
             fluid.Update(greenPosition);
 
 
