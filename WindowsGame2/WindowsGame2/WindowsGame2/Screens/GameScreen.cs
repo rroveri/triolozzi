@@ -440,26 +440,7 @@ namespace WindowsGame2.Screens
 
             world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
 
-            // Particle modification
-
-            /*
-            for (int i = 0; i < Cars.Count; i++)
-            {
-                particleComponent.particleEmitterList[i].Position = Cars[i].Position - Cars[i].mDirection * Cars[i].tailOffset * 200;
-                if (Cars[i].hasBoost)
-                {
-                    particleComponent.particleEmitterList[i].Active = true;
-                }
-                else
-                {
-                    particleComponent.particleEmitterList[i].Active = false;
-                }
-            }
-            */
-
             mySneezesManager.Update(gameTime,Cars);
-
-            fluid.start(3);
         }
 
         private void UpdateCars(GameTime gameTime)
@@ -676,9 +657,6 @@ namespace WindowsGame2.Screens
 
         public override void Draw(GameTime gameTime)
         {
-            while (fluid.inCriticalSection) { }
-            fluid.shouldWait = true;
-
             GraphicsDevice.Clear(Color.White);
 
             GraphicsDevice.Viewport = defaultViewport;
@@ -692,8 +670,6 @@ namespace WindowsGame2.Screens
                 ScreenManager.FadeBackBufferToBlack(alpha);
             }
             base.Draw(gameTime);
-
-            fluid.shouldWait = false;
         }
 
         public void DrawSprites(Camera camera)
@@ -701,7 +677,7 @@ namespace WindowsGame2.Screens
 
             Vector2 greenPosition = Vector2.Transform(Cars[0].Position, cameraFollowing.Transform);
             fluid.carPos = greenPosition;
-            //fluid.Update();
+            fluid.Update();
 
 
             //compute camera matrices

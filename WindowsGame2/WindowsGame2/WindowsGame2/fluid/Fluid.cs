@@ -33,7 +33,7 @@ using System.IO;
 
 namespace WindowsGame2
 {
-    public class Fluid : Thread
+    public class Fluid
     {
         GraphicsDevice graphicsDevice;
         SpriteBatch spriteBatch;
@@ -373,15 +373,5 @@ namespace WindowsGame2
             Density.SaveAsPng(pngFile, Density.Width, Density.Height);
             pngFile.Close();
         }
-
-        protected override void threadFunction()
-        {
-            while (shouldWait) { }
-            inCriticalSection = true;
-            if (shouldResetDensity) resetDensity();
-            Update();
-            inCriticalSection = false;
-        }
-
     }
 }
