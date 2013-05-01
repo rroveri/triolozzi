@@ -32,22 +32,20 @@ namespace WindowsGame2.GameElements
             float randomOffset = (float)MathHelper.Lerp(-0.30f, 0.30f, (float)random.NextDouble());
             position = randomTrack.curvePointsMiddle[middlePoint] - randomTrack.normals[middlePoint] * randomOffset;
             rotation = (float)MathHelper.Lerp(-MathHelper.Pi / 4f, MathHelper.Pi / 4f, (float)random.NextDouble());
-
-            contourPhysicsObject = new TexturePhysicsObject(world, GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Dreams/postitContour"), postItSize, Color.White);
-            contourPhysicsObject._compound.Position = position;
-            contourPhysicsObject._compound.Rotation = rotation;
-            contourPhysicsObject._compound.UserData = postItIndex;
-            contourPhysicsObject._compound.IsSensor = true;
+            Texture2D textureContour = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Dreams/postitContourNightmare");
+            
             color = Color.White;
 
             isNightmare = _isNightmare;
 
             if (isNightmare == 0)
             {
+                textureContour = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Dreams/postitContourWish");
                 backgroundTexture = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Dreams/postitwish");
             }
             else if (isNightmare == 1)
             {
+                textureContour = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Dreams/postitContourNightmare");
                 backgroundTexture = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Dreams/postitnightmare");
             }
             else
@@ -55,14 +53,20 @@ namespace WindowsGame2.GameElements
                 backgroundTexture = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Dreams/postitFree");
             }
 
+            contourPhysicsObject = new TexturePhysicsObject(world, textureContour, postItSize, Color.White);
+            contourPhysicsObject._compound.Position = position;
+            contourPhysicsObject._compound.Rotation = rotation;
+            contourPhysicsObject._compound.UserData = postItIndex;
+            contourPhysicsObject._compound.IsSensor = true;
+
             foregroundTexture = _foregroundTexture;
             textureScaleVec = new Vector2(postItSize.X / (float)backgroundTexture.Width, postItSize.Y / (float)backgroundTexture.Height);
 
         }
 
         public void Draw(SpriteBatch spriteBatch){
-            spriteBatch.Draw(backgroundTexture, ConvertUnits.ToDisplayUnits(position), null, Color.Yellow, rotation, contourPhysicsObject._origin,  textureScaleVec, SpriteEffects.None, 1f);
-            spriteBatch.Draw(foregroundTexture, ConvertUnits.ToDisplayUnits(position), null, color, rotation, contourPhysicsObject._origin, textureScaleVec, SpriteEffects.None, 1f);         
+            spriteBatch.Draw(backgroundTexture, ConvertUnits.ToDisplayUnits(position), null, Color.White, rotation, contourPhysicsObject._origin,  textureScaleVec, SpriteEffects.None, 1f);
+            spriteBatch.Draw(foregroundTexture, ConvertUnits.ToDisplayUnits(position), null, color, rotation, contourPhysicsObject._origin, textureScaleVec * 0.6f, SpriteEffects.None, 1f);         
         }
     }
 }

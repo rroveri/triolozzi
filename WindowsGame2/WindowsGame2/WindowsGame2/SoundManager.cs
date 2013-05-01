@@ -23,7 +23,10 @@ namespace WindowsGame2
         public string CurrentSong { get; private set; }
 
         public static readonly string MenuSelection = "MenuSelection";
+
         public static readonly string CarCrash = "CarCrash";
+        private static readonly string[] CarCrashes = { "CarCrash1", "CarCrash2", "CarCrash3", "CarCrash4" };
+
         public static readonly string CarSteering = "CarSteering";
 
         public static readonly string MenuSong = "MenuSong";
@@ -54,23 +57,37 @@ namespace WindowsGame2
 
         public void Initalize(ContentManager Content)
         {
-            LoadSound(SoundManager.CarCrash, "Sounds/crash");
+            LoadSound(SoundManager.CarCrashes[0], "Sounds/CarCrash1");
+            LoadSound(SoundManager.CarCrashes[1], "Sounds/CarCrash2");
+            LoadSound(SoundManager.CarCrashes[2], "Sounds/CarCrash3");
+            LoadSound(SoundManager.CarCrashes[3], "Sounds/CarCrash4");
+
             LoadSound(SoundManager.MenuSelection, "Sounds/menu_selection");
             LoadSound(SoundManager.CarSteering, "Sounds/CarSteering");
+            
+            SoundEffectInstance sound;
 
             for (int i = 0; i < 25; i++)
             {
-                effectsPool[SoundManager.CarCrash].Enqueue(Sounds[SoundManager.CarCrash].CreateInstance());
-                effectsPool[SoundManager.MenuSelection].Enqueue(Sounds[SoundManager.MenuSelection].CreateInstance());
-
+                sound = Sounds[SoundManager.MenuSelection].CreateInstance();
+                sound.Volume = 0.5f;
+                effectsPool[SoundManager.MenuSelection].Enqueue(sound);
             }
 
-            SoundEffectInstance sound;
+            
             for (int i = 0; i < 4; i++)
             {
                 sound = Sounds[SoundManager.CarSteering].CreateInstance();
+                sound.Volume = 0.3f;
                 sound.IsLooped = true;
                 effectsPool[SoundManager.CarSteering].Enqueue(sound);
+
+                for (int j = 0; j < 6; j++)
+                {
+                    sound = Sounds[SoundManager.CarCrashes[i]].CreateInstance();
+                    sound.Volume = 1f;
+                    effectsPool[SoundManager.CarCrash].Enqueue(sound);
+                }
             }
 
             LoadSong(SoundManager.MenuSong, "Sounds/MenuSong");
@@ -98,6 +115,7 @@ namespace WindowsGame2
             CurrentSong = songName;
             MediaPlayer.IsRepeating = repeat;
             MediaPlayer.Play(Songs[CurrentSong]);
+            MediaPlayer.Volume = 1f;
         }
 
         public void PauseSong()
@@ -157,15 +175,11 @@ namespace WindowsGame2
             else
             {
                 sound = Sounds[soundName].CreateInstance();
-
+                sound.Volume = volume;
+                sound.Pitch = pitch;
+                sound.Pan = pan;
+                sound.IsLooped = repeat;
             }
-
-            sound.Volume = volume;
-            sound.Pitch = pitch;
-            sound.Pan = pan;
-            // TODO: create pool for looped effects
-            //sound.IsLooped = repeat;
-
             return sound;
         }
 
