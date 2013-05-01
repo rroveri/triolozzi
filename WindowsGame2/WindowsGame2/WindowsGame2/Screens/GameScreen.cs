@@ -298,7 +298,7 @@ namespace WindowsGame2.Screens
             currentPos = new Vector2(100);
             prevPos = new Vector2(0);
 
-            quad = new QuadRenderComponent(ScreenManager.Game);
+            quad = new QuadRenderComponent(ScreenManager.Game, cameraFollowing, ScreenManager.GraphicsDevice.Viewport.Width, ScreenManager.GraphicsDevice.Viewport.Height);
             ScreenManager.Game.Components.Add(quad);
 
             fluidUpdateThread = new Thread(this.UpdateFluid);
@@ -830,7 +830,7 @@ namespace WindowsGame2.Screens
             //Texture2D rend = gaussian.Render(buffer);
             coloredEffect.Parameters["Texture"].SetValue(texInk);
             coloredEffect.Techniques[0].Passes[0].Apply();
-            quad.renderMainQuad();
+            quad.renderFromDisplayUnits(mySneezesManager.sneezePosition,fluid.renderWidth,fluid.renderHeight);
 
             //printInfo();
         }

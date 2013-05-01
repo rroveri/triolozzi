@@ -72,6 +72,8 @@ namespace WindowsGame2
         private Vector4 currentColor;
 
         public Color[] texData;
+        public float renderWidth = 256;
+        public float renderHeight = 256;
 
         #endregion
 
@@ -235,10 +237,10 @@ namespace WindowsGame2
 
             for (int i = 0; i < m_w * m_h; i++)
             {
-                texData[i].R = (byte)(Math.Min(mp_ink0[i].X, 1) * 255);
-                texData[i].G = (byte)(Math.Min(mp_ink0[i].Y, 1) * 255);
-                texData[i].B = (byte)(Math.Min(mp_ink0[i].Z, 1) * 255);
-                texData[i].A = (byte)(Math.Min(mp_ink0[i].W, 1) * 255);
+                texData[i].R = 50;// (byte)(Math.Min(mp_ink0[i].X, 1) * 255);
+                texData[i].G = 50;//(byte)(Math.Min(mp_ink0[i].Y, 1) * 255);
+                texData[i].B = 50;//(byte)(Math.Min(mp_ink0[i].Z, 1) * 255);
+                texData[i].A = 255;//(byte)(Math.Min(mp_ink0[i].W, 1) * 255);
             }
         }
 

@@ -30,22 +30,24 @@ namespace WindowsGame2
 
         public void Update(GameTime gameTime, List<Car> Cars)
         {
-            //timer += gameTime.ElapsedGameTime.TotalMilliseconds;
-            //if (timer > nextSneezeTime)
-            //{
-            //    int maxMiddlePoint=0;
-            //    for (int i=0; i<Cars.Count; i++){
-            //        if (Cars[i].currentMiddlePoint>maxMiddlePoint){
-            //            maxMiddlePoint=Cars[i].currentMiddlePoint;
-            //        }
-            //    }
-            //    sneezePosition = ConvertUnits.ToDisplayUnits(randomTrack.curvePointsMiddle[maxMiddlePoint%randomTrack.curvePointsMiddle.Count]);
-            //    timer = 0;
-            //    nextSneezeTime = random.NextDouble() * 10000;
-            //    fluid.resetDensity();
+            timer += gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (timer > nextSneezeTime)
+            {
+                int maxMiddlePoint = 0;
+                for (int i = 0; i < Cars.Count; i++)
+                {
+                    if (Cars[i].currentMiddlePoint > maxMiddlePoint)
+                    {
+                        maxMiddlePoint = Cars[i].currentMiddlePoint;
+                    }
+                }
+                sneezePosition = ConvertUnits.ToDisplayUnits(randomTrack.curvePointsMiddle[maxMiddlePoint % randomTrack.curvePointsMiddle.Count]);
+                timer = 0;
+                nextSneezeTime = random.NextDouble() * 10000;
+                fluid.resetDensity();
 
-            //    drawFluid = true;
-            //}
+                drawFluid = true;
+            }
 
         }
 

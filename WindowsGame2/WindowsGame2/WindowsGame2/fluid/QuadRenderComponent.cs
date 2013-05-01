@@ -21,14 +21,19 @@ namespace WindowsGame2
         VertexPositionTexture[] verts = null;
         short[] ib = null;
 
-        
 
+        Camera camera;
+        int screenWidth, screenHeight;
+        Vector2 v1 = new Vector2(), v2 = new Vector2();
 
         // Constructor
-        public QuadRenderComponent(Game game)
+        public QuadRenderComponent(Game game, Camera camera, int screenWidth, int screenHeight)
             : base(game)
         {
             // TODO: Construct any child components here
+            this.camera = camera;
+            this.screenWidth = screenWidth;
+            this.screenHeight = screenHeight;
         }
         
 
@@ -86,6 +91,20 @@ namespace WindowsGame2
         public void renderMainQuad()
         {
             Render(Vector2.One * -1, Vector2.One);
+        }
+
+        public void renderFromDisplayUnits(Vector2 v1, float dx, float dy)
+        {
+            v1 = Vector2.Transform(v1, camera.Transform);
+            v1.X = v1.X / (float)screenWidth * 2 - 1;
+            v1.Y = v1.Y / (float)screenHeight * 2 - 1;
+            dx = dx / (float)screenWidth * 2 - 1;
+            dy = dy / (float)screenHeight * 2 - 1;
+
+            v2.X = v1.X + dx;
+            v2.Y = v1.Y + dy;
+
+            Render(v1, v2);
         }
 
         // void Render(Vector2 v1, Vector2 v2)
