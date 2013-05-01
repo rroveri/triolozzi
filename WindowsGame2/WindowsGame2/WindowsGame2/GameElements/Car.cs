@@ -46,8 +46,8 @@ namespace WindowsGame2.GameElements
         private Texture2D mDummyTexture;
         public Color mColor;
 
-        private VertexPositionColorTexture[] trailVertices = new VertexPositionColorTexture[mMaximumTrailPoints * 6 * paintersCount];
-        private VertexPositionColorTexture[] burnoutsVertices = new VertexPositionColorTexture[500*6*4];
+        public VertexPositionColorTexture[] trailVertices = new VertexPositionColorTexture[mMaximumTrailPoints * 6 * paintersCount];
+        public VertexPositionColorTexture[] burnoutsVertices = new VertexPositionColorTexture[500*6*4];
         private Vector3 tdPos = new Vector3(0, 0, -0.1f);
         private Vector3 oldWVert, newWVert, oldEVert, newEVert;
         private Vector3 oldWVertBurnoutRight, newWVertBurnoutRight, oldEVertBurnoutRight, newEVertBurnoutRight;
@@ -253,7 +253,7 @@ namespace WindowsGame2.GameElements
             driftValue = 0;
         }
 
-        public void Update(GamePadState gps, KeyboardState ks, GameTime gameTime)
+        public void Update(int playerIndex, GameInput gameInput, GameTime gameTime)
         {
             
             if (isActive == false)
@@ -286,120 +286,46 @@ namespace WindowsGame2.GameElements
             bool blueOnly = mColor == Color.Green || true;
             bool brownOnly = mColor == Color.Brown;
 
-            if (drivingMode == vicksMode)
+            
+            float newAcc = 0.0f;
+            if (gameInput.horizontal[playerIndex] > 0)
             {
-                // Move the car
-                if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0)
-                {
-                    _compound.AngularVelocity = 0;
-                    _compound.Rotation += rotVel;
-                }
-                if (ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0)
-                {
-                    _compound.AngularVelocity = 0;
-                    _compound.Rotation -= rotVel;
-                }
-
-                if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0)
-                {
-                    _compound.LinearVelocity += mDirection * (linearVel);
-
-                }
-                if (ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0)
-                {
-                    _compound.LinearVelocity += -mDirection * (linearVel);
-                }
+                _compound.AngularVelocity = 0;
+                _compound.Rotation += rotVel;
             }
-            else if (drivingMode == richMode)
+            if (gameInput.horizontal[playerIndex] < 0)
             {
-                
-                // Move the car
-                if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0)
-                {
-                    _compound.ApplyTorque(0.05f);
-                }
-                if (ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0)
-                {
-                    _compound.ApplyTorque(-0.05f);
-                   
-                }
-
-                if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0)
-                {
-                    _compound.ApplyForce(mForceVector, _compound.WorldCenter);
-
-                }
-                if (ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0)
-                {
-                    _compound.ApplyForce(-mForceVector, _compound.WorldCenter);
-                }
-
-                KillOrthogonalVelocity(this, 0.1f);
+                _compound.AngularVelocity = 0;
+                _compound.Rotation -= rotVel;
             }
-            else if (drivingMode == unityMode)
+
+            if (gameInput.vertical[playerIndex] > 0) 
             {
-                float newAcc = 0.0f;
-                if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0 || ks.IsKeyDown(Keys.D) && brownOnly)
-                {
-                    _compound.AngularVelocity = 0;
-                    _compound.Rotation += rotVel;
-                }
-                if (ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0 || ks.IsKeyDown(Keys.A) && brownOnly)
-                {
-                    _compound.AngularVelocity = 0;
-                    _compound.Rotation -= rotVel;
-                }
-
-                if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0 || ks.IsKeyDown(Keys.W) && brownOnly) 
-                {
-                    newAcc = currentAcc;
-                }
-                if (ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0 || ks.IsKeyDown(Keys.S) && brownOnly)
-                {
-                    newAcc = -currentAcc;
-                }
-
-                _compound.LinearVelocity += mDirection * (newAcc);
-                KillOrthogonalVelocity(this, driftValue);
-                if (_compound.LinearVelocity.Length() > currentMaxVel)
-                {
-                    Vector2 tempVel=_compound.LinearVelocity;
-                    _compound.LinearVelocity = Vector2.Normalize(tempVel) * currentMaxVel;
-                }
-
-                if ( _compound.LinearVelocity.Length() < 0.1f)
-                {
-                    resetTrail();
-                }
+                newAcc = currentAcc;
             }
-            else if (drivingMode == microMode)
+            if (gameInput.vertical[playerIndex] < 0)
             {
-                // Move the car
-                if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0)
-                {
-                    _compound.ApplyTorque(0.1f);
-                }
-                if (ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0)
-                {
-                    _compound.ApplyTorque(-0.1f);
-                }
+                newAcc = -currentAcc;
+            }
 
-                if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0)
-                {
-                    _compound.ApplyForce(mForceVector, _compound.WorldCenter);
+            _compound.LinearVelocity += mDirection * (newAcc);
+            KillOrthogonalVelocity(this, driftValue);
+            if (_compound.LinearVelocity.Length() > currentMaxVel)
+            {
+                Vector2 tempVel=_compound.LinearVelocity;
+                _compound.LinearVelocity = Vector2.Normalize(tempVel) * currentMaxVel;
+            }
 
-                }
-                if (ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0)
-                {
-                    _compound.ApplyForce(-mForceVector, _compound.WorldCenter);
-                }
+            if ( _compound.LinearVelocity.Length() < 0.1f)
+            {
+                resetTrail();
             }
 
             tdPos.X = _compound.Position.X;
             tdPos.Y = _compound.Position.Y;
 
             // Add a trail point if the player is drawing
-            if ((((ks.IsKeyDown(Keys.F) && blueOnly || gps.Triggers.Right > 0) || true) && !hasBoost) && !justStarted)
+            if (!hasBoost && !justStarted)
             {
                if (mTrailPoints >= mMaximumTrailPoints)
                 {
@@ -479,15 +405,15 @@ namespace WindowsGame2.GameElements
             projectedPosition = computeMiddleTrackProjection();
         
             //easter egg
-            if (gps.Triggers.Left > 0 && gps.Buttons.Y== ButtonState.Pressed && freeToSwap)
-            {
-                randomTrack.swapTexture();
-                freeToSwap = false;
-            }
-            else if (gps.Buttons.Y == ButtonState.Released)
-            {
-                freeToSwap = true;
-            }
+            //if (gps.Triggers.Left > 0 && gps.Buttons.Y== ButtonState.Pressed && freeToSwap)
+            //{
+            //    randomTrack.swapTexture();
+            //    freeToSwap = false;
+            //}
+            //else if (gps.Buttons.Y == ButtonState.Released)
+            //{
+            //    freeToSwap = true;
+            //}
 
             //move the message position
             moveMessageImage(gameTime);
@@ -592,139 +518,139 @@ namespace WindowsGame2.GameElements
             Vector2 rightVelocity = rightVector * Vector2.Dot(car._compound.LinearVelocity,rightVector);
             car._compound.LinearVelocity = forwardVelocity + rightVelocity * drift;
 
-            if (burnoutCounter > 500 - 4) burnoutCounter = 0;
+            //if (burnoutCounter > 500 - 4) burnoutCounter = 0;
 
-            if (drift != 0 && rightVelocity.Length() > 5f)
-            {
-                newWVertBurnoutRight.X = tdPos.X - mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
-                newWVertBurnoutRight.Y = tdPos.Y + mDirection.X * burnoutOffset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.Y * wheelsDistance;
+            //if (drift != 0 && rightVelocity.Length() > 5f)
+            //{
+            //    newWVertBurnoutRight.X = tdPos.X - mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
+            //    newWVertBurnoutRight.Y = tdPos.Y + mDirection.X * burnoutOffset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.Y * wheelsDistance;
 
-                newEVertBurnoutRight.X = tdPos.X + mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
-                newEVertBurnoutRight.Y = tdPos.Y - mDirection.X * burnoutOffset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.Y * wheelsDistance;
+            //    newEVertBurnoutRight.X = tdPos.X + mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
+            //    newEVertBurnoutRight.Y = tdPos.Y - mDirection.X * burnoutOffset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.Y * wheelsDistance;
 
-                burnoutsVertices[burnoutCounter * 6 + 0].Position = newWVertBurnoutRight;
-                burnoutsVertices[burnoutCounter * 6 + 1].Position = newEVertBurnoutRight;
-                burnoutsVertices[burnoutCounter * 6 + 2].Position = oldWVertBurnoutRight;
-                burnoutsVertices[burnoutCounter * 6 + 3].Position = oldWVertBurnoutRight;
-                burnoutsVertices[burnoutCounter * 6 + 4].Position = oldEVertBurnoutRight;
-                burnoutsVertices[burnoutCounter * 6 + 5].Position = newEVertBurnoutRight;
+            //    burnoutsVertices[burnoutCounter * 6 + 0].Position = newWVertBurnoutRight;
+            //    burnoutsVertices[burnoutCounter * 6 + 1].Position = newEVertBurnoutRight;
+            //    burnoutsVertices[burnoutCounter * 6 + 2].Position = oldWVertBurnoutRight;
+            //    burnoutsVertices[burnoutCounter * 6 + 3].Position = oldWVertBurnoutRight;
+            //    burnoutsVertices[burnoutCounter * 6 + 4].Position = oldEVertBurnoutRight;
+            //    burnoutsVertices[burnoutCounter * 6 + 5].Position = newEVertBurnoutRight;
 
-                burnoutsVertices[burnoutCounter * 6 + 0].TextureCoordinate = texNW;
-                burnoutsVertices[burnoutCounter * 6 + 1].TextureCoordinate = texNE;
-                burnoutsVertices[burnoutCounter * 6 + 2].TextureCoordinate = texOW;
-                burnoutsVertices[burnoutCounter * 6 + 3].TextureCoordinate = texOW;
-                burnoutsVertices[burnoutCounter * 6 + 4].TextureCoordinate = texOE;
-                burnoutsVertices[burnoutCounter * 6 + 5].TextureCoordinate = texNE;
+            //    burnoutsVertices[burnoutCounter * 6 + 0].TextureCoordinate = texNW;
+            //    burnoutsVertices[burnoutCounter * 6 + 1].TextureCoordinate = texNE;
+            //    burnoutsVertices[burnoutCounter * 6 + 2].TextureCoordinate = texOW;
+            //    burnoutsVertices[burnoutCounter * 6 + 3].TextureCoordinate = texOW;
+            //    burnoutsVertices[burnoutCounter * 6 + 4].TextureCoordinate = texOE;
+            //    burnoutsVertices[burnoutCounter * 6 + 5].TextureCoordinate = texNE;
 
-                oldWVertBurnoutRight = newWVertBurnoutRight;
-                oldEVertBurnoutRight = newEVertBurnoutRight;
+            //    oldWVertBurnoutRight = newWVertBurnoutRight;
+            //    oldEVertBurnoutRight = newEVertBurnoutRight;
 
-                burnoutCounter++;
-
-
-                newWVertBurnoutLeft.X = tdPos.X - mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
-                newWVertBurnoutLeft.Y = tdPos.Y + mDirection.X * burnoutOffset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.Y * wheelsDistance;
-
-                newEVertBurnoutLeft.X = tdPos.X + mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
-                newEVertBurnoutLeft.Y = tdPos.Y - mDirection.X * burnoutOffset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.Y * wheelsDistance;
-
-                burnoutsVertices[burnoutCounter * 6 + 0].Position = newWVertBurnoutLeft;
-                burnoutsVertices[burnoutCounter * 6 + 1].Position = newEVertBurnoutLeft;
-                burnoutsVertices[burnoutCounter * 6 + 2].Position = oldWVertBurnoutLeft;
-                burnoutsVertices[burnoutCounter * 6 + 3].Position = oldWVertBurnoutLeft;
-                burnoutsVertices[burnoutCounter * 6 + 4].Position = oldEVertBurnoutLeft;
-                burnoutsVertices[burnoutCounter * 6 + 5].Position = newEVertBurnoutLeft;
-
-                burnoutsVertices[burnoutCounter * 6 + 0].TextureCoordinate = texNW;
-                burnoutsVertices[burnoutCounter * 6 + 1].TextureCoordinate = texNE;
-                burnoutsVertices[burnoutCounter * 6 + 2].TextureCoordinate = texOW;
-                burnoutsVertices[burnoutCounter * 6 + 3].TextureCoordinate = texOW;
-                burnoutsVertices[burnoutCounter * 6 + 4].TextureCoordinate = texOE;
-                burnoutsVertices[burnoutCounter * 6 + 5].TextureCoordinate = texNE;
-
-                oldWVertBurnoutLeft = newWVertBurnoutLeft;
-                oldEVertBurnoutLeft = newEVertBurnoutLeft;
-
-                burnoutCounter++;
-
-                newWVertBurnoutRightFront.X = tdPos.X - mDirection.Y * burnoutOffset + mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
-                newWVertBurnoutRightFront.Y = tdPos.Y + mDirection.X * burnoutOffset + mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.Y * wheelsDistance;
-
-                newEVertBurnoutRightFront.X = tdPos.X + mDirection.Y * burnoutOffset + mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
-                newEVertBurnoutRightFront.Y = tdPos.Y - mDirection.X * burnoutOffset + mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.Y * wheelsDistance;
-
-                burnoutsVertices[burnoutCounter * 6 + 0].Position = newWVertBurnoutRightFront;
-                burnoutsVertices[burnoutCounter * 6 + 1].Position = newEVertBurnoutRightFront;
-                burnoutsVertices[burnoutCounter * 6 + 2].Position = oldWVertBurnoutRightFront;
-                burnoutsVertices[burnoutCounter * 6 + 3].Position = oldWVertBurnoutRightFront;
-                burnoutsVertices[burnoutCounter * 6 + 4].Position = oldEVertBurnoutRightFront;
-                burnoutsVertices[burnoutCounter * 6 + 5].Position = newEVertBurnoutRightFront;
-
-                burnoutsVertices[burnoutCounter * 6 + 0].TextureCoordinate = texNW;
-                burnoutsVertices[burnoutCounter * 6 + 1].TextureCoordinate = texNE;
-                burnoutsVertices[burnoutCounter * 6 + 2].TextureCoordinate = texOW;
-                burnoutsVertices[burnoutCounter * 6 + 3].TextureCoordinate = texOW;
-                burnoutsVertices[burnoutCounter * 6 + 4].TextureCoordinate = texOE;
-                burnoutsVertices[burnoutCounter * 6 + 5].TextureCoordinate = texNE;
-
-                oldWVertBurnoutRightFront = newWVertBurnoutRightFront;
-                oldEVertBurnoutRightFront = newEVertBurnoutRightFront;
-
-                burnoutCounter++;
+            //    burnoutCounter++;
 
 
-                newWVertBurnoutLeftFront.X = tdPos.X - mDirection.Y * burnoutOffset + mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
-                newWVertBurnoutLeftFront.Y = tdPos.Y + mDirection.X * burnoutOffset + mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.Y * wheelsDistance;
+            //    newWVertBurnoutLeft.X = tdPos.X - mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
+            //    newWVertBurnoutLeft.Y = tdPos.Y + mDirection.X * burnoutOffset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.Y * wheelsDistance;
 
-                newEVertBurnoutLeftFront.X = tdPos.X + mDirection.Y * burnoutOffset + mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
-                newEVertBurnoutLeftFront.Y = tdPos.Y - mDirection.X * burnoutOffset + mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.Y * wheelsDistance;
+            //    newEVertBurnoutLeft.X = tdPos.X + mDirection.Y * burnoutOffset - mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
+            //    newEVertBurnoutLeft.Y = tdPos.Y - mDirection.X * burnoutOffset - mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.Y * wheelsDistance;
 
-                burnoutsVertices[burnoutCounter * 6 + 0].Position = newWVertBurnoutLeftFront;
-                burnoutsVertices[burnoutCounter * 6 + 1].Position = newEVertBurnoutLeftFront;
-                burnoutsVertices[burnoutCounter * 6 + 2].Position = oldWVertBurnoutLeftFront;
-                burnoutsVertices[burnoutCounter * 6 + 3].Position = oldWVertBurnoutLeftFront;
-                burnoutsVertices[burnoutCounter * 6 + 4].Position = oldEVertBurnoutLeftFront;
-                burnoutsVertices[burnoutCounter * 6 + 5].Position = newEVertBurnoutLeftFront;
+            //    burnoutsVertices[burnoutCounter * 6 + 0].Position = newWVertBurnoutLeft;
+            //    burnoutsVertices[burnoutCounter * 6 + 1].Position = newEVertBurnoutLeft;
+            //    burnoutsVertices[burnoutCounter * 6 + 2].Position = oldWVertBurnoutLeft;
+            //    burnoutsVertices[burnoutCounter * 6 + 3].Position = oldWVertBurnoutLeft;
+            //    burnoutsVertices[burnoutCounter * 6 + 4].Position = oldEVertBurnoutLeft;
+            //    burnoutsVertices[burnoutCounter * 6 + 5].Position = newEVertBurnoutLeft;
 
-                burnoutsVertices[burnoutCounter * 6 + 0].TextureCoordinate = texNW;
-                burnoutsVertices[burnoutCounter * 6 + 1].TextureCoordinate = texNE;
-                burnoutsVertices[burnoutCounter * 6 + 2].TextureCoordinate = texOW;
-                burnoutsVertices[burnoutCounter * 6 + 3].TextureCoordinate = texOW;
-                burnoutsVertices[burnoutCounter * 6 + 4].TextureCoordinate = texOE;
-                burnoutsVertices[burnoutCounter * 6 + 5].TextureCoordinate = texNE;
+            //    burnoutsVertices[burnoutCounter * 6 + 0].TextureCoordinate = texNW;
+            //    burnoutsVertices[burnoutCounter * 6 + 1].TextureCoordinate = texNE;
+            //    burnoutsVertices[burnoutCounter * 6 + 2].TextureCoordinate = texOW;
+            //    burnoutsVertices[burnoutCounter * 6 + 3].TextureCoordinate = texOW;
+            //    burnoutsVertices[burnoutCounter * 6 + 4].TextureCoordinate = texOE;
+            //    burnoutsVertices[burnoutCounter * 6 + 5].TextureCoordinate = texNE;
 
-                oldWVertBurnoutLeftFront = newWVertBurnoutLeftFront;
-                oldEVertBurnoutLeftFront = newEVertBurnoutLeftFront;
+            //    oldWVertBurnoutLeft = newWVertBurnoutLeft;
+            //    oldEVertBurnoutLeft = newEVertBurnoutLeft;
 
-                burnoutCounter++;
+            //    burnoutCounter++;
 
-            }
-            else
-            {
-                oldWVertBurnoutRight.X = tdPos.X - mDirection.Y * burnoutOffset + rightVector.X * wheelsDistance;
-                oldWVertBurnoutRight.Y = tdPos.Y + mDirection.X * burnoutOffset + rightVector.Y * wheelsDistance;
+            //    newWVertBurnoutRightFront.X = tdPos.X - mDirection.Y * burnoutOffset + mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
+            //    newWVertBurnoutRightFront.Y = tdPos.Y + mDirection.X * burnoutOffset + mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.Y * wheelsDistance;
 
-                oldEVertBurnoutRight.X = tdPos.X + mDirection.Y * burnoutOffset + rightVector.X * wheelsDistance;
-                oldEVertBurnoutRight.Y = tdPos.Y - mDirection.X * burnoutOffset + rightVector.Y * wheelsDistance;
+            //    newEVertBurnoutRightFront.X = tdPos.X + mDirection.Y * burnoutOffset + mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.X * wheelsDistance;
+            //    newEVertBurnoutRightFront.Y = tdPos.Y - mDirection.X * burnoutOffset + mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f + rightVector.Y * wheelsDistance;
 
-                oldWVertBurnoutLeft.X = tdPos.X - mDirection.Y * burnoutOffset - rightVector.X * wheelsDistance;
-                oldWVertBurnoutLeft.Y = tdPos.Y + mDirection.X * burnoutOffset - rightVector.Y * wheelsDistance;
+            //    burnoutsVertices[burnoutCounter * 6 + 0].Position = newWVertBurnoutRightFront;
+            //    burnoutsVertices[burnoutCounter * 6 + 1].Position = newEVertBurnoutRightFront;
+            //    burnoutsVertices[burnoutCounter * 6 + 2].Position = oldWVertBurnoutRightFront;
+            //    burnoutsVertices[burnoutCounter * 6 + 3].Position = oldWVertBurnoutRightFront;
+            //    burnoutsVertices[burnoutCounter * 6 + 4].Position = oldEVertBurnoutRightFront;
+            //    burnoutsVertices[burnoutCounter * 6 + 5].Position = newEVertBurnoutRightFront;
 
-                oldEVertBurnoutLeft.X = tdPos.X + mDirection.Y * burnoutOffset - rightVector.X * wheelsDistance;
-                oldEVertBurnoutLeft.Y = tdPos.Y - mDirection.X * burnoutOffset - rightVector.Y * wheelsDistance;
+            //    burnoutsVertices[burnoutCounter * 6 + 0].TextureCoordinate = texNW;
+            //    burnoutsVertices[burnoutCounter * 6 + 1].TextureCoordinate = texNE;
+            //    burnoutsVertices[burnoutCounter * 6 + 2].TextureCoordinate = texOW;
+            //    burnoutsVertices[burnoutCounter * 6 + 3].TextureCoordinate = texOW;
+            //    burnoutsVertices[burnoutCounter * 6 + 4].TextureCoordinate = texOE;
+            //    burnoutsVertices[burnoutCounter * 6 + 5].TextureCoordinate = texNE;
 
-                oldWVertBurnoutRightFront.X = tdPos.X - mDirection.Y * burnoutOffset + rightVector.X * wheelsDistance;
-                oldWVertBurnoutRightFront.Y = tdPos.Y + mDirection.X * burnoutOffset + rightVector.Y * wheelsDistance;
+            //    oldWVertBurnoutRightFront = newWVertBurnoutRightFront;
+            //    oldEVertBurnoutRightFront = newEVertBurnoutRightFront;
 
-                oldEVertBurnoutRightFront.X = tdPos.X + mDirection.Y * burnoutOffset + rightVector.X * wheelsDistance;
-                oldEVertBurnoutRightFront.Y = tdPos.Y - mDirection.X * burnoutOffset + rightVector.Y * wheelsDistance;
+            //    burnoutCounter++;
 
-                oldWVertBurnoutLeftFront.X = tdPos.X - mDirection.Y * burnoutOffset - rightVector.X * wheelsDistance;
-                oldWVertBurnoutLeftFront.Y = tdPos.Y + mDirection.X * burnoutOffset - rightVector.Y * wheelsDistance;
 
-                oldEVertBurnoutLeftFront.X = tdPos.X + mDirection.Y * burnoutOffset - rightVector.X * wheelsDistance;
-                oldEVertBurnoutLeftFront.Y = tdPos.Y - mDirection.X * burnoutOffset - rightVector.Y * wheelsDistance;
-            }
+            //    newWVertBurnoutLeftFront.X = tdPos.X - mDirection.Y * burnoutOffset + mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
+            //    newWVertBurnoutLeftFront.Y = tdPos.Y + mDirection.X * burnoutOffset + mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.Y * wheelsDistance;
+
+            //    newEVertBurnoutLeftFront.X = tdPos.X + mDirection.Y * burnoutOffset + mDirection.X * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.X * wheelsDistance;
+            //    newEVertBurnoutLeftFront.Y = tdPos.Y - mDirection.X * burnoutOffset + mDirection.Y * tailOffset + (float)seed.NextDouble() * 0.05f - rightVector.Y * wheelsDistance;
+
+            //    burnoutsVertices[burnoutCounter * 6 + 0].Position = newWVertBurnoutLeftFront;
+            //    burnoutsVertices[burnoutCounter * 6 + 1].Position = newEVertBurnoutLeftFront;
+            //    burnoutsVertices[burnoutCounter * 6 + 2].Position = oldWVertBurnoutLeftFront;
+            //    burnoutsVertices[burnoutCounter * 6 + 3].Position = oldWVertBurnoutLeftFront;
+            //    burnoutsVertices[burnoutCounter * 6 + 4].Position = oldEVertBurnoutLeftFront;
+            //    burnoutsVertices[burnoutCounter * 6 + 5].Position = newEVertBurnoutLeftFront;
+
+            //    burnoutsVertices[burnoutCounter * 6 + 0].TextureCoordinate = texNW;
+            //    burnoutsVertices[burnoutCounter * 6 + 1].TextureCoordinate = texNE;
+            //    burnoutsVertices[burnoutCounter * 6 + 2].TextureCoordinate = texOW;
+            //    burnoutsVertices[burnoutCounter * 6 + 3].TextureCoordinate = texOW;
+            //    burnoutsVertices[burnoutCounter * 6 + 4].TextureCoordinate = texOE;
+            //    burnoutsVertices[burnoutCounter * 6 + 5].TextureCoordinate = texNE;
+
+            //    oldWVertBurnoutLeftFront = newWVertBurnoutLeftFront;
+            //    oldEVertBurnoutLeftFront = newEVertBurnoutLeftFront;
+
+            //    burnoutCounter++;
+
+            //}
+            //else
+            //{
+            //    oldWVertBurnoutRight.X = tdPos.X - mDirection.Y * burnoutOffset + rightVector.X * wheelsDistance;
+            //    oldWVertBurnoutRight.Y = tdPos.Y + mDirection.X * burnoutOffset + rightVector.Y * wheelsDistance;
+
+            //    oldEVertBurnoutRight.X = tdPos.X + mDirection.Y * burnoutOffset + rightVector.X * wheelsDistance;
+            //    oldEVertBurnoutRight.Y = tdPos.Y - mDirection.X * burnoutOffset + rightVector.Y * wheelsDistance;
+
+            //    oldWVertBurnoutLeft.X = tdPos.X - mDirection.Y * burnoutOffset - rightVector.X * wheelsDistance;
+            //    oldWVertBurnoutLeft.Y = tdPos.Y + mDirection.X * burnoutOffset - rightVector.Y * wheelsDistance;
+
+            //    oldEVertBurnoutLeft.X = tdPos.X + mDirection.Y * burnoutOffset - rightVector.X * wheelsDistance;
+            //    oldEVertBurnoutLeft.Y = tdPos.Y - mDirection.X * burnoutOffset - rightVector.Y * wheelsDistance;
+
+            //    oldWVertBurnoutRightFront.X = tdPos.X - mDirection.Y * burnoutOffset + rightVector.X * wheelsDistance;
+            //    oldWVertBurnoutRightFront.Y = tdPos.Y + mDirection.X * burnoutOffset + rightVector.Y * wheelsDistance;
+
+            //    oldEVertBurnoutRightFront.X = tdPos.X + mDirection.Y * burnoutOffset + rightVector.X * wheelsDistance;
+            //    oldEVertBurnoutRightFront.Y = tdPos.Y - mDirection.X * burnoutOffset + rightVector.Y * wheelsDistance;
+
+            //    oldWVertBurnoutLeftFront.X = tdPos.X - mDirection.Y * burnoutOffset - rightVector.X * wheelsDistance;
+            //    oldWVertBurnoutLeftFront.Y = tdPos.Y + mDirection.X * burnoutOffset - rightVector.Y * wheelsDistance;
+
+            //    oldEVertBurnoutLeftFront.X = tdPos.X + mDirection.Y * burnoutOffset - rightVector.X * wheelsDistance;
+            //    oldEVertBurnoutLeftFront.Y = tdPos.Y - mDirection.X * burnoutOffset - rightVector.Y * wheelsDistance;
+            //}
             
             
         }
@@ -753,11 +679,8 @@ namespace WindowsGame2.GameElements
             return _projectedPosition;
         }
 
-        public void Draw(SpriteBatch spriteBatch, out VertexPositionColorTexture[] vertices, out VertexPositionColorTexture[] _burnoutsVertices)
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            vertices = trailVertices;
-            _burnoutsVertices = burnoutsVertices;
-
             //draw projected position
            //   spriteBatch.Draw(mDummyTexture,ConvertUnits.ToDisplayUnits( projectedPosition),
            //                                null, mColor, 0, Vector2.Zero, Vector2.One*10, SpriteEffects.None,

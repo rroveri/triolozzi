@@ -24,9 +24,10 @@ namespace WindowsGame2.GameElements
         /// <summary>
         /// The crucial points in a track.
         /// </summary>
-        private int[] _crucialPoints;
+        private int[] _crucialPoints = { 300, 600, 1000 };
 
-        private int _pointsCount;
+        // Set up the points count in the track
+        public int PointsCount { get; set; }
 
         private int[] taken;
 
@@ -47,6 +48,11 @@ namespace WindowsGame2.GameElements
         public int Laps { get; private set; }
 
         /// <summary>
+        /// Events fired when a mini race is over.
+        /// </summary>
+        public event EventHandler<MiniRaceOverEventArgs> DidFinishMiniRace;
+
+        /// <summary>
         /// Events fired when a lap finished.
         /// </summary>
         public event EventHandler<FinishedLapEventArgs> DidFinishLap;
@@ -58,6 +64,7 @@ namespace WindowsGame2.GameElements
 
         private FinishedLapEventArgs _finishedLapEvent;
         private EliminatedCarEventArgs _eliminatedCarEvent;
+        private MiniRaceOverEventArgs _miniRaceoverEvent;
 
         /// <summary>
         /// The ranking position for each car in the race.
@@ -70,13 +77,9 @@ namespace WindowsGame2.GameElements
 
         #region Initialization
 
-        public GameLogic(int[] crucialPoints, int pointsCount)
+        public GameLogic()
         {
             Laps = 0;
-
-            // Set up the reference points in the track
-            _crucialPoints = crucialPoints;
-            _pointsCount = pointsCount;
             didReachCrucialPoint = new Dictionary<int, bool>(4);
             ResetCrucialPoints();
 
@@ -85,15 +88,10 @@ namespace WindowsGame2.GameElements
             _eliminatedCars = 0;
 
             Ranking = new int[kMaximumPlayers];
-            isMiniRaceOver = false;
 
             _eliminatedCarEvent = new EliminatedCarEventArgs(0);
             _finishedLapEvent = new FinishedLapEventArgs(0);
-        }
-
-        public void RestartMiniRace()
-        {
-            isMiniRaceOver = false;
+            _miniRaceoverEvent = new MiniRaceOverEventArgs();
         }
 
         #endregion
@@ -102,7 +100,6 @@ namespace WindowsGame2.GameElements
 
         public void Update(List<Car> Cars, Matrix Transform, GraphicsDeviceManager GraphicsDevice)
         {
-            isMiniRaceOver = false;
             // Update rankings
             UpdateRankings(Cars);
 
@@ -121,8 +118,6 @@ namespace WindowsGame2.GameElements
         #endregion
 
         #region Queries
-
-        public bool isMiniRaceOver { get; private set; }
 
         public bool isGameOver()
         {
@@ -210,7 +205,7 @@ namespace WindowsGame2.GameElements
                 point = Cars[i].currentMiddlePoint;
 
                 // Transform the point for 1-Lap computation
-                point = point % (_pointsCount + 20);
+                point = point % (PointsCount + 20);
 
                 if (didReachCrucialPoint.ContainsKey(point))
                 {
@@ -235,7 +230,10 @@ namespace WindowsGame2.GameElements
             // Is the first player the only one left in the game?
             if (_eliminatedCars == Cars.Count - 1)
             {
-                isMiniRaceOver = true;
+                if (DidFinishMiniRace != null)
+                {
+                    DidFinishMiniRace(this, _miniRaceoverEvent);
+                }
                 _eliminatedCars = 0;
                 UpdateScore(Cars[Ranking[0]], 0);
             }

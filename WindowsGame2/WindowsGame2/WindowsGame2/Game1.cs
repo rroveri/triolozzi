@@ -60,8 +60,8 @@ namespace WindowsGame2
         protected override void Initialize()
         {
             Settings.EnableDiagnostics = false;
-            Settings.VelocityIterations = 1; //6
-            Settings.PositionIterations = 1; //2
+            Settings.VelocityIterations = 6; //6
+            Settings.PositionIterations = 2; //2
             Settings.ContinuousPhysics = true;
             // IsFixedTimeStep = false;
 

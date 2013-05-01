@@ -360,7 +360,7 @@ namespace WindowsGame2.Screens
             {
                 if (!_didSelectColor[i])
                 {
-                    return false;
+                    //return false;
                 }
             }
             return true;

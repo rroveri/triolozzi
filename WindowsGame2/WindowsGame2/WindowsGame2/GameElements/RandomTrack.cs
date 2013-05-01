@@ -523,7 +523,7 @@ namespace WindowsGame2.GameElements
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
 
                 _particleComponent.particleEmitterList[car.index + carsCount*2].Position = postitCenter;
-                _particleComponent.particleEmitterList[car.index + carsCount * 2].Active = true;
+                //_particleComponent.particleEmitterList[car.index + carsCount * 2].Active = true;
             }
             else
             {
@@ -534,7 +534,7 @@ namespace WindowsGame2.GameElements
 
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
                 _particleComponent.particleEmitterList[car.index + carsCount].Position = postitCenter;
-                _particleComponent.particleEmitterList[car.index + carsCount].Active = true;
+                //_particleComponent.particleEmitterList[car.index + carsCount].Active = true;
             }
         }
 
@@ -639,9 +639,6 @@ namespace WindowsGame2.GameElements
 
         public void DrawSprites(Camera camera, SpriteBatch spriteBatch)
         {
-
-            
-
             //draw background
             for (int y = (int)Math.Ceiling(down - 2*currentTexture.Height * textureScale); y < (int)Math.Ceiling(up + 2*currentTexture.Height * textureScale); y = y + currentTexture.Height * textureScale)
             {
@@ -650,16 +647,6 @@ namespace WindowsGame2.GameElements
                     spriteBatch.Draw(currentTexture, new Vector2(x, y), null, Color.White, 0.0f, Vector2.Zero, Vector2.One * textureScale, SpriteEffects.None, 1f);
                 }
             }
-
-            //draw starting line
-            //Vector2 startingLine=(ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]])+ ConvertUnits.ToDisplayUnits(curvePointsExternal[0]))/2f;
-            //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
-            //Vector2 normalLine = Vector2.Normalize( new Vector2(-startingLine.Y,startingLine.X))*100f;
-            //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]])+normalLine, ConvertUnits.ToDisplayUnits(curvePointsExternal[0])+normalLine);
-            //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]) + normalLine, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normalLine);
-            //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]) + normalLine, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]));
-            //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normalLine);
-            //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]), ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]) + normalLine);
 
             //draw quotes
             for (int i = 0; i < postItQuotesList.Count; i++)
@@ -671,111 +658,8 @@ namespace WindowsGame2.GameElements
             for (int i = 0; i < postItDreamsList.Count; i++)
             {
                 postItDreamsList[i].Draw(spriteBatch);
-
-              //  DrawRainbow(spriteBatch, 0.2f, Color.White, ConvertUnits.ToDisplayUnits(postItDreamsList[i].position), ConvertUnits.ToDisplayUnits(new Vector2(0,0)));
                 
             }
-
-
-            
-
-            /*
-            //draw triangulation of the track for debugging 
-            for (int i = 0; i < curvePointsExternal.Count; i++)
-            {
-                int nextIndex = i + 1;
-                if (nextIndex > curvePointsExternal.Count-1)
-                {
-                    nextIndex = 0;
-                }
-
-                int a=internalCorrispondances[i];
-                int b=internalCorrispondances[nextIndex];
-                if (b - a == 1 )
-                {
-                    //for each "rectangle" there are two triangles
-                    DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[a]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
-                    DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[b]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
-                    DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[b]), ConvertUnits.ToDisplayUnits(curvePointsInternal[a]));
-
-                    DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[b]), ConvertUnits.ToDisplayUnits(curvePointsExternal[nextIndex]));
-                    DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[b]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
-                    DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsExternal[nextIndex]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
-                }
-                else
-                {
-                   for (int j = a; j < b; j++)
-                   {
-                       DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsInternal[j]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
-                       DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsInternal[j]), ConvertUnits.ToDisplayUnits(curvePointsInternal[j+1]));
-                       DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsInternal[j+1]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
-                   }
-                   DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsInternal[b]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
-                   DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsInternal[b]), ConvertUnits.ToDisplayUnits(curvePointsExternal[nextIndex]));
-                   DrawLine(spriteBatch, 5, Color.Green, ConvertUnits.ToDisplayUnits(curvePointsExternal[nextIndex]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
-                }
-            }
-             *
-             */
-            
-            /*
-             //draw connections between internal and external points for debugging
-             for (int i = 0; i < curvePointsExternal.Count; i++)
-             {
-                 DrawLine(spriteBatch, 5, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[i]]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i]));
-             }
-             */ 
-            
-
-
-            //// draw track
-            //for (int i = 1; i < curvePointsInternal.Count; i++)
-            //{
-            //    DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[i]), ConvertUnits.ToDisplayUnits(curvePointsInternal[i - 1]));
-
-            //    DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[i - 1]), ConvertUnits.ToDisplayUnits(curvePointsInternal[i - 1] + normalsInternal[i - 1] / pathWidth));
-            //    DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[i]), ConvertUnits.ToDisplayUnits(curvePointsInternal[i - 1] + normalsInternal[i - 1] / pathWidth));
-            //    DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[i] + normalsInternal[i] / pathWidth), ConvertUnits.ToDisplayUnits(curvePointsInternal[i - 1] + normalsInternal[i - 1] / pathWidth));
-            //}
-            //DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsInternal[0]), ConvertUnits.ToDisplayUnits(curvePointsInternal[curvePointsInternal.Count - 1]));
-
-            //// why multiply by 5????? random like a drunk kurva!!!
-            //for (int i = 1; i < curvePointsExternal.Count; i++)
-            //{
-            //   // DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]) + normals[i - 1], ConvertUnits.ToDisplayUnits(curvePointsExternal[i]) + normals[i]);
-            //    DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]) , ConvertUnits.ToDisplayUnits(curvePointsExternal[i]) );
-
-            //    //ugo
-               
-            //    DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]+normals[i-1] / pathWidth));
-            //    DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i-1]+normals[i-1]/pathWidth));
-            //    DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[i] + normals[i] / pathWidth), ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1] + normals[i - 1] / pathWidth));
-            //}
-            //// DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]) + normals[curvePointsExternal.Count - 1], ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normals[0]);
-            //DrawLine(spriteBatch, 5, Color.Black, ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]));
-            
-
-
-            /*
-            //draw middle points
-            for (int i = 1; i < curvePointsMiddle.Count; i++)
-            {
-                spriteBatch.Draw(dummyTexture, ConvertUnits.ToDisplayUnits(curvePointsMiddle[i]), null, Color.Green, 0f, Vector2.Zero, new Vector2(20,20), SpriteEffects.None, 0);
-            }
-            */
-            
-              
-
-            /*
-            for (int i = 1; i < curvePointsExternal.Count; i++)
-            {
-                DrawLine(spriteBatch, 50, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsExternal[i]), ConvertUnits.ToDisplayUnits(curvePointsExternal[i - 1]));
-            }
-            DrawLine(spriteBatch, 50, Color.Red, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]), ConvertUnits.ToDisplayUnits(curvePointsExternal[curvePointsExternal.Count - 1]));
-        
-             */ 
-
-
         }
     
     }

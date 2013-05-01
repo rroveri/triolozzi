@@ -20,6 +20,8 @@ namespace WindowsGame2
         /// </summary>
         private System.Threading.Thread _thread;
 
+        public bool isSomeOneWaiting = false;
+        public bool shouldStart = true;
 
         /// <summary>
         /// <para>This bool indicates whether the thread is currently running or not.
