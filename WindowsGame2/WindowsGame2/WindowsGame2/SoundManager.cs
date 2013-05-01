@@ -18,9 +18,15 @@ namespace WindowsGame2
         private Dictionary<string, Song> Songs { get; set; }
         private Dictionary<string, SoundEffect> Sounds { get; set; }
 
-        private List<SoundEffectInstance> PlayingSounds { get; set; }
+        private Dictionary<SoundEffectInstance, string> PlayingSounds { get; set; }
 
         public string CurrentSong { get; private set; }
+
+        public static readonly string MenuSelection = "MenuSelection";
+        public static readonly string CarCrash = "CarCrash";
+
+        private Dictionary<string, Queue<SoundEffectInstance>> effectsPool;
+        private Dictionary<string, Queue<SoundEffectInstance>> loopedEffectsPool;
 
         #endregion
 
@@ -32,7 +38,25 @@ namespace WindowsGame2
             Songs = new Dictionary<string, Song>();
             Sounds = new Dictionary<string, SoundEffect>();
 
-            PlayingSounds = new List<SoundEffectInstance>();
+            PlayingSounds = new Dictionary<SoundEffectInstance, string>();
+
+            effectsPool = new Dictionary<string, Queue<SoundEffectInstance>>();
+            effectsPool[SoundManager.MenuSelection] = new Queue<SoundEffectInstance>();
+            effectsPool[SoundManager.CarCrash] = new Queue<SoundEffectInstance>();
+
+            loopedEffectsPool = new Dictionary<string, Queue<SoundEffectInstance>>();
+        }
+
+        public void Initalize(ContentManager Content)
+        {
+            LoadSound(SoundManager.CarCrash, "Sounds/crash");
+            LoadSound(SoundManager.MenuSelection, "Sounds/menu_selection");
+            
+            for (int i = 0; i < 25; i++)
+            {
+                effectsPool[SoundManager.CarCrash].Enqueue(Sounds[SoundManager.CarCrash].CreateInstance());
+                effectsPool[SoundManager.MenuSelection].Enqueue(Sounds[SoundManager.MenuSelection].CreateInstance());
+            }
         }
 
         #endregion
@@ -95,24 +119,37 @@ namespace WindowsGame2
 
         public void PlaySound(string soundName, float volume, float pitch, float pan, bool repeat)
         {
-            SoundEffectInstance sound = Sounds[soundName].CreateInstance();
+            SoundEffectInstance sound;
+            if (effectsPool[soundName].Count > 0)
+            {
+                sound = effectsPool[soundName].Dequeue();
+            }
+            else
+            {
+                sound = Sounds[soundName].CreateInstance();
+                
+            }
 
             sound.Volume = volume;
             sound.Pitch = pitch;
             sound.Pan = pan;
-            sound.IsLooped = repeat;
+            // TODO: create pool for looped effects
+            //sound.IsLooped = repeat;
 
             sound.Play();
-            PlayingSounds.Add(sound);
+            PlayingSounds[sound] = soundName;
         }
 
         public void StopAllSounds()
         {
             for (int i = 0; i < PlayingSounds.Count; i++)
             {
-                PlayingSounds[i].Pause();
-                PlayingSounds[i].Dispose();
-                PlayingSounds.RemoveAt(i);
+                SoundEffectInstance key = PlayingSounds.ElementAt(i).Key;
+                string value = PlayingSounds.ElementAt(i).Value;
+
+                key.Pause();
+                effectsPool[value].Enqueue(key);
+                PlayingSounds.Remove(key);
                 i--;
             }
         }
@@ -126,10 +163,14 @@ namespace WindowsGame2
             base.Update(gameTime);
             for (int i = 0; i < PlayingSounds.Count; i++)
             {
-                if (PlayingSounds[i].State == SoundState.Stopped)
+                if (PlayingSounds.ElementAt(i).Key.State == SoundState.Stopped)
                 {
-                    PlayingSounds[i].Dispose();
-                    PlayingSounds.RemoveAt(i);
+                    SoundEffectInstance key = PlayingSounds.ElementAt(i).Key;
+                    string value = PlayingSounds.ElementAt(i).Value;
+
+                    effectsPool[value].Enqueue(key);
+                    PlayingSounds.Remove(key);
+
                     i--;
                 }
             }

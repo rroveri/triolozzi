@@ -83,8 +83,8 @@ namespace WindowsGame2
             GameServices.AddService<ParticleComponent>(particleComponent);
             GameServices.AddService<SoundManager>(SoundManager);
 
+            SoundManager.Initalize(Content);
             SoundManager.LoadSong("Cracks", "Sounds/Cracks");
-            SoundManager.LoadSound("crash", "Sounds/crash");
 
             ScreenManager.AddScreen(new LoadingScreen(), null);
             ScreenManager.AddScreen(new OptionsMenuScreen(), null);
