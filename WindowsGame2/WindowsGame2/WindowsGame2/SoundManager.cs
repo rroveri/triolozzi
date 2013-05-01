@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace WindowsGame2
 {
-    class SoundManager : GameComponent
+    public class SoundManager : GameComponent
     {
         #region Fields and Properties
 
@@ -24,6 +24,7 @@ namespace WindowsGame2
 
         public static readonly string MenuSelection = "MenuSelection";
         public static readonly string CarCrash = "CarCrash";
+        public static readonly string CarSteering = "CarSteering";
 
         private Dictionary<string, Queue<SoundEffectInstance>> effectsPool;
         private Dictionary<string, Queue<SoundEffectInstance>> loopedEffectsPool;
@@ -43,6 +44,7 @@ namespace WindowsGame2
             effectsPool = new Dictionary<string, Queue<SoundEffectInstance>>();
             effectsPool[SoundManager.MenuSelection] = new Queue<SoundEffectInstance>();
             effectsPool[SoundManager.CarCrash] = new Queue<SoundEffectInstance>();
+            effectsPool[SoundManager.CarSteering] = new Queue<SoundEffectInstance>();
 
             loopedEffectsPool = new Dictionary<string, Queue<SoundEffectInstance>>();
         }
@@ -51,12 +53,22 @@ namespace WindowsGame2
         {
             LoadSound(SoundManager.CarCrash, "Sounds/crash");
             LoadSound(SoundManager.MenuSelection, "Sounds/menu_selection");
-            
+            LoadSound(SoundManager.CarSteering, "Sounds/CarSteering");
+
             for (int i = 0; i < 25; i++)
             {
                 effectsPool[SoundManager.CarCrash].Enqueue(Sounds[SoundManager.CarCrash].CreateInstance());
                 effectsPool[SoundManager.MenuSelection].Enqueue(Sounds[SoundManager.MenuSelection].CreateInstance());
+
             }
+
+            //SoundEffectInstance sound;
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    sound = Sounds[SoundManager.CarSteering].CreateInstance();
+            //    sound.IsLooped = true;
+            //    effectsPool[SoundManager.CarSteering].Enqueue(sound);
+            //}
         }
 
         #endregion
@@ -119,6 +131,18 @@ namespace WindowsGame2
 
         public void PlaySound(string soundName, float volume, float pitch, float pan, bool repeat)
         {
+            SoundEffectInstance sound = GetSound(soundName, volume, pitch, pan, repeat);
+            PlayingSounds[sound] = soundName;
+            sound.Play();
+        }
+
+        public SoundEffectInstance GetSound(string soundName)
+        {
+            return GetSound(soundName, 1f, 0f, 0f, true);
+        }
+
+        public SoundEffectInstance GetSound(string soundName, float volume, float pitch, float pan, bool repeat)
+        {
             SoundEffectInstance sound;
             if (effectsPool[soundName].Count > 0)
             {
@@ -127,7 +151,7 @@ namespace WindowsGame2
             else
             {
                 sound = Sounds[soundName].CreateInstance();
-                
+
             }
 
             sound.Volume = volume;
@@ -136,8 +160,13 @@ namespace WindowsGame2
             // TODO: create pool for looped effects
             //sound.IsLooped = repeat;
 
-            sound.Play();
-            PlayingSounds[sound] = soundName;
+            return sound;
+        }
+
+        public void PoolSound(SoundEffectInstance sound, string soundName)
+        {
+            sound.Stop();
+            effectsPool[soundName].Enqueue(sound);
         }
 
         public void StopAllSounds()

@@ -663,7 +663,7 @@ namespace WindowsGame2.Screens
                             particleComponent.particleEmitterList[i].Active = true;
 
                             // Play sound for car that crashed
-                            soundManager.PlaySound("crash");
+                            soundManager.PlaySound(SoundManager.CarCrash);
 
                         }
                     }
