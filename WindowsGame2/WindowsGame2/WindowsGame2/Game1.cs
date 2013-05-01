@@ -84,7 +84,6 @@ namespace WindowsGame2
             GameServices.AddService<SoundManager>(SoundManager);
 
             SoundManager.Initalize(Content);
-            SoundManager.LoadSong("Cracks", "Sounds/Cracks");
 
             ScreenManager.AddScreen(new LoadingScreen(), null);
             ScreenManager.AddScreen(new OptionsMenuScreen(), null);

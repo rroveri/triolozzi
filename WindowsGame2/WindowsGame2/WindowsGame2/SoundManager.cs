@@ -26,6 +26,9 @@ namespace WindowsGame2
         public static readonly string CarCrash = "CarCrash";
         public static readonly string CarSteering = "CarSteering";
 
+        public static readonly string MenuSong = "MenuSong";
+        public static readonly string GameSong = "GameSong";
+
         private Dictionary<string, Queue<SoundEffectInstance>> effectsPool;
         private Dictionary<string, Queue<SoundEffectInstance>> loopedEffectsPool;
 
@@ -62,13 +65,16 @@ namespace WindowsGame2
 
             }
 
-            //SoundEffectInstance sound;
-            //for (int i = 0; i < 4; i++)
-            //{
-            //    sound = Sounds[SoundManager.CarSteering].CreateInstance();
-            //    sound.IsLooped = true;
-            //    effectsPool[SoundManager.CarSteering].Enqueue(sound);
-            //}
+            SoundEffectInstance sound;
+            for (int i = 0; i < 4; i++)
+            {
+                sound = Sounds[SoundManager.CarSteering].CreateInstance();
+                sound.IsLooped = true;
+                effectsPool[SoundManager.CarSteering].Enqueue(sound);
+            }
+
+            LoadSong(SoundManager.MenuSong, "Sounds/MenuSong");
+            LoadSong(SoundManager.GameSong, "Sounds/GameSong");
         }
 
         #endregion

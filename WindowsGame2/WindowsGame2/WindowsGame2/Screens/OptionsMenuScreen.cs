@@ -274,7 +274,6 @@ namespace WindowsGame2.Screens
                 if (BackAction.Evaluate(input, (PlayerIndex)i, out playerIndex))
                 {
                     ScreenManager.ShowScreen<MainMenuScreen>();
-                    _soundManager.StopSong();
                     return;
                 }
                 // Ignore everything if color has been selected already
