@@ -18,6 +18,9 @@ namespace WindowsGame2
         private Texture2D _currentTexture;
         private Rectangle _currentPosition;
 
+        private Texture2D _gameControls;
+        private Rectangle _gameControlsPosition;
+
         private bool _isReady;
 
         private InputAction StartAction;
@@ -33,9 +36,11 @@ namespace WindowsGame2
             _backgroundTexture = content.Load<Texture2D>("Images/bgNew");
             _loadingMessage = content.Load<Texture2D>("Images/PimpScreen/loadingMessage");
             _readyToPlayMessage = content.Load<Texture2D>("Images/PimpScreen/startGameMessage");
+            _gameControls = content.Load<Texture2D>("Images/PimpScreen/game_controls");
 
             Viewport viewport = ScreenManager.GraphicsDevice.Viewport;
-            _currentPosition = new Rectangle(viewport.Width/2 - 300, viewport.Height/2 - 75, 600, 150);
+            _currentPosition = new Rectangle(viewport.Width/2 - 300, viewport.Height/2 + 200, 600, 150);
+            _gameControlsPosition = new Rectangle(viewport.Width/2 - 450, viewport.Height/2 - 400, 900, 581);
 
             _currentTexture = _loadingMessage;
 
@@ -63,6 +68,7 @@ namespace WindowsGame2
             spriteBatch.End();
 
             spriteBatch.Begin();
+            spriteBatch.Draw(_gameControls, _gameControlsPosition, null, Color.White);
             spriteBatch.Draw(_currentTexture, _currentPosition, null, Color.White);
             spriteBatch.End();
         }
