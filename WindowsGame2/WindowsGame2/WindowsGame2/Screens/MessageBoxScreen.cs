@@ -69,9 +69,6 @@ namespace WindowsGame2.Screens
 
             IsPopup = true;
 
-            TransitionOnTime = TimeSpan.FromSeconds(0.2);
-            TransitionOffTime = TimeSpan.FromSeconds(0.2);
-
             menuSelect = new InputAction(
                 new Buttons[] { Buttons.A, Buttons.Start },
                 new Keys[] { Keys.Space, Keys.Enter },

@@ -56,10 +56,10 @@ namespace X2DPE
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		public override void Update(GameTime gameTime)
 		{
-			foreach (Emitter emitter in particleEmitterList)
-			{
-				emitter.UpdateParticles(gameTime);
-			}
+            for (int i = 0; i < particleEmitterList.Count; i++)
+            {
+                particleEmitterList[i].UpdateParticles(gameTime);
+            }
 			base.Update(gameTime);
 		}
 
@@ -67,9 +67,9 @@ namespace X2DPE
 		{
 			spriteBatch.Begin();
 
-			foreach (Emitter emitter in particleEmitterList)
+            for (int i = 0; i < particleEmitterList.Count; i++)
 			{
-				emitter.DrawParticles(gameTime, spriteBatch);
+                particleEmitterList[i].DrawParticles(gameTime, spriteBatch);
 			}
 			
 			spriteBatch.End();
