@@ -66,7 +66,7 @@ namespace WindowsGame2.GameElements
 
         public void Draw(SpriteBatch spriteBatch){
             spriteBatch.Draw(backgroundTexture, ConvertUnits.ToDisplayUnits(position), null, Color.White, rotation, contourPhysicsObject._origin,  textureScaleVec, SpriteEffects.None, 1f);
-            spriteBatch.Draw(foregroundTexture, ConvertUnits.ToDisplayUnits(position), null, color, rotation, contourPhysicsObject._origin, textureScaleVec * 0.6f, SpriteEffects.None, 1f);         
+            spriteBatch.Draw(foregroundTexture, ConvertUnits.ToDisplayUnits(position), null, color, rotation, contourPhysicsObject._origin, textureScaleVec, SpriteEffects.None, 1f);         
         }
     }
 }
