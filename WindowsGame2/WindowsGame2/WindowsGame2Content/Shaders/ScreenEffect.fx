@@ -1,5 +1,7 @@
 
 Texture2D postitHappy, postitSad, lap, numbers;
+Texture2D postitHappy_NW, postitHappy_NE, postitHappy_SW, postitHappy_SE;
+Texture2D postitSad_NW, postitSad_NE, postitSad_SW, postitSad_SE;
 
 float4 nLaps;
 
