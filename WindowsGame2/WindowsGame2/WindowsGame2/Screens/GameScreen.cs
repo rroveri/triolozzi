@@ -107,8 +107,10 @@ namespace WindowsGame2.Screens
         ParticleComponent particleComponent;
         Fluid fluid;
         Vector2 fluidPos = new Vector2(-1);
-        Vector2 currentPos;
-        Vector2 prevPos;
+        Vector2[] currentPoses;
+        Vector2[] prevPoses;
+        Vector2 currentMousePos;
+        Vector2 prevMousePos;
         KeyboardState previousState;
         GamePadState previousPadState;
 
@@ -118,7 +120,7 @@ namespace WindowsGame2.Screens
 
         public SneezesManager mySneezesManager;
         private QuadRenderComponent quad;
-        private bool isGameOver;
+        private bool gameIsExiting;
         private Thread fluidUpdateThread;
         private int sideSize;
 
@@ -293,10 +295,12 @@ namespace WindowsGame2.Screens
 
             fluid = new Fluid();
             fluid.Init();
-            sideSize = 64;
 
-            currentPos = new Vector2(100);
-            prevPos = new Vector2(0);
+            currentPoses = new Vector2[4];
+            prevPoses = new Vector2[4];
+
+            currentMousePos = new Vector2(100);
+            prevMousePos = new Vector2(0);
 
             quad = new QuadRenderComponent(ScreenManager.Game, cameraFollowing, ScreenManager.GraphicsDevice.Viewport.Width, ScreenManager.GraphicsDevice.Viewport.Height);
             ScreenManager.Game.Components.Add(quad);
@@ -309,7 +313,7 @@ namespace WindowsGame2.Screens
             coloredEffect = Content.Load<Effect>("Shaders/FluidEffect");
 
             texInk = new Texture2D(graphics.GraphicsDevice,
-                sideSize, sideSize, true,
+                fluid.m_w, fluid.m_h, true,
                 SurfaceFormat.Color);
             buffer = new RenderTarget2D(GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Width, ScreenManager.GraphicsDevice.Viewport.Height, true,
                 SurfaceFormat.Color, GraphicsDevice.PresentationParameters.DepthStencilFormat);
@@ -428,6 +432,7 @@ namespace WindowsGame2.Screens
             base.Unload();
             GameServices.DeleteService<World>();
             GameServices.DeleteService<Camera>();
+            gameIsExiting = true;
 
             if (fluidUpdateThread != null)
             {
@@ -486,6 +491,8 @@ namespace WindowsGame2.Screens
             updateFluidParameters(gameTime);
 
             mySneezesManager.Update(gameTime,Cars);
+
+            if (Keyboard.GetState().IsKeyDown(Keys.F)) fluid.saveDensity();
         }
 
         private void UpdateCars(GameTime gameTime)
@@ -507,9 +514,14 @@ namespace WindowsGame2.Screens
                         polygonsList.Add(obstacle);
                     }
                 }
-                //Vector2 screen = Vector2.Transform(Cars[i].Position, cameraFollowing.Transform);
-                //float densValue = fluid.fluidLevelAtPosition(screen);
-                //if (densValue > 0.09f) Cars[i]._compound.LinearVelocity *= 0.8f;
+                
+                Vector2 relativePos = Vector2.Transform(Cars[i].Position,cameraFollowing.Transform) - Vector2.Transform(fluid.renderPosition, cameraFollowing.Transform);
+
+                float relativePosX = relativePos.X * fluid.m_w / fluid.renderWidth;
+                float relativePosY = fluid.m_h + relativePos.Y * fluid.m_h / fluid.renderHeight;
+
+                float densValue = fluid.fluidLevelAtPosition(relativePosX, relativePosY);
+                if (densValue > 0.09f) Cars[i]._compound.LinearVelocity *= 0.8f;
             }
 
             for (int i = Cars.Count; i < Cars.Count * 2; i++ )
@@ -700,84 +712,51 @@ namespace WindowsGame2.Screens
 
         private void updateFluidParameters(GameTime gameTime)
         {
-            KeyboardState keyState = Keyboard.GetState();
-
-            float relativePosX = currentPos.X * fluid.m_w / ScreenManager.GraphicsDevice.Viewport.Width;
-            float relativePosY = currentPos.Y * fluid.m_h / ScreenManager.GraphicsDevice.Viewport.Height;
-
-#if !XBOX360
-
-            if (keyState.IsKeyDown(Keys.Space) && !previousState.IsKeyDown(Keys.Space))
+            for (int i = 0; i < PlayersCount; i++)
             {
-                fluid.update = !fluid.update;
+                currentPoses[i] = Vector2.Transform(Cars[i].Position, cameraFollowing.Transform);
+
+                Vector2 relativePos = currentPoses[i] - Vector2.Transform(fluid.renderPosition, cameraFollowing.Transform);
+
+                float relativePosX = relativePos.X * fluid.m_w / fluid.renderWidth;
+                float relativePosY = fluid.m_h + relativePos.Y * fluid.m_h / fluid.renderHeight;
+
+                float dX = currentPoses[i].X - prevPoses[i].X;
+                float dY = currentPoses[i].Y - prevPoses[i].Y;
+
+                if (fluid.fluidLevelAtPosition(relativePosX, relativePosY) < 0.09f) continue;
+                fluid.makeImpulse(relativePosX, relativePosY, dX, dY, false);
+
+                prevPoses[i] = currentPoses[i]; 
             }
 
-            if (keyState.IsKeyDown(Keys.R))
-            {
-                this.fluid.Reset();
-            }
+            /*
+             * Server per disegnare col mouse dei nouvi muchi 
+             * 
+            */
 
             //if (keyState.IsKeyDown(Keys.Enter) && !previousState.IsKeyDown(Keys.Enter))
             //    this.texInk.Save("captura.bmp", ImageFileFormat.Bmp);
 
-            MouseState mouseState = Mouse.GetState();
-            Vector2 carPos = Vector2.Transform(Cars[0].Position, cameraFollowing.Transform);
-            currentPos = carPos;// new Vector2((float)mouseState.X, (float)mouseState.Y);
+            //MouseState mouseState = Mouse.GetState();
+            //KeyboardState keyState = Keyboard.GetState();
+            
+            //Vector2 currentPos = new Vector2((float)mouseState.X, (float)mouseState.Y);
 
-            ButtonState leftState = mouseState.LeftButton;
-            ButtonState rightState = mouseState.RightButton;
+            //ButtonState leftState = mouseState.LeftButton;
 
-            float dX = currentPos.X - prevPos.X;
-            float dY = currentPos.Y - prevPos.Y;
+            //float dX = currentMousePos.X - prevMousePos.X;
+            //float dY = currentMousePos.Y - prevMousePos.Y;
 
-            if (leftState == ButtonState.Pressed || true)
-            {
-                fluid.makeImpulse(relativePosX, relativePosY, dX, dY, true);
-            }
+            //if (leftState == ButtonState.Pressed)
+            //{
+            //    fluid.makeImpulse(relativePosX, relativePosY, dX, dY, true);
+            //}
 
-            fluid.makeImpulse(relativePosX, relativePosY, dX, dY, false);
+            //previousState = keyState;
 
-            previousState = keyState;
-
-#else
-            GamePadState padState = GamePad.GetState(PlayerIndex.One);
-
-            this.currentPos.X = this.currentPos.X + 5.0f * padState.ThumbSticks.Left.X;
-            this.currentPos.Y = this.currentPos.Y - 5.0f * padState.ThumbSticks.Left.Y;
-
-            if (currentPos.X < 10.0f)
-                currentPos.X = 10.0f;
-            if (currentPos.X > (float)(screenWidth - 10))
-                currentPos.X = (float)(screenWidth - 10);
-            if (currentPos.Y < 10.0f)
-                currentPos.Y = 10.0f;
-            if (currentPos.Y > (float)(screenHeight - 10))
-                currentPos.Y = (float)(screenHeight - 10);
-
-
-            if (padState.Triggers.Right > 0.1f)
-            {
-                this.currentTex = paintTex;
-                this.makeImpulse(relativePosX, relativePosY, true);
-            }
-            if (padState.Triggers.Left > 0.1f)
-            {
-                this.currentTex = fingerTex;
-                this.makeImpulse(relativePosX, relativePosY, false);
-            }
-
-            if (padState.Buttons.Start == ButtonState.Pressed)
-                this.fluid.Reset();
-
-            if ((padState.DPad.Right == ButtonState.Pressed) && 
-               (previousPadState.DPad.Right != ButtonState.Pressed))
-                this.fluid.update = !fluid.update;
-
-            previousPadState = padState;
-         
-#endif
-
-            prevPos = currentPos;
+            //prevMousePos = currentMousePos;
+            
         }
 
         void UpdateFluid()
@@ -786,7 +765,7 @@ namespace WindowsGame2.Screens
             Thread.CurrentThread.SetProcessorAffinity(new int[] { 3 });
 #endif
 
-            while (!isGameOver)
+            while (!gameIsExiting)
             {
                 fluid.Update(0.04f);
             }
@@ -798,6 +777,7 @@ namespace WindowsGame2.Screens
 
             GraphicsDevice.Viewport = defaultViewport;
             DrawSprites(cameraFollowing);
+            drawFluid();
             
             // If the game is transitioning on or off, fade it out to black.
             if (TransitionPosition > 0 || pauseAlpha > 0)
@@ -813,6 +793,8 @@ namespace WindowsGame2.Screens
         {
             //graphics.GraphicsDevice.Clear(Color.White);
 
+            if (fluid.shouldResetDensity) return;
+
             graphics.GraphicsDevice.Textures[0] = null;
 
             texInk.SetData<Color>(fluid.texData);
@@ -823,16 +805,20 @@ namespace WindowsGame2.Screens
             coloredEffect.Parameters["texelSize"].SetValue(0.01f);
 #endif
             //graphics.GraphicsDevice.SetRenderTarget(buffer);
-            graphics.GraphicsDevice.Clear(ClearOptions.Target, Color.White, 0, 0);
+            //graphics.GraphicsDevice.Clear(ClearOptions.Target, Color.White, 0, 0);
             //coloredEffect.Techniques[0].Passes[0].Apply();
             //quad.renderMainQuad();
             //graphics.GraphicsDevice.SetRenderTarget(null);
             //Texture2D rend = gaussian.Render(buffer);
             coloredEffect.Parameters["Texture"].SetValue(texInk);
             coloredEffect.Techniques[0].Passes[0].Apply();
-            quad.renderFromDisplayUnits(mySneezesManager.sneezePosition,fluid.renderWidth,fluid.renderHeight);
+            quad.renderFromDisplayUnits(fluid.renderPosition,fluid.renderWidth,fluid.renderHeight);
 
-            //printInfo();
+            Texture2D trailSketch = Content.Load<Texture2D>("Materials/trailSketch");
+            coloredEffect.Parameters["Texture"].SetValue(trailSketch);
+            coloredEffect.Techniques[0].Passes[0].Apply();
+            
+            //quad.renderFromScreenUnits(currentMousePos, 10, 10);
         }
 
         public void DrawSprites(Camera camera)
@@ -859,8 +845,6 @@ namespace WindowsGame2.Screens
             }
        
             spriteBatch.End();
-
-            drawFluid();
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -958,7 +942,7 @@ namespace WindowsGame2.Screens
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.nLapsVertices, 0, 2);
 
             screenEffect.CurrentTechnique.Passes["BarPass"].Apply();
-            for (int i = 0; i < PlayersCount; i++)
+            for (int i = 0; i < Cars.Count(); i++)
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.barVertices[i], 0, Cars[i].score * 2);
 
 

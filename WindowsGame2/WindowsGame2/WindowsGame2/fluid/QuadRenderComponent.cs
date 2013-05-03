@@ -97,9 +97,22 @@ namespace WindowsGame2
         {
             v1 = Vector2.Transform(v1, camera.Transform);
             v1.X = v1.X / (float)screenWidth * 2 - 1;
-            v1.Y = v1.Y / (float)screenHeight * 2 - 1;
-            dx = dx / (float)screenWidth * 2 - 1;
-            dy = dy / (float)screenHeight * 2 - 1;
+            v1.Y = 1 - v1.Y / (float)screenHeight * 2;
+            dx = dx / (float)screenWidth * 2;
+            dy = dy / (float)screenHeight * 2;
+
+            v2.X = v1.X + dx;
+            v2.Y = v1.Y + dy;
+
+            Render(v1, v2);
+        }
+
+        public void renderFromScreenUnits(Vector2 v1, float dx, float dy)
+        {
+            v1.X = v1.X / (float)screenWidth * 2 - 1;
+            v1.Y = 1 - v1.Y / (float)screenHeight * 2;
+            dx = dx / (float)screenWidth * 2;
+            dy = dy / (float)screenHeight * 2;
 
             v2.X = v1.X + dx;
             v2.Y = v1.Y + dy;

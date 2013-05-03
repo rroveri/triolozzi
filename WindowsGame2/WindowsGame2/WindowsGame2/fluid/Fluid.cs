@@ -12,6 +12,11 @@ using Microsoft.Xna.Framework.Input;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using System.Text;
+using System.IO;
+using System.Xml.Serialization;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Storage;
+using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
@@ -23,8 +28,7 @@ namespace WindowsGame2
         #region Public Fields
 
         public bool update = true;
-
-        public string TIME;
+        public Vector2 renderPosition = new Vector2();
       
         public int m_w;
         public int m_h;
@@ -63,6 +67,8 @@ namespace WindowsGame2
 
         private Vector4[] mp_ink1;
 
+        private Vector4[][] densities;
+
         private int[] mp_sources;
         private float[] mp_source_fractions;
         private float[] mp_fraction;
@@ -74,6 +80,7 @@ namespace WindowsGame2
         public Color[] texData;
         public float renderWidth = 256;
         public float renderHeight = 256;
+        public bool shouldResetDensity;
 
         #endregion
 
@@ -89,6 +96,7 @@ namespace WindowsGame2
 
         public void Init()
         {
+#if !XBOX360
             m_w = 64;
             m_h = 64;
             size = m_w * m_h;
@@ -109,21 +117,79 @@ namespace WindowsGame2
 
             m_diffusion_iterations = 1;
 
-            m_velocity_diffusion = 1.0f;
-            m_pressure_diffusion = 4.0f;
+            m_velocity_diffusion = .5f;
+            m_pressure_diffusion = .5f;
             m_ink_diffusion = 0.0f;
 
             m_vorticity = 1.0f;
 
-            m_pressure_acc = 1;
+            m_pressure_acc = 0.5f;
 
             m_ink_advection = 120.0f;
-            m_velocity_advection = 100.0f;
-            m_pressure_advection = 120.0f;
+            m_velocity_advection = 1000.0f;
+            m_pressure_advection = 80.0f;
+#else
+            m_w = 64;
+            m_h = 64;
+            size = m_w * m_h;
+            mp_xv0 = new float[size];
+            mp_yv0 = new float[size];
+            mp_xv1 = new float[size];
+            mp_yv1 = new float[size];
+            mp_xv2 = new float[size];
+            mp_yv2 = new float[size];
+            mp_p0 = new float[size];
+            mp_p1 = new float[size];
+            mp_ink0 = new Vector4[size];
+            mp_ink1 = new Vector4[size];
+            mp_sources = new int[size];
+            mp_source_fractions = new float[size * 4];
+            mp_fraction = new float[size];
+            Reset();
 
-            currentColor = new Vector4(1, 0, 0, 1);
+            m_diffusion_iterations = 1;
+
+            m_velocity_diffusion = .5f;
+            m_pressure_diffusion = .5f;
+            m_ink_diffusion = 0.0f;
+
+            m_vorticity = 1.0f;
+
+            m_pressure_acc = 0.5f;
+
+            m_ink_advection = 120.0f;
+            m_velocity_advection = 1000.0f;
+            m_pressure_advection = 80.0f;
+#endif
+
+            currentColor = new Vector4(0.1f, 0.6f, 0.1f, 1.0f);
 
             texData = new Color[m_w * m_h];
+
+            loadDensities();
+        }
+
+        public void saveDensity()
+        {
+        }
+
+        public void loadDensities()
+        {
+            int size = m_w * m_h;
+            densities = new Vector4[1][];
+            densities[0] = new Vector4[size];
+
+            Texture2D densTex = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/mucus/color_scrofa64");
+
+            Color[] texData = new Color[m_w * m_h];
+            densTex.GetData(texData);
+
+            for (int i = 0; i < size; i++)
+            {
+                densities[0][i] = texData[i].ToVector4();
+            }
+            int ani = 0;
+            size = ani;
         }
 
         #endregion
@@ -231,17 +297,23 @@ namespace WindowsGame2
             ReverseAdvection(ref mp_p0, ref mp_p1, m_pressure_advection * advection_scale);
             swap(ref mp_p0, ref mp_p1);
 
-            DateTime stopTime = DateTime.Now;
-            TimeSpan diff = stopTime - startTime;
-            this.TIME = diff.TotalMilliseconds.ToString();
-
             for (int i = 0; i < m_w * m_h; i++)
             {
-                texData[i].R = 50;// (byte)(Math.Min(mp_ink0[i].X, 1) * 255);
-                texData[i].G = 50;//(byte)(Math.Min(mp_ink0[i].Y, 1) * 255);
-                texData[i].B = 50;//(byte)(Math.Min(mp_ink0[i].Z, 1) * 255);
-                texData[i].A = 255;//(byte)(Math.Min(mp_ink0[i].W, 1) * 255);
+                texData[i].R = (byte)(Math.Min(mp_ink0[i].X, 1) * 255);
+                texData[i].G = (byte)(Math.Min(mp_ink0[i].Y, 1) * 255);
+                texData[i].B = (byte)(Math.Min(mp_ink0[i].Z, 1) * 255);
+                texData[i].A = (byte)(Math.Min(mp_ink0[i].W, 1) * 255);
             }
+
+            if (shouldResetDensity) resetDensity();
+        }
+
+        public float fluidLevelAtPosition(float relativePosX, float relativePosY)
+        {
+            if (relativePosX < 0 || relativePosY < 0 || relativePosX >= m_w - 1 || relativePosY >= m_h - 1) return 0;
+            int index = Cell((int)relativePosX,(int)relativePosY);
+            Vector4 densityColor = mp_ink0[index];
+            return densityColor.X * densityColor.X + densityColor.Y * densityColor.Y + densityColor.Z * densityColor.Z;
         }
 
         #endregion
@@ -1089,14 +1161,13 @@ namespace WindowsGame2
 
         public void makeImpulse(float X, float Y, float dX, float dY, bool throwInk)
         {
+            if (fluidLevelAtPosition((int)X, (int)Y) < 0.09f) return;
             float step = 0.1f;
 #if !XBOX360
-            float scale = 0.0003f;
+            float scale = 0.0004f;
 #else
-            float scale = 0.0005f;
+            float scale = 0.0004f;
 #endif
-
-            
 
             for (float x0 = -0.5f; x0 < 0.5f; x0 += step)
             {
@@ -1110,10 +1181,6 @@ namespace WindowsGame2
                     }
                     else
                     {
-                        // Uncomment this for a smoke-like ink
-                        //AddValue(mp_yv0, x0 + X, y0 + Y, -6.0f * (1.0f - rr) * scale);
-
-                        // Comment this for a smoke-like ink
                         AddValue(mp_xv0, x0 + X, y0 + Y, dX * (1.0f - rr) * scale);
                         AddValue(mp_yv0, x0 + X, y0 + Y, dY * (1.0f - rr) * scale);
 
@@ -1124,6 +1191,26 @@ namespace WindowsGame2
                     }
                 }
             }
+        }
+
+        public void resetDensity()
+        {
+            //Buffer.BlockCopy(src,0,dst,0,);
+            int size = m_w * m_h;
+            for (int i = 0; i < size; i++)
+            {
+                mp_xv0[i] = 0.0f;
+                mp_yv0[i] = 0.0f;
+                mp_xv1[i] = 0.0f;
+                mp_yv1[i] = 0.0f;
+                mp_xv2[i] = 0.0f;
+                mp_yv2[i] = 0.0f;
+                mp_p0[i] = 1.0f;
+                mp_p1[i] = 1.0f;
+                mp_ink0[i] = densities[0][i];
+            }
+
+            shouldResetDensity = false;
         }
 
         #endregion

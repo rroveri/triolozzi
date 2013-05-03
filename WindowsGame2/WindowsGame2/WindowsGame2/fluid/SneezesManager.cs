@@ -45,7 +45,7 @@ namespace WindowsGame2
                 timer = 0;
                 nextSneezeTime = random.NextDouble() * 10000;
                 fluid.resetDensity();
-
+                fluid.renderPosition = sneezePosition;
                 drawFluid = true;
             }
 
