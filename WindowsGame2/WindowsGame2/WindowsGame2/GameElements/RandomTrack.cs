@@ -49,7 +49,7 @@ namespace WindowsGame2.GameElements
         float up = -10000000;
         float down = 10000000;
 
-        int textureScale = 3;
+        int textureScale = 2;
 
         public VertexPositionColorTexture[] myArray;
         public VertexPositionColorTexture[] startLineVertices;

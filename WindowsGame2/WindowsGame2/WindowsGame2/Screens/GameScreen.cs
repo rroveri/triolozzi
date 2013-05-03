@@ -211,43 +211,8 @@ namespace WindowsGame2.Screens
 
             mySneezesManager.randomTrack = randomRaceTrack;
 
-
-            paperEffect = Content.Load<Effect>("Shaders/PaperEffect");
-            paperEffect.CurrentTechnique = paperEffect.Techniques["DoodleTechinque"];
-            Texture2D trailSketch = Content.Load<Texture2D>("Materials/trailSketch");
-            Texture2D objectSketch = Content.Load<Texture2D>("Materials/pencil");
-            Texture2D ink = Content.Load<Texture2D>("Materials/ink_texture");
-            Texture2D startLine = Content.Load<Texture2D>("Materials/squares");
-            Texture2D alphabet = Content.Load<Texture2D>("Images/alphabet");
-            Texture2D messageBg = Content.Load<Texture2D>("Images/onomatopeeBg");
-            Texture2D externalTex = Content.Load<Texture2D>("Images/external_bg");
-            paperEffect.Parameters["trailSketchBrush"].SetValue(dummyTexture);
-            paperEffect.Parameters["trailSketch"].SetValue(trailSketch);
-            paperEffect.Parameters["objectSketch"].SetValue(objectSketch);
-            paperEffect.Parameters["ink"].SetValue(ink);
-            paperEffect.Parameters["startLine"].SetValue(startLine);
-            paperEffect.Parameters["alphabet"].SetValue(alphabet);
-            paperEffect.Parameters["popupMessage"].SetValue(messageBg);
-            paperEffect.Parameters["externalSketch"].SetValue(externalTex);
-            randomArray = new float[16 * 16];
-            Color[] randomCol = new Color[16 * 16];
-            randomArray[0] = 0.5f;
-            for (int i = 1; i < randomArray.Count(); i++) randomArray[i] = (float)Random.NextDouble();
-            for (int i = 0; i < randomArray.Count(); i++) randomCol[i] = Color.White * randomArray[i];
-            Texture2D randomTex = new Texture2D(graphics.GraphicsDevice, 16, 16);
-            randomTex.SetData(randomCol);
-            paperEffect.Parameters["random"].SetValue(randomTex);
-
-            screenEffect = Content.Load<Effect>("Shaders/ScreenEffect");
-            screenEffect.CurrentTechnique = screenEffect.Techniques["ScreenTechinque"];
-            Texture2D postitHappy = Content.Load<Texture2D>("Images/postitHappy");
-            screenEffect.Parameters["postitHappy"].SetValue(postitHappy);
-            Texture2D postitSad = Content.Load<Texture2D>("Images/postitSad");
-            screenEffect.Parameters["postitSad"].SetValue(postitSad);
-            Texture2D postitLap = Content.Load<Texture2D>("Images/postitLap");
-            screenEffect.Parameters["lap"].SetValue(postitLap);
-            Texture2D numbers = Content.Load<Texture2D>("Images/numbers");
-            screenEffect.Parameters["numbers"].SetValue(numbers);
+            LoadPaperEffect();
+            LoadScreenEffect();
 
             screenRenderer = new ScreenRenderer();
             Logic.DidEliminateCar += screenRenderer.setSadToPlayer;
@@ -319,6 +284,65 @@ namespace WindowsGame2.Screens
                 SurfaceFormat.Color, GraphicsDevice.PresentationParameters.DepthStencilFormat);
 
             //gaussian = new GaussianBlur(ScreenManager.Game);
+        }
+
+        private void LoadPaperEffect()
+        {
+            paperEffect = Content.Load<Effect>("Shaders/PaperEffect");
+            paperEffect.CurrentTechnique = paperEffect.Techniques["DoodleTechinque"];
+            Texture2D trailSketch = Content.Load<Texture2D>("Materials/trailSketch");
+            Texture2D objectSketch = Content.Load<Texture2D>("Materials/pencil");
+            Texture2D ink = Content.Load<Texture2D>("Materials/ink_texture");
+            Texture2D startLine = Content.Load<Texture2D>("Materials/squares");
+            Texture2D alphabet = Content.Load<Texture2D>("Images/alphabet");
+            Texture2D messageBg = Content.Load<Texture2D>("Images/onomatopeeBg");
+            Texture2D externalTex = Content.Load<Texture2D>("Images/external_bg");
+            paperEffect.Parameters["trailSketchBrush"].SetValue(dummyTexture);
+            paperEffect.Parameters["trailSketch"].SetValue(trailSketch);
+            paperEffect.Parameters["objectSketch"].SetValue(objectSketch);
+            paperEffect.Parameters["ink"].SetValue(ink);
+            paperEffect.Parameters["startLine"].SetValue(startLine);
+            paperEffect.Parameters["alphabet"].SetValue(alphabet);
+            paperEffect.Parameters["popupMessage"].SetValue(messageBg);
+            paperEffect.Parameters["externalSketch"].SetValue(externalTex);
+            randomArray = new float[16 * 16];
+            Color[] randomCol = new Color[16 * 16];
+            randomArray[0] = 0.5f;
+            for (int i = 1; i < randomArray.Count(); i++) randomArray[i] = (float)Random.NextDouble();
+            for (int i = 0; i < randomArray.Count(); i++) randomCol[i] = Color.White * randomArray[i];
+            Texture2D randomTex = new Texture2D(graphics.GraphicsDevice, 16, 16);
+            randomTex.SetData(randomCol);
+            paperEffect.Parameters["random"].SetValue(randomTex);
+        }
+
+        private void LoadScreenEffect()
+        {
+            screenEffect = Content.Load<Effect>("Shaders/ScreenEffect");
+            screenEffect.CurrentTechnique = screenEffect.Techniques["ScreenTechinque"];
+
+            Texture2D postitHappy = Content.Load<Texture2D>("Images/postitHappy");
+            screenEffect.Parameters["postitHappy"].SetValue(postitHappy);
+
+            Texture2D postitSad = Content.Load<Texture2D>("Images/postitSad");
+            screenEffect.Parameters["postitSad"].SetValue(postitSad);
+
+            Texture2D postitLap = Content.Load<Texture2D>("Images/postitLap");
+            screenEffect.Parameters["lap"].SetValue(postitLap);
+
+            Texture2D numbers = Content.Load<Texture2D>("Images/numbers");
+            screenEffect.Parameters["numbers"].SetValue(numbers);
+
+            // Load and set happy post it for each player
+            screenEffect.Parameters["postitHappy_NW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_NW"));
+            screenEffect.Parameters["postitHappy_NE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_NE"));
+            screenEffect.Parameters["postitHappy_SW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_SW"));
+            screenEffect.Parameters["postitHappy_SE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_SE"));
+
+            // Load and set sad post it for each player
+            screenEffect.Parameters["postitSad_NW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_NW"));
+            screenEffect.Parameters["postitSad_NE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_NE"));
+            screenEffect.Parameters["postitSad_SW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_SW"));
+            screenEffect.Parameters["postitSad_SE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_SE"));
         }
 
         public void positionCars(int startingPointToCheck)
@@ -521,7 +545,11 @@ namespace WindowsGame2.Screens
                 float relativePosY = fluid.m_h + relativePos.Y * fluid.m_h / fluid.renderHeight;
 
                 float densValue = fluid.fluidLevelAtPosition(relativePosX, relativePosY);
-                if (densValue > 0.09f) Cars[i]._compound.LinearVelocity *= 0.8f;
+                if (densValue > 0.09f) 
+                { 
+                    Cars[i]._compound.LinearVelocity *= 0.8f;
+                    Cars[i].hasBoost = false;
+                }
             }
 
             for (int i = Cars.Count; i < Cars.Count * 2; i++ )
@@ -702,7 +730,7 @@ namespace WindowsGame2.Screens
                             particleComponent.particleEmitterList[i].Active = true;
 
                             // Play sound for car that crashed
-                            soundManager.PlaySound("crash");
+                            soundManager.PlaySound(SoundManager.CarCrash);
 
                         }
                     }
@@ -724,7 +752,7 @@ namespace WindowsGame2.Screens
                 float dX = currentPoses[i].X - prevPoses[i].X;
                 float dY = currentPoses[i].Y - prevPoses[i].Y;
 
-                if (fluid.fluidLevelAtPosition(relativePosX, relativePosY) < 0.09f) continue;
+                if (fluid.fluidLevelAtPosition(relativePosX, relativePosY) <= 0.09f) continue;
                 fluid.makeImpulse(relativePosX, relativePosY, dX, dY, false);
 
                 prevPoses[i] = currentPoses[i]; 

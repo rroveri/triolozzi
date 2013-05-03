@@ -12,6 +12,7 @@ using FarseerPhysics.Common;
 using FarseerPhysics.SamplesFramework;
 using Microsoft.Xna.Framework.Content;
 using FarseerPhysics.Dynamics.Contacts;
+using Microsoft.Xna.Framework.Audio;
 
 namespace WindowsGame2.GameElements
 {
@@ -20,12 +21,6 @@ namespace WindowsGame2.GameElements
     {
         private static int mMinimumCarDistance = 50;
         private static float mIntersectionDistance = 30.0f;
-        private static string vicksMode = "vicks";
-        private static string richMode = "rich";
-        private static string unityMode = "unity";
-        private static string microMode = "micro";
-        private static string physicMode = "physic";
-        private static string drivingMode = unityMode;
 
         public static int mMaximumTrailPoints = 130;
         public int mTrailPoints;
@@ -61,7 +56,7 @@ namespace WindowsGame2.GameElements
         private float acc = 0.4f;
         private float rotVel = 0.12f; //0.12
         private float maxVel = 11.5f; //5
-        private float linearVel = 0;
+        //private float linearVel = 0;
         private float boostAcc = 4f;
         private float boostMaxVel = 21f;
         private float currentAcc;
@@ -103,6 +98,9 @@ namespace WindowsGame2.GameElements
 
         private GraphicsDeviceManager _graphicsDevice;
         private Camera _camera;
+        private SoundManager _soundManager;
+
+        private SoundEffectInstance steeringSound;
 
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
             : base(world, texture, new Vector2(65.0f, 40.0f), Color)
@@ -196,6 +194,7 @@ namespace WindowsGame2.GameElements
 
             _graphicsDevice = GameServices.GetService<GraphicsDeviceManager>();
             _camera = GameServices.GetService<Camera>();
+            _soundManager = GameServices.GetService<SoundManager>();
         }
 
         bool body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
@@ -214,13 +213,8 @@ namespace WindowsGame2.GameElements
                     randomTrack.changePostItColor(postItNumber, this);
                 }
             }
-           
             return true;
         }
-
-
-  
-
 
         public Vector2 ProjectedPosition
         {
@@ -286,113 +280,51 @@ namespace WindowsGame2.GameElements
             bool blueOnly = mColor == Color.Green || true;
             bool brownOnly = mColor == Color.Brown;
 
-            if (drivingMode == vicksMode)
+            float newAcc = 0.0f;
+            if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0 || ks.IsKeyDown(Keys.D) && brownOnly)
             {
-                // Move the car
-                if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0)
-                {
-                    _compound.AngularVelocity = 0;
-                    _compound.Rotation += rotVel;
-                }
-                if (ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0)
-                {
-                    _compound.AngularVelocity = 0;
-                    _compound.Rotation -= rotVel;
-                }
-
-                if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0)
-                {
-                    _compound.LinearVelocity += mDirection * (linearVel);
-
-                }
-                if (ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0)
-                {
-                    _compound.LinearVelocity += -mDirection * (linearVel);
-                }
+                _compound.AngularVelocity = 0;
+                _compound.Rotation += rotVel;
             }
-            else if (drivingMode == richMode)
+            if (ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0 || ks.IsKeyDown(Keys.A) && brownOnly)
             {
-                
-                // Move the car
-                if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0)
-                {
-                    _compound.ApplyTorque(0.05f);
-                }
-                if (ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0)
-                {
-                    _compound.ApplyTorque(-0.05f);
-                   
-                }
-
-                if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0)
-                {
-                    _compound.ApplyForce(mForceVector, _compound.WorldCenter);
-
-                }
-                if (ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0)
-                {
-                    _compound.ApplyForce(-mForceVector, _compound.WorldCenter);
-                }
-
-                KillOrthogonalVelocity(this, 0.1f);
+                _compound.AngularVelocity = 0;
+                _compound.Rotation -= rotVel;
             }
-            else if (drivingMode == unityMode)
+
+            bool isSteering = ks.IsKeyDown(Keys.Left) || ks.IsKeyDown(Keys.Right) || gps.ThumbSticks.Right.X != 0;
+
+            if (isSteering && steeringSound == null)
             {
-                float newAcc = 0.0f;
-                if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0 || ks.IsKeyDown(Keys.D) && brownOnly)
-                {
-                    _compound.AngularVelocity = 0;
-                    _compound.Rotation += rotVel;
-                }
-                if (ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0 || ks.IsKeyDown(Keys.A) && brownOnly)
-                {
-                    _compound.AngularVelocity = 0;
-                    _compound.Rotation -= rotVel;
-                }
-
-                if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0 || ks.IsKeyDown(Keys.W) && brownOnly) 
-                {
-                    newAcc = currentAcc;
-                }
-                if (ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0 || ks.IsKeyDown(Keys.S) && brownOnly)
-                {
-                    newAcc = -currentAcc;
-                }
-
-                _compound.LinearVelocity += mDirection * (newAcc);
-                KillOrthogonalVelocity(this, driftValue);
-                if (_compound.LinearVelocity.Length() > currentMaxVel)
-                {
-                    Vector2 tempVel=_compound.LinearVelocity;
-                    _compound.LinearVelocity = Vector2.Normalize(tempVel) * currentMaxVel;
-                }
-
-                if ( _compound.LinearVelocity.Length() < 0.1f)
-                {
-                    resetTrail();
-                }
+                steeringSound = _soundManager.GetSound(SoundManager.CarSteering);
+                steeringSound.Play();
             }
-            else if (drivingMode == microMode)
+            else if (!isSteering && steeringSound != null)
             {
-                // Move the car
-                if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0)
-                {
-                    _compound.ApplyTorque(0.1f);
-                }
-                if (ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0)
-                {
-                    _compound.ApplyTorque(-0.1f);
-                }
+                _soundManager.PoolSound(steeringSound, SoundManager.CarSteering);
+                steeringSound = null;
+            }
 
-                if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0)
-                {
-                    _compound.ApplyForce(mForceVector, _compound.WorldCenter);
+            if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0 || ks.IsKeyDown(Keys.W) && brownOnly) 
+            {
+                newAcc = currentAcc;
+            }
+            if (ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0 || ks.IsKeyDown(Keys.S) && brownOnly)
+            {
+                newAcc = -currentAcc;
+            }
 
-                }
-                if (ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0)
-                {
-                    _compound.ApplyForce(-mForceVector, _compound.WorldCenter);
-                }
+            _compound.LinearVelocity += mDirection * (newAcc);
+            KillOrthogonalVelocity(this, driftValue);
+            if (_compound.LinearVelocity.Length() > currentMaxVel)
+            {
+                Vector2 tempVel=_compound.LinearVelocity;
+                _compound.LinearVelocity = Vector2.Normalize(tempVel) * currentMaxVel;
+            }
+
+            if ( _compound.LinearVelocity.Length() < 0.1f)
+            {
+                resetTrail();
             }
 
             tdPos.X = _compound.Position.X;

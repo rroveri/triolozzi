@@ -34,6 +34,8 @@ namespace WindowsGame2
         private ButtonPress buttonTest;
         private KeyPress keyTest;
 
+        private SoundManager soundManager;
+
         // These delegate types map to the methods on InputState. We use these to simplify the evalute method
         // by allowing us to map the appropriate delegates and invoke them, rather than having two separate code paths.
         private delegate bool ButtonPress(Buttons button, PlayerIndex? controllingPlayer, out PlayerIndex player);
@@ -81,17 +83,32 @@ namespace WindowsGame2
             for (int i = 0; i < buttons.Length; i++)
             {
                 if (buttonTest(buttons[i], controllingPlayer, out player))
+                {
+                    playMenuSound();
                     return true;
+                }
             }
             for (int i = 0; i < keys.Length; i++)
             {
                 if (keyTest(keys[i], controllingPlayer, out player))
+                {
+                    playMenuSound();
                     return true;
+                }
             }
 
             // If we got here, the action is not matched
             player = PlayerIndex.One;
             return false;
+        }
+
+        private void playMenuSound()
+        {
+            if (soundManager == null)
+            {
+                soundManager = GameServices.GetService<SoundManager>();
+            }
+            soundManager.PlaySound(SoundManager.MenuSelection);
         }
     }
 }

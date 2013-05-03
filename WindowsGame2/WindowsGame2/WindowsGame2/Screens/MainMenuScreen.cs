@@ -56,6 +56,8 @@ namespace WindowsGame2.Screens
             MenuEntries.Add(exitMenuEntry);
 
             UpdatePlayersCount();
+
+            GameServices.GetService<SoundManager>().PlaySong(SoundManager.MenuSong, true);
         }
 
         #endregion

@@ -372,6 +372,7 @@ namespace WindowsGame2
 				        float y1 = y + vy * a;
 				        Collide(x,y, ref x1, ref y1);
 				        int cell1 = Cell((int)x1,(int)y1);
+                        if (cell1 < 0 || cell1 >= mp_xv0.Length) return;
         				
 				        float fx = x1-(int)x1;
 				        float fy = y1-(int)y1;
@@ -415,6 +416,7 @@ namespace WindowsGame2
 				        float y1 = y + vy * a;
 				        Collide(x,y, ref x1, ref y1);
 				        int cell1 = Cell((int)x1,(int)y1);
+                        if (cell1 < 0 || cell1 >= mp_xv0.Length) return;
         				
 				        float fx = x1-(int)x1;
 				        float fy = y1-(int)y1;
@@ -499,6 +501,7 @@ namespace WindowsGame2
                         float y1 = y + vy * a;
                         Collide(x, y, ref x1, ref y1);
                         int cell1 = Cell((int)x1, (int)y1);
+                        if (cell1 < 0 || cell1 >= mp_xv0.Length) return;
 
                         float fx = x1 - (int)x1;
                         float fy = y1 - (int)y1;
@@ -604,6 +607,7 @@ namespace WindowsGame2
 				        float y1 = y + vy * a;
 				        Collide(x,y, ref x1, ref y1);
 				        int cell1 = Cell((int)x1,(int)y1);
+                        if (cell1 < 0 || cell1 >= mp_xv0.Length) return;
 				        
 				        float fx = x1-(int)x1;
 				        float fy = y1-(int)y1;
@@ -652,6 +656,7 @@ namespace WindowsGame2
                         float y1 = y + vy * a;
                         Collide(x, y, ref x1, ref y1);
                         int cell1 = Cell((int)x1, (int)y1);
+                        if(cell1 < 0 || cell1 >= mp_xv0.Length) return;
                         
                         float fx = x1 - (int)x1;
                         float fy = y1 - (int)y1;
