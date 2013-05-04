@@ -67,7 +67,7 @@ namespace WindowsGame2
         {
             textureOrigin.X = texture.Width / 2.0f;
             textureOrigin.Y = texture.Height / 2.0f;
-            spriteBatch.Draw(texture, Position, null, color, body.Rotation, textureOrigin, scale, SpriteEffects.None, 0.9f);
+            spriteBatch.Draw(texture, Position, null, color, body.Rotation, textureOrigin, scale, SpriteEffects.None, -0.1f);
 
         }
     }

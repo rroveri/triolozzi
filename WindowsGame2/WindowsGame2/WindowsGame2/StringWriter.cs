@@ -18,7 +18,7 @@ namespace WindowsGame2
         private int index;
 
         private Vector2 initPosition, upDirection, texCoords, vecDx, vecDy;
-        private Vector3 initPosition3d, upDirection3d, direction3d;
+        private Vector3 initPosition3d = new Vector3(-0.1f), upDirection3d, direction3d;
         private float texDx, texDy;
         private int nCharX = 10, nCharY = 4;
 
@@ -38,9 +38,9 @@ namespace WindowsGame2
             upDirection = new Vector2();
             texCoords = new Vector2();
 
-            initPosition = new Vector2(-0.2f);
-            upDirection = new Vector2(-0.2f);
-            texCoords = new Vector2(-0.2f);
+            initPosition = new Vector2(-0.1f);
+            upDirection = new Vector2(-0.1f);
+            texCoords = new Vector2(-0.1f);
 
             vecDx = new Vector2(texDx, 0);
             vecDy = new Vector2(0, texDy);

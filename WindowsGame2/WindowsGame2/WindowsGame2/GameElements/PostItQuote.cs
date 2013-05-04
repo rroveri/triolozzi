@@ -31,7 +31,7 @@ namespace WindowsGame2.GameElements
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(quoteTexture, ConvertUnits.ToDisplayUnits(position), null, Color.Yellow, rotation, Vector2.Zero, textureScaleVec, SpriteEffects.None, 1f);
+            spriteBatch.Draw(quoteTexture, ConvertUnits.ToDisplayUnits(position), null, Color.Yellow, rotation, Vector2.Zero, textureScaleVec, SpriteEffects.None, -0.1f);
         }
     }
 }

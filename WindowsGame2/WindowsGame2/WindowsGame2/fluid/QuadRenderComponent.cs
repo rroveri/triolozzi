@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 
 namespace WindowsGame2
@@ -23,8 +24,12 @@ namespace WindowsGame2
 
 
         Camera camera;
+        GraphicsDevice device;
+        Effect quadRenderEffect;
+
         int screenWidth, screenHeight;
         Vector2 v1 = new Vector2(), v2 = new Vector2();
+        Vector2 rightDir = new Vector2(), bottomDir = new Vector2();
 
         // Constructor
         public QuadRenderComponent(Game game, Camera camera, int screenWidth, int screenHeight)
@@ -34,6 +39,8 @@ namespace WindowsGame2
             this.camera = camera;
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
+            this.device = GameServices.GetService<GraphicsDeviceManager>().GraphicsDevice;
+            quadRenderEffect = GameServices.GetService<ContentManager>().Load<Effect>("QuadRenderEffect");
         }
         
 
@@ -55,16 +62,16 @@ namespace WindowsGame2
                 verts = new VertexPositionTexture[]
                         {
                             new VertexPositionTexture(
-                                new Vector3(0,0,0),
+                                new Vector3(0,0,-0.1f),
                                 new Vector2(1,1)),
                             new VertexPositionTexture(
-                                new Vector3(0,0,0),
+                                new Vector3(0,0,-0.1f),
                                 new Vector2(0,1)),
                             new VertexPositionTexture(
-                                new Vector3(0,0,0),
+                                new Vector3(0,0,-0.1f),
                                 new Vector2(0,0)),
                             new VertexPositionTexture(
-                                new Vector3(0,0,0),
+                                new Vector3(0,0,-0.1f),
                                 new Vector2(1,0))
                         };
 
@@ -107,6 +114,43 @@ namespace WindowsGame2
             Render(v1, v2);
         }
 
+        public void renderSprite(Texture2D texture, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale)
+        {
+            v1 = Vector2.Transform(position + origin, camera.Transform);
+            v1.X = v1.X / (float)screenWidth * 2 - 1;
+            v1.Y = 1 - v1.Y / (float)screenHeight * 2;
+            float dx = texture.Width / (float)screenWidth * 2;
+            float dy = texture.Height / (float)screenHeight * 2;
+
+            rightDir.X = (float)Math.Cos((double)rotation);
+            rightDir.Y = (float)Math.Sin((double)rotation);
+
+            bottomDir.X = rightDir.Y;
+            bottomDir.Y = -rightDir.X;
+
+            rightDir *= dx * scale.X;
+            bottomDir *= dy * scale.Y;
+
+            verts[0].Position.X = v1.X + rightDir.X;
+            verts[0].Position.Y = v1.Y + rightDir.Y;
+
+            verts[1].Position.X = v1.X;
+            verts[1].Position.Y = v1.Y;
+
+            verts[2].Position.X = v1.X + bottomDir.X;
+            verts[2].Position.Y = v2.Y + bottomDir.Y;
+
+            verts[3].Position.X = v2.X + bottomDir.X + rightDir.X;
+            verts[3].Position.Y = v2.Y + bottomDir.Y + rightDir.Y;
+
+            quadRenderEffect.CurrentTechnique = quadRenderEffect.Techniques["BasicTechnique"];
+            quadRenderEffect.CurrentTechnique.Passes["BasicPass"].Apply();
+            quadRenderEffect.Parameters["currentTex"].SetValue(texture);
+            quadRenderEffect.Parameters["multColor"].SetValue(color.ToVector4());
+            device.DrawUserIndexedPrimitives<VertexPositionTexture>
+                (PrimitiveType.TriangleList, verts, 0, 4, ib, 0, 2);
+        }
+
         public void renderFromScreenUnits(Vector2 v1, float dx, float dy)
         {
             v1.X = v1.X / (float)screenWidth * 2 - 1;
@@ -123,11 +167,6 @@ namespace WindowsGame2
         // void Render(Vector2 v1, Vector2 v2)
         public void Render(Vector2 v1, Vector2 v2)
         {
-            IGraphicsDeviceService graphicsService = (IGraphicsDeviceService)
-                base.Game.Services.GetService(typeof(IGraphicsDeviceService));
-
-            GraphicsDevice device = graphicsService.GraphicsDevice;
-
             verts[0].Position.X = v2.X;
             verts[0].Position.Y = v1.Y;
 

@@ -923,11 +923,21 @@ namespace WindowsGame2.Screens
             paperEffect.CurrentTechnique.Passes["BorderPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
 
-
             paperEffect.CurrentTechnique.Passes["ExternalSketchPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.verticesBordersInternal, 0, randomRaceTrack.verticesBordersInternal.Count() / 3);
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.verticesBordersExternal, 0, randomRaceTrack.verticesBordersExternal.Count() / 3);
-            
+
+
+            paperEffect.CurrentTechnique.Passes["AlphabetPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, stringWriter.stringVertices, 0, stringWriter.stringVertices.Count() / 3);
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                if (Cars[i].message.isActive)
+                {
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.stringWriter.stringVertices, 0, Cars[i].message.stringWriter.stringVertices.Count() / 3);
+                }
+            }
+
             paperEffect.CurrentTechnique.Passes["ObjectPass"].Apply();
 
             // draw polygons
@@ -949,15 +959,7 @@ namespace WindowsGame2.Screens
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.bgTextureVertices, 0, 2);
             }
 
-            paperEffect.CurrentTechnique.Passes["AlphabetPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, stringWriter.stringVertices, 0, stringWriter.stringVertices.Count() / 3);
-            for (int i = 0; i < Cars.Count; i++)
-            {
-                if (Cars[i].message.isActive)
-                {
-                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.stringWriter.stringVertices, 0, Cars[i].message.stringWriter.stringVertices.Count() / 3);
-                }
-            }
+            
 
 
             screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
