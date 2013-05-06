@@ -643,6 +643,15 @@ namespace WindowsGame2.GameElements
             {
                 postItQuotesList[i].Draw(spriteBatch);
             }
+
+            //draw dreams
+            for (int i = 0; i < postItDreamsList.Count; i++)
+            {
+                postItDreamsList[i].Draw(spriteBatch);
+
+                //  DrawRainbow(spriteBatch, 0.2f, Color.White, ConvertUnits.ToDisplayUnits(postItDreamsList[i].position), ConvertUnits.ToDisplayUnits(new Vector2(0,0)));
+
+            }
         }
 
         public void DrawSprites(Camera camera, SpriteBatch spriteBatch)
@@ -677,6 +686,7 @@ namespace WindowsGame2.GameElements
             }
              * */
 
+            /*
             //draw dreams
             for (int i = 0; i < postItDreamsList.Count; i++)
             {
@@ -685,7 +695,7 @@ namespace WindowsGame2.GameElements
               //  DrawRainbow(spriteBatch, 0.2f, Color.White, ConvertUnits.ToDisplayUnits(postItDreamsList[i].position), ConvertUnits.ToDisplayUnits(new Vector2(0,0)));
                 
             }
-
+            */
 
             
 

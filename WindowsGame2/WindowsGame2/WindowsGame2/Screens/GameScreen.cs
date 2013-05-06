@@ -130,6 +130,10 @@ namespace WindowsGame2.Screens
 
         Effect coloredEffect;
 
+        public double timer;
+
+        
+
         #endregion
 
         /// <summary>
@@ -140,6 +144,8 @@ namespace WindowsGame2.Screens
         /// </summary>
         public GameScreen()
         {
+            timer = 0.0f;
+
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
@@ -284,6 +290,8 @@ namespace WindowsGame2.Screens
                 SurfaceFormat.Color, GraphicsDevice.PresentationParameters.DepthStencilFormat);
 
             //gaussian = new GaussianBlur(ScreenManager.Game);
+
+            
         }
 
         private void LoadPaperEffect()
@@ -347,6 +355,9 @@ namespace WindowsGame2.Screens
 
         public void positionCars(int startingPointToCheck)
         {
+            cameraFollowing.timerCanStart = true;
+            
+
             GC.Collect();
 
             int startingPoint = startingPointToCheck;
@@ -816,6 +827,8 @@ namespace WindowsGame2.Screens
                 ScreenManager.FadeBackBufferToBlack(alpha);
             }
             base.Draw(gameTime);
+
+
         }
 
         private void drawFluid()
@@ -858,7 +871,7 @@ namespace WindowsGame2.Screens
 
             //draw 2D (!keep DepthStencilState to None in order to see shaders!)
 
-            
+
             spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
 
             // Draw the race track and the starting line
@@ -962,6 +975,7 @@ namespace WindowsGame2.Screens
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
             }
 
+
             
 
             paperEffect.CurrentTechnique.Passes["PopupMessagePass"].Apply();
@@ -993,6 +1007,10 @@ namespace WindowsGame2.Screens
             }
 
             spriteBatch.End();
+
+
+
+
             screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, PlayersCount * 2);
 
@@ -1005,6 +1023,12 @@ namespace WindowsGame2.Screens
             screenEffect.CurrentTechnique.Passes["BarPass"].Apply();
             for (int i = 0; i < Cars.Count(); i++)
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.barVertices[i], 0, Cars[i].score * 2);
+
+
+
+            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
+            cameraFollowing.counterIndicator.Draw(spriteBatch);
+            spriteBatch.End();
 
 
         }

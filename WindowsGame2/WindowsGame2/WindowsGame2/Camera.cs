@@ -88,6 +88,16 @@ namespace WindowsGame2
 
         public bool raceCanStart;
 
+        public double timer;
+        public bool updateTimer;
+        public bool timerCanStart;
+        public StringWriter stringWriter321 = new StringWriter();
+
+        public bool timerGoAwayBastard = false;
+
+        public CounterIndicator counterIndicator;
+        public double timerGoAway;
+
         /// <summary>
         /// Initialize a new Camera object
         /// </summary>
@@ -108,11 +118,54 @@ namespace WindowsGame2
 
             raceCanStart = true;
             firstTime = true;
+
+            timer = 0;
+            updateTimer = false;
+            timerCanStart = false;
+
+            stringWriter321.nCharacters = 3;
+
+            counterIndicator = new CounterIndicator();
+
+            timerGoAwayBastard = false;
+            timerGoAway = 0;
         }
 
         
         public void Update(GameTime gametime, List<Car> Cars)
         {
+
+            if (timerCanStart)
+            {
+                counterIndicator.enter();
+            }
+
+            if (timerGoAwayBastard)
+            {
+                timerGoAway+= gametime.ElapsedGameTime.TotalMilliseconds;
+                int timerGoAwayDelay = 1000;
+
+                if (Vector2.Distance(counterIndicator.currentPostion, counterIndicator.outPosition) < 0.1f)
+                {
+                    timerGoAwayBastard = false;
+                }
+
+                if (timerGoAway > timerGoAwayDelay)
+                {
+                    counterIndicator.exit();
+                }
+                
+            }
+
+            if (updateTimer)
+            {
+               
+                timer += gametime.ElapsedGameTime.TotalMilliseconds;
+                checkTimer(Cars);
+
+                counterIndicator.enter();
+            }
+            
 
             //choose interpolation weight and cars weights depending on the number of players
             float interpWeight = 0.1f;
@@ -145,7 +198,13 @@ namespace WindowsGame2
 
             if (Vector2.Distance(oldPosition, objectPosition_) < 0.6f)
             {
-                raceCanStart = true;
+                if (timerCanStart)
+                {
+                    updateTimer = true;
+                    timerCanStart = false;
+
+                }
+               
             }
 
             //interpolate
@@ -178,7 +237,44 @@ namespace WindowsGame2
             ViewMatrix = Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(objectPosition) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(Zoom, 10)), 0f));
         }
 
-        
+
+        public void checkTimer(List<Car> Cars)
+        {
+            
+            float totalMilliseconds=1500;
+            if (timer > totalMilliseconds)
+            {
+                raceCanStart = true;
+                timer = 0;
+                updateTimer = false;
+
+                Vector2 position = (Cars[0]._compound.Position + Cars[Cars.Count - 1]._compound.Position) / 2f;
+               
+
+                counterIndicator.changeTexture(0);
+
+                timerGoAwayBastard = true;
+                timerGoAway = 0;
+            }
+            else if (timer > totalMilliseconds/3f*2f)
+            {
+                Vector2 position = (Cars[0]._compound.Position + Cars[Cars.Count - 1]._compound.Position) / 2f;
+
+                counterIndicator.changeTexture(1);
+            }
+            else if (timer > totalMilliseconds / 3f * 1f)
+            {
+                Vector2 position = (Cars[0]._compound.Position + Cars[Cars.Count - 1]._compound.Position) / 2f;
+
+                counterIndicator.changeTexture(2);
+            }
+            else if (timer > 0.001f)
+            {
+                Vector2 position = (Cars[0]._compound.Position + Cars[Cars.Count - 1]._compound.Position) / 2f;
+
+                counterIndicator.changeTexture(3);
+            }
+        }
 
         public Matrix inverseTransformMatrix(){
             return Matrix.Invert(Transform);
