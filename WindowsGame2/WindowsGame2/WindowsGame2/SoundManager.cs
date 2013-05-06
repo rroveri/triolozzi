@@ -78,7 +78,7 @@ namespace WindowsGame2
             for (int i = 0; i < 4; i++)
             {
                 sound = Sounds[SoundManager.CarSteering].CreateInstance();
-                sound.Volume = 0.3f;
+                sound.Volume = 0.2f;
                 sound.IsLooped = true;
                 effectsPool[SoundManager.CarSteering].Enqueue(sound);
 

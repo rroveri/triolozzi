@@ -637,6 +637,14 @@ namespace WindowsGame2.GameElements
             batch.Draw(rainbowTex, point1, null, transp, -angle, Vector2.Zero, new Vector2(1, 10000) * 0.3f, SpriteEffects.None, 0);
         }
 
+        public void DrawSpritesPostItQuotes(Camera camera, SpriteBatch spriteBatch)
+        {
+            for (int i = 0; i < postItQuotesList.Count; i++)
+            {
+                postItQuotesList[i].Draw(spriteBatch);
+            }
+        }
+
         public void DrawSprites(Camera camera, SpriteBatch spriteBatch)
         {
 
@@ -661,11 +669,13 @@ namespace WindowsGame2.GameElements
             //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]), ConvertUnits.ToDisplayUnits(curvePointsExternal[0]) + normalLine);
             //DrawLine(spriteBatch, 5, Color.Yellow, ConvertUnits.ToDisplayUnits(curvePointsExternal[0]), ConvertUnits.ToDisplayUnits(curvePointsInternal[internalCorrispondances[0]]) + normalLine);
 
+            /*
             //draw quotes
             for (int i = 0; i < postItQuotesList.Count; i++)
             {
                 postItQuotesList[i].Draw(spriteBatch);
             }
+             * */
 
             //draw dreams
             for (int i = 0; i < postItDreamsList.Count; i++)

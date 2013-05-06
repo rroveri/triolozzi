@@ -445,7 +445,7 @@ namespace WindowsGame2.GameElements
 
         public void moveMessageImage(GameTime gameTime)
         {
-            return;
+           
             //move the message and udpate its string
             message.Update(gameTime);
 
@@ -685,6 +685,11 @@ namespace WindowsGame2.GameElements
             return _projectedPosition;
         }
 
+        public void DrawMessage(SpriteBatch spriteBatch)
+        {
+            message.Draw(spriteBatch);
+        }
+
         public void Draw(SpriteBatch spriteBatch, out VertexPositionColorTexture[] vertices, out VertexPositionColorTexture[] _burnoutsVertices)
         {
             vertices = trailVertices;
@@ -701,7 +706,7 @@ namespace WindowsGame2.GameElements
            //                                0.9f);
 
 
-            message.Draw(spriteBatch);
+           // message.Draw(spriteBatch);
             
 
             base.Draw(spriteBatch);

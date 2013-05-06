@@ -482,6 +482,7 @@ namespace WindowsGame2.Screens
             {
                 ScreenManager.ShowScreen<PauseMenuScreen>();
                 soundManager.PauseSong();
+                soundManager.StopAllSounds();
                 return;
             }
 
@@ -548,7 +549,7 @@ namespace WindowsGame2.Screens
                 if (densValue > 0.09f) 
                 { 
                     Cars[i]._compound.LinearVelocity *= 0.8f;
-                    Cars[i].hasBoost = false;
+                    Cars[i].resetBoost();
                 }
             }
 
@@ -805,7 +806,7 @@ namespace WindowsGame2.Screens
 
             GraphicsDevice.Viewport = defaultViewport;
             DrawSprites(cameraFollowing);
-            drawFluid();
+           
             
             // If the game is transitioning on or off, fade it out to black.
             if (TransitionPosition > 0 || pauseAlpha > 0)
@@ -865,13 +866,6 @@ namespace WindowsGame2.Screens
             randomRaceTrack.DrawSprites(camera, spriteBatch);
 
 
-            // draw cars and their trails
-            for (int i = 0; i < Cars.Count; i++)
-            {
-                Cars[i].Draw(spriteBatch, out trails[i], out burnouts[i]);
-                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
-            }
-       
             spriteBatch.End();
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
@@ -881,6 +875,41 @@ namespace WindowsGame2.Screens
 
             paperEffect.Parameters["Projection"].SetValue(projection);
             paperEffect.Parameters["View"].SetValue(view);
+
+            
+
+            
+
+
+            //now draw 3D (shaders)
+
+            //reset GraphicsDevice states (might be slow)
+
+
+            int counter = 0;
+
+            paperEffect.CurrentTechnique.Passes["StartLinePass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.startLineVertices, 0, 2);
+
+            
+
+
+            paperEffect.CurrentTechnique.Passes["ExternalSketchPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.verticesBordersInternal, 0, randomRaceTrack.verticesBordersInternal.Count() / 3);
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.verticesBordersExternal, 0, randomRaceTrack.verticesBordersExternal.Count() / 3);
+
+
+            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
+
+            // Draw the race track and the starting line
+            // raceTrack.DrawSprites(camera, spriteBatch);
+            randomRaceTrack.DrawSpritesPostItQuotes(camera, spriteBatch);
+
+            spriteBatch.End();
+
+            paperEffect.CurrentTechnique.Passes["BorderPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
+
 
             if (Car.isBrush)
                 paperEffect.CurrentTechnique.Passes["TrailPassBrush"].Apply();
@@ -899,9 +928,8 @@ namespace WindowsGame2.Screens
                 {
                     GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, Cars[i].mTrailPoints * Car.paintersCount * 2);
                 }
-                
-            }
 
+            }
             paperEffect.CurrentTechnique.Passes["TrailPass"].Apply();
             for (int i = 0; i < Cars.Count; i++)
             {
@@ -909,24 +937,15 @@ namespace WindowsGame2.Screens
                     GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, burnouts[i], 0, Cars[i].burnoutCounter * 2);
             }
 
-
-            //now draw 3D (shaders)
-
-            //reset GraphicsDevice states (might be slow)
-
-
-            int counter = 0;
-
-            paperEffect.CurrentTechnique.Passes["StartLinePass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.startLineVertices, 0, 2);
-
-            paperEffect.CurrentTechnique.Passes["BorderPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
-
-
-            paperEffect.CurrentTechnique.Passes["ExternalSketchPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.verticesBordersInternal, 0, randomRaceTrack.verticesBordersInternal.Count() / 3);
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.verticesBordersExternal, 0, randomRaceTrack.verticesBordersExternal.Count() / 3);
+            paperEffect.CurrentTechnique.Passes["AlphabetPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, stringWriter.stringVertices, 0, stringWriter.stringVertices.Count() / 3);
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                if (Cars[i].message.isActive)
+                {
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.stringWriter.stringVertices, 0, Cars[i].message.stringWriter.stringVertices.Count() / 3);
+                }
+            }
             
             paperEffect.CurrentTechnique.Passes["ObjectPass"].Apply();
 
@@ -943,23 +962,37 @@ namespace WindowsGame2.Screens
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
             }
 
+            
+
             paperEffect.CurrentTechnique.Passes["PopupMessagePass"].Apply();
             for (int i = 0; i < Cars.Count; i++)
             {
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.bgTextureVertices, 0, 2);
             }
 
-            paperEffect.CurrentTechnique.Passes["AlphabetPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, stringWriter.stringVertices, 0, stringWriter.stringVertices.Count() / 3);
+            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
+
+            // draw cars and their trails
             for (int i = 0; i < Cars.Count; i++)
             {
-                if (Cars[i].message.isActive)
-                {
-                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.stringWriter.stringVertices, 0, Cars[i].message.stringWriter.stringVertices.Count() / 3);
-                }
+                Cars[i].Draw(spriteBatch, out trails[i], out burnouts[i]);
+                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
             }
 
+            spriteBatch.End();
+            drawFluid();
 
+
+            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
+
+            // draw cars and their trails
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                Cars[i].DrawMessage(spriteBatch);
+                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
+            }
+
+            spriteBatch.End();
             screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, PlayersCount * 2);
 
@@ -1011,6 +1044,10 @@ namespace WindowsGame2.Screens
                 screenRenderer.SetColor(availableColors[selectedColors[i]], i);
             }
 
+            double frequency = 1d;
+#if XBOX360
+            frequency = 2d;
+#endif
 
             //add particles for collisions with walls and cars
             for (int i = 0; i < Cars.Count; i++)
@@ -1052,7 +1089,7 @@ namespace WindowsGame2.Screens
                               //  Content.Load<Texture2D>("Sprites\\flower_yellow"),
                               //  Content.Load<Texture2D>("Sprites\\flower_purple")
                                 },
-                            RandomEmissionInterval = new RandomMinMax(0.5d),
+                            RandomEmissionInterval = new RandomMinMax(frequency),
                             ParticleLifeTime = 1000,
                             ParticleDirection = new RandomMinMax(0, 359),
                             ParticleSpeed = new RandomMinMax(5.1f, 7.0f),
@@ -1079,7 +1116,7 @@ namespace WindowsGame2.Screens
                                 //Content.Load<Texture2D>("Sprites\\flower_yellow"),
                                 //Content.Load<Texture2D>("Sprites\\flower_purple")
                                 },
-                            RandomEmissionInterval = new RandomMinMax(0.5d),
+                            RandomEmissionInterval = new RandomMinMax(frequency),
                             ParticleLifeTime = 1000,
                             ParticleDirection = new RandomMinMax(0, 359),
                             ParticleSpeed = new RandomMinMax(5.1f, 7.0f),
