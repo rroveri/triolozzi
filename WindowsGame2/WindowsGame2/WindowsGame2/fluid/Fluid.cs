@@ -81,6 +81,7 @@ namespace WindowsGame2
         public float renderWidth = 256;
         public float renderHeight = 256;
         public bool shouldResetDensity;
+        private int currentResetTexture;
 
         #endregion
 
@@ -167,29 +168,38 @@ namespace WindowsGame2
             texData = new Color[m_w * m_h];
 
             loadDensities();
+
+            currentResetTexture = 0;
         }
 
         public void saveDensity()
         {
+            GraphicsDevice device = GameServices.GetService<GraphicsDeviceManager>().GraphicsDevice;
+            Texture2D tex = new Texture2D(device, m_w, m_h, false, SurfaceFormat.Color);
+            if (File.Exists("mucus" + m_w + "x" + m_h + ".png")) return;
+            Stream stream = File.OpenWrite("mucus" + m_w + "x" + m_h + ".png");
+            tex.SetData(texData);
+            tex.SaveAsPng(stream, m_w, m_h);
         }
 
         public void loadDensities()
         {
             int size = m_w * m_h;
-            densities = new Vector4[1][];
-            densities[0] = new Vector4[size];
-
-            Texture2D densTex = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/mucus/color_scrofa64");
-
-            Color[] texData = new Color[m_w * m_h];
-            densTex.GetData(texData);
-
-            for (int i = 0; i < size; i++)
+            densities = new Vector4[4][];
+            for (int t = 0; t < densities.Length; t++)
             {
-                densities[0][i] = texData[i].ToVector4();
+                densities[t] = new Vector4[size];
+
+                Texture2D densTex = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/mucus/mucus" + m_w + "x" + m_h + "n" + t);
+
+                Color[] texData = new Color[m_w * m_h];
+                densTex.GetData(texData);
+
+                for (int i = 0; i < size; i++)
+                {
+                    densities[t][i] = texData[i].ToVector4();
+                } 
             }
-            int ani = 0;
-            size = ani;
         }
 
         #endregion
@@ -1169,9 +1179,9 @@ namespace WindowsGame2
             if (fluidLevelAtPosition((int)X, (int)Y) < 0.09f) return;
             float step = 0.1f;
 #if !XBOX360
-            float scale = 0.0004f;
+            float scale = 0.00007f;
 #else
-            float scale = 0.0004f;
+            float scale = 0.00007f;
 #endif
 
             for (float x0 = -0.5f; x0 < 0.5f; x0 += step)
@@ -1212,9 +1222,10 @@ namespace WindowsGame2
                 mp_yv2[i] = 0.0f;
                 mp_p0[i] = 1.0f;
                 mp_p1[i] = 1.0f;
-                mp_ink0[i] = densities[0][i];
+                mp_ink0[i] = densities[currentResetTexture][i];
             }
-
+            currentResetTexture++;
+            if (currentResetTexture >= densities.Length) currentResetTexture = 0;
             shouldResetDensity = false;
         }
 
