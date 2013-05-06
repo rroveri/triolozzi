@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using WindowsGame2.Events;
+using Microsoft.Xna.Framework.Content;
+using WindowsGame2.GameElements;
 
 namespace WindowsGame2
 {
@@ -33,15 +35,18 @@ namespace WindowsGame2
         private float nLapOffsetW = 0.08f, nLapOffsetH = 0.015f;
         private float nLapWidth = 0.06f, nLapHeight = 0.06f;
 
+        Effect screenEffect;
+        GraphicsDevice device;
+
         public ScreenRenderer()
         {
 
             PlayersCount = kMaximumPlayers;
             
             barHeight = height * 0.0675f;
-            barOffsetW = width / 10;
-            barOffsetH = height*0.2075f;//0.062f;
-            barWidth = width*0.717f;// barOffset;
+            barOffsetW = width * 0.041f;
+            barOffsetH = height * 0.0455f;
+            barWidth = width*0.787f;// barOffset;
             pointLength = barWidth / nPoints;
 
             texNW = new Vector2(0, 0);
@@ -100,8 +105,26 @@ namespace WindowsGame2
 
                 setHappyToAllPlayers();
 
-                initPoint.X += barOffsetW;
-                initPoint.Y += height - barOffsetH - barHeight;
+                if (p == 0)
+                {
+                    initPoint.X += barOffsetW;
+                    initPoint.Y += barOffsetH;
+                }
+                else if (p == 1)
+                {
+                    initPoint.X += width - barOffsetW - barWidth;
+                    initPoint.Y += barOffsetH;
+                }
+                else if (p == 2)
+                {
+                    initPoint.X += barOffsetW;
+                    initPoint.Y += height - barOffsetH - barHeight;
+                }
+                else if (p == 3)
+                {
+                    initPoint.X += width - barOffsetW - barWidth;
+                    initPoint.Y += height - barOffsetH - barHeight;
+                }
 
                 for (int i = 0; i < nPoints; i++)
                 {
@@ -159,6 +182,8 @@ namespace WindowsGame2
             nLapsVertices[4].TextureCoordinate = texOE / 3;
             nLapsVertices[5].TextureCoordinate = texOW / 3;
 
+            LoadScreenEffect();
+            device = GameServices.GetService<GraphicsDeviceManager>().GraphicsDevice;
         }
 
         public void SetColor(Color color, int playerIndex)
@@ -207,6 +232,75 @@ namespace WindowsGame2
         {
             for (int i = 0; i < postitVertices.Count(); i++)
                     postitVertices[i].Color = Color.White;
+        }
+
+        public void drawHUD(ref List<Car> Cars)
+        {
+            if (PlayersCount >= 1)
+            {
+                screenEffect.CurrentTechnique.Passes["PostitPassNW"].Apply();
+                device.DrawUserPrimitives(PrimitiveType.TriangleList, postitVertices, 0, 2);
+            }
+
+            if (PlayersCount >= 2)
+            {
+                screenEffect.CurrentTechnique.Passes["PostitPassNE"].Apply();
+                device.DrawUserPrimitives(PrimitiveType.TriangleList, postitVertices, 6, 2);
+            }
+
+            if (PlayersCount >= 3)
+            {
+                screenEffect.CurrentTechnique.Passes["PostitPassSW"].Apply();
+                device.DrawUserPrimitives(PrimitiveType.TriangleList, postitVertices, 12, 2);
+            }
+
+            if (PlayersCount >= 4)
+            {
+                screenEffect.CurrentTechnique.Passes["PostitPassSE"].Apply();
+                device.DrawUserPrimitives(PrimitiveType.TriangleList, postitVertices, 18, 2);
+            }
+
+            screenEffect.CurrentTechnique.Passes["LapPass"].Apply();
+            device.DrawUserPrimitives(PrimitiveType.TriangleList, lapVertices, 0, 2);
+
+            screenEffect.CurrentTechnique.Passes["NLapPass"].Apply();
+            device.DrawUserPrimitives(PrimitiveType.TriangleList, nLapsVertices, 0, 2);
+
+            screenEffect.CurrentTechnique.Passes["BarPass"].Apply();
+            for (int i = 0; i < Cars.Count(); i++)
+                device.DrawUserPrimitives(PrimitiveType.TriangleList, barVertices[i], 0, Cars[i].score * 2);
+        }
+
+        private void LoadScreenEffect()
+        {
+            ContentManager Content = GameServices.GetService<ContentManager>();
+
+            screenEffect = Content.Load<Effect>("Shaders/ScreenEffect");
+            screenEffect.CurrentTechnique = screenEffect.Techniques["ScreenTechinque"];
+
+            Texture2D postitHappy = Content.Load<Texture2D>("Images/postitHappy");
+            screenEffect.Parameters["postitHappy"].SetValue(postitHappy);
+
+            Texture2D postitSad = Content.Load<Texture2D>("Images/postitSad");
+            screenEffect.Parameters["postitSad"].SetValue(postitSad);
+
+            Texture2D postitLap = Content.Load<Texture2D>("Images/postitLap");
+            screenEffect.Parameters["lap"].SetValue(postitLap);
+
+            Texture2D numbers = Content.Load<Texture2D>("Images/numbers");
+            screenEffect.Parameters["numbers"].SetValue(numbers);
+
+            // Load and set happy post it for each player
+            screenEffect.Parameters["postitHappy_NW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_NW"));
+            screenEffect.Parameters["postitHappy_NE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_NE"));
+            screenEffect.Parameters["postitHappy_SW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_SW"));
+            screenEffect.Parameters["postitHappy_SE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_SE"));
+
+            // Load and set sad post it for each player
+            screenEffect.Parameters["postitSad_NW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_NW"));
+            screenEffect.Parameters["postitSad_NE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_NE"));
+            screenEffect.Parameters["postitSad_SW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_SW"));
+            screenEffect.Parameters["postitSad_SE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_SE"));
         }
     }
 }

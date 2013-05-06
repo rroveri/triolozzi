@@ -363,7 +363,7 @@ namespace WindowsGame2.Screens
                 }
                 if (_didSelectColor[i] && _selectedColors[i] == colorIndex)
                 {
-                    //return false;
+                    return false;
                 }
             }
             return true;
@@ -375,7 +375,7 @@ namespace WindowsGame2.Screens
             {
                 if (!_didSelectColor[i])
                 {
-                    return false;
+                    //return false;
                 }
             }
             return true;

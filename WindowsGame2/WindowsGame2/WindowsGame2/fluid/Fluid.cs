@@ -120,14 +120,14 @@ namespace WindowsGame2
 
             m_velocity_diffusion = .5f;
             m_pressure_diffusion = .5f;
-            m_ink_diffusion = 0.0f;
+            m_ink_diffusion = .1f;
 
             m_vorticity = 1.0f;
 
             m_pressure_acc = 0.5f;
 
             m_ink_advection = 120.0f;
-            m_velocity_advection = 1000.0f;
+            m_velocity_advection = 80.0f;
             m_pressure_advection = 80.0f;
 #else
             m_w = 64;
@@ -152,14 +152,14 @@ namespace WindowsGame2
 
             m_velocity_diffusion = .5f;
             m_pressure_diffusion = .5f;
-            m_ink_diffusion = 0.0f;
+            m_ink_diffusion = 1.0f;
 
             m_vorticity = 1.0f;
 
             m_pressure_acc = 0.5f;
 
             m_ink_advection = 120.0f;
-            m_velocity_advection = 1000.0f;
+            m_velocity_advection = 100.0f;
             m_pressure_advection = 80.0f;
 #endif
 
@@ -1181,7 +1181,7 @@ namespace WindowsGame2
 #if !XBOX360
             float scale = 0.00007f;
 #else
-            float scale = 0.00007f;
+            float scale = 0.00047f;
 #endif
 
             for (float x0 = -0.5f; x0 < 0.5f; x0 += step)

@@ -218,7 +218,6 @@ namespace WindowsGame2.Screens
             mySneezesManager.randomTrack = randomRaceTrack;
 
             LoadPaperEffect();
-            LoadScreenEffect();
 
             screenRenderer = new ScreenRenderer();
             Logic.DidEliminateCar += screenRenderer.setSadToPlayer;
@@ -321,36 +320,6 @@ namespace WindowsGame2.Screens
             Texture2D randomTex = new Texture2D(graphics.GraphicsDevice, 16, 16);
             randomTex.SetData(randomCol);
             paperEffect.Parameters["random"].SetValue(randomTex);
-        }
-
-        private void LoadScreenEffect()
-        {
-            screenEffect = Content.Load<Effect>("Shaders/ScreenEffect");
-            screenEffect.CurrentTechnique = screenEffect.Techniques["ScreenTechinque"];
-
-            Texture2D postitHappy = Content.Load<Texture2D>("Images/postitHappy");
-            screenEffect.Parameters["postitHappy"].SetValue(postitHappy);
-
-            Texture2D postitSad = Content.Load<Texture2D>("Images/postitSad");
-            screenEffect.Parameters["postitSad"].SetValue(postitSad);
-
-            Texture2D postitLap = Content.Load<Texture2D>("Images/postitLap");
-            screenEffect.Parameters["lap"].SetValue(postitLap);
-
-            Texture2D numbers = Content.Load<Texture2D>("Images/numbers");
-            screenEffect.Parameters["numbers"].SetValue(numbers);
-
-            // Load and set happy post it for each player
-            screenEffect.Parameters["postitHappy_NW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_NW"));
-            screenEffect.Parameters["postitHappy_NE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_NE"));
-            screenEffect.Parameters["postitHappy_SW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_SW"));
-            screenEffect.Parameters["postitHappy_SE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_SE"));
-
-            // Load and set sad post it for each player
-            screenEffect.Parameters["postitSad_NW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_NW"));
-            screenEffect.Parameters["postitSad_NE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_NE"));
-            screenEffect.Parameters["postitSad_SW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_SW"));
-            screenEffect.Parameters["postitSad_SE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_SE"));
         }
 
         public void positionCars(int startingPointToCheck)
@@ -1008,22 +977,7 @@ namespace WindowsGame2.Screens
 
             spriteBatch.End();
 
-
-
-
-            screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, PlayersCount * 2);
-
-            screenEffect.CurrentTechnique.Passes["LapPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.lapVertices, 0, 2);
-
-            screenEffect.CurrentTechnique.Passes["NLapPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.nLapsVertices, 0, 2);
-
-            screenEffect.CurrentTechnique.Passes["BarPass"].Apply();
-            for (int i = 0; i < Cars.Count(); i++)
-                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.barVertices[i], 0, Cars[i].score * 2);
-
+            screenRenderer.drawHUD(ref Cars);
 
 
             spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
