@@ -1044,6 +1044,10 @@ namespace WindowsGame2.Screens
                 screenRenderer.SetColor(availableColors[selectedColors[i]], i);
             }
 
+            double frequency = 1d;
+#if XBOX360
+            frequency = 2d;
+#endif
 
             //add particles for collisions with walls and cars
             for (int i = 0; i < Cars.Count; i++)
@@ -1085,7 +1089,7 @@ namespace WindowsGame2.Screens
                               //  Content.Load<Texture2D>("Sprites\\flower_yellow"),
                               //  Content.Load<Texture2D>("Sprites\\flower_purple")
                                 },
-                            RandomEmissionInterval = new RandomMinMax(0.5d),
+                            RandomEmissionInterval = new RandomMinMax(frequency),
                             ParticleLifeTime = 1000,
                             ParticleDirection = new RandomMinMax(0, 359),
                             ParticleSpeed = new RandomMinMax(5.1f, 7.0f),
@@ -1112,7 +1116,7 @@ namespace WindowsGame2.Screens
                                 //Content.Load<Texture2D>("Sprites\\flower_yellow"),
                                 //Content.Load<Texture2D>("Sprites\\flower_purple")
                                 },
-                            RandomEmissionInterval = new RandomMinMax(0.5d),
+                            RandomEmissionInterval = new RandomMinMax(frequency),
                             ParticleLifeTime = 1000,
                             ParticleDirection = new RandomMinMax(0, 359),
                             ParticleSpeed = new RandomMinMax(5.1f, 7.0f),
