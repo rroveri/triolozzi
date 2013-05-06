@@ -707,13 +707,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\bgNew.png">
-      <Name>bgNew</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Images\PlayerPostits\postitHappy_NE.png">
       <Name>postitHappy_NE</Name>
       <Importer>TextureImporter</Importer>
@@ -830,6 +823,27 @@
     </Compile>
     <Compile Include="Images\Counter\countDownGO.png">
       <Name>countDownGO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\postitBiancoLap.png">
+      <Name>postitBiancoLap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="bgNew.png">
+      <Name>bgNew</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\bgNew.png">
+      <Name>bgNew</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

@@ -463,7 +463,13 @@ namespace WindowsGame2.Screens
                 ScreenManager.ShowScreen<PauseMenuScreen>();
                 soundManager.PauseSong();
                 soundManager.StopAllSounds();
-                return;
+
+                for (int i = 0; i < Cars.Count; i++)
+                {
+                    Cars[i].stopSteeringSound();
+                }
+
+                    return;
             }
 
             if (Logic.isGameOver())

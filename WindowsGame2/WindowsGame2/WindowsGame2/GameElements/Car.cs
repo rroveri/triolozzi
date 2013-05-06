@@ -247,11 +247,23 @@ namespace WindowsGame2.GameElements
             driftValue = 0;
         }
 
+        public void stopSteeringSound()
+        {
+            if (steeringSound != null)
+            {
+                _soundManager.PoolSound(steeringSound, SoundManager.CarSteering);
+                steeringSound = null;
+            }
+        }
+
         public void Update(GamePadState gps, KeyboardState ks, GameTime gameTime)
         {
             
             if (isActive == false)
             {
+
+                stopSteeringSound();
+
                 //do nothing except for moving the message position on the screen
                 //ATTENTION: at the beginning of the match the inverse of the camera matrix will return NAN, therefore check for NAN when you position the message!!!
                 moveMessageImage(gameTime);
@@ -299,10 +311,8 @@ namespace WindowsGame2.GameElements
                 steeringSound = _soundManager.GetSound(SoundManager.CarSteering);
                 steeringSound.Play();
             }
-            else if (!isSteering && steeringSound != null)
-            {
-                _soundManager.PoolSound(steeringSound, SoundManager.CarSteering);
-                steeringSound = null;
+            else if (!isSteering){
+                stopSteeringSound();
             }
 
             if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0 || ks.IsKeyDown(Keys.W) && brownOnly) 
