@@ -549,7 +549,7 @@ namespace WindowsGame2.Screens
                 if (densValue > 0.09f) 
                 { 
                     Cars[i]._compound.LinearVelocity *= 0.8f;
-                    Cars[i].hasBoost = false;
+                    Cars[i].resetBoost();
                 }
             }
 
