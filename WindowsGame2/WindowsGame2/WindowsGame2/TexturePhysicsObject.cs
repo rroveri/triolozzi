@@ -83,7 +83,7 @@ namespace WindowsGame2
 
             spriteBatch.Draw(_polygonTexture, ConvertUnits.ToDisplayUnits(_compound.Position),
                                            null, color, _compound.Rotation, _origin, textureScale, SpriteEffects.None,
-                                           -0.1f);
+                                           0.9f);
 
 
 

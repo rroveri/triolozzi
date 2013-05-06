@@ -647,7 +647,7 @@ namespace WindowsGame2.GameElements
             {
                 for (int x = (int)Math.Floor(left - 2*currentTexture.Width * textureScale); x < (int)Math.Ceiling(right + 2*currentTexture.Width * textureScale); x = x + currentTexture.Width * textureScale)
                 {
-                    spriteBatch.Draw(currentTexture, new Vector2(x, y), null, Color.White, 0.0f, Vector2.Zero, Vector2.One * textureScale, SpriteEffects.None, 0.9f);
+                    spriteBatch.Draw(currentTexture, new Vector2(x, y), null, Color.White, 0.0f, Vector2.Zero, Vector2.One * textureScale, SpriteEffects.None, 1f);
                 }
             }
 

@@ -133,10 +133,10 @@ namespace WindowsGame2.GameElements
 
                 spriteBatch.Draw(textureBg, newPos,
                                                null, car.mColor, 0, origin, Vector2.One * textureScale, SpriteEffects.None,
-                                               -0.1f);
+                                               0.0f);
                 spriteBatch.Draw(currentTexture, newPos,
                                                null, Color.White, 0, origin, Vector2.One * textureScale, SpriteEffects.None,
-                                               -0.1f);
+                                               0.0f);
                 /*
                 Color transp = new Color(1, 1, 1, 0.4f);
                 spriteBatch.Draw(rainbowTex, car.Position,

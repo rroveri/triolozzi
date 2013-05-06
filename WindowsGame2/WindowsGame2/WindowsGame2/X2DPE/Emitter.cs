@@ -142,7 +142,7 @@ namespace X2DPE
                                                  Particles[i].Center,
                                                  Particles[i].Scale,
 												 SpriteEffects.None,
-												 -0.1f);
+												 0);
 			}
 		}
 	}
