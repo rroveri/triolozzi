@@ -531,11 +531,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Shaders\Fluid.fx">
-      <Name>Fluid</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
     <Compile Include="Shaders\GaussianBlur.fx">
       <Name>GaussianBlur</Name>
       <Importer>EffectImporter</Importer>
@@ -621,8 +616,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\mucus\color_scrofa.png">
-      <Name>color_scrofa</Name>
+    <Compile Include="Images\mucus\color_scrofa128.png">
+      <Name>color_scrofa128</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\mucus\color_scrofa64.png">
+      <Name>color_scrofa64</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -765,6 +765,13 @@
       <Name>postitSad_SW</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Shaders\FluidEffect.fx">
+      <Name>FluidEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

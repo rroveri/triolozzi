@@ -41,12 +41,11 @@ namespace WindowsGame2
                         maxMiddlePoint = Cars[i].currentMiddlePoint;
                     }
                 }
-                fluid.shouldResetDensity = true;
-                fluid.renderPosition = ConvertUnits.ToDisplayUnits(randomTrack.curvePointsMiddle[maxMiddlePoint % randomTrack.curvePointsMiddle.Count]);
-                
+                sneezePosition = ConvertUnits.ToDisplayUnits(randomTrack.curvePointsMiddle[maxMiddlePoint % randomTrack.curvePointsMiddle.Count]);
                 timer = 0;
                 nextSneezeTime = random.NextDouble() * 10000;
-
+                fluid.resetDensity();
+                fluid.renderPosition = sneezePosition;
                 drawFluid = true;
             }
 

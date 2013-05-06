@@ -8,7 +8,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Net;
 
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
@@ -24,7 +26,7 @@ using FarseerPhysics.Collision;
 using FarseerPhysics.Dynamics.Contacts;
 using X2DPE;
 using X2DPE.Helpers;
-//using fluid;
+using System.Threading;
 
 namespace WindowsGame2.Screens
 
@@ -105,12 +107,28 @@ namespace WindowsGame2.Screens
         ParticleComponent particleComponent;
         Fluid fluid;
         Vector2 fluidPos = new Vector2(-1);
+        Vector2[] currentPoses;
+        Vector2[] prevPoses;
+        Vector2 currentMousePos;
+        Vector2 prevMousePos;
+        KeyboardState previousState;
+        GamePadState previousPadState;
 
         public int PlayersCount { get; set; }
 
         private Texture2D dummyTexture;
 
         public SneezesManager mySneezesManager;
+        private QuadRenderComponent quad;
+        private bool gameIsExiting;
+        private Thread fluidUpdateThread;
+        private int sideSize;
+
+        Texture2D texInk;
+        RenderTarget2D buffer;
+        GaussianBlur gaussian;
+
+        Effect coloredEffect;
 
         #endregion
 
@@ -238,11 +256,34 @@ namespace WindowsGame2.Screens
             triangleListIndices = new short[maxNumberOfTriangles * 3];
 
             verticesBorders = new VertexPositionColorTexture[randomRaceTrack.curvePointsInternal.Count];
-            
-            
 
-            fluid = new Fluid(Content,GraphicsDevice, spriteBatch);
+
+            fluid = new Fluid();
+            fluid.Init();
+
+            currentPoses = new Vector2[4];
+            prevPoses = new Vector2[4];
+
+            currentMousePos = new Vector2(100);
+            prevMousePos = new Vector2(0);
+
+            quad = new QuadRenderComponent(ScreenManager.Game, cameraFollowing, ScreenManager.GraphicsDevice.Viewport.Width, ScreenManager.GraphicsDevice.Viewport.Height);
+            ScreenManager.Game.Components.Add(quad);
+
+            fluidUpdateThread = new Thread(this.UpdateFluid);
+            fluidUpdateThread.Start();
+
             mySneezesManager.fluid = fluid;
+
+            coloredEffect = Content.Load<Effect>("Shaders/FluidEffect");
+
+            texInk = new Texture2D(graphics.GraphicsDevice,
+                fluid.m_w, fluid.m_h, true,
+                SurfaceFormat.Color);
+            buffer = new RenderTarget2D(GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Width, ScreenManager.GraphicsDevice.Viewport.Height, true,
+                SurfaceFormat.Color, GraphicsDevice.PresentationParameters.DepthStencilFormat);
+
+            //gaussian = new GaussianBlur(ScreenManager.Game);
         }
 
         private void LoadPaperEffect()
@@ -415,6 +456,13 @@ namespace WindowsGame2.Screens
             base.Unload();
             GameServices.DeleteService<World>();
             GameServices.DeleteService<Camera>();
+            gameIsExiting = true;
+
+            if (fluidUpdateThread != null)
+            {
+                fluidUpdateThread.Join();
+                fluidUpdateThread = null;
+            }
         }
 
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
@@ -434,6 +482,7 @@ namespace WindowsGame2.Screens
             {
                 ScreenManager.ShowScreen<PauseMenuScreen>();
                 soundManager.PauseSong();
+                soundManager.StopAllSounds();
                 return;
             }
 
@@ -464,25 +513,11 @@ namespace WindowsGame2.Screens
 
             world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
 
-            // Particle modification
-
-            /*
-            for (int i = 0; i < Cars.Count; i++)
-            {
-                particleComponent.particleEmitterList[i].Position = Cars[i].Position - Cars[i].mDirection * Cars[i].tailOffset * 200;
-                if (Cars[i].hasBoost)
-                {
-                    particleComponent.particleEmitterList[i].Active = true;
-                }
-                else
-                {
-                    particleComponent.particleEmitterList[i].Active = false;
-                }
-            }
-            */
+            updateFluidParameters(gameTime);
 
             mySneezesManager.Update(gameTime,Cars);
-                
+
+            if (Keyboard.GetState().IsKeyDown(Keys.F)) fluid.saveDensity();
         }
 
         private void UpdateCars(GameTime gameTime)
@@ -504,9 +539,18 @@ namespace WindowsGame2.Screens
                         polygonsList.Add(obstacle);
                     }
                 }
-                Vector2 screen = Vector2.Transform(Cars[i].Position, cameraFollowing.Transform);
-                float densValue = fluid.fluidLevelAtPosition(screen);
-                if (densValue > 0.09f) Cars[i]._compound.LinearVelocity *= 0.8f;
+                
+                Vector2 relativePos = Vector2.Transform(Cars[i].Position,cameraFollowing.Transform) - Vector2.Transform(fluid.renderPosition, cameraFollowing.Transform);
+
+                float relativePosX = relativePos.X * fluid.m_w / fluid.renderWidth;
+                float relativePosY = fluid.m_h + relativePos.Y * fluid.m_h / fluid.renderHeight;
+
+                float densValue = fluid.fluidLevelAtPosition(relativePosX, relativePosY);
+                if (densValue > 0.09f) 
+                { 
+                    Cars[i]._compound.LinearVelocity *= 0.8f;
+                    Cars[i].hasBoost = false;
+                }
             }
 
             for (int i = Cars.Count; i < Cars.Count * 2; i++ )
@@ -695,7 +739,66 @@ namespace WindowsGame2.Screens
             }
         }
 
+        private void updateFluidParameters(GameTime gameTime)
+        {
+            for (int i = 0; i < PlayersCount; i++)
+            {
+                currentPoses[i] = Vector2.Transform(Cars[i].Position, cameraFollowing.Transform);
 
+                Vector2 relativePos = currentPoses[i] - Vector2.Transform(fluid.renderPosition, cameraFollowing.Transform);
+
+                float relativePosX = relativePos.X * fluid.m_w / fluid.renderWidth;
+                float relativePosY = fluid.m_h + relativePos.Y * fluid.m_h / fluid.renderHeight;
+
+                float dX = currentPoses[i].X - prevPoses[i].X;
+                float dY = currentPoses[i].Y - prevPoses[i].Y;
+
+                if (fluid.fluidLevelAtPosition(relativePosX, relativePosY) <= 0.09f) continue;
+                fluid.makeImpulse(relativePosX, relativePosY, dX, dY, false);
+
+                prevPoses[i] = currentPoses[i]; 
+            }
+
+            /*
+             * Server per disegnare col mouse dei nouvi muchi 
+             * 
+            */
+
+            //if (keyState.IsKeyDown(Keys.Enter) && !previousState.IsKeyDown(Keys.Enter))
+            //    this.texInk.Save("captura.bmp", ImageFileFormat.Bmp);
+
+            //MouseState mouseState = Mouse.GetState();
+            //KeyboardState keyState = Keyboard.GetState();
+            
+            //Vector2 currentPos = new Vector2((float)mouseState.X, (float)mouseState.Y);
+
+            //ButtonState leftState = mouseState.LeftButton;
+
+            //float dX = currentMousePos.X - prevMousePos.X;
+            //float dY = currentMousePos.Y - prevMousePos.Y;
+
+            //if (leftState == ButtonState.Pressed)
+            //{
+            //    fluid.makeImpulse(relativePosX, relativePosY, dX, dY, true);
+            //}
+
+            //previousState = keyState;
+
+            //prevMousePos = currentMousePos;
+            
+        }
+
+        void UpdateFluid()
+        {
+#if XBOX360
+            Thread.CurrentThread.SetProcessorAffinity(new int[] { 3 });
+#endif
+
+            while (!gameIsExiting)
+            {
+                fluid.Update(0.04f);
+            }
+        }
 
         public override void Draw(GameTime gameTime)
         {
@@ -703,6 +806,7 @@ namespace WindowsGame2.Screens
 
             GraphicsDevice.Viewport = defaultViewport;
             DrawSprites(cameraFollowing);
+           
             
             // If the game is transitioning on or off, fade it out to black.
             if (TransitionPosition > 0 || pauseAlpha > 0)
@@ -714,19 +818,47 @@ namespace WindowsGame2.Screens
             base.Draw(gameTime);
         }
 
+        private void drawFluid()
+        {
+            //graphics.GraphicsDevice.Clear(Color.White);
+
+            if (fluid.shouldResetDensity) return;
+
+            graphics.GraphicsDevice.Textures[0] = null;
+
+            texInk.SetData<Color>(fluid.texData);
+            coloredEffect.Parameters["Texture"].SetValue(texInk);
+
+#if !XBOX360
+            coloredEffect.Parameters["textureSize"].SetValue(100.0f);
+            coloredEffect.Parameters["texelSize"].SetValue(0.01f);
+#endif
+            //graphics.GraphicsDevice.SetRenderTarget(buffer);
+            //graphics.GraphicsDevice.Clear(ClearOptions.Target, Color.White, 0, 0);
+            //coloredEffect.Techniques[0].Passes[0].Apply();
+            //quad.renderMainQuad();
+            //graphics.GraphicsDevice.SetRenderTarget(null);
+            //Texture2D rend = gaussian.Render(buffer);
+            coloredEffect.Parameters["Texture"].SetValue(texInk);
+            coloredEffect.Techniques[0].Passes[0].Apply();
+            quad.renderFromDisplayUnits(fluid.renderPosition,fluid.renderWidth,fluid.renderHeight);
+
+            Texture2D trailSketch = Content.Load<Texture2D>("Materials/trailSketch");
+            coloredEffect.Parameters["Texture"].SetValue(trailSketch);
+            coloredEffect.Techniques[0].Passes[0].Apply();
+            
+            //quad.renderFromScreenUnits(currentMousePos, 10, 10);
+        }
+
         public void DrawSprites(Camera camera)
         {
-
-           // Vector2 greenPosition = Vector2.Transform(Cars[0].Position, cameraFollowing.Transform);
-           // fluid.Update(greenPosition);
-
-
             //compute camera matrices
             projection = camera.ProjectionMatrix;
             view = camera.ViewMatrix;
 
             //draw 2D (!keep DepthStencilState to None in order to see shaders!)
 
+            
             spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
 
             // Draw the race track and the starting line
@@ -734,20 +866,7 @@ namespace WindowsGame2.Screens
             randomRaceTrack.DrawSprites(camera, spriteBatch);
 
 
-            // draw cars and their trails
-            for (int i = 0; i < Cars.Count; i++)
-            {
-                Cars[i].Draw(spriteBatch, out trails[i], out burnouts[i]);
-                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
-            }
-       
             spriteBatch.End();
-
-            //if (fluidPos.X == -1)
-            //    fluidPos = Cars[3].Position;
-            //Vector2 brownPosition = Vector2.Transform(fluidPos, cameraFollowing.Transform);
-            Vector2 fluidScreenPosition = Vector2.Transform(mySneezesManager.sneezePosition, cameraFollowing.Transform);
-            fluid.Draw(fluidScreenPosition);
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -756,6 +875,41 @@ namespace WindowsGame2.Screens
 
             paperEffect.Parameters["Projection"].SetValue(projection);
             paperEffect.Parameters["View"].SetValue(view);
+
+            
+
+            
+
+
+            //now draw 3D (shaders)
+
+            //reset GraphicsDevice states (might be slow)
+
+
+            int counter = 0;
+
+            paperEffect.CurrentTechnique.Passes["StartLinePass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.startLineVertices, 0, 2);
+
+            
+
+
+            paperEffect.CurrentTechnique.Passes["ExternalSketchPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.verticesBordersInternal, 0, randomRaceTrack.verticesBordersInternal.Count() / 3);
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.verticesBordersExternal, 0, randomRaceTrack.verticesBordersExternal.Count() / 3);
+
+
+            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
+
+            // Draw the race track and the starting line
+            // raceTrack.DrawSprites(camera, spriteBatch);
+            randomRaceTrack.DrawSpritesPostItQuotes(camera, spriteBatch);
+
+            spriteBatch.End();
+
+            paperEffect.CurrentTechnique.Passes["BorderPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
+
 
             if (Car.isBrush)
                 paperEffect.CurrentTechnique.Passes["TrailPassBrush"].Apply();
@@ -774,9 +928,8 @@ namespace WindowsGame2.Screens
                 {
                     GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, Cars[i].mTrailPoints * Car.paintersCount * 2);
                 }
-                
-            }
 
+            }
             paperEffect.CurrentTechnique.Passes["TrailPass"].Apply();
             for (int i = 0; i < Cars.Count; i++)
             {
@@ -784,24 +937,15 @@ namespace WindowsGame2.Screens
                     GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, burnouts[i], 0, Cars[i].burnoutCounter * 2);
             }
 
-
-            //now draw 3D (shaders)
-
-            //reset GraphicsDevice states (might be slow)
-
-
-            int counter = 0;
-
-            paperEffect.CurrentTechnique.Passes["StartLinePass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.startLineVertices, 0, 2);
-
-            paperEffect.CurrentTechnique.Passes["BorderPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.myArray, 0, randomRaceTrack.myArray.Count() / 3);
-
-
-            paperEffect.CurrentTechnique.Passes["ExternalSketchPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.verticesBordersInternal, 0, randomRaceTrack.verticesBordersInternal.Count() / 3);
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, randomRaceTrack.verticesBordersExternal, 0, randomRaceTrack.verticesBordersExternal.Count() / 3);
+            paperEffect.CurrentTechnique.Passes["AlphabetPass"].Apply();
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, stringWriter.stringVertices, 0, stringWriter.stringVertices.Count() / 3);
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                if (Cars[i].message.isActive)
+                {
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.stringWriter.stringVertices, 0, Cars[i].message.stringWriter.stringVertices.Count() / 3);
+                }
+            }
             
             paperEffect.CurrentTechnique.Passes["ObjectPass"].Apply();
 
@@ -818,23 +962,37 @@ namespace WindowsGame2.Screens
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
             }
 
+            
+
             paperEffect.CurrentTechnique.Passes["PopupMessagePass"].Apply();
             for (int i = 0; i < Cars.Count; i++)
             {
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.bgTextureVertices, 0, 2);
             }
 
-            paperEffect.CurrentTechnique.Passes["AlphabetPass"].Apply();
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, stringWriter.stringVertices, 0, stringWriter.stringVertices.Count() / 3);
+            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
+
+            // draw cars and their trails
             for (int i = 0; i < Cars.Count; i++)
             {
-                if (Cars[i].message.isActive)
-                {
-                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].message.stringWriter.stringVertices, 0, Cars[i].message.stringWriter.stringVertices.Count() / 3);
-                }
+                Cars[i].Draw(spriteBatch, out trails[i], out burnouts[i]);
+                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
             }
 
+            spriteBatch.End();
+            drawFluid();
 
+
+            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
+
+            // draw cars and their trails
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                Cars[i].DrawMessage(spriteBatch);
+                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
+            }
+
+            spriteBatch.End();
             screenEffect.CurrentTechnique.Passes["PostitPass"].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.postitVertices, 0, PlayersCount * 2);
 
@@ -845,7 +1003,7 @@ namespace WindowsGame2.Screens
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.nLapsVertices, 0, 2);
 
             screenEffect.CurrentTechnique.Passes["BarPass"].Apply();
-            for (int i = 0; i < PlayersCount; i++)
+            for (int i = 0; i < Cars.Count(); i++)
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, screenRenderer.barVertices[i], 0, Cars[i].score * 2);
 
 

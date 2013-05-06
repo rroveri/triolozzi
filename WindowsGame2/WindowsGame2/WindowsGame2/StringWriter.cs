@@ -18,7 +18,7 @@ namespace WindowsGame2
         private int index;
 
         private Vector2 initPosition, upDirection, texCoords, vecDx, vecDy;
-        private Vector3 initPosition3d, upDirection3d, direction3d;
+        private Vector3 initPosition3d = new Vector3(-0.1f), upDirection3d, direction3d;
         private float texDx, texDy;
         private int nCharX = 10, nCharY = 4;
 
