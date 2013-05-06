@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Audio;
 
 namespace WindowsGame2
 {
@@ -23,20 +24,18 @@ namespace WindowsGame2
 
         public float textureScale;
 
-        
+        SoundEffect bip;
+        SoundEffect bap;
+
+        public int oldSound;
 
         public CounterIndicator()
         {
-            
-            //texture3 = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Counter/counter3");
-            //texture2 = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Counter/counter2");
-            //texture1 = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Counter/counter1");
-            //textureGo = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Counter/counterGo");
 
-            texture3 = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/PlayerPostits/postitHappy_NE");
-            texture2 = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/PlayerPostits/postitHappy_SE");
-            texture1 = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/PlayerPostits/postitHappy_SW");
-            textureGo = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/PlayerPostits/postitHappy_NW");
+            texture3 = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Counter/countDown3");
+            texture2 = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Counter/countDown2");
+            texture1 = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Counter/countDown1");
+            textureGo = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Counter/countDownGO");
 
             currentTexture = texture3;
 
@@ -52,25 +51,50 @@ namespace WindowsGame2
             inPosition = new Vector2(_graphicsDevice.PreferredBackBufferWidth / 2f - verticalDisplacement / 2f, 0);
             currentPostion = outPosition;
 
+            bip = GameServices.GetService<ContentManager>().Load<SoundEffect>("Sounds/bip_converted");
+            bap = GameServices.GetService<ContentManager>().Load<SoundEffect>("Sounds/bap_converted");
+
+            oldSound = -1;
+
         }
 
-        public void changeTexture(int newTex)
+        public void changeTexture(int newTex, bool playSound)
         {
             if (newTex == 3)
             {
                 currentTexture = texture3;
+                if (playSound && oldSound != 3)
+                {
+                    oldSound = 3;
+                    bip.Play(1,1f,0);
+                }
             }
             else if (newTex == 2)
             {
                 currentTexture = texture2;
+                if (playSound && oldSound != 2)
+                {
+                    oldSound = 2;
+                    bip.Play(1, 1f, 0);
+                }
             }
             else if (newTex == 1)
             {
                 currentTexture = texture1;
+                if (playSound && oldSound != 1)
+                {
+                    oldSound = 1;
+                    bip.Play(1, 1f, 0);
+                }
             }
             else if (newTex == 0)
             {
                 currentTexture = textureGo;
+                if (playSound && oldSound != 0)
+                {
+                    oldSound = 0;
+                    bap.Play(1,1,0);
+                }
             }
         }
 

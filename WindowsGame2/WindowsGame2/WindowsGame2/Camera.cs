@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.Input;
 using FarseerPhysics.SamplesFramework;
 using FarseerPhysics.Common;
 using WindowsGame2.GameElements;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 
 namespace WindowsGame2
 {
@@ -98,6 +100,9 @@ namespace WindowsGame2
         public CounterIndicator counterIndicator;
         public double timerGoAway;
 
+
+        private bool firstTimeSound = false;
+
         /// <summary>
         /// Initialize a new Camera object
         /// </summary>
@@ -129,6 +134,8 @@ namespace WindowsGame2
 
             timerGoAwayBastard = false;
             timerGoAway = 0;
+
+            
         }
 
         
@@ -153,6 +160,7 @@ namespace WindowsGame2
                 if (timerGoAway > timerGoAwayDelay)
                 {
                     counterIndicator.exit();
+                    counterIndicator.changeTexture(3,false);
                 }
                 
             }
@@ -194,6 +202,8 @@ namespace WindowsGame2
 
                 oldPosition = objectPosition_+new Vector2(3000);
                 firstTime = false;
+
+                firstTimeSound = true;
             }
 
             if (Vector2.Distance(oldPosition, objectPosition_) < 0.6f)
@@ -251,28 +261,35 @@ namespace WindowsGame2
                 Vector2 position = (Cars[0]._compound.Position + Cars[Cars.Count - 1]._compound.Position) / 2f;
                
 
-                counterIndicator.changeTexture(0);
+                counterIndicator.changeTexture(0,true);
 
                 timerGoAwayBastard = true;
                 timerGoAway = 0;
+
+                if (firstTimeSound)
+                {
+                    firstTimeSound = false;
+                    GameServices.GetService<SoundManager>().PlaySong(SoundManager.GameSong, true);
+                }
             }
             else if (timer > totalMilliseconds/3f*2f)
             {
                 Vector2 position = (Cars[0]._compound.Position + Cars[Cars.Count - 1]._compound.Position) / 2f;
 
-                counterIndicator.changeTexture(1);
+                counterIndicator.changeTexture(1,true);
             }
             else if (timer > totalMilliseconds / 3f * 1f)
             {
                 Vector2 position = (Cars[0]._compound.Position + Cars[Cars.Count - 1]._compound.Position) / 2f;
 
-                counterIndicator.changeTexture(2);
+                counterIndicator.changeTexture(2,true);
             }
             else if (timer > 0.001f)
             {
                 Vector2 position = (Cars[0]._compound.Position + Cars[Cars.Count - 1]._compound.Position) / 2f;
 
-                counterIndicator.changeTexture(3);
+                counterIndicator.changeTexture(3,true);
+                
             }
         }
 
