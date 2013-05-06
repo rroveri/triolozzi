@@ -5,6 +5,80 @@ Texture2D postitSad_NW, postitSad_NE, postitSad_SW, postitSad_SE;
 
 float4 nLaps;
 
+sampler postitHappyNWSampler = sampler_state
+{
+    Texture = <postitHappy_NW>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
+sampler postitHappyNESampler = sampler_state
+{
+    Texture = <postitHappy_NE>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
+sampler postitHappySWSampler = sampler_state
+{
+    Texture = <postitHappy_SW>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
+sampler postitHappySESampler = sampler_state
+{
+    Texture = <postitHappy_SE>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
+
+sampler postitSadNWSampler = sampler_state
+{
+    Texture = <postitSad_NW>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
+sampler postitSadNESampler = sampler_state
+{
+    Texture = <postitSad_NE>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
+sampler postitSadSWSampler = sampler_state
+{
+    Texture = <postitSad_SW>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
+sampler postitSadSESampler = sampler_state
+{
+    Texture = <postitSad_SE>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
+
 sampler postitHappySampler = sampler_state
 {
     Texture = <postitHappy>;
@@ -145,6 +219,61 @@ BarVertexShaderOutput VertexShaderFunctionBar(BarVertexShaderInput input)
     return output;
 }
 
+float4 PixelShaderFunctionPostitNW(PostitVertexShaderOutput input) : COLOR0
+{
+    float4 texCol;
+    if(input.Color[0] == 0)
+    {
+        texCol = tex2D(postitSadNWSampler, input.uv);
+    }
+    else
+    {
+        texCol = tex2D(postitHappyNWSampler, input.uv);
+    }
+	return texCol;
+}
+float4 PixelShaderFunctionPostitNE(PostitVertexShaderOutput input) : COLOR0
+{
+    float4 texCol;
+    if(input.Color[0] == 0)
+    {
+        texCol = tex2D(postitSadNESampler, input.uv);
+    }
+    else
+    {
+        texCol = tex2D(postitHappyNESampler, input.uv);
+    }
+	return texCol;
+}
+
+float4 PixelShaderFunctionPostitSW(PostitVertexShaderOutput input) : COLOR0
+{
+    float4 texCol;
+    if(input.Color[0] == 0)
+    {
+        texCol = tex2D(postitSadSWSampler, input.uv);
+    }
+    else
+    {
+        texCol = tex2D(postitHappySWSampler, input.uv);
+    }
+	return texCol;
+}
+
+float4 PixelShaderFunctionPostitSE(PostitVertexShaderOutput input) : COLOR0
+{
+    float4 texCol;
+    if(input.Color[0] == 0)
+    {
+        texCol = tex2D(postitSadSESampler, input.uv);
+    }
+    else
+    {
+        texCol = tex2D(postitHappySESampler, input.uv);
+    }
+	return texCol;
+}
+
 float4 PixelShaderFunctionPostit(PostitVertexShaderOutput input) : COLOR0
 {
     float4 texCol;
@@ -179,6 +308,29 @@ float4 PixelShaderFunctionBar(BarVertexShaderOutput input) : COLOR0
 
 technique ScreenTechinque
 {
+	pass PostitPassNW
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPostitNW();
+    }
+	pass PostitPassNE
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPostitNE();
+    }
+	pass PostitPassSW
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPostitSW();
+    }
+	pass PostitPassSE
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPostitSE();
+    }
+
+
+	
     pass PostitPass
     {
         VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
