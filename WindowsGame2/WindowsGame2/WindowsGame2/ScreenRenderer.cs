@@ -29,10 +29,10 @@ namespace WindowsGame2
         private float width = 0.25f, height = 0.30f;
         private float barOffsetW, barOffsetH, barWidth, barHeight, pointLength;
 
-        private float lapWidth = 0.15f, lapHeight = 0.1f;
-        private float lapOffset = 0.03f;
+        private float lapWidth = 0.125f, lapHeight = 0.15f;
+        private float lapOffset = 0.0f;
 
-        private float nLapOffsetW = 0.08f, nLapOffsetH = 0.015f;
+        private float nLapOffsetW = 0.03f, nLapOffsetH = 0.05f;
         private float nLapWidth = 0.06f, nLapHeight = 0.06f;
 
         Effect screenEffect;
@@ -284,7 +284,7 @@ namespace WindowsGame2
             Texture2D postitSad = Content.Load<Texture2D>("Images/postitSad");
             screenEffect.Parameters["postitSad"].SetValue(postitSad);
 
-            Texture2D postitLap = Content.Load<Texture2D>("Images/postitLap");
+            Texture2D postitLap = Content.Load<Texture2D>("Images/postitBiancoLap");
             screenEffect.Parameters["lap"].SetValue(postitLap);
 
             Texture2D numbers = Content.Load<Texture2D>("Images/numbers");

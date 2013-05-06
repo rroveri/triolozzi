@@ -11,8 +11,8 @@ sampler postitHappyNWSampler = sampler_state
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU  = Wrap;
-    AddressV  = Wrap;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
 };
 sampler postitHappyNESampler = sampler_state
 {
@@ -20,8 +20,8 @@ sampler postitHappyNESampler = sampler_state
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU  = Wrap;
-    AddressV  = Wrap;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
 };
 sampler postitHappySWSampler = sampler_state
 {
@@ -29,8 +29,8 @@ sampler postitHappySWSampler = sampler_state
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU  = Wrap;
-    AddressV  = Wrap;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
 };
 sampler postitHappySESampler = sampler_state
 {
@@ -38,8 +38,8 @@ sampler postitHappySESampler = sampler_state
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU  = Wrap;
-    AddressV  = Wrap;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
 };
 
 sampler postitSadNWSampler = sampler_state
@@ -48,8 +48,8 @@ sampler postitSadNWSampler = sampler_state
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU  = Wrap;
-    AddressV  = Wrap;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
 };
 sampler postitSadNESampler = sampler_state
 {
@@ -57,8 +57,8 @@ sampler postitSadNESampler = sampler_state
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU  = Wrap;
-    AddressV  = Wrap;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
 };
 sampler postitSadSWSampler = sampler_state
 {
@@ -66,8 +66,8 @@ sampler postitSadSWSampler = sampler_state
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU  = Wrap;
-    AddressV  = Wrap;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
 };
 sampler postitSadSESampler = sampler_state
 {
@@ -75,8 +75,8 @@ sampler postitSadSESampler = sampler_state
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU  = Wrap;
-    AddressV  = Wrap;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
 };
 
 sampler postitHappySampler = sampler_state
@@ -85,8 +85,8 @@ sampler postitHappySampler = sampler_state
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU  = Wrap;
-    AddressV  = Wrap;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
 };
 
 sampler postitSadSampler = sampler_state
@@ -95,8 +95,8 @@ sampler postitSadSampler = sampler_state
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU  = Wrap;
-    AddressV  = Wrap;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
 };
 
 sampler lapSampler = sampler_state
@@ -105,8 +105,8 @@ sampler lapSampler = sampler_state
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU  = Wrap;
-    AddressV  = Wrap;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
 };
 
 sampler numberSampler = sampler_state
@@ -115,8 +115,8 @@ sampler numberSampler = sampler_state
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU  = Wrap;
-    AddressV  = Wrap;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
 };
 
 struct PostitVertexShaderInput
