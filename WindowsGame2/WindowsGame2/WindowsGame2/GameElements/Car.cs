@@ -102,9 +102,13 @@ namespace WindowsGame2.GameElements
 
         private SoundEffectInstance steeringSound;
 
+        public bool isInsideMucus;
+
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
             : base(world, texture, new Vector2(65.0f, 40.0f), Color)
         {
+
+            isInsideMucus = false;
 
             index = _index;
 

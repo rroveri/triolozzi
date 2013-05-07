@@ -132,7 +132,7 @@ namespace WindowsGame2.Screens
 
         public double timer;
 
-        
+        SoundEffect splatSound;
 
         #endregion
 
@@ -179,6 +179,8 @@ namespace WindowsGame2.Screens
             dummyTexture.SetData(new Color[] { dummyTextureColor });
 
             mySneezesManager = new SneezesManager();
+
+            splatSound=GameServices.GetService<ContentManager>().Load<SoundEffect>("Sounds/mucus/splat2_converted");
         }
  
            
@@ -535,10 +537,21 @@ namespace WindowsGame2.Screens
                 float relativePosY = fluid.m_h + relativePos.Y * fluid.m_h / fluid.renderHeight;
 
                 float densValue = fluid.fluidLevelAtPosition(relativePosX, relativePosY);
-                if (densValue > 0.09f) 
-                { 
+                if (densValue > 0.09f)
+                {
                     Cars[i]._compound.LinearVelocity *= 0.8f;
                     Cars[i].resetBoost();
+
+                    if (!Cars[i].isInsideMucus)
+                    {
+                        //play splat sound
+                        splatSound.Play();
+                        Cars[i].isInsideMucus = true;
+                    }
+                }
+                else
+                {
+                    Cars[i].isInsideMucus = false;
                 }
             }
 
