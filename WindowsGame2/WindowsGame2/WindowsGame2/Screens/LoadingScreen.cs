@@ -27,6 +27,8 @@ namespace WindowsGame2
         private bool _isReady;
 
         private InputAction StartAction, switchTutorialAction;
+        private Texture2D _switchTip;
+        private Rectangle _switchTipPosition;
 
         #endregion
 
@@ -38,6 +40,7 @@ namespace WindowsGame2
             ContentManager content = GameServices.GetService<ContentManager>();
             _backgroundTexture = content.Load<Texture2D>("Images/bgNew");
             _loadingMessage = content.Load<Texture2D>("Images/PimpScreen/loadingMessage");
+            _switchTip = content.Load<Texture2D>("Images/PimpScreen/tutorialSwitchMessage");
             _readyToPlayMessage = content.Load<Texture2D>("Images/PimpScreen/startGameMessage");
 
             _tutorials = new Texture2D[4];
@@ -48,6 +51,7 @@ namespace WindowsGame2
 
             Viewport viewport = ScreenManager.GraphicsDevice.Viewport;
             _currentPosition = new Rectangle(viewport.Width/2 - 300, viewport.Height/2 - 500, 600, 150);
+            _switchTipPosition = new Rectangle(viewport.Width / 2 - 850, viewport.Height / 2 + 400, 500, 150);
 
             _tutorialsPosition = new Rectangle[4];
             _tutorialsPosition[0] = new Rectangle(viewport.Width / 2 - 450, viewport.Height / 2 - 300, 900, 581);
@@ -85,6 +89,7 @@ namespace WindowsGame2
             spriteBatch.Begin();
             spriteBatch.Draw(_tutorials[currentTutorial], _tutorialsPosition[currentTutorial], null, Color.White);
             spriteBatch.Draw(_currentTexture, _currentPosition, null, Color.White);
+            spriteBatch.Draw(_switchTip, _switchTipPosition, null, Color.White);
             spriteBatch.End();
         }
 
