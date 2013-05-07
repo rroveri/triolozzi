@@ -306,7 +306,7 @@ namespace WindowsGame2.Screens
             Texture2D startLine = Content.Load<Texture2D>("Materials/squares");
             Texture2D alphabet = Content.Load<Texture2D>("Images/alphabet");
             Texture2D messageBg = Content.Load<Texture2D>("Images/onomatopeeBg");
-            Texture2D externalTex = Content.Load<Texture2D>("Images/external_bg");
+            Texture2D externalTex = Content.Load<Texture2D>("Images/external_bg3");
             paperEffect.Parameters["trailSketchBrush"].SetValue(dummyTexture);
             paperEffect.Parameters["trailSketch"].SetValue(trailSketch);
             paperEffect.Parameters["objectSketch"].SetValue(objectSketch);
