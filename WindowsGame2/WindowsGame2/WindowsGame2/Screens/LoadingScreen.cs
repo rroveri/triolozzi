@@ -18,12 +18,15 @@ namespace WindowsGame2
         private Texture2D _currentTexture;
         private Rectangle _currentPosition;
 
-        private Texture2D _gameControls;
-        private Rectangle _gameControlsPosition;
+        private Texture2D[] _tutorials;
+        private Rectangle[] _tutorialsPosition;
+        private int currentTutorial = 0;
+
+        private Vector2 zeroVector = new Vector2();
 
         private bool _isReady;
 
-        private InputAction StartAction;
+        private InputAction StartAction, switchTutorialAction;
 
         #endregion
 
@@ -36,18 +39,30 @@ namespace WindowsGame2
             _backgroundTexture = content.Load<Texture2D>("Images/bgNew");
             _loadingMessage = content.Load<Texture2D>("Images/PimpScreen/loadingMessage");
             _readyToPlayMessage = content.Load<Texture2D>("Images/PimpScreen/startGameMessage");
-            _gameControls = content.Load<Texture2D>("Images/PimpScreen/game_controls");
+
+            _tutorials = new Texture2D[4];
+            _tutorials[0] = content.Load<Texture2D>("Images/PimpScreen/game_controls");
+            _tutorials[1] = content.Load<Texture2D>("Images/PimpScreen/tutorial1");
+            _tutorials[2] = content.Load<Texture2D>("Images/PimpScreen/tutorial2");
+            _tutorials[3] = content.Load<Texture2D>("Images/PimpScreen/tutorial3");
 
             Viewport viewport = ScreenManager.GraphicsDevice.Viewport;
-            _currentPosition = new Rectangle(viewport.Width/2 - 300, viewport.Height/2 + 200, 600, 150);
-            _gameControlsPosition = new Rectangle(viewport.Width/2 - 450, viewport.Height/2 - 400, 900, 581);
+            _currentPosition = new Rectangle(viewport.Width/2 - 300, viewport.Height/2 - 500, 600, 150);
+
+            _tutorialsPosition = new Rectangle[4];
+            _tutorialsPosition[0] = new Rectangle(viewport.Width / 2 - 450, viewport.Height / 2 - 300, 900, 581);
+            _tutorialsPosition[1] = new Rectangle(0, 0, 1920, 1080);
+            _tutorialsPosition[2] = new Rectangle(0, 0, 1920, 1080);
+            _tutorialsPosition[3] = new Rectangle(0, 0, 1920, 1080);
 
             _currentTexture = _loadingMessage;
 
             StartAction = new InputAction(
                     new Buttons[] { Buttons.A },
-                    new Keys[] { Keys.Enter },
+                    new Keys[] { Keys.A },
                     true);
+
+            switchTutorialAction = new InputAction(new Buttons[] { Buttons.X }, new Keys[] { Keys.X }, true);
         }
 
         #endregion
@@ -68,7 +83,7 @@ namespace WindowsGame2
             spriteBatch.End();
 
             spriteBatch.Begin();
-            spriteBatch.Draw(_gameControls, _gameControlsPosition, null, Color.White);
+            spriteBatch.Draw(_tutorials[currentTutorial], _tutorialsPosition[currentTutorial], null, Color.White);
             spriteBatch.Draw(_currentTexture, _currentPosition, null, Color.White);
             spriteBatch.End();
         }
@@ -86,6 +101,12 @@ namespace WindowsGame2
              //   GameServices.GetService<SoundManager>().PlaySong(SoundManager.GameSong, true);
                 GameServices.GetService<SoundManager>().StopSong();
                 ScreenManager.ShowScreen<GameScreen>();
+            }
+            if (switchTutorialAction.Evaluate(input, null, out playerIndex))
+            {
+                //   GameServices.GetService<SoundManager>().PlaySong(SoundManager.GameSong, true);
+                currentTutorial++;
+                if (currentTutorial >= _tutorials.Length) currentTutorial = 0;
             }
         }
 
