@@ -224,9 +224,9 @@ namespace WindowsGame2.Screens
 
             // Initialize cars
             _availableCars = new Texture2D[3];
-            _availableCars[0] = Content.Load<Texture2D>("Cars/pickUpCar"); 
+            _availableCars[0] = Content.Load<Texture2D>("Cars/standardCar");
             _availableCars[1] = Content.Load<Texture2D>("Cars/spiderCar");
-            _availableCars[2] = Content.Load<Texture2D>("Cars/standardCar");
+            _availableCars[2] = Content.Load<Texture2D>("Cars/pickUpCar"); 
 
             _selectedCars = new int[4];
             _selectedCars[0] = 0;

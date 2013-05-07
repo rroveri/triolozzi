@@ -453,13 +453,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Materials\pencil.jpg">
-      <Name>pencil</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Images\whiteStar.png">
       <Name>whiteStar</Name>
       <Importer>TextureImporter</Importer>
@@ -861,6 +854,20 @@
   <ItemGroup>
     <Compile Include="Images\bgNew.png">
       <Name>bgNew</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Materials\pencil.png">
+      <Name>pencil</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\external_bg3.png">
+      <Name>external_bg3</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
