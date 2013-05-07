@@ -835,6 +835,23 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cars\pickUpCar.png">
+      <Name>pickUpCar</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Cars\spiderCar.png">
+      <Name>spiderCar</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Cars\standardCar.png">
+      <Name>standardCar</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="bgNew.png">
       <Name>bgNew</Name>
       <Importer>TextureImporter</Importer>

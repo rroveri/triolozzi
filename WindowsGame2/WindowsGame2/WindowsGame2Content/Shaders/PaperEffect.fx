@@ -271,7 +271,7 @@ float4 PixelShaderFunctionObject(ObjectVertexShaderOutput input) : COLOR0
     float rand = tex2D(randomSampler, input.xy)[0];
 
     // Moses Effect
-	float2 carPos;
+	/*float2 carPos;
 	if(input.Color[0] == 1)
 	{
 		carPos = redCarPos;
@@ -289,7 +289,7 @@ float4 PixelShaderFunctionObject(ObjectVertexShaderOutput input) : COLOR0
 		carPos = pinkCarPos;
 	}
     if(length(carPos - input.xy) < (0.2 + 0.4 * rand))
-        return float4(0,0,0,0);
+        return float4(0,0,0,0);*/
     
     return float4(texCol[0],texCol[1],texCol[2],alpha);
 
