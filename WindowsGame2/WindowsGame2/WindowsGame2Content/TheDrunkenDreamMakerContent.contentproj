@@ -928,6 +928,28 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Images\PlayerPostits\pigiamaNE.png">
+      <Name>pigiamaNE</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\PlayerPostits\pigiamaNW.png">
+      <Name>pigiamaNW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\PlayerPostits\pigiamaSE.png">
+      <Name>pigiamaSE</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\PlayerPostits\pigiamaSW.png">
+      <Name>pigiamaSW</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Images\paginainiziale.png">
       <Name>paginainiziale</Name>
       <Importer>TextureImporter</Importer>

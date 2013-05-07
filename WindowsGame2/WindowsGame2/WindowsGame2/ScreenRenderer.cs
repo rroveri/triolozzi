@@ -19,7 +19,7 @@ namespace WindowsGame2
         public int PlayersCount { get; set; }
 
         private float nPoints = 54;
-        public VertexPositionColorTexture[] postitVertices, lapVertices, nLapsVertices;
+        public VertexPositionColorTexture[] postitVertices, pijiamaVertices,lapVertices, nLapsVertices;
         public VertexPositionColorTexture[][] barVertices;
 
         private Vector2 texNW, texNE, texOW, texOE;
@@ -55,6 +55,7 @@ namespace WindowsGame2
             texOE = new Vector2(1, 1);
 
             postitVertices = new VertexPositionColorTexture[6 * kMaximumPlayers];
+            pijiamaVertices = new VertexPositionColorTexture[6 * kMaximumPlayers];
             barVertices = new VertexPositionColorTexture[kMaximumPlayers][];
             for (int i = 0; i < kMaximumPlayers; i++)
             {
@@ -102,6 +103,21 @@ namespace WindowsGame2
                 postitVertices[p * 6 + 3].TextureCoordinate = texNE;
                 postitVertices[p * 6 + 4].TextureCoordinate = texOE;
                 postitVertices[p * 6 + 5].TextureCoordinate = texOW;
+
+                pijiamaVertices[p * 6 + 0].Position = new Vector3(initPoint.X, initPoint.Y, 0);
+                pijiamaVertices[p * 6 + 1].Position = new Vector3(initPoint.X + width, initPoint.Y, 0);
+                pijiamaVertices[p * 6 + 2].Position = new Vector3(initPoint.X, initPoint.Y + height, 0);
+
+                pijiamaVertices[p * 6 + 3].Position = new Vector3(initPoint.X + width, initPoint.Y, 0);
+                pijiamaVertices[p * 6 + 4].Position = new Vector3(initPoint.X + width, initPoint.Y + height, 0);
+                pijiamaVertices[p * 6 + 5].Position = new Vector3(initPoint.X, initPoint.Y + height, 0);
+
+                pijiamaVertices[p * 6 + 0].TextureCoordinate = texNW;
+                pijiamaVertices[p * 6 + 1].TextureCoordinate = texNE;
+                pijiamaVertices[p * 6 + 2].TextureCoordinate = texOW;
+                pijiamaVertices[p * 6 + 3].TextureCoordinate = texNE;
+                pijiamaVertices[p * 6 + 4].TextureCoordinate = texOE;
+                pijiamaVertices[p * 6 + 5].TextureCoordinate = texOW;
 
                 setHappyToAllPlayers();
 
@@ -193,6 +209,7 @@ namespace WindowsGame2
                 for (int c = 0; c < 6; c++)
                 {
                     barVertices[playerIndex][i * 6 + c].Color = color;
+                    pijiamaVertices[playerIndex * 6 + c].Color = color;
                 }
             }
         }
@@ -240,24 +257,44 @@ namespace WindowsGame2
             {
                 screenEffect.CurrentTechnique.Passes["PostitPassNW"].Apply();
                 device.DrawUserPrimitives(PrimitiveType.TriangleList, postitVertices, 0, 2);
+                if (postitVertices[0].Color != Color.Black)
+                {
+                    screenEffect.CurrentTechnique.Passes["PigiamaPassNW"].Apply();
+                    device.DrawUserPrimitives(PrimitiveType.TriangleList, pijiamaVertices, 0, 2);
+                }
             }
 
             if (PlayersCount >= 2)
             {
                 screenEffect.CurrentTechnique.Passes["PostitPassNE"].Apply();
                 device.DrawUserPrimitives(PrimitiveType.TriangleList, postitVertices, 6, 2);
+                if (postitVertices[6].Color != Color.Black)
+                {
+                    screenEffect.CurrentTechnique.Passes["PigiamaPassNE"].Apply();
+                    device.DrawUserPrimitives(PrimitiveType.TriangleList, pijiamaVertices, 6, 2);
+                }
             }
 
             if (PlayersCount >= 3)
             {
                 screenEffect.CurrentTechnique.Passes["PostitPassSW"].Apply();
                 device.DrawUserPrimitives(PrimitiveType.TriangleList, postitVertices, 12, 2);
+                if (postitVertices[12].Color != Color.Black)
+                {
+                    screenEffect.CurrentTechnique.Passes["PigiamaPassSW"].Apply();
+                    device.DrawUserPrimitives(PrimitiveType.TriangleList, pijiamaVertices, 12, 2);
+                }
             }
 
             if (PlayersCount >= 4)
             {
                 screenEffect.CurrentTechnique.Passes["PostitPassSE"].Apply();
                 device.DrawUserPrimitives(PrimitiveType.TriangleList, postitVertices, 18, 2);
+                if (postitVertices[18].Color != Color.Black)
+                {
+                    screenEffect.CurrentTechnique.Passes["PigiamaPassSE"].Apply();
+                    device.DrawUserPrimitives(PrimitiveType.TriangleList, pijiamaVertices, 18, 2);
+                }
             }
 
             screenEffect.CurrentTechnique.Passes["LapPass"].Apply();
@@ -301,6 +338,12 @@ namespace WindowsGame2
             screenEffect.Parameters["postitSad_NE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_NE"));
             screenEffect.Parameters["postitSad_SW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_SW"));
             screenEffect.Parameters["postitSad_SE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitSad_SE"));
+
+            // Load and set pijama post it for each player
+            screenEffect.Parameters["pigiama_NW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/pigiamaNW"));
+            screenEffect.Parameters["pigiama_NE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/pigiamaNE"));
+            screenEffect.Parameters["pigiama_SW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/pigiamaSW"));
+            screenEffect.Parameters["pigiama_SE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/pigiamaSE"));
         }
     }
 }
