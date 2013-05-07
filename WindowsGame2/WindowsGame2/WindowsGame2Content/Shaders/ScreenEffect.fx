@@ -2,8 +2,46 @@
 Texture2D postitHappy, postitSad, lap, numbers;
 Texture2D postitHappy_NW, postitHappy_NE, postitHappy_SW, postitHappy_SE;
 Texture2D postitSad_NW, postitSad_NE, postitSad_SW, postitSad_SE;
+Texture2D pigiama_NW, pigiama_NE, pigiama_SW, pigiama_SE;
 
 float4 nLaps;
+
+sampler pigiamaNWSampler = sampler_state
+{
+    Texture = <pigiama_NW>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
+};
+sampler pigiamaNESampler = sampler_state
+{
+    Texture = <pigiama_NE>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
+};
+sampler pigiamaSWSampler = sampler_state
+{
+    Texture = <pigiama_SW>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
+};
+sampler pigiamaSESampler = sampler_state
+{
+    Texture = <pigiama_SE>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
+};
 
 sampler postitHappyNWSampler = sampler_state
 {
@@ -306,6 +344,34 @@ float4 PixelShaderFunctionBar(BarVertexShaderOutput input) : COLOR0
     return input.Color;
 }
 
+float4 PixelShaderFunctionPigiamaNW(LapVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(pigiamaNWSampler, input.uv);
+	texCol *= input.Color;
+	return texCol;
+}
+
+float4 PixelShaderFunctionPigiamaNE(LapVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(pigiamaNESampler, input.uv);
+	texCol *= input.Color;
+	return texCol;
+}
+
+float4 PixelShaderFunctionPigiamaSW(LapVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(pigiamaSWSampler, input.uv);
+	texCol *= input.Color;
+	return texCol;
+}
+
+float4 PixelShaderFunctionPigiamaSE(LapVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(pigiamaSESampler, input.uv);
+	texCol *= input.Color;
+	return texCol;
+}
+
 technique ScreenTechinque
 {
 	pass PostitPassNW
@@ -329,7 +395,26 @@ technique ScreenTechinque
         PixelShader = compile ps_3_0 PixelShaderFunctionPostitSE();
     }
 
-
+	pass PigiamaPassNW
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPigiamaNW();
+    }
+	pass PigiamaPassNE
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPigiamaNE();
+    }
+	pass PigiamaPassSW
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPigiamaSW();
+    }
+	pass PigiamaPassSE
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPigiamaSE();
+    }
 	
     pass PostitPass
     {
