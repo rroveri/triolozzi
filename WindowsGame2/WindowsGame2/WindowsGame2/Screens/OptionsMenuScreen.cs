@@ -205,7 +205,7 @@ namespace WindowsGame2.Screens
 
             // Initialize colors
             _availableColors = new Color[10];
-            _availableColors[0] = Color.Blue;
+            _availableColors[0] = new Color(0,0.4f,1,1);
             _availableColors[1] = Color.Red;
             _availableColors[2] = Color.Green;
             _availableColors[3] = Color.DarkKhaki;
@@ -223,9 +223,10 @@ namespace WindowsGame2.Screens
             _selectedColors[3] = 0;
 
             // Initialize cars
-            _availableCars = new Texture2D[2];
-            _availableCars[0] = Content.Load<Texture2D>("Images/small_car");
-            _availableCars[1] = Content.Load<Texture2D>("Images/small_white_penis");
+            _availableCars = new Texture2D[3];
+            _availableCars[0] = Content.Load<Texture2D>("Cars/pickUpCar"); 
+            _availableCars[1] = Content.Load<Texture2D>("Cars/spiderCar");
+            _availableCars[2] = Content.Load<Texture2D>("Cars/standardCar");
 
             _selectedCars = new int[4];
             _selectedCars[0] = 0;
@@ -363,7 +364,7 @@ namespace WindowsGame2.Screens
                 }
                 if (_didSelectColor[i] && _selectedColors[i] == colorIndex)
                 {
-                    return false;
+                    //return false;
                 }
             }
             return true;
@@ -375,7 +376,7 @@ namespace WindowsGame2.Screens
             {
                 if (!_didSelectColor[i])
                 {
-                    //return false;
+                    return false;
                 }
             }
             return true;
