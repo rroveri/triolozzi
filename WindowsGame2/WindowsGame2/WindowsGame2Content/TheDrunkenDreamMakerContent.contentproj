@@ -885,16 +885,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\PimpScreen\tutorial1.png">
-      <Name>tutorial1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Images\PimpScreen\tutorial2.png">
-      <Name>tutorial2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Images\PimpScreen\tutorial3.png">
       <Name>tutorial3</Name>
       <Importer>TextureImporter</Importer>
@@ -962,6 +952,23 @@
   <ItemGroup>
     <Compile Include="Images\PimpScreen\tutorialSwitchMessage.png">
       <Name>tutorialSwitchMessage</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\paginainiziale.png">
+      <Name>paginainiziale</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\PimpScreen\tutorial1.png">
+      <Name>tutorial1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Images\PimpScreen\tutorial2.png">
+      <Name>tutorial2</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

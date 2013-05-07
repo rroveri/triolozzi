@@ -40,7 +40,7 @@ namespace WindowsGame2.Screens
         /// <summary>
         /// Constructor fills in the menu contents.
         /// </summary>
-        public MainMenuScreen() : base("The Drunken Dream Maker (With a Cold)")
+        public MainMenuScreen() : base("")
         {
             optionsMenuEntry = new MenuEntry("Start New Game");
             optionsMenuEntry.Selected += OptionsMenuEntrySelected;
@@ -54,7 +54,7 @@ namespace WindowsGame2.Screens
             MenuEntry exitMenuEntry = new MenuEntry("Exit");
             exitMenuEntry.Selected += OnCancel;
             MenuEntries.Add(exitMenuEntry);
-
+            
             UpdatePlayersCount();
 
             GameServices.GetService<SoundManager>().PlaySong(SoundManager.MenuSong, true);
