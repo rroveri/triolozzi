@@ -238,6 +238,9 @@ namespace WindowsGame2.Screens
             cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f);
             GameServices.AddService<Camera>(cameraFollowing);
 
+            mySneezesManager.camera = cameraFollowing;
+
+
             //generate starting positions and angles
             int startingPoint = 0;
             positionCars(startingPoint);
