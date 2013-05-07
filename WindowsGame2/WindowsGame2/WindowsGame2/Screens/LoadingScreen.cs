@@ -83,7 +83,8 @@ namespace WindowsGame2
             base.HandleInput(gameTime, input);
             if (_isReady && StartAction.Evaluate(input, null, out playerIndex))
             {
-                GameServices.GetService<SoundManager>().PlaySong(SoundManager.GameSong, true);
+             //   GameServices.GetService<SoundManager>().PlaySong(SoundManager.GameSong, true);
+                GameServices.GetService<SoundManager>().StopSong();
                 ScreenManager.ShowScreen<GameScreen>();
             }
         }
