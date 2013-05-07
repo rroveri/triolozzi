@@ -106,7 +106,7 @@ namespace WindowsGame2.Screens
         public override void LoadContent()
         {
             base.LoadContent();
-            _backgroundTexture = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/bgNew");
+            _backgroundTexture = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/paginainiziale");
         }
 
         #endregion
@@ -217,7 +217,7 @@ namespace WindowsGame2.Screens
             float transitionOffset = (float)Math.Pow(TransitionPosition, 2);
 
             // start at Y = 175; each X value is generated per entry
-            position.X = 0f; position.Y = 375f;
+            position.X = 0f; position.Y = 475f;
 
             // update each menu entry's location in turn
             for (int i = 0; i < menuEntries.Count; i++)
@@ -226,6 +226,9 @@ namespace WindowsGame2.Screens
                 
                 // each entry is to be centered horizontally
                 position.X = ScreenManager.GraphicsDevice.Viewport.Width / 2 - menuEntry.GetWidth(this) / 2;
+
+                position.X -= 400;
+               // position.Y += 100;
 
                 if (ScreenState == ScreenState.TransitionOn)
                     position.X -= transitionOffset * 256;
