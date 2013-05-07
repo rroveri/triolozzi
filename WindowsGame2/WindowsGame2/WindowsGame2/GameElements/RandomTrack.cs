@@ -11,6 +11,7 @@ using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework.Content;
 using WindowsGame2.Events;
 using X2DPE;
+using Microsoft.Xna.Framework.Audio;
 
 
 namespace WindowsGame2.GameElements
@@ -81,6 +82,9 @@ namespace WindowsGame2.GameElements
 
         private ParticleComponent _particleComponent;
 
+        SoundEffect wishSound;
+        SoundEffect nightmareSound;
+
         public RandomTrack()
         {
            
@@ -142,6 +146,9 @@ namespace WindowsGame2.GameElements
             externalNormalsCoefficients = new List<float>();
 
             _particleComponent = GameServices.GetService<ParticleComponent>();
+
+            wishSound = GameServices.GetService<ContentManager>().Load<SoundEffect>("Sounds/wishSound");
+            nightmareSound = GameServices.GetService<ContentManager>().Load<SoundEffect>("Sounds/nightmareSound");
         }
     
         public void buildRandomTrack(){
@@ -524,6 +531,8 @@ namespace WindowsGame2.GameElements
 
                 _particleComponent.particleEmitterList[car.index + carsCount*2].Position = postitCenter;
                 _particleComponent.particleEmitterList[car.index + carsCount * 2].Active = true;
+
+                wishSound.Play(0.5f,0,0);
             }
             else
             {
@@ -535,6 +544,8 @@ namespace WindowsGame2.GameElements
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
                 _particleComponent.particleEmitterList[car.index + carsCount].Position = postitCenter;
                 _particleComponent.particleEmitterList[car.index + carsCount].Active = true;
+
+                nightmareSound.Play(0.5f, 0, 0);
             }
         }
 
