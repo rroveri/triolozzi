@@ -32,11 +32,13 @@ namespace WindowsGame2
 
         private bool soundPlayed;
 
+        private bool fluidWasSeen;
+
         public SneezesManager()
         {
             timer = 0;
             random = new Random(DateTime.Now.Millisecond);
-            nextSneezeTime = Math.Min( random.NextDouble()*25000,15000);
+            nextSneezeTime = Math.Max( random.NextDouble()*25000,15000);
             drawFluid = false;
 
             fluidFree = true;
@@ -47,6 +49,7 @@ namespace WindowsGame2
             sneezeSound = GameServices.GetService<ContentManager>().Load<SoundEffect>("Sounds/mucus/sneeze");
 
             soundPlayed = false;
+            fluidWasSeen = false;
         }
 
         public void Update(GameTime gameTime, List<Car> Cars)
@@ -76,7 +79,7 @@ namespace WindowsGame2
 
 
                     timer = 0;
-                    nextSneezeTime = Math.Min(1000, random.NextDouble() * 35000);
+                    nextSneezeTime = Math.Max(5000, random.NextDouble() * 15000);
 
                     soundPlayed = false;
 
@@ -103,10 +106,15 @@ namespace WindowsGame2
                     }
                 }
 
-                if (fluidOffScreen)
+                if (fluidOffScreen && fluidWasSeen)
                 {
                     fluidFree = true;
                     timer = 0;
+                    fluidWasSeen = false;
+                }
+                else
+                {
+                    fluidWasSeen = true;
                 }
                 
                  
