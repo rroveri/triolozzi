@@ -12,6 +12,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using WindowsGame2;
+using Microsoft.Xna.Framework.Content;
 #endregion
 
 namespace WindowsGame2.Screens
@@ -30,14 +31,6 @@ namespace WindowsGame2.Screens
         /// The text rendered for this entry.
         /// </summary>
         string text;
-
-        /// <summary>
-        /// Tracks a fading selection effect on the entry.
-        /// </summary>
-        /// <remarks>
-        /// The entries transition out of the selection effect when they are deselected.
-        /// </remarks>
-        float selectionFade;
 
         /// <summary>
         /// The position at which the entry is drawn. This is set by the MenuScreen
@@ -98,6 +91,10 @@ namespace WindowsGame2.Screens
 
         protected internal virtual void OnSelectLeft(PlayerIndex playerIndex)
         {
+            if (_currentTextureIndex > 0)
+            {
+                _currentTextureIndex--;
+            }
             PlayerIndexEvent.PlayerIndex = playerIndex;
             if (LeftClick != null)
                 LeftClick(this, PlayerIndexEvent);
@@ -105,6 +102,10 @@ namespace WindowsGame2.Screens
 
         protected internal virtual void OnSelectRight(PlayerIndex playerIndex)
         {
+            if (_currentTextureIndex < _textures.Length - 1)
+            {
+                _currentTextureIndex++;
+            }
             PlayerIndexEvent.PlayerIndex = playerIndex;
             if (RightClick != null)
                 RightClick(this, PlayerIndexEvent);
@@ -112,6 +113,11 @@ namespace WindowsGame2.Screens
 
 
         #endregion
+
+        private Texture2D[] _textures;
+        private Texture2D[] _selectedTextures;
+
+        private int _currentTextureIndex;
 
         #region Initialization
 
@@ -126,6 +132,22 @@ namespace WindowsGame2.Screens
             PlayerIndexEvent = new PlayerIndexEventArgs(0);
         }
 
+        public MenuEntry(string[] textures, string[] selectedTextures) : this("")
+        {
+            ContentManager content = GameServices.GetService<ContentManager>();
+
+            _currentTextureIndex = 0;
+            _textures = new Texture2D[textures.Length];
+            _selectedTextures = new Texture2D[selectedTextures.Length];
+
+            for (int i = 0; i < _textures.Length; i++)
+            {
+                _textures[i] = content.Load<Texture2D>(textures[i]);
+                _selectedTextures[i] = content.Load<Texture2D>(selectedTextures[i]);
+            }
+            
+        }
+
 
         #endregion
 
@@ -137,15 +159,7 @@ namespace WindowsGame2.Screens
         /// </summary>
         public virtual void Update(MenuScreen screen, bool isSelected, GameTime gameTime)
         {
-            // When the menu selection changes, entries gradually fade between
-            // their selected and deselected appearance, rather than instantly
-            // popping to the new state.
-            float fadeSpeed = (float)gameTime.ElapsedGameTime.TotalSeconds * 4;
 
-            if (isSelected)
-                selectionFade = Math.Min(selectionFade + fadeSpeed, 1);
-            else
-                selectionFade = Math.Max(selectionFade - fadeSpeed, 0);
         }
 
 
@@ -154,27 +168,32 @@ namespace WindowsGame2.Screens
         /// </summary>
         public virtual void Draw(MenuScreen screen, bool isSelected, GameTime gameTime)
         {
-            // Draw the selected entry in yellow, otherwise white.
-            Color color = isSelected ? Color.Blue : Color.Black;
+            SpriteBatch spriteBatch = screen.ScreenManager.SpriteBatch;
+            if (!String.IsNullOrEmpty(text))
+            {
+                // Draw the selected entry in yellow, otherwise white.
+                Color color = isSelected ? Color.Blue : Color.Black;
 
-            // Pulsate the size of the selected menu entry.
-            double time = gameTime.TotalGameTime.TotalSeconds;
+                // Modify the alpha to fade text out during transitions.
+                color *= screen.TransitionAlpha;
+
+                // Draw text, centered on the middle of each line.
+                SpriteFont font = screen.ScreenManager.Font;
+
+                origin.Y = font.LineSpacing / 2;
+
+                spriteBatch.DrawString(font, text, position, color, 0, origin, 1f, SpriteEffects.None, 0);
+                return;
+            }
             
-            float pulsate = (float)Math.Sin(time * 6) + 1;
-
-            float scale = 1; // 1 + pulsate * 0.05f * selectionFade;
-
-            // Modify the alpha to fade text out during transitions.
-            color *= screen.TransitionAlpha;
-
-            // Draw text, centered on the middle of each line.
-            ScreenManager screenManager = screen.ScreenManager;
-            SpriteBatch spriteBatch = screenManager.SpriteBatch;
-            SpriteFont font = screenManager.Font;
-
-            origin.Y = font.LineSpacing / 2;
-
-            spriteBatch.DrawString(font, text, position, color, 0, origin, scale, SpriteEffects.None, 0);
+            if (isSelected)
+            {
+                spriteBatch.Draw(_selectedTextures[_currentTextureIndex], position, null, Color.White);
+            }
+            else
+            {
+                spriteBatch.Draw(_textures[_currentTextureIndex], position, null, Color.White);
+            }
         }
 
 
@@ -183,7 +202,14 @@ namespace WindowsGame2.Screens
         /// </summary>
         public virtual int GetHeight(MenuScreen screen)
         {
-            return screen.ScreenManager.Font.LineSpacing;
+            if (_textures == null)
+            {
+                return screen.ScreenManager.Font.LineSpacing;
+            }
+            else
+            {
+                return _textures[_currentTextureIndex].Bounds.Height*2;
+            }
         }
 
 
@@ -192,7 +218,14 @@ namespace WindowsGame2.Screens
         /// </summary>
         public virtual int GetWidth(MenuScreen screen)
         {
-            return (int)screen.ScreenManager.Font.MeasureString(Text).X;
+            if (_textures == null)
+            {
+                return (int)screen.ScreenManager.Font.MeasureString(Text).X;
+            }
+            else
+            {
+                return _textures[_currentTextureIndex].Bounds.Width;
+            }
         }
 
 
