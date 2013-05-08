@@ -274,13 +274,6 @@ namespace WindowsGame2
             return true;
         }
 
-        protected int preferredWidth = GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth;
-        protected int preferredHeight = GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight;
-        protected Matrix scaleMatrix = Matrix.CreateScale(GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight / (float)1080, GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight / (float)1080, 1);
-        protected float scale = GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight / (float)1080;
-        protected Vector2 scaleVector = new Vector2(GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight / (float)1080);
-
-
         /// <summary>
         /// Allows the screen to handle user input. Unlike Update, this method
         /// is only called when the screen is active, and not when some other

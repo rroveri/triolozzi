@@ -37,11 +37,12 @@ namespace WindowsGame2
             graphics.PreferredBackBufferHeight = (int)(720);
             graphics.PreferredBackBufferWidth = (int)(1280);
 
-            graphics.IsFullScreen = false;// (GraphicsDevice.Viewport.Height == 720 || GraphicsDevice.Viewport.Height == 1080);
+            graphics.IsFullScreen = false;
 
             Window.Title = "The Drunken Dream Maker (With a Cold)";
 
             ScreenManager = new ScreenManager(this);
+            ScreenManager.initParameters();
             Components.Add(ScreenManager);
 
             SoundManager = new SoundManager(this);

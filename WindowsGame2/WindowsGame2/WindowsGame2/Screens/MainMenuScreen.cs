@@ -69,8 +69,8 @@ namespace WindowsGame2.Screens
             MenuEntries.Add(playersMenuEntry);
 
             resolutionMenuEntry = new MenuEntry(_playersTextures, _playersSelectedTextures);
-            resolutionMenuEntry.LeftClick += PlayersMenuEntryDecrement;
-            resolutionMenuEntry.RightClick += PlayersMenuEntryIncrement;
+            resolutionMenuEntry.LeftClick += ResolutionMenuEntryChange;
+            resolutionMenuEntry.RightClick += ResolutionMenuEntryChange;
             MenuEntries.Add(resolutionMenuEntry);
 
             _exitButton = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/MainMenu/exit_menu");
@@ -99,19 +99,29 @@ namespace WindowsGame2.Screens
             }
         }
 
-        void ResolutionMenuEntryDecrement(object sender, PlayerIndexEventArgs e)
+        void ResolutionMenuEntryChange(object sender, PlayerIndexEventArgs e)
         {
-            if (_playersCountIndex > 0)
+            if (ScreenManager.preferredHeight == 1080)
             {
-                _playersCountIndex--;
-            }
-        }
+                ScreenManager.preferredHeight = 720;
+                ScreenManager.preferredWidth = 1280;
 
-        void ResolutionMenuEntryIncrement(object sender, PlayerIndexEventArgs e)
-        {
-            if (_playersCountIndex < 2)
+                GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth = ScreenManager.preferredWidth;
+                GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight = ScreenManager.preferredHeight;
+                GameServices.GetService<GraphicsDeviceManager>().ApplyChanges();
+
+                ScreenManager.initParameters();
+            }
+            else
             {
-                _playersCountIndex++;
+                ScreenManager.preferredHeight = 1080;
+                ScreenManager.preferredWidth = 1920;
+
+                GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth = ScreenManager.preferredWidth;
+                GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight = ScreenManager.preferredHeight;
+                GameServices.GetService<GraphicsDeviceManager>().ApplyChanges();
+
+                ScreenManager.initParameters();
             }
         }
 
@@ -134,7 +144,7 @@ namespace WindowsGame2.Screens
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
-            ScreenManager.SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone, null, scaleMatrix);
+            ScreenManager.SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone, null, ScreenManager.scaleMatrix);
             ScreenManager.SpriteBatch.Draw(_exitButton, _exitButtonPosition, null, Color.White);
             ScreenManager.SpriteBatch.End();
         }

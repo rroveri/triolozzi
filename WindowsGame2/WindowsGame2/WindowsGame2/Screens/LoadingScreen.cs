@@ -86,7 +86,7 @@ namespace WindowsGame2
             spriteBatch.Draw(_backgroundTexture, Vector2.Zero, ScreenManager.GraphicsDevice.Viewport.Bounds, Color.White, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1f);
             spriteBatch.End();
 
-            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone, null, scaleMatrix);
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone, null, ScreenManager.scaleMatrix);
             spriteBatch.Draw(_tutorials[currentTutorial], _tutorialsPosition[currentTutorial], null, Color.White);
             spriteBatch.Draw(_currentTexture, _currentPosition, null, Color.White);
             spriteBatch.Draw(_switchTip, _switchTipPosition, null, Color.White);

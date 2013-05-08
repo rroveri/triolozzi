@@ -322,7 +322,7 @@ namespace WindowsGame2.Screens
             ScreenManager.SpriteBatch.Draw(_backgroundTexture, Vector2.Zero, ScreenManager.GraphicsDevice.Viewport.Bounds, Color.White, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1f);
             ScreenManager.SpriteBatch.End();
 
-            ScreenManager.SpriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, scaleMatrix);
+            ScreenManager.SpriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, ScreenManager.scaleMatrix);
             ScreenManager.SpriteBatch.Draw(_title, _titlePosition, null, Color.White);
             for (int i = 0; i < PlayersCount; i++)
             {
