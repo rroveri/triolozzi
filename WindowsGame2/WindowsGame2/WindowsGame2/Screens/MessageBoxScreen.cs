@@ -26,7 +26,6 @@ namespace WindowsGame2.Screens
     {
         #region Fields
 
-        string message;
         Texture2D gradientTexture;
 
         InputAction menuSelect;
@@ -44,29 +43,8 @@ namespace WindowsGame2.Screens
         #region Initialization
 
 
-        /// <summary>
-        /// Constructor automatically includes the standard "A=ok, B=cancel"
-        /// usage text prompt.
-        /// </summary>
-        public MessageBoxScreen(string message)
-            : this(message, true)
-        { }
-
-
-        /// <summary>
-        /// Constructor lets the caller specify whether to include the standard
-        /// "A=ok, B=cancel" usage text prompt.
-        /// </summary>
-        public MessageBoxScreen(string message, bool includeUsageText)
+        public MessageBoxScreen()
         {
-            const string usageText = "\n      YES" +
-                                     "\n      NO"; 
-            
-            if (includeUsageText)
-                this.message = message + usageText;
-            else
-                this.message = message;
-
             IsPopup = true;
 
             menuSelect = new InputAction(
@@ -139,39 +117,18 @@ namespace WindowsGame2.Screens
         /// </summary>
         public override void Draw(GameTime gameTime)
         {
-            SpriteBatch spriteBatch = ScreenManager.SpriteBatch;
-            SpriteFont font = ScreenManager.Font;
-
-            // Darken down any other screens that were drawn beneath the popup.
             ScreenManager.FadeBackBufferToBlack(TransitionAlpha * 2 / 3);
 
             // Center the message text in the viewport.
             Viewport viewport = ScreenManager.GraphicsDevice.Viewport;
-            Vector2 viewportSize = new Vector2(viewport.Width, viewport.Height);
-            Vector2 textSize = font.MeasureString(message);
-            Vector2 textPosition = (viewportSize - textSize) / 2;
+            Vector2 position = new Vector2(viewport.Width / 2 - gradientTexture.Bounds.Width / 2, viewport.Height / 2 - gradientTexture.Bounds.Height / 2);
 
-            // The background includes a border somewhat larger than the text itself.
-            const int hPad = 32;
-            const int vPad = 16;
-
-            Rectangle backgroundRectangle = new Rectangle((int)textPosition.X - hPad,
-                                                          (int)textPosition.Y - vPad,
-                                                          (int)textSize.X + hPad * 2,
-                                                          (int)textSize.Y + vPad * 2);
-
-            // Fade the popup alpha during transitions.
-            Color color = Color.White * TransitionAlpha;
-
-            spriteBatch.Begin();
+            ScreenManager.SpriteBatch.Begin();
 
             // Draw the background rectangle.
-            spriteBatch.Draw(gradientTexture, backgroundRectangle, color);
+            ScreenManager.SpriteBatch.Draw(gradientTexture, position, Color.White);
 
-            // Draw the message box text.
-            spriteBatch.DrawString(font, message, textPosition, color);
-
-            spriteBatch.End();
+            ScreenManager.SpriteBatch.End();
         }
 
 

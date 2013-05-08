@@ -42,8 +42,7 @@ namespace WindowsGame2.Screens
             MenuEntries.Add(quitGameMenuEntry);
 
             // Prepare the dialog for quitting the game.
-            const string message = "Are you sure you want to quit this game?";
-            QuitDialog = new MessageBoxScreen(message);
+            QuitDialog = new MessageBoxScreen();
             QuitDialog.Accepted += ConfirmQuitMessageBoxAccepted;
         }
 
