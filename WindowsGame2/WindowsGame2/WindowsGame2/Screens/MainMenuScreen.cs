@@ -26,6 +26,7 @@ namespace WindowsGame2.Screens
         #region Fields
 
         private MenuEntry playersMenuEntry;
+        private MenuEntry resolutionMenuEntry;
         private MenuEntry optionsMenuEntry;
 
         static int[] numberOfPlayers = { 2, 3, 4 };
@@ -67,6 +68,11 @@ namespace WindowsGame2.Screens
             playersMenuEntry.RightClick += PlayersMenuEntryIncrement;
             MenuEntries.Add(playersMenuEntry);
 
+            resolutionMenuEntry = new MenuEntry(_playersTextures, _playersSelectedTextures);
+            resolutionMenuEntry.LeftClick += PlayersMenuEntryDecrement;
+            resolutionMenuEntry.RightClick += PlayersMenuEntryIncrement;
+            MenuEntries.Add(resolutionMenuEntry);
+
             _exitButton = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/MainMenu/exit_menu");
             _exitButtonPosition = new Vector2(100, 850);
 
@@ -93,6 +99,22 @@ namespace WindowsGame2.Screens
             }
         }
 
+        void ResolutionMenuEntryDecrement(object sender, PlayerIndexEventArgs e)
+        {
+            if (_playersCountIndex > 0)
+            {
+                _playersCountIndex--;
+            }
+        }
+
+        void ResolutionMenuEntryIncrement(object sender, PlayerIndexEventArgs e)
+        {
+            if (_playersCountIndex < 2)
+            {
+                _playersCountIndex++;
+            }
+        }
+
         void OptionsMenuEntrySelected(object sender, PlayerIndexEventArgs e)
         {
             ScreenManager.GetScreen<OptionsMenuScreen>().ShowOptions(numberOfPlayers[_playersCountIndex]);
@@ -112,7 +134,7 @@ namespace WindowsGame2.Screens
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
-            ScreenManager.SpriteBatch.Begin();
+            ScreenManager.SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone, null, scaleMatrix);
             ScreenManager.SpriteBatch.Draw(_exitButton, _exitButtonPosition, null, Color.White);
             ScreenManager.SpriteBatch.End();
         }

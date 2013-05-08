@@ -122,8 +122,8 @@ namespace WindowsGame2.Screens
             _postIts[3] = Content.Load<Texture2D>("Images/PimpScreen/player4_postit");
 
             GraphicsDevice device = GameServices.GetService<GraphicsDevice>();
-            int width = device.Viewport.Bounds.Width/2;
-            int height = device.Viewport.Bounds.Height/2;
+            int width = 1920/2;
+            int height = 1090/2;
             int horizontalOffset = 200;
             int horizontalSize = 500;
             int verticalSize = 520;
@@ -322,7 +322,7 @@ namespace WindowsGame2.Screens
             ScreenManager.SpriteBatch.Draw(_backgroundTexture, Vector2.Zero, ScreenManager.GraphicsDevice.Viewport.Bounds, Color.White, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1f);
             ScreenManager.SpriteBatch.End();
 
-            ScreenManager.SpriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
+            ScreenManager.SpriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, scaleMatrix);
             ScreenManager.SpriteBatch.Draw(_title, _titlePosition, null, Color.White);
             for (int i = 0; i < PlayersCount; i++)
             {

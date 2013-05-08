@@ -50,11 +50,11 @@ namespace WindowsGame2
             _tutorials[3] = content.Load<Texture2D>("Images/PimpScreen/tutorial3");
 
             Viewport viewport = ScreenManager.GraphicsDevice.Viewport;
-            _currentPosition = new Rectangle(viewport.Width/2 - 300, viewport.Height/2 - 500, 600, 150);
-            _switchTipPosition = new Rectangle(viewport.Width / 2 - 850, viewport.Height / 2 + 400, 500, 150);
+            _currentPosition = new Rectangle(1920/2 - 300, 1080/2 - 500, 600, 150);
+            _switchTipPosition = new Rectangle(1920 / 2 - 850, 1080 / 2 + 400, 500, 150);
 
             _tutorialsPosition = new Rectangle[4];
-            _tutorialsPosition[0] = new Rectangle(viewport.Width / 2 - 450, viewport.Height / 2 - 300, 900, 581);
+            _tutorialsPosition[0] = new Rectangle(1920 / 2 - 450, 1080 / 2 - 300, 900, 581);
             _tutorialsPosition[1] = new Rectangle(0, 0, 1920, 1080);
             _tutorialsPosition[2] = new Rectangle(0, 0, 1920, 1080);
             _tutorialsPosition[3] = new Rectangle(0, 0, 1920, 1080);
@@ -86,7 +86,7 @@ namespace WindowsGame2
             spriteBatch.Draw(_backgroundTexture, Vector2.Zero, ScreenManager.GraphicsDevice.Viewport.Bounds, Color.White, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1f);
             spriteBatch.End();
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone, null, scaleMatrix);
             spriteBatch.Draw(_tutorials[currentTutorial], _tutorialsPosition[currentTutorial], null, Color.White);
             spriteBatch.Draw(_currentTexture, _currentPosition, null, Color.White);
             spriteBatch.Draw(_switchTip, _switchTipPosition, null, Color.White);
