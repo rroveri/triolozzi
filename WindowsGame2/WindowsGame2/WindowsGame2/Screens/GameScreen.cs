@@ -81,7 +81,7 @@ namespace WindowsGame2.Screens
 
         private PauseMenuScreen PauseScreen;
 
-        Effect paperEffect, screenEffect;
+        Effect paperEffect;
         ScreenRenderer screenRenderer;
         StringWriter stringWriter = new StringWriter();
         Matrix projection;
@@ -111,8 +111,6 @@ namespace WindowsGame2.Screens
         Vector2[] prevPoses;
         Vector2 currentMousePos;
         Vector2 prevMousePos;
-        KeyboardState previousState;
-        GamePadState previousPadState;
 
         public int PlayersCount { get; set; }
 
@@ -122,11 +120,9 @@ namespace WindowsGame2.Screens
         private QuadRenderComponent quad;
         private bool gameIsExiting;
         private Thread fluidUpdateThread;
-        private int sideSize;
 
         Texture2D texInk;
         RenderTarget2D buffer;
-        GaussianBlur gaussian;
 
         Effect coloredEffect;
 

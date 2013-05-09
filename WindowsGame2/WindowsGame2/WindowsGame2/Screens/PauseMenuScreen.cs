@@ -23,15 +23,20 @@ namespace WindowsGame2.Screens
 
         private MessageBoxScreen QuitDialog;
 
+        static string[] _resumeTextures = { "Images/PauseMenu/resume_menu" };
+        static string[] _resumeTexturesSelected = { "Images/PauseMenu/resume_menu_selected" };
+
+        static string[] _quitTextures = { "Images/PauseMenu/quit_game" };
+        static string[] _quitTexturesSelected = { "Images/PauseMenu/quit_game_selected" };
+
         /// <summary>
         /// Constructor.
         /// </summary>
-        public PauseMenuScreen()
-            : base("Paused")
+        public PauseMenuScreen() : base("")
         {
             // Create our menu entries.
-            MenuEntry resumeGameMenuEntry = new MenuEntry("Resume Game");
-            MenuEntry quitGameMenuEntry = new MenuEntry("Quit Game");
+            MenuEntry resumeGameMenuEntry = new MenuEntry(_resumeTextures, _resumeTexturesSelected);
+            MenuEntry quitGameMenuEntry = new MenuEntry(_quitTextures, _quitTexturesSelected);
             
             // Hook up menu event handlers.
             resumeGameMenuEntry.Selected += OnCancel;

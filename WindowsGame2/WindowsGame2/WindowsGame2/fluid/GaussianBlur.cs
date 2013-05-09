@@ -27,7 +27,6 @@ namespace WindowsGame2
         private Effect GaussianEffect;
 
         private SpriteBatch sprite;
-        byte[] screenData;
 
         public GaussianBlur(Game game)
         {
