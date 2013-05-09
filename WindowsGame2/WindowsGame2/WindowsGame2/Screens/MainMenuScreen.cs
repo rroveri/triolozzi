@@ -36,6 +36,9 @@ namespace WindowsGame2.Screens
         static string[] _playersTextures = { "Images/MainMenu/2players", "Images/MainMenu/3players", "Images/MainMenu/4players" };
         static string[] _playersSelectedTextures = { "Images/MainMenu/2players_selected", "Images/MainMenu/3players_selected", "Images/MainMenu/4players_selected" };
 
+        static string[] _resolutionTextures = { "Images/MainMenu/res_720p", "Images/MainMenu/res_1080p" };
+        static string[] _resolutionSelectedTextures = { "Images/MainMenu/res_720p_selected", "Images/MainMenu/res_1080p_selected" };
+
         private Texture2D _exitButton;
         private Vector2 _exitButtonPosition;
 
@@ -68,7 +71,7 @@ namespace WindowsGame2.Screens
             playersMenuEntry.RightClick += PlayersMenuEntryIncrement;
             MenuEntries.Add(playersMenuEntry);
 
-            resolutionMenuEntry = new MenuEntry(_playersTextures, _playersSelectedTextures);
+            resolutionMenuEntry = new MenuEntry(_resolutionTextures, _resolutionSelectedTextures);
             resolutionMenuEntry.LeftClick += ResolutionMenuEntryChange;
             resolutionMenuEntry.RightClick += ResolutionMenuEntryChange;
             MenuEntries.Add(resolutionMenuEntry);
