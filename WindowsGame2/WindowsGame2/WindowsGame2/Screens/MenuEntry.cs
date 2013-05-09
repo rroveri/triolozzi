@@ -163,7 +163,7 @@ namespace WindowsGame2.Screens
         /// </summary>
         public virtual int GetHeight(MenuScreen screen)
         {
-            return _textures[_currentTextureIndex].Bounds.Height*2;
+            return _textures[_currentTextureIndex].Bounds.Height + 20;
         }
 
 

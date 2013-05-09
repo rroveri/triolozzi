@@ -28,6 +28,7 @@ namespace WindowsGame2.Screens
         private MenuEntry playersMenuEntry;
         private MenuEntry resolutionMenuEntry;
         private MenuEntry optionsMenuEntry;
+        private MenuEntry creditsMenuEntry;
 
         static int[] numberOfPlayers = { 2, 3, 4 };
         static string[] _newGameTextures = { "Images/MainMenu/start_new_game" };
@@ -38,6 +39,9 @@ namespace WindowsGame2.Screens
 
         static string[] _resolutionTextures = { "Images/MainMenu/res_720p", "Images/MainMenu/res_1080p" };
         static string[] _resolutionSelectedTextures = { "Images/MainMenu/res_720p_selected", "Images/MainMenu/res_1080p_selected" };
+
+        static string[] _creditsTextures = { "Images/MainMenu/credits_menu" };
+        static string[] _creditsSelectedTextures = { "Images/MainMenu/credits_menu_selected" };
 
         private Texture2D _exitButton;
         private Vector2 _exitButtonPosition;
@@ -75,6 +79,10 @@ namespace WindowsGame2.Screens
             resolutionMenuEntry.LeftClick += ResolutionMenuEntryChange;
             resolutionMenuEntry.RightClick += ResolutionMenuEntryChange;
             MenuEntries.Add(resolutionMenuEntry);
+
+            creditsMenuEntry = new MenuEntry(_creditsTextures, _creditsSelectedTextures);
+            creditsMenuEntry.Selected += CreditsMenuEntrySelected;
+            MenuEntries.Add(creditsMenuEntry);
 
             _exitButton = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/MainMenu/exit_menu");
             _exitButtonPosition = new Vector2(100, 850);
@@ -132,6 +140,11 @@ namespace WindowsGame2.Screens
         {
             ScreenManager.GetScreen<OptionsMenuScreen>().ShowOptions(numberOfPlayers[_playersCountIndex]);
             ScreenManager.ShowScreen<OptionsMenuScreen>();
+        }
+
+        void CreditsMenuEntrySelected(object sender, PlayerIndexEventArgs e)
+        {
+            ScreenManager.ShowScreen<CreditsScreen>();
         }
 
         public override void HandleInput(GameTime gameTime, InputState input)
