@@ -149,11 +149,11 @@ namespace WindowsGame2.Screens
             
             if (isSelected)
             {
-                spriteBatch.Draw(_selectedTextures[_currentTextureIndex], position, null, Color.White);
+                spriteBatch.Draw(_selectedTextures[_currentTextureIndex], position, null, Color.White * screen.TransitionAlpha);
             }
             else
             {
-                spriteBatch.Draw(_textures[_currentTextureIndex], position, null, Color.White);
+                spriteBatch.Draw(_textures[_currentTextureIndex], position, null, Color.White * screen.TransitionAlpha);
             }
         }
 
