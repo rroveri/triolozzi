@@ -37,7 +37,7 @@ namespace WindowsGame2
           //  graphics.PreferredBackBufferHeight = (int)(720);
           //  graphics.PreferredBackBufferWidth = (int)(1280);
 
-            graphics.IsFullScreen = false;
+            graphics.IsFullScreen = true;
 
             Window.Title = "The Drunken Dream Maker (With a Cold)";
 

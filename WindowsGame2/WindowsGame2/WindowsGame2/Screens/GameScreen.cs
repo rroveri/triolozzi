@@ -237,7 +237,17 @@ namespace WindowsGame2.Screens
             defaultViewport = GraphicsDevice.Viewport;
 
             // Single screen mode only
-            cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f);
+            cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2),  0.0f, Cars.Count ,true); 
+            //ZOOM:
+
+            //low res:
+            //0.95 for 2 players
+            //0.93 for 3 players
+            //0.91 for 4 players
+
+            //high res:
+            //0.95 for 4 players
+
             GameServices.AddService<Camera>(cameraFollowing);
 
             mySneezesManager.camera = cameraFollowing;
@@ -641,7 +651,7 @@ namespace WindowsGame2.Screens
 
         private void UpdateCamera(GameTime gameTime)
         {
-            cameraFollowing.Update(gameTime, Cars);
+            cameraFollowing.Update(gameTime, Cars, Logic._eliminatedCars);
 
             //set camera parameters
             cameraFollowing.firstCarIndex = Logic.Ranking[0];
@@ -824,6 +834,7 @@ namespace WindowsGame2.Screens
 
         private void drawFluid()
         {
+            
             //graphics.GraphicsDevice.Clear(Color.White);
 
             if (fluid.shouldResetDensity) return;
@@ -988,7 +999,7 @@ namespace WindowsGame2.Screens
             drawFluid();
 
 
-            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
+            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.TransformNoZoom);
 
             // draw cars and their trails
             for (int i = 0; i < Cars.Count; i++)
@@ -1130,7 +1141,7 @@ namespace WindowsGame2.Screens
             }
 
 
-
+            cameraFollowing.setCameraZoom(Cars.Count);
 
             // Call the Jean Charles
             GC.Collect();
