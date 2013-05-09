@@ -44,6 +44,21 @@ namespace WindowsGame2
 
         bool isInitialized;
 
+
+
+        public int preferredWidth = GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth;
+        public int preferredHeight = GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight;
+        public Matrix scaleMatrix = Matrix.CreateScale(GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight / (float)1080, GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight / (float)1080, 1);
+        public float scale = GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight / (float)1080;
+        public Vector2 scaleVector = new Vector2(GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight / (float)1080);
+
+        public void initParameters()
+        {
+            scaleMatrix = Matrix.CreateScale(preferredHeight / (float)1080, preferredHeight / (float)1080, 1);
+            scale = preferredHeight / (float)1080;
+            scaleVector = new Vector2(scale);
+        }
+
         #endregion
 
         #region Properties

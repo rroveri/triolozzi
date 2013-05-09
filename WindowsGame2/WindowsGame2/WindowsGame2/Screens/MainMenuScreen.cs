@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using System;
+using Microsoft.Xna.Framework.Input;
 #endregion
 
 namespace WindowsGame2.Screens
@@ -25,11 +26,22 @@ namespace WindowsGame2.Screens
         #region Fields
 
         private MenuEntry playersMenuEntry;
+        private MenuEntry resolutionMenuEntry;
         private MenuEntry optionsMenuEntry;
 
         static int[] numberOfPlayers = { 2, 3, 4 };
-        static string[] _playersText = {"< 2 Players >", "< 3 Players >", "< 4 Players >" };
+        static string[] _newGameTextures = { "Images/MainMenu/start_new_game" };
+        static string[] _newGameSelectedTextures = { "Images/MainMenu/start_new_game_selected" };
+
+        static string[] _playersTextures = { "Images/MainMenu/2players", "Images/MainMenu/3players", "Images/MainMenu/4players" };
+        static string[] _playersSelectedTextures = { "Images/MainMenu/2players_selected", "Images/MainMenu/3players_selected", "Images/MainMenu/4players_selected" };
+
+        private Texture2D _exitButton;
+        private Vector2 _exitButtonPosition;
+
         static int _playersCountIndex = 2;
+
+        InputAction exitAction;
 
         #endregion
 
@@ -42,20 +54,27 @@ namespace WindowsGame2.Screens
         /// </summary>
         public MainMenuScreen() : base("")
         {
-            optionsMenuEntry = new MenuEntry("Start New Game");
+            exitAction = new InputAction(
+                new Buttons[] { Buttons.X, Buttons.Back },
+                new Keys[] { Keys.Escape, Keys.X },
+                true);
+
+            optionsMenuEntry = new MenuEntry(_newGameTextures, _newGameSelectedTextures);
             optionsMenuEntry.Selected += OptionsMenuEntrySelected;
             MenuEntries.Add(optionsMenuEntry);
 
-            playersMenuEntry = new MenuEntry("Players");
+            playersMenuEntry = new MenuEntry(_playersTextures, _playersSelectedTextures);
             playersMenuEntry.LeftClick += PlayersMenuEntryDecrement;
             playersMenuEntry.RightClick += PlayersMenuEntryIncrement;
             MenuEntries.Add(playersMenuEntry);
 
-            MenuEntry exitMenuEntry = new MenuEntry("Exit");
-            exitMenuEntry.Selected += OnCancel;
-            MenuEntries.Add(exitMenuEntry);
-            
-            UpdatePlayersCount();
+            resolutionMenuEntry = new MenuEntry(_playersTextures, _playersSelectedTextures);
+            resolutionMenuEntry.LeftClick += ResolutionMenuEntryChange;
+            resolutionMenuEntry.RightClick += ResolutionMenuEntryChange;
+            MenuEntries.Add(resolutionMenuEntry);
+
+            _exitButton = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/MainMenu/exit_menu");
+            _exitButtonPosition = new Vector2(100, 850);
 
             GameServices.GetService<SoundManager>().PlaySong(SoundManager.MenuSong, true);
         }
@@ -69,7 +88,6 @@ namespace WindowsGame2.Screens
             if (_playersCountIndex > 0)
             {
                 _playersCountIndex--;
-                UpdatePlayersCount();
             }
         }
 
@@ -78,7 +96,32 @@ namespace WindowsGame2.Screens
             if (_playersCountIndex < numberOfPlayers.Length - 1)
             {
                 _playersCountIndex++;
-                UpdatePlayersCount();
+            }
+        }
+
+        void ResolutionMenuEntryChange(object sender, PlayerIndexEventArgs e)
+        {
+            if (ScreenManager.preferredHeight == 1080)
+            {
+                ScreenManager.preferredHeight = 720;
+                ScreenManager.preferredWidth = 1280;
+
+                GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth = ScreenManager.preferredWidth;
+                GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight = ScreenManager.preferredHeight;
+                GameServices.GetService<GraphicsDeviceManager>().ApplyChanges();
+
+                ScreenManager.initParameters();
+            }
+            else
+            {
+                ScreenManager.preferredHeight = 1080;
+                ScreenManager.preferredWidth = 1920;
+
+                GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth = ScreenManager.preferredWidth;
+                GameServices.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight = ScreenManager.preferredHeight;
+                GameServices.GetService<GraphicsDeviceManager>().ApplyChanges();
+
+                ScreenManager.initParameters();
             }
         }
 
@@ -88,14 +131,22 @@ namespace WindowsGame2.Screens
             ScreenManager.ShowScreen<OptionsMenuScreen>();
         }
 
-        private void UpdatePlayersCount()
+        public override void HandleInput(GameTime gameTime, InputState input)
         {
-            playersMenuEntry.Text = _playersText[_playersCountIndex];
+            PlayerIndex playerIndex;
+            if (exitAction.Evaluate(input, ControllingPlayer, out playerIndex))
+            {
+                ScreenManager.Game.Exit();
+            }
+            base.HandleInput(gameTime, input);
         }
 
-        protected override void OnCancel(PlayerIndex playerIndex)
+        public override void Draw(GameTime gameTime)
         {
-            ScreenManager.Game.Exit();
+            base.Draw(gameTime);
+            ScreenManager.SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullNone, null, ScreenManager.scaleMatrix);
+            ScreenManager.SpriteBatch.Draw(_exitButton, _exitButtonPosition, null, Color.White);
+            ScreenManager.SpriteBatch.End();
         }
 
         #endregion

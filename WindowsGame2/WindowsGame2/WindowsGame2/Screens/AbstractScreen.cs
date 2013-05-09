@@ -274,7 +274,6 @@ namespace WindowsGame2
             return true;
         }
 
-
         /// <summary>
         /// Allows the screen to handle user input. Unlike Update, this method
         /// is only called when the screen is active, and not when some other
