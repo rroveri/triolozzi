@@ -130,6 +130,8 @@ namespace WindowsGame2.Screens
 
         SoundEffect splatSound;
 
+        private bool isFullHd;
+
         #endregion
 
         /// <summary>
@@ -141,7 +143,7 @@ namespace WindowsGame2.Screens
         public GameScreen()
         {
             timer = 0.0f;
-
+            
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
@@ -232,8 +234,11 @@ namespace WindowsGame2.Screens
 
             defaultViewport = GraphicsDevice.Viewport;
 
+
+            isFullHd=(ScreenManager.preferredHeight!=720);
+
             // Single screen mode only
-            cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2),  0.0f, Cars.Count ,true); 
+            cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.0f, Cars.Count, isFullHd); 
             //ZOOM:
 
             //low res:

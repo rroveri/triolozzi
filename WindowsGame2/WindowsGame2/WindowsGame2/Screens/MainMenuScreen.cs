@@ -39,7 +39,7 @@ namespace WindowsGame2.Screens
         private Texture2D _exitButton;
         private Vector2 _exitButtonPosition;
 
-        static int _playersCountIndex = 2;
+        static int _playersCountIndex = 0;
 
         InputAction exitAction;
 
