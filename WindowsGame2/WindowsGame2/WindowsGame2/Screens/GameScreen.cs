@@ -374,6 +374,14 @@ namespace WindowsGame2.Screens
                         break;
                     }
 
+                    //NUOVA COSA PER FIXARE L'ASSERT IN DEBUG PROXYCOUNT!=0...MAGARI NON VA PIU UNA SEGA -- inizio
+                    if (polygonsList[i].compound.FixtureList[j].ProxyCount == 0)
+                    {
+                       // foundTooClose = true;
+                        continue;
+                    }
+                    //NUOVA COSA PER FIXARE L'ASSERT IN DEBUG PROXYCOUNT!=0...MAGARI NON VA PIU UNA SEGA -- fine
+
                     //compute bounding AABB bounding box of fixture !!! USE VERTICES INSTEAD IF NOT ENOUGH PRECISE !!!
                     polygonsList[i].compound.FixtureList[j].GetAABB(out aabb, 0);
 
@@ -592,9 +600,18 @@ namespace WindowsGame2.Screens
                         break;
                     }
 
+                    //NUOVA COSA PER FIXARE L'ASSERT IN DEBUG PROXYCOUNT!=0...MAGARI NON VA PIU UNA SEGA -- inizio
+                    if (polygonsList[i].compound.FixtureList[j].ProxyCount == 0)
+                    {
+                        polygonsList[i].compound.Enabled = true;
+                        foundInside = true;
+                        continue;
+                    }
+                    //NUOVA COSA PER FIXARE L'ASSERT IN DEBUG PROXYCOUNT!=0...MAGARI NON VA PIU UNA SEGA -- fine
+
                     //compute bounding AABB bounding box of fixture !!! USE VERTICES INSTEAD IF NOT ENOUGH PRECISE !!!
                     polygonsList[i].compound.FixtureList[j].GetAABB(out aabb, 0);
-
+                    
                     aabbVerts[0] = new Vector2(aabb.LowerBound.X, aabb.LowerBound.Y);
                     aabbVerts[1] = new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y);
                     aabbVerts[2] = new Vector2(aabb.UpperBound.X, aabb.UpperBound.Y);
@@ -625,6 +642,8 @@ namespace WindowsGame2.Screens
                     polygonsList[i].compound.Enabled = false;
                 }
             }
+
+            
         }
 
         private bool checkIfOffScreen(Vector2 vec){
