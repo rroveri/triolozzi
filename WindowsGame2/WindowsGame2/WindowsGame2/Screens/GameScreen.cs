@@ -600,14 +600,16 @@ namespace WindowsGame2.Screens
                         break;
                     }
 
-                    //NUOVA COSA PER FIXARE L'ASSERT IN DEBUG PROXYCOUNT!=0...MAGARI NON VA PIU UNA SEGA -- inizio
+                    //NUOVA COSA PER FIXARE L'ASSERT IN DEBUG PROXYCOUNT!=0...MAGARI NON VA PIU UNA SEGA -- inizio ... NO!! LENTO!!! MA CMQ PENSO CHE IL LOOP INFINITO NON VIENE DA QUA!!
+                    /*
                     if (polygonsList[i].compound.FixtureList[j].ProxyCount == 0)
                     {
                         polygonsList[i].compound.Enabled = true;
                         foundInside = true;
                         continue;
                     }
-                    //NUOVA COSA PER FIXARE L'ASSERT IN DEBUG PROXYCOUNT!=0...MAGARI NON VA PIU UNA SEGA -- fine
+                     */
+                    //NUOVA COSA PER FIXARE L'ASSERT IN DEBUG PROXYCOUNT!=0...MAGARI NON VA PIU UNA SEGA -- fine ... NO!! LENTO!!! MA CMQ PENSO CHE IL LOOP INFINITO NON VIENE DA QUA!!
 
                     //compute bounding AABB bounding box of fixture !!! USE VERTICES INSTEAD IF NOT ENOUGH PRECISE !!!
                     polygonsList[i].compound.FixtureList[j].GetAABB(out aabb, 0);
@@ -627,7 +629,10 @@ namespace WindowsGame2.Screens
                         {
                             if (polygonsList[i].IsValid)
                             {
-                                polygonsList[i].compound.Enabled = true;
+                                if (polygonsList[i].compound.Enabled == false)
+                                {
+                                    polygonsList[i].compound.Enabled = true;
+                                }
                                 foundInside = true;
 
                                 //for debugging
@@ -639,7 +644,10 @@ namespace WindowsGame2.Screens
                 }
                 if (!foundInside)
                 {
-                    polygonsList[i].compound.Enabled = false;
+                    if (polygonsList[i].compound.Enabled == true)
+                    {
+                        polygonsList[i].compound.Enabled = false;
+                    }
                 }
             }
 

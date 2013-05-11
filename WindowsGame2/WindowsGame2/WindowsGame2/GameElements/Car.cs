@@ -42,7 +42,7 @@ namespace WindowsGame2.GameElements
         public Color mColor;
 
         private VertexPositionColorTexture[] trailVertices = new VertexPositionColorTexture[mMaximumTrailPoints * 6 * paintersCount];
-        private VertexPositionColorTexture[] burnoutsVertices = new VertexPositionColorTexture[500*6*4];
+        private VertexPositionColorTexture[] burnoutsVertices = new VertexPositionColorTexture[250*6*4];
         private Vector3 tdPos = new Vector3(0, 0, -0.1f);
         private Vector3 oldWVert, newWVert, oldEVert, newEVert;
         private Vector3 oldWVertBurnoutRight, newWVertBurnoutRight, oldEVertBurnoutRight, newEVertBurnoutRight;
