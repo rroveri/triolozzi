@@ -89,7 +89,7 @@ namespace WindowsGame2.Screens
 
         VertexPositionColorTexture[] basicVert;
         short[] triangleListIndices;
-        int maxNumberOfTriangles = 10000;
+        int maxNumberOfTriangles = 3000;
 
         VertexPositionColorTexture[] verticesBorders;
 
@@ -131,6 +131,8 @@ namespace WindowsGame2.Screens
         SoundEffect splatSound;
 
         private bool isFullHd;
+
+        private int obstaclesLoop;
 
         #endregion
 
@@ -179,6 +181,8 @@ namespace WindowsGame2.Screens
             mySneezesManager = new SneezesManager();
 
             splatSound=GameServices.GetService<ContentManager>().Load<SoundEffect>("Sounds/mucus/splat2_converted");
+
+            obstaclesLoop = 0;
         }
  
            
@@ -274,7 +278,7 @@ namespace WindowsGame2.Screens
 
             basicVert = new VertexPositionColorTexture[maxNumberOfTriangles];
             for (int i = 0; i < maxNumberOfTriangles; i++) basicVert[i].TextureCoordinate = new Vector2(-1);
-            triangleListIndices = new short[maxNumberOfTriangles * 3];
+          
 
             verticesBorders = new VertexPositionColorTexture[randomRaceTrack.curvePointsInternal.Count];
 
@@ -995,18 +999,21 @@ namespace WindowsGame2.Screens
             // draw polygons
             for (int i = 0; i < polygonsList.Count; i++)
             {
-                polygonsList[i].Draw(ref projection, ref view, camera.Transform, ref basicVert, ref counter);
+                polygonsList[i].Draw(ref projection, ref view, camera.Transform, ref basicVert, ref counter, maxNumberOfTriangles, ref obstaclesLoop);
             }
 
             if (counter > 0)
             {
-
+                int totalNumber = counter;
+                if (obstaclesLoop > 0)
+                {
+                    totalNumber = obstaclesLoop;
+                }
                 //draw shader
-                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, counter);
+                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, totalNumber);
             }
 
 
-            
 
             paperEffect.CurrentTechnique.Passes["PopupMessagePass"].Apply();
             for (int i = 0; i < Cars.Count; i++)
