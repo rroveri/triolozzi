@@ -60,18 +60,6 @@
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>4E3565A8CBFA57B25FB3DF5CAF331AD4B133130D</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>The Drunken Dream Maker_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>false</SignManifests>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="FarseerPhysicsXNA, Version=3.3.4826.36195, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -154,6 +142,7 @@
     <Compile Include="ScreenManagement\ScreenManager.cs" />
     <Compile Include="ScreenRenderer.cs" />
     <Compile Include="Screens\AbstractScreen.cs" />
+    <Compile Include="Screens\CreditsScreen.cs" />
     <Compile Include="Screens\GameScreen.cs" />
     <Compile Include="Screens\LoadingScreen.cs" />
     <Compile Include="Screens\MainMenuScreen.cs" />

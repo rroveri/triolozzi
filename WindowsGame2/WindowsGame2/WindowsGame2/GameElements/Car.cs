@@ -42,7 +42,7 @@ namespace WindowsGame2.GameElements
         public Color mColor;
 
         private VertexPositionColorTexture[] trailVertices = new VertexPositionColorTexture[mMaximumTrailPoints * 6 * paintersCount];
-        private VertexPositionColorTexture[] burnoutsVertices = new VertexPositionColorTexture[500*6*4];
+        private VertexPositionColorTexture[] burnoutsVertices = new VertexPositionColorTexture[250*6*4];
         private Vector3 tdPos = new Vector3(0, 0, -0.1f);
         private Vector3 oldWVert, newWVert, oldEVert, newEVert;
         private Vector3 oldWVertBurnoutRight, newWVertBurnoutRight, oldEVertBurnoutRight, newEVertBurnoutRight;
@@ -108,7 +108,7 @@ namespace WindowsGame2.GameElements
             : base(world, texture, new Vector2(65.0f, 40.0f), Color)
         {
 
-            isInsideMucus = false;
+            isInsideMucus=false;
 
             index = _index;
 
@@ -459,7 +459,7 @@ namespace WindowsGame2.GameElements
 
         public void moveMessageImage(GameTime gameTime)
         {
-           
+            
             //move the message and udpate its string
             message.Update(gameTime);
 
@@ -469,7 +469,7 @@ namespace WindowsGame2.GameElements
             //interpolate position
             messageImagePos = Vector2.Lerp( messageImagePos, Position+dirVec, 0.5f);
             //transform it to screen position
-            Vector2 screenPosition = Vector2.Transform(messageImagePos, _camera.Transform);
+            Vector2 screenPosition = Vector2.Transform(messageImagePos, _camera.TransformNoZoom);
 
             //check if still on screen, if not bring it back to screen!
             //set a margin
@@ -518,7 +518,7 @@ namespace WindowsGame2.GameElements
             
 
             //compute inverse matrix
-            Matrix inverse = _camera.inverseTransformMatrix();
+            Matrix inverse = _camera.inverseTransformMatrixNoZoom();
             //re-transform the vector in world coordinated
             Vector2 croppedPos = Vector2.Transform(screenPosition, inverse);
             messageImagePos = croppedPos;

@@ -82,7 +82,7 @@ namespace WindowsGame2
                 sound.IsLooped = true;
                 effectsPool[SoundManager.CarSteering].Enqueue(sound);
 
-                for (int j = 0; j < 6; j++)
+                for (int j = 0; j < 20; j++)
                 {
                     sound = Sounds[SoundManager.CarCrashes[i]].CreateInstance();
                     sound.Volume = 1f;

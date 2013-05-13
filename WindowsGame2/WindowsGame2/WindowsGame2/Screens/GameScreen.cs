@@ -81,7 +81,7 @@ namespace WindowsGame2.Screens
 
         private PauseMenuScreen PauseScreen;
 
-        Effect paperEffect, screenEffect;
+        Effect paperEffect;
         ScreenRenderer screenRenderer;
         StringWriter stringWriter = new StringWriter();
         Matrix projection;
@@ -111,8 +111,6 @@ namespace WindowsGame2.Screens
         Vector2[] prevPoses;
         Vector2 currentMousePos;
         Vector2 prevMousePos;
-        KeyboardState previousState;
-        GamePadState previousPadState;
 
         public int PlayersCount { get; set; }
 
@@ -122,17 +120,17 @@ namespace WindowsGame2.Screens
         private QuadRenderComponent quad;
         private bool gameIsExiting;
         private Thread fluidUpdateThread;
-        private int sideSize;
 
         Texture2D texInk;
         RenderTarget2D buffer;
-        GaussianBlur gaussian;
 
         Effect coloredEffect;
 
         public double timer;
 
         SoundEffect splatSound;
+
+        private bool isFullHd;
 
         #endregion
 
@@ -145,7 +143,7 @@ namespace WindowsGame2.Screens
         public GameScreen()
         {
             timer = 0.0f;
-
+            
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
@@ -236,8 +234,21 @@ namespace WindowsGame2.Screens
 
             defaultViewport = GraphicsDevice.Viewport;
 
+
+            isFullHd=(ScreenManager.preferredHeight!=720);
+
             // Single screen mode only
-            cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.95f, 0.0f);
+            cameraFollowing = new Camera(defaultViewport, Vector2.Zero, new Vector2(defaultViewport.Width / 2, defaultViewport.Height / 2), 0.0f, Cars.Count, isFullHd); 
+            //ZOOM:
+
+            //low res:
+            //0.95 for 2 players
+            //0.93 for 3 players
+            //0.91 for 4 players
+
+            //high res:
+            //0.95 for 4 players
+
             GameServices.AddService<Camera>(cameraFollowing);
 
             mySneezesManager.camera = cameraFollowing;
@@ -362,6 +373,14 @@ namespace WindowsGame2.Screens
                     {
                         break;
                     }
+
+                    //NUOVA COSA PER FIXARE L'ASSERT IN DEBUG PROXYCOUNT!=0...MAGARI NON VA PIU UNA SEGA -- inizio
+                    if (polygonsList[i].compound.FixtureList[j].ProxyCount == 0)
+                    {
+                       // foundTooClose = true;
+                        continue;
+                    }
+                    //NUOVA COSA PER FIXARE L'ASSERT IN DEBUG PROXYCOUNT!=0...MAGARI NON VA PIU UNA SEGA -- fine
 
                     //compute bounding AABB bounding box of fixture !!! USE VERTICES INSTEAD IF NOT ENOUGH PRECISE !!!
                     polygonsList[i].compound.FixtureList[j].GetAABB(out aabb, 0);
@@ -581,9 +600,20 @@ namespace WindowsGame2.Screens
                         break;
                     }
 
+                    //NUOVA COSA PER FIXARE L'ASSERT IN DEBUG PROXYCOUNT!=0...MAGARI NON VA PIU UNA SEGA -- inizio ... NO!! LENTO!!! MA CMQ PENSO CHE IL LOOP INFINITO NON VIENE DA QUA!!
+                    /*
+                    if (polygonsList[i].compound.FixtureList[j].ProxyCount == 0)
+                    {
+                        polygonsList[i].compound.Enabled = true;
+                        foundInside = true;
+                        continue;
+                    }
+                     */
+                    //NUOVA COSA PER FIXARE L'ASSERT IN DEBUG PROXYCOUNT!=0...MAGARI NON VA PIU UNA SEGA -- fine ... NO!! LENTO!!! MA CMQ PENSO CHE IL LOOP INFINITO NON VIENE DA QUA!!
+
                     //compute bounding AABB bounding box of fixture !!! USE VERTICES INSTEAD IF NOT ENOUGH PRECISE !!!
                     polygonsList[i].compound.FixtureList[j].GetAABB(out aabb, 0);
-
+                    
                     aabbVerts[0] = new Vector2(aabb.LowerBound.X, aabb.LowerBound.Y);
                     aabbVerts[1] = new Vector2(aabb.UpperBound.X, aabb.LowerBound.Y);
                     aabbVerts[2] = new Vector2(aabb.UpperBound.X, aabb.UpperBound.Y);
@@ -599,7 +629,10 @@ namespace WindowsGame2.Screens
                         {
                             if (polygonsList[i].IsValid)
                             {
-                                polygonsList[i].compound.Enabled = true;
+                                if (polygonsList[i].compound.Enabled == false)
+                                {
+                                    polygonsList[i].compound.Enabled = true;
+                                }
                                 foundInside = true;
 
                                 //for debugging
@@ -611,9 +644,14 @@ namespace WindowsGame2.Screens
                 }
                 if (!foundInside)
                 {
-                    polygonsList[i].compound.Enabled = false;
+                    if (polygonsList[i].compound.Enabled == true)
+                    {
+                        polygonsList[i].compound.Enabled = false;
+                    }
                 }
             }
+
+            
         }
 
         private bool checkIfOffScreen(Vector2 vec){
@@ -641,7 +679,7 @@ namespace WindowsGame2.Screens
 
         private void UpdateCamera(GameTime gameTime)
         {
-            cameraFollowing.Update(gameTime, Cars);
+            cameraFollowing.Update(gameTime, Cars, Logic._eliminatedCars);
 
             //set camera parameters
             cameraFollowing.firstCarIndex = Logic.Ranking[0];
@@ -824,6 +862,7 @@ namespace WindowsGame2.Screens
 
         private void drawFluid()
         {
+            
             //graphics.GraphicsDevice.Clear(Color.White);
 
             if (fluid.shouldResetDensity) return;
@@ -988,7 +1027,7 @@ namespace WindowsGame2.Screens
             drawFluid();
 
 
-            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.Transform);
+            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.TransformNoZoom);
 
             // draw cars and their trails
             for (int i = 0; i < Cars.Count; i++)
@@ -1130,7 +1169,7 @@ namespace WindowsGame2.Screens
             }
 
 
-
+            cameraFollowing.setCameraZoom(Cars.Count);
 
             // Call the Jean Charles
             GC.Collect();

@@ -22,8 +22,6 @@ namespace WindowsGame2
         private Rectangle[] _tutorialsPosition;
         private int currentTutorial = 0;
 
-        private Vector2 zeroVector = new Vector2();
-
         private bool _isReady;
 
         private InputAction StartAction, switchTutorialAction;
@@ -103,13 +101,11 @@ namespace WindowsGame2
             base.HandleInput(gameTime, input);
             if (_isReady && StartAction.Evaluate(input, null, out playerIndex))
             {
-             //   GameServices.GetService<SoundManager>().PlaySong(SoundManager.GameSong, true);
                 GameServices.GetService<SoundManager>().StopSong();
                 ScreenManager.ShowScreen<GameScreen>();
             }
             if (switchTutorialAction.Evaluate(input, null, out playerIndex))
             {
-                //   GameServices.GetService<SoundManager>().PlaySong(SoundManager.GameSong, true);
                 currentTutorial++;
                 if (currentTutorial >= _tutorials.Length) currentTutorial = 0;
             }

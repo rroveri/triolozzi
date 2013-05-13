@@ -91,6 +91,7 @@ namespace WindowsGame2
 
             ScreenManager.AddScreen(new LoadingScreen(), null);
             ScreenManager.AddScreen(new OptionsMenuScreen(), null);
+            ScreenManager.AddScreen(new CreditsScreen(), null);
             ScreenManager.AddScreen(new MainMenuScreen(), null);
         }
 

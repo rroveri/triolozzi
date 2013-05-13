@@ -28,11 +28,6 @@ namespace WindowsGame2.Screens
         #region Fields
 
         /// <summary>
-        /// The text rendered for this entry.
-        /// </summary>
-        string text;
-
-        /// <summary>
         /// The position at which the entry is drawn. This is set by the MenuScreen
         /// each frame in Update.
         /// </summary>
@@ -42,16 +37,6 @@ namespace WindowsGame2.Screens
         #endregion
 
         #region Properties
-
-
-        /// <summary>
-        /// Gets or sets the text of this menu entry.
-        /// </summary>
-        public string Text
-        {
-            get { return text; }
-            set { text = value; }
-        }
 
 
         /// <summary>
@@ -121,19 +106,11 @@ namespace WindowsGame2.Screens
 
         #region Initialization
 
-
-        /// <summary>
-        /// Constructs a new menu entry with the specified text.
-        /// </summary>
-        public MenuEntry(string text)
+        public MenuEntry(string[] textures, string[] selectedTextures)
         {
-            this.text = text;
             origin = new Vector2(0f, 0f);
             PlayerIndexEvent = new PlayerIndexEventArgs(0);
-        }
 
-        public MenuEntry(string[] textures, string[] selectedTextures) : this("")
-        {
             ContentManager content = GameServices.GetService<ContentManager>();
 
             _currentTextureIndex = 0;
@@ -169,30 +146,14 @@ namespace WindowsGame2.Screens
         public virtual void Draw(MenuScreen screen, bool isSelected, GameTime gameTime)
         {
             SpriteBatch spriteBatch = screen.ScreenManager.SpriteBatch;
-            if (!String.IsNullOrEmpty(text))
-            {
-                // Draw the selected entry in yellow, otherwise white.
-                Color color = isSelected ? Color.Blue : Color.Black;
-
-                // Modify the alpha to fade text out during transitions.
-                color *= screen.TransitionAlpha;
-
-                // Draw text, centered on the middle of each line.
-                SpriteFont font = screen.ScreenManager.Font;
-
-                origin.Y = font.LineSpacing / 2;
-
-                spriteBatch.DrawString(font, text, position, color, 0, origin, 1f, SpriteEffects.None, 0);
-                return;
-            }
             
             if (isSelected)
             {
-                spriteBatch.Draw(_selectedTextures[_currentTextureIndex], position, null, Color.White);
+                spriteBatch.Draw(_selectedTextures[_currentTextureIndex], position, null, Color.White * screen.TransitionAlpha);
             }
             else
             {
-                spriteBatch.Draw(_textures[_currentTextureIndex], position, null, Color.White);
+                spriteBatch.Draw(_textures[_currentTextureIndex], position, null, Color.White * screen.TransitionAlpha);
             }
         }
 
@@ -202,14 +163,7 @@ namespace WindowsGame2.Screens
         /// </summary>
         public virtual int GetHeight(MenuScreen screen)
         {
-            if (_textures == null)
-            {
-                return screen.ScreenManager.Font.LineSpacing;
-            }
-            else
-            {
-                return _textures[_currentTextureIndex].Bounds.Height*2;
-            }
+            return _textures[_currentTextureIndex].Bounds.Height + 20;
         }
 
 
@@ -218,14 +172,7 @@ namespace WindowsGame2.Screens
         /// </summary>
         public virtual int GetWidth(MenuScreen screen)
         {
-            if (_textures == null)
-            {
-                return (int)screen.ScreenManager.Font.MeasureString(Text).X;
-            }
-            else
-            {
-                return _textures[_currentTextureIndex].Bounds.Width;
-            }
+            return _textures[_currentTextureIndex].Bounds.Width;
         }
 
 

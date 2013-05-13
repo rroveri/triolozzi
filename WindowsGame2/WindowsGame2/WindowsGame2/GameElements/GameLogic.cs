@@ -33,7 +33,7 @@ namespace WindowsGame2.GameElements
         /// <summary>
         /// The number of cars that have been eleminated during a short race.
         /// </summary>
-        private int _eliminatedCars;
+        public int _eliminatedCars;
 
         /// <summary>
         /// A list that tells whether a crucial point has been reached or not during one lap.

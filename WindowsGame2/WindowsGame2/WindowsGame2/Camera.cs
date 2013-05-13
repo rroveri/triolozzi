@@ -40,7 +40,7 @@ namespace WindowsGame2
         public float Zoom
         {
             get;
-            private set;
+            set;
         }
 
         //Amount to rotate the camera
@@ -56,6 +56,8 @@ namespace WindowsGame2
         //    get;
         //    private set;
         //}
+
+        public Matrix TransformNoZoom;
 
         //Our camera's transform matrix
         public Matrix ViewMatrix
@@ -100,8 +102,18 @@ namespace WindowsGame2
         public CounterIndicator counterIndicator;
         public double timerGoAway;
 
+        private static float FourPlayersFullHd = 0.95f;
+        private static float ThreePlayersFullHd = 0.97f;
+        private static float TwoPlayersFullHd = 0.99f;
+        private static float FourPlayersHd = 0.91f;
+        private static float ThreePlayersHd = 0.93f;
+        public static float TwoPlayersHd = 0.95f;
 
         private bool firstTimeSound = false;
+
+        private float currentZoom;
+        private bool isFullHd;
+        private float initialZoom;
 
         /// <summary>
         /// Initialize a new Camera object
@@ -111,11 +123,14 @@ namespace WindowsGame2
         /// <param name="focus">Where to point the center of the camera (0x0 will be the center of the viewport)</param>
         /// <param name="zoom">How much we want the camera zoomed by default</param>
         /// <param name="rotation">How much we want the camera to be rotated by default</param>
-        public Camera(Viewport view, Vector2 position, Vector2 focus, float zoom, float rotation)
+        public Camera(Viewport view, Vector2 position, Vector2 focus, float rotation, int numberOfCars, bool _isFullHd)
         {
+
+            isFullHd = _isFullHd;
+
             View = view;
             Position = position;
-            Zoom = zoom;
+
             Rotation = rotation;
             random = new Random(DateTime.Now.Millisecond);
             FocusPoint = focus;
@@ -135,12 +150,57 @@ namespace WindowsGame2
             timerGoAwayBastard = false;
             timerGoAway = 0;
 
-            
+
         }
 
-        
-        public void Update(GameTime gametime, List<Car> Cars)
+        public void setCameraZoom(int numberOfCars)
         {
+            Zoom = computeCameraZoom(numberOfCars);
+            initialZoom = Zoom;
+        }
+
+        private float computeCameraZoom(int numberOfCars)
+        {
+            float resultingZoom = 0;
+            if (isFullHd)
+            {
+                if (numberOfCars == 4)
+                {
+                    resultingZoom = FourPlayersFullHd;
+                }
+                else if (numberOfCars == 3)
+                {
+                    resultingZoom = ThreePlayersFullHd;
+                }
+                else if (numberOfCars == 2)
+                {
+                    resultingZoom = TwoPlayersFullHd;
+                }
+            }
+            else
+            {
+                if (numberOfCars == 4)
+                {
+                    resultingZoom = FourPlayersHd;
+                }
+                else if (numberOfCars == 3)
+                {
+                    resultingZoom = ThreePlayersHd;
+                }
+                else if (numberOfCars == 2)
+                {
+                    resultingZoom = TwoPlayersHd;
+                }
+            }
+
+            return resultingZoom;
+        }
+
+
+        public void Update(GameTime gametime, List<Car> Cars, int eliminatedCarsNumber)
+        {
+            int activeCars = Cars.Count - eliminatedCarsNumber;
+            Zoom = MathHelper.Lerp(Zoom, computeCameraZoom(activeCars), 0.1f);
 
             if (timerCanStart)
             {
@@ -149,7 +209,7 @@ namespace WindowsGame2
 
             if (timerGoAwayBastard)
             {
-                timerGoAway+= gametime.ElapsedGameTime.TotalMilliseconds;
+                timerGoAway += gametime.ElapsedGameTime.TotalMilliseconds;
                 int timerGoAwayDelay = 1000;
 
                 if (Vector2.Distance(counterIndicator.currentPostion, counterIndicator.outPosition) < 0.1f)
@@ -160,20 +220,20 @@ namespace WindowsGame2
                 if (timerGoAway > timerGoAwayDelay)
                 {
                     counterIndicator.exit();
-                    counterIndicator.changeTexture(3,false);
+                    counterIndicator.changeTexture(3, false);
                 }
-                
+
             }
 
             if (updateTimer)
             {
-               
+
                 timer += gametime.ElapsedGameTime.TotalMilliseconds;
                 checkTimer(Cars);
 
                 counterIndicator.enter();
             }
-            
+
 
             //choose interpolation weight and cars weights depending on the number of players
             float interpWeight = 0.1f;
@@ -198,9 +258,10 @@ namespace WindowsGame2
             Vector2 objectPosition_ = ConvertUnits.ToDisplayUnits(firstCarWeight * Cars[firstCarIndex]._compound.Position + (1 - firstCarWeight) * Cars[lastCarIndex]._compound.Position);
 
             //initialize old position
-            if (firstTime){
+            if (firstTime)
+            {
 
-                oldPosition = objectPosition_+new Vector2(3000);
+                oldPosition = objectPosition_ + new Vector2(3000);
                 firstTime = false;
 
                 firstTimeSound = true;
@@ -214,14 +275,14 @@ namespace WindowsGame2
                     timerCanStart = false;
 
                 }
-               
+
             }
 
             //interpolate
             Vector2 objectPosition = new Vector2();
             objectPosition.X = MathHelper.Lerp(oldPosition.X, objectPosition_.X, interpWeight);
             objectPosition.Y = MathHelper.Lerp(oldPosition.Y, objectPosition_.Y, interpWeight);
-    
+
             //set old position
             oldPosition = objectPosition;
 
@@ -238,20 +299,24 @@ namespace WindowsGame2
                 Matrix.CreateScale(new Vector3((float)Math.Pow(Zoom, 10), (float)Math.Pow(Zoom, 10), 1)) *  // UUUUHHHH!!! BUGGG!!! THE LAST 1 WAS 0 IN CASE...Wrong? --> seems yes! http://xboxforums.create.msdn.com/forums/t/28476.aspx
                 Matrix.CreateRotationZ(-objectRotation + deltaRotation) *
                 Matrix.CreateTranslation(new Vector3(FocusPoint.X, FocusPoint.Y, 0));
-                
-            
-            
+
+
+           TransformNoZoom = Matrix.CreateTranslation(new Vector3(-objectPosition, 0)) *
+                Matrix.CreateScale(new Vector3((float)Math.Pow(initialZoom, 10), (float)Math.Pow(initialZoom, 10), 1)) *  // UUUUHHHH!!! BUGGG!!! THE LAST 1 WAS 0 IN CASE...Wrong? --> seems yes! http://xboxforums.create.msdn.com/forums/t/28476.aspx
+                Matrix.CreateRotationZ(-objectRotation + deltaRotation) *
+                Matrix.CreateTranslation(new Vector3(FocusPoint.X, FocusPoint.Y, 0));
+
             //create also projection and viewMatrix for the shaders
             ProjectionMatrix = Matrix.CreateOrthographicOffCenter(0f, ConvertUnits.ToSimUnits(View.Width) * (1 / (float)Math.Pow(Zoom, 10)),
-                                                              ConvertUnits.ToSimUnits(View.Height) * (1 / (float)Math.Pow(Zoom, 10)), 0f, 0f,1f);
+                                                              ConvertUnits.ToSimUnits(View.Height) * (1 / (float)Math.Pow(Zoom, 10)), 0f, 0f, 1f);
             ViewMatrix = Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(objectPosition) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(Zoom, 10)), 0f));
         }
 
 
         public void checkTimer(List<Car> Cars)
         {
-            
-            float totalMilliseconds=1500;
+
+            float totalMilliseconds = 1500;
             if (timer > totalMilliseconds)
             {
                 raceCanStart = true;
@@ -259,9 +324,9 @@ namespace WindowsGame2
                 updateTimer = false;
 
                 Vector2 position = (Cars[0]._compound.Position + Cars[Cars.Count - 1]._compound.Position) / 2f;
-               
 
-                counterIndicator.changeTexture(0,true);
+
+                counterIndicator.changeTexture(0, true);
 
                 timerGoAwayBastard = true;
                 timerGoAway = 0;
@@ -272,29 +337,36 @@ namespace WindowsGame2
                     GameServices.GetService<SoundManager>().PlaySong(SoundManager.GameSong, true);
                 }
             }
-            else if (timer > totalMilliseconds/3f*2f)
+            else if (timer > totalMilliseconds / 3f * 2f)
             {
                 Vector2 position = (Cars[0]._compound.Position + Cars[Cars.Count - 1]._compound.Position) / 2f;
 
-                counterIndicator.changeTexture(1,true);
+                counterIndicator.changeTexture(1, true);
             }
             else if (timer > totalMilliseconds / 3f * 1f)
             {
                 Vector2 position = (Cars[0]._compound.Position + Cars[Cars.Count - 1]._compound.Position) / 2f;
 
-                counterIndicator.changeTexture(2,true);
+                counterIndicator.changeTexture(2, true);
             }
             else if (timer > 0.001f)
             {
                 Vector2 position = (Cars[0]._compound.Position + Cars[Cars.Count - 1]._compound.Position) / 2f;
 
-                counterIndicator.changeTexture(3,true);
-                
+                counterIndicator.changeTexture(3, true);
+
             }
         }
 
-        public Matrix inverseTransformMatrix(){
+        public Matrix inverseTransformMatrix()
+        {
             return Matrix.Invert(Transform);
+        }
+
+
+        public Matrix inverseTransformMatrixNoZoom()
+        {
+            return Matrix.Invert(TransformNoZoom);
         }
     }
 }

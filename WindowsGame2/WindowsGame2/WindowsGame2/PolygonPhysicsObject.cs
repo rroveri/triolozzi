@@ -109,26 +109,108 @@ namespace WindowsGame2
 
             bool canCreate = true;
 
+            //ROBA NUOVA PER EVITARE L'ASSERT s>0 e area big enough IN FARSEER...MAGARI NON VA PIU UNA SEGA!!! -- inizio
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (!checkFarseerAssertSBiggerThanZero(list[i]) || !checkFarseerAssertAreaNotTooSmall(list[i]))
+                {
+                    //list.RemoveAt(i);
+                    //don't create polygon
+                    canCreate = false;
+                }
+            }
+            //ROBA NUOVA PER EVITARE L'ASSERT s>0 IN FARSEER e area big enough...MAGARI NON VA PIU UNA SEGA!!! -- fine
+
             // create compound
             if (canCreate)
-            {
-                compound = BodyFactory.CreateCompoundPolygon(world, list, 1f, BodyType.Dynamic);
+                {
+                    compound = BodyFactory.CreateCompoundPolygon(world, list, 1f, BodyType.Dynamic);
 
-                if (compound.Mass < 1f)
-                {
-                    compound.Enabled = false;
-                   
+                    if (compound.Mass < 1f)
+                    {
+                        compound.Enabled = false;
+
+                        IsValid = false;
+                    }
+                    else
+                    {
+                        compound.BodyType = BodyType.Dynamic;
+                        compound.CollisionGroup = -1;
+                    }
+             }
+             else
+             {
                     IsValid = false;
-                }
-                else
+             }
+        }
+
+        bool checkFarseerAssertSBiggerThanZero(Vertices vertices)
+        {
+            // Ensure the polygon is convex and the interior
+            // is to the left of each edge.
+            bool sOk = true;
+
+            for (int i = 0; i < vertices.Count; ++i)
+            {
+                int i1 = i;
+                int i2 = i + 1 < vertices.Count ? i + 1 : 0;
+                Vector2 edge = vertices[i2] - vertices[i1];
+
+                for (int j = 0; j < vertices.Count; ++j)
                 {
-                    compound.BodyType = BodyType.Dynamic;
-                    compound.CollisionGroup = -1;
+                    // Don't check vertices on the current edge.
+                    if (j == i1 || j == i2)
+                    {
+                        continue;
+                    }
+
+                    Vector2 r = vertices[j] - vertices[i1];
+
+                    // Your polygon is non-convex (it has an indentation) or
+                    // has colinear edges.
+                    float s = edge.X * r.Y - edge.Y * r.X;
+
+                    if (s <= 0)
+                    {
+                        sOk = false;
+                        break;
+                    }
+                    
                 }
+            }
+
+            return sOk;
+        }
+
+        bool checkFarseerAssertAreaNotTooSmall(Vertices vertices)
+        {
+            float area = 0.0f;
+            Vector2 pRef = Vector2.Zero;
+
+            for (int i = 0; i < vertices.Count; ++i)
+            {
+                // Triangle vertices.
+                Vector2 p1 = pRef;
+                Vector2 p2 = vertices[i];
+                Vector2 p3 = i + 1 < vertices.Count ? vertices[i + 1] : vertices[0];
+
+                Vector2 e1 = p2 - p1;
+                Vector2 e2 = p3 - p1;
+
+                float d;
+                MathUtils.Cross(ref e1, ref e2, out d);
+
+                float triangleArea = 0.5f * d;
+                area += triangleArea;
+            }
+
+            if (area > Settings.Epsilon)
+            {
+                return true;
             }
             else
             {
-                IsValid = false;
+                return false;
             }
         }
 
