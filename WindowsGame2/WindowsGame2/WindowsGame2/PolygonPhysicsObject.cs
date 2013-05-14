@@ -223,7 +223,7 @@ namespace WindowsGame2
         }
 
 
-        public void Draw( ref Matrix projection, ref Matrix view, Matrix transform, ref VertexPositionColorTexture[] basicVert,ref int counter)
+        public void Draw( ref Matrix projection, ref Matrix view, Matrix transform, ref VertexPositionColorTexture[] basicVert,ref int counter, int maxTriangles, ref int loop)
         {
             compound.GetTransform(out xf);
             // iterate fixtures
@@ -237,6 +237,13 @@ namespace WindowsGame2
                 for (int i = 1; i < ((PolygonShape)compound.FixtureList[j].Shape).Vertices.Count; ++i)
                 {
                     counter++;
+
+                    if (counter == Math.Round(maxTriangles/3f))
+                    {
+                        counter = 1;
+                        loop =(int) Math.Round((maxTriangles-1) / 3f);
+                    }
+
                     // transform them from local to world coordinates
                     vertex1 = MathUtils.Multiply(ref xf, ((PolygonShape)compound.FixtureList[j].Shape).Vertices[i]);
                     vertex2 = MathUtils.Multiply(ref xf, ((PolygonShape)compound.FixtureList[j].Shape).Vertices[i - 1]);

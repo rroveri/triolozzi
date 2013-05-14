@@ -342,6 +342,9 @@ namespace WindowsGame2.GameElements
 
             //set borders triangles for shaders
             //external borders
+
+
+
             myArray = new VertexPositionColorTexture[(curvePointsExternal.Count) * 6 + (curvePointsInternal.Count) * 6];
             for (int i = 0; i < curvePointsExternal.Count; i++)
             {
@@ -371,6 +374,7 @@ namespace WindowsGame2.GameElements
                 myArray[i * 6 + 5].TextureCoordinate = new Vector2(1, 0);
 
                 //external texture background
+
 
                 float distance = 10;
                 verticesBordersExternal[i * 6].Position = new Vector3(curvePointsExternal[preIndex], -0.1f);

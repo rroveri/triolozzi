@@ -11,7 +11,7 @@ namespace WindowsGame2
 {
     public class StringWriter
     {
-        public int nCharacters = 500;
+        public int nCharacters = 100;
 
         public VertexPositionColorTexture[] stringVertices;
 
