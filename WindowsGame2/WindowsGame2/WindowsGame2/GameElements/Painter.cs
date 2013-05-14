@@ -26,8 +26,13 @@ namespace WindowsGame2.GameElements
             //far away but nice
             //div=0.1f
             //ease = (float)seed.NextDouble() * 0.2f + 0.5f;
-            //close 
-            div = 0.2f; 
+            
+            //close, perfect if drawing everyframe 
+            //div = 0.2f; 
+            //ease = (float)seed.NextDouble() * 0.4f + 0.5f;
+
+            //close, perfect if drawing every two frames 
+            div = 0.3f; 
             ease = (float)seed.NextDouble() * 0.4f + 0.5f;
             
         }

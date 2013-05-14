@@ -969,11 +969,11 @@ namespace WindowsGame2.Screens
                 paperEffect.Parameters[paperEffects[i]].SetValue(Cars[i]._compound.Position);
                 if (Cars[i].mIsTrailLoop)
                 {
-                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, Car.mMaximumTrailPoints * Car.paintersCount * 2);
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, Car.mMaximumTrailPoints/2 * Car.paintersCount * 2);
                 }
-                else if (Cars[i].mTrailPoints > 0)
+                else if (Cars[i].mTrailPoints/2 > 0)
                 {
-                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, Cars[i].mTrailPoints * Car.paintersCount * 2);
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, trails[i], 0, Cars[i].mTrailPoints/2 * Car.paintersCount * 2);
                 }
 
             }
@@ -981,7 +981,14 @@ namespace WindowsGame2.Screens
             for (int i = 0; i < Cars.Count; i++)
             {
                 if (Cars[i].burnoutCounter > 0)
-                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, burnouts[i], 0, Cars[i].burnoutCounter * 2);
+                {
+                    int totalCount = Cars[i].burnoutCounter * 2;
+                    if (Cars[i].loopBurnout)
+                    {
+                        totalCount = (Car.burnoutCounterMaxValue - 4)*2;
+                    }
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, burnouts[i], 0, totalCount);
+                }
             }
 
             paperEffect.CurrentTechnique.Passes["AlphabetPass"].Apply();
