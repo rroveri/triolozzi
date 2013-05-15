@@ -123,6 +123,7 @@ namespace WindowsGame2.GameElements
 
         public Bullet bullet;
         public bool bulletIsShot;
+
         
 
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
@@ -234,6 +235,12 @@ namespace WindowsGame2.GameElements
             updateOrthogonalVelocityCounter = 0;
 
             _compound.CollisionCategories = Category.Cat20;
+
+
+
+
+
+            
         }
 
         bool body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)

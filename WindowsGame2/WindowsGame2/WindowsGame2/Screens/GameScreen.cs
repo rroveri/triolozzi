@@ -134,6 +134,8 @@ namespace WindowsGame2.Screens
 
         private int obstaclesLoop;
 
+
+
         #endregion
 
         /// <summary>
@@ -312,7 +314,8 @@ namespace WindowsGame2.Screens
 
             //gaussian = new GaussianBlur(ScreenManager.Game);
 
-            
+
+    
         }
 
         private void LoadPaperEffect()
@@ -1036,6 +1039,16 @@ namespace WindowsGame2.Screens
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, totalNumber);
             }
 
+            //draw laser
+            paperEffect.CurrentTechnique.Passes["TrailPass"].Apply();
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                Cars[i].DrawBullet(spriteBatch);
+                if (Cars[i].bullet.isGoing && Cars[i].isActive)
+                {
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Cars[i].bullet.laserVertices, 0, 2);
+                }
+            }
 
 
             paperEffect.CurrentTechnique.Passes["PopupMessagePass"].Apply();
@@ -1054,6 +1067,11 @@ namespace WindowsGame2.Screens
             }
 
             spriteBatch.End();
+
+            
+
+            
+
             drawFluid();
 
 
