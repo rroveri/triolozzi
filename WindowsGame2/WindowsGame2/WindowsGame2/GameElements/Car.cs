@@ -68,6 +68,7 @@ namespace WindowsGame2.GameElements
 
         private int boostFrames;
         public bool hasBoost;
+        public bool isDrawing;
 
         private RandomTrack randomTrack;
         public int currentMiddlePoint;
@@ -227,7 +228,7 @@ namespace WindowsGame2.GameElements
 
         bool body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
         {
-            if (this.hasBoost)
+            if (!isDrawing)
             {
                 return true;
             }
@@ -270,6 +271,7 @@ namespace WindowsGame2.GameElements
             if (currentPowerup == powerupTurbo || currentPowerup == powerupSlow) return;
             boostFrames = 0;
             hasBoost = false;
+            isDrawing = true;
             currentMaxVel = maxVel;
             currentAcc = acc;
 
@@ -352,11 +354,11 @@ namespace WindowsGame2.GameElements
                 stopSteeringSound();
             }
 
-            if ((ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0 || ks.IsKeyDown(Keys.W) && brownOnly || invertedDownToUp) && !invertedUpToDown) 
+            if ((ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0 || ks.IsKeyDown(Keys.W) && brownOnly/* || invertedDownToUp*/) /*&& !invertedUpToDown*/) 
             {
                 newAcc = currentAcc;
             }
-            if ((ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0 || ks.IsKeyDown(Keys.S) && brownOnly || invertedUpToDown) && !invertedDownToUp)
+            if ((ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0 || ks.IsKeyDown(Keys.S) && brownOnly/* || invertedUpToDown*/)/* && !invertedDownToUp*/)
             {
                 newAcc = -currentAcc;
             }
@@ -378,7 +380,7 @@ namespace WindowsGame2.GameElements
             tdPos.Y = _compound.Position.Y;
 
             // Add a trail point if the player is drawing
-            if (currentPowerup != powerupNoDrawing && !hasBoost && !justStarted )
+            if (isDrawing && !justStarted )
             {
                 
                     if (mTrailPoints >= mMaximumTrailPoints)
@@ -884,6 +886,7 @@ namespace WindowsGame2.GameElements
                         //   acc = acc + result.compound.Mass / 10;
                         currentAcc = boostAcc;
                         hasBoost = true;
+                        isDrawing = false;
                     }
                     return result;
                 }
@@ -925,7 +928,7 @@ namespace WindowsGame2.GameElements
             }
             else if(powerupIndex == powerupNoDrawing)
             {
-                // check for drawing done in update
+                isDrawing = false;
             }
             else if (powerupIndex == powerupInverted)
             {
@@ -939,6 +942,7 @@ namespace WindowsGame2.GameElements
             currentPowerup = powerupNone;
             currentMaxVel = maxVel;
             deactivateSecondMode();
+            if(!hasBoost) isDrawing = true;
         }
     }
 }
