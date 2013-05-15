@@ -37,10 +37,10 @@ namespace WindowsGame2.GameElements
 
         bool bullet_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
         {
-
+            /*
             // check if post it
             if (fixtureB.Body.UserData != null)
-            {
+            {fixtureB.Body.IsBullet
                 //update color
                 int postItNumber = (int)fixtureB.Body.UserData;
                 if (randomTrack.postItDreamsList[postItNumber].color == Color.White)
@@ -48,6 +48,7 @@ namespace WindowsGame2.GameElements
                     randomTrack.changePostItColor(postItNumber, this);
                 }
             }
+             */
             return true;
         }
 
