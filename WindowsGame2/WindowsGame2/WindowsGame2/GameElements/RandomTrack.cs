@@ -71,6 +71,8 @@ namespace WindowsGame2.GameElements
         public VertexPositionColorTexture[] verticesBordersInternal;
         public VertexPositionColorTexture[] verticesBordersExternal;
 
+        public List<PolygonPhysicsObject> polygonList;
+
         public int carsCount;
         
         public static RandomTrack createTrack()

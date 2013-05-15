@@ -41,6 +41,8 @@ namespace WindowsGame2
             set;
         }
 
+        public Body currentIgnoredBody;
+
         public Color Color { get; set; }
 
         MaterialType chooseMaterialType(Random random)

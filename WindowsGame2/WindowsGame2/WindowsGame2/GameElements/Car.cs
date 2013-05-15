@@ -70,7 +70,7 @@ namespace WindowsGame2.GameElements
         public bool hasBoost;
         public bool isDrawing;
 
-        private RandomTrack randomTrack;
+        public RandomTrack randomTrack;
         public int currentMiddlePoint;
         public Vector2 projectedPosition;
 
@@ -100,7 +100,7 @@ namespace WindowsGame2.GameElements
         public static bool isBrush = true;
 
         private GraphicsDeviceManager _graphicsDevice;
-        private Camera _camera;
+        public Camera _camera;
         private SoundManager _soundManager;
 
         private SoundEffectInstance steeringSound;
@@ -122,7 +122,7 @@ namespace WindowsGame2.GameElements
         public int currentPowerup = 0;
 
         public Bullet bullet;
-        private bool bulletIsShot;
+        public bool bulletIsShot;
         
 
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
@@ -248,8 +248,13 @@ namespace WindowsGame2.GameElements
             {
                 //update color
                 int postItNumber = (int)fixtureB.Body.UserData;
-                if (randomTrack.postItDreamsList[postItNumber].color==Color.White){
-                    randomTrack.changePostItColor(postItNumber, this);
+
+                if (postItNumber < 1000)
+                {
+                    if (randomTrack.postItDreamsList[postItNumber].color == Color.White)
+                    {
+                        randomTrack.changePostItColor(postItNumber, this);
+                    }
                 }
             }
             return true;
@@ -912,6 +917,7 @@ namespace WindowsGame2.GameElements
                 {
                     result.Color = mColor;
                     result.compound.IgnoreCollisionWith(_compound);
+                    result.currentIgnoredBody = _compound;
                     result.compound.CollisionCategories = Category.Cat10;
                     result.compound.CollidesWith = Category.Cat20;
 
