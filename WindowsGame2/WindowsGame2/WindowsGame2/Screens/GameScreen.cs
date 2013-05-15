@@ -532,6 +532,14 @@ namespace WindowsGame2.Screens
             mySneezesManager.Update(gameTime,Cars);
 
             if (Keyboard.GetState().IsKeyDown(Keys.F)) fluid.saveDensity();
+
+            if (Keyboard.GetState().IsKeyDown(Keys.D0)) Cars[0].setPowerup(0);
+            if (Keyboard.GetState().IsKeyDown(Keys.D1)) Cars[0].setPowerup(1);
+            if (Keyboard.GetState().IsKeyDown(Keys.D2)) Cars[0].setPowerup(2);
+            if (Keyboard.GetState().IsKeyDown(Keys.D3)) Cars[0].setPowerup(3);
+            if (Keyboard.GetState().IsKeyDown(Keys.D4)) Cars[0].setPowerup(4);
+            if (Keyboard.GetState().IsKeyDown(Keys.D5)) Cars[0].setPowerup(5);
+            if (Keyboard.GetState().IsKeyDown(Keys.D6)) Cars[0].setPowerup(6);
         }
 
         private void UpdateCars(GameTime gameTime)
@@ -678,6 +686,7 @@ namespace WindowsGame2.Screens
                 int newMiddlePoint = findACloserMiddlePoint();
                 positionCars(newMiddlePoint % randomRaceTrack.curvePointsMiddle.Count);
                 screenRenderer.setHappyToAllPlayers();
+                for (int i = 0; i < Cars.Count(); i++) Cars[i].stopPowerup();
             }
         }
 
@@ -742,6 +751,7 @@ namespace WindowsGame2.Screens
         public void PostSolve(Contact contact, ContactConstraint impulse)
         {
             for (int i=0; i<Cars.Count; i++){
+                if (Cars[i].currentPowerup == Car.powerupBig) Cars[i]._compound.AngularVelocity *= 0.1f;
                 if (Cars[i]._compound.FixtureList.Contains(contact.FixtureA) || Cars[i]._compound.FixtureList.Contains(contact.FixtureB))
                 {
                     float maxImpulse = 0.0f;
@@ -750,6 +760,7 @@ namespace WindowsGame2.Screens
                     for (int j = 0; j < count; ++j)
                     {
                         maxImpulse = Math.Max(maxImpulse, impulse.Points[j].NormalImpulse);
+                        if (Cars[i].currentPowerup == Car.powerupBig) maxImpulse /= 5;
                     }
                     if (maxImpulse > 1)
                     {

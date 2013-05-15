@@ -110,10 +110,19 @@ namespace WindowsGame2.GameElements
         private int updateOrthogonalVelocityCounter;
 
         public bool loopBurnout = false;
+
+        static public int powerupNone = 0;
+        static public int powerupWings = 1;
+        static public int powerupTurbo = 2;
+        static public int powerupBig = 3;
+        static public int powerupSlow = 4;
+        static public int powerupNoDrawing = 5;
+        static public int powerupInverted = 6;
+        public int currentPowerup = 0;
         
 
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
-            : base(world, texture, new Vector2(65.0f, 40.0f), Color)
+            : base(world, texture, new Vector2(65.0f, 40.0f), Color, new Vector2(130.0f,80.0f))
         {
 
             isInsideMucus=false;
@@ -213,7 +222,7 @@ namespace WindowsGame2.GameElements
             updateCounter=0;
             updateOrthogonalVelocityCounter = 0;
 
-    
+            _compound.CollisionCategories = Category.Cat20;
         }
 
         bool body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
@@ -258,6 +267,7 @@ namespace WindowsGame2.GameElements
 
         public void resetBoost()
         {
+            if (currentPowerup == powerupTurbo || currentPowerup == powerupSlow) return;
             boostFrames = 0;
             hasBoost = false;
             currentMaxVel = maxVel;
@@ -314,12 +324,18 @@ namespace WindowsGame2.GameElements
             bool brownOnly = mColor == Color.Brown;
 
             float newAcc = 0.0f;
-            if (ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0 || ks.IsKeyDown(Keys.D) && brownOnly)
+
+            bool invertedLeftToRight = ks.IsKeyDown(Keys.Left) && currentPowerup == powerupInverted;
+            bool invertedRightToLeft = ks.IsKeyDown(Keys.Right) && currentPowerup == powerupInverted;
+            bool invertedUpToDown = ks.IsKeyDown(Keys.Up) && currentPowerup == powerupInverted;
+            bool invertedDownToUp = ks.IsKeyDown(Keys.Down) && currentPowerup == powerupInverted;
+
+            if ((ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0 || ks.IsKeyDown(Keys.D) && brownOnly || invertedLeftToRight) && !invertedRightToLeft)
             {
                 _compound.AngularVelocity = 0;
                 _compound.Rotation += rotVel;
             }
-            if (ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0 || ks.IsKeyDown(Keys.A) && brownOnly)
+            if ((ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0 || ks.IsKeyDown(Keys.A) && brownOnly || invertedRightToLeft) && !invertedLeftToRight)
             {
                 _compound.AngularVelocity = 0;
                 _compound.Rotation -= rotVel;
@@ -336,11 +352,11 @@ namespace WindowsGame2.GameElements
                 stopSteeringSound();
             }
 
-            if (ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0 || ks.IsKeyDown(Keys.W) && brownOnly) 
+            if ((ks.IsKeyDown(Keys.Up) && blueOnly || gps.ThumbSticks.Left.Y > 0 || ks.IsKeyDown(Keys.W) && brownOnly || invertedDownToUp) && !invertedUpToDown) 
             {
                 newAcc = currentAcc;
             }
-            if (ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0 || ks.IsKeyDown(Keys.S) && brownOnly)
+            if ((ks.IsKeyDown(Keys.Down) && blueOnly || gps.ThumbSticks.Left.Y < 0 || ks.IsKeyDown(Keys.S) && brownOnly || invertedUpToDown) && !invertedDownToUp)
             {
                 newAcc = -currentAcc;
             }
@@ -362,7 +378,7 @@ namespace WindowsGame2.GameElements
             tdPos.Y = _compound.Position.Y;
 
             // Add a trail point if the player is drawing
-            if ((((ks.IsKeyDown(Keys.F) && blueOnly || gps.Triggers.Right > 0) || true) && !hasBoost) && !justStarted )
+            if (currentPowerup != powerupNoDrawing && !hasBoost && !justStarted )
             {
                 
                     if (mTrailPoints >= mMaximumTrailPoints)
@@ -857,13 +873,18 @@ namespace WindowsGame2.GameElements
                 {
                     result.Color = mColor;
                     result.compound.IgnoreCollisionWith(_compound);
+                    result.compound.CollisionCategories = Category.Cat10;
+                    result.compound.CollidesWith = Category.Cat20;
 
-                    maxBoostFrames =(int)Math.Floor(result.compound.Mass * 4);
-                  //  maxVel = 10 + result.compound.Mass;
-                    currentMaxVel = boostMaxVel;
-                 //   acc = acc + result.compound.Mass / 10;
-                    currentAcc = boostAcc;
-                    hasBoost = true;
+                    if (currentPowerup != powerupSlow && currentPowerup != powerupTurbo)
+                    {
+                        maxBoostFrames = (int)Math.Floor(result.compound.Mass * 4);
+                        //  maxVel = 10 + result.compound.Mass;
+                        currentMaxVel = boostMaxVel;
+                        //   acc = acc + result.compound.Mass / 10;
+                        currentAcc = boostAcc;
+                        hasBoost = true;
+                    }
                     return result;
                 }
                 else
@@ -876,6 +897,48 @@ namespace WindowsGame2.GameElements
             {
                 return null;
             }
+        }
+
+        public void setPowerup(int powerupIndex)
+        {
+            currentPowerup = powerupIndex;
+
+            if (powerupIndex == 0)
+            {
+                stopPowerup();
+            }
+            else if(powerupIndex == powerupWings)
+            {
+                _compound.CollisionCategories = Category.Cat21;
+            }
+            else if(powerupIndex == powerupTurbo)
+            {
+                currentMaxVel = 20.0f; 
+            }
+            else if (powerupIndex == powerupBig)
+            {
+                activateSecondMode();
+            }
+            else if(powerupIndex == powerupSlow)
+            {
+                currentMaxVel = 6.5f;
+            }
+            else if(powerupIndex == powerupNoDrawing)
+            {
+                // check for drawing done in update
+            }
+            else if (powerupIndex == powerupInverted)
+            {
+                // invert commands in update
+            }
+        }
+
+        public void stopPowerup()
+        {
+            _compound.CollisionCategories = Category.Cat20;
+            currentPowerup = powerupNone;
+            currentMaxVel = maxVel;
+            deactivateSecondMode();
         }
     }
 }
