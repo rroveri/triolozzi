@@ -119,6 +119,7 @@
     <Compile Include="fluid\Fluid.cs" />
     <Compile Include="fluid\GaussianBlur.cs" />
     <Compile Include="fluid\QuadRenderComponent.cs" />
+    <Compile Include="GameElements\Bullet.cs" />
     <Compile Include="GameElements\Car.cs" />
     <Compile Include="AssetCreator.cs" />
     <Compile Include="ConvertUnits.cs" />

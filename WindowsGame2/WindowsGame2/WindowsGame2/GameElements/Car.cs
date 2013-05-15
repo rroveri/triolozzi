@@ -120,11 +120,16 @@ namespace WindowsGame2.GameElements
         static public int powerupNoDrawing = 5;
         static public int powerupInverted = 6;
         public int currentPowerup = 0;
+
+        public Bullet bullet;
+        private bool bulletIsShot;
         
 
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
             : base(world, texture, new Vector2(65.0f, 40.0f), Color, new Vector2(130.0f,80.0f))
         {
+
+            
 
             isInsideMucus=false;
 
@@ -148,6 +153,11 @@ namespace WindowsGame2.GameElements
             mDummyTexture = new Texture2D(GameServices.GetService<GraphicsDevice>(), 1, 1);
             mDummyTexture.SetData(new Color[] { Color.White });
             mColor = Color;
+
+
+            bullet = new Bullet(world, this,mDummyTexture);
+            bulletIsShot = false;
+
 
             _compound.LinearDamping = 1;
             _compound.AngularDamping = 1;
@@ -479,7 +489,28 @@ namespace WindowsGame2.GameElements
 
             //move the message position
             moveMessageImage(gameTime);
+
+
+
+
+
+
+            if (ks.IsKeyDown(Keys.R) && blueOnly || gps.Buttons.A >0 )
+            {
+                if (bulletIsShot == false)
+                {
+                    shootBullet();
+                }
+            }
+
+            bullet.Update();
             
+        }
+
+        public void shootBullet()
+        {
+            bullet.Shoot();
+            bulletIsShot = true;
         }
 
         public void drawQuad(Vector3 newWVert,Vector3 newEVert,Vector3 oldWVert,Vector3 oldEVert, int painterIndex)
@@ -757,6 +788,11 @@ namespace WindowsGame2.GameElements
             message.Draw(spriteBatch);
         }
 
+        public void DrawBullet(SpriteBatch spriteBatch)
+        {
+            bullet.Draw(spriteBatch);
+        }
+
         public void Draw(SpriteBatch spriteBatch, out VertexPositionColorTexture[] vertices, out VertexPositionColorTexture[] _burnoutsVertices)
         {
             vertices = trailVertices;
@@ -774,7 +810,8 @@ namespace WindowsGame2.GameElements
 
 
            // message.Draw(spriteBatch);
-            
+
+            DrawBullet(spriteBatch);
 
             base.Draw(spriteBatch);
         }
