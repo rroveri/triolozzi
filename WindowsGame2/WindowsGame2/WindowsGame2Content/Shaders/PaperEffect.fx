@@ -312,7 +312,7 @@ float4 PixelShaderFunctionExternalSketch(ObjectVertexShaderOutput input) : COLOR
 
 float4 PixelShaderFunctionStartLine(ObjectVertexShaderOutput input) : COLOR0
 {
-    float4 texCol = tex2D(startLineSampler, input.xy);
+    float4 texCol = tex2D(startLineSampler, input.uv);
     float alpha = texCol[0];
 	if(alpha < 0.8) alpha = 0;
     
