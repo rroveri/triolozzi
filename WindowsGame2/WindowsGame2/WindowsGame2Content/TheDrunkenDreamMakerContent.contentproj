@@ -581,13 +581,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sounds\Cracks.mp3">
-      <Name>Cracks</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Sounds\Laugh.mp3">
       <Name>Laugh</Name>
       <Importer>Mp3Importer</Importer>

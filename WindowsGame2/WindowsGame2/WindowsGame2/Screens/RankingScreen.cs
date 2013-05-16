@@ -28,6 +28,7 @@ namespace WindowsGame2.Screens
         private string[] _ranks = { "1st: ", "2nd: ", "3rd: ", "4th: " };
 
         private StringBuilder _rankingText;
+        private string _finalString;
 
         #endregion
 
@@ -80,6 +81,7 @@ namespace WindowsGame2.Screens
                 _rankingText.Append(_playersNumber[Cars.IndexOf(sortedCars[i])]);
                 _rankingText.Append('\n');
             }
+            _finalString = _rankingText.ToString();
         }
 
 
@@ -142,7 +144,7 @@ namespace WindowsGame2.Screens
             spriteBatch.Draw(gradientTexture, backgroundRectangle, color);
 
             // Draw the message box text.
-            spriteBatch.DrawString(font, _rankingText.ToString(), textPosition, Color.Black);
+            spriteBatch.DrawString(font, _finalString, textPosition, Color.Black);
 
             spriteBatch.End();
         }

@@ -27,8 +27,7 @@ namespace WindowsGame2
         public Camera camera;
 
         GraphicsDeviceManager graphics;
-
-        SoundEffect sneezeSound;
+        private SoundManager _soundManager;
 
         private bool soundPlayed;
 
@@ -45,8 +44,7 @@ namespace WindowsGame2
 
 
             graphics = GameServices.GetService<GraphicsDeviceManager>();
-
-            sneezeSound = GameServices.GetService<ContentManager>().Load<SoundEffect>("Sounds/mucus/sneeze");
+            _soundManager = GameServices.GetService<SoundManager>();
 
             soundPlayed = false;
             fluidWasSeen = false;
@@ -59,7 +57,7 @@ namespace WindowsGame2
                 timer += gameTime.ElapsedGameTime.TotalMilliseconds;
                 if (timer > nextSneezeTime - 3000 && !soundPlayed)
                 {
-                    sneezeSound.Play();
+                    _soundManager.PlaySound(SoundManager.Sneeze);
                     soundPlayed = true;
                 }
                 if (timer > nextSneezeTime)
