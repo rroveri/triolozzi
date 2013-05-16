@@ -128,6 +128,11 @@ namespace WindowsGame2.GameElements
         private double powerupDuration = 7.0 * 1000.0;
         private double startBlinkingFrom = 5.0 * 1000.0;
         private double blinkingDuration = 0.2 * 1000.0;
+        private double powerupDurationCurrent;
+        private double startBlinkingFromCurrent;
+        private double powerupDurationSpeed;
+        private double startBlinkingFromSpeed;
+
         private bool startedBlinking;
 
         public Bullet bullet;
@@ -140,7 +145,11 @@ namespace WindowsGame2.GameElements
             : base(world, texture, new Vector2(65.0f, 40.0f), Color, new Vector2(130.0f,80.0f))
         {
 
-            
+            powerupDurationSpeed = powerupDuration / 2.7f;
+            startBlinkingFromSpeed = startBlinkingFrom / 2.7f;
+            powerupDurationCurrent = powerupDuration;
+            startBlinkingFromCurrent = startBlinkingFrom;
+
 
             isInsideMucus=false;
 
@@ -331,7 +340,7 @@ namespace WindowsGame2.GameElements
 
             timer += gameTime.ElapsedGameTime.TotalMilliseconds;
             blinkTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (timer > powerupDuration && currentPowerup != powerupNone) stopPowerup();
+            if (timer > powerupDurationCurrent && currentPowerup != powerupNone) stopPowerup();
 
             updateCounter++;
             
@@ -838,7 +847,7 @@ namespace WindowsGame2.GameElements
         public void DrawGlow(SpriteBatch spriteBatch)
         {
             if (currentPowerup == powerupNone) return;
-            if (timer > startBlinkingFrom)
+            if (timer > startBlinkingFromCurrent)
             {
                 if(!startedBlinking) 
                 {
@@ -1002,7 +1011,7 @@ namespace WindowsGame2.GameElements
                     
                     if (currentPowerup != powerupSlow && currentPowerup != powerupTurbo)
                     {
-                        maxBoostFrames = (int)Math.Floor(result.compound.Mass * 4);
+                        maxBoostFrames = (int)Math.Floor(result.compound.Mass * 5); //*4
                         //  maxVel = 10 + result.compound.Mass;
                         currentMaxVel = boostMaxVel;
                         //   acc = acc + result.compound.Mass / 10;
@@ -1032,22 +1041,37 @@ namespace WindowsGame2.GameElements
 
             if(powerupIndex == powerupWings)
             {
+                powerupDurationCurrent = powerupDuration;
+                startBlinkingFromCurrent = startBlinkingFrom;
+
                 _compound.CollisionCategories = Category.Cat21;
             }
             else if(powerupIndex == powerupTurbo)
             {
+                powerupDurationCurrent = powerupDurationSpeed;
+                startBlinkingFromCurrent = startBlinkingFromSpeed;
+
                 currentMaxVel = 20.0f; 
             }
             else if (powerupIndex == powerupBig)
             {
+                powerupDurationCurrent = powerupDuration;
+                startBlinkingFromCurrent = startBlinkingFrom;
+
                 activateSecondMode();
             }
             else if(powerupIndex == powerupSlow)
             {
+                powerupDurationCurrent = powerupDurationSpeed;
+                startBlinkingFromCurrent = startBlinkingFromSpeed;
+
                 currentMaxVel = 6.5f;
             }
             else if(powerupIndex == powerupNoDrawing)
             {
+                powerupDurationCurrent = powerupDuration;
+                startBlinkingFromCurrent = startBlinkingFrom;
+
                 for (int i = 0; i < randomTrack.polygonList.Count; i++)
                 {
                     if (randomTrack.polygonList[i].currentIgnoredBody == this._compound)
@@ -1062,6 +1086,9 @@ namespace WindowsGame2.GameElements
             else if (powerupIndex == powerupInverted)
             {
                 // invert commands in update
+                powerupDurationCurrent = powerupDuration;
+                startBlinkingFromCurrent = startBlinkingFrom;
+
             }
         }
 

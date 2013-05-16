@@ -59,6 +59,8 @@ namespace WindowsGame2.GameElements
                 backgroundTexture = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/Dreams/postitFree");
             }
 
+            textureContour = _foregroundTexture;
+
             contourPhysicsObject = new TexturePhysicsObject(world, textureContour, postItSize, Color.White);
             contourPhysicsObject._compound.Position = position;
             contourPhysicsObject._compound.Rotation = rotation;
@@ -72,7 +74,7 @@ namespace WindowsGame2.GameElements
 
         public void Draw(SpriteBatch spriteBatch){
             spriteBatch.Draw(backgroundTexture, ConvertUnits.ToDisplayUnits(position), null, Color.White, rotation, contourPhysicsObject._origin,  textureScaleVec, SpriteEffects.None, 1f);
-            spriteBatch.Draw(foregroundTexture, ConvertUnits.ToDisplayUnits(position), null, color, rotation, contourPhysicsObject._origin, textureScaleVec, SpriteEffects.None, 1f);         
+            spriteBatch.Draw(foregroundTexture, ConvertUnits.ToDisplayUnits(position), null, color, rotation, contourPhysicsObject._origin, textureScaleVec/1.4f, SpriteEffects.None, 1f);         
         }
     }
 }
