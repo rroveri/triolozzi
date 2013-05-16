@@ -54,6 +54,7 @@ namespace WindowsGame2.Screens
 
         private Rectangle[][] _CarsPositions;
 
+        private Viewport _viewport;
         private SoundManager _soundManager;
 
         // Handle Game Pad Actions
@@ -108,6 +109,7 @@ namespace WindowsGame2.Screens
             base.LoadContent();
             ContentManager Content = GameServices.GetService<ContentManager>();
             _soundManager = GameServices.GetService<SoundManager>();
+            _viewport = ScreenManager.GraphicsDevice.Viewport;
 
             _backgroundTexture = Content.Load<Texture2D>("Images/bgNew");
             _title = Content.Load<Texture2D>("Images/PimpScreen/pimp_screen_title");
@@ -122,10 +124,8 @@ namespace WindowsGame2.Screens
             _postIts[2] = Content.Load<Texture2D>("Images/PimpScreen/player3_postit");
             _postIts[3] = Content.Load<Texture2D>("Images/PimpScreen/player4_postit");
 
-            GraphicsDevice device = GameServices.GetService<GraphicsDevice>();
-            Viewport view = ScreenManager.GraphicsDevice.Viewport;
-            int width = view.Width / 2;
-            int height = view.Height / 2;
+            int width = 1920/2;
+            int height = 1080/2;
             int horizontalOffset = 200;
             int horizontalSize = 500;
             int verticalSize = 520;

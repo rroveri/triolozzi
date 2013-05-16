@@ -992,7 +992,8 @@ namespace WindowsGame2.GameElements
                     result.currentIgnoredBody = _compound;
                     result.compound.CollisionCategories = Category.Cat10;
                     result.compound.CollidesWith = Category.Cat20;
-
+            
+                    
                     if (currentPowerup != powerupSlow && currentPowerup != powerupTurbo)
                     {
                         maxBoostFrames = (int)Math.Floor(result.compound.Mass * 4);
@@ -1041,7 +1042,16 @@ namespace WindowsGame2.GameElements
             }
             else if(powerupIndex == powerupNoDrawing)
             {
+                for (int i = 0; i < randomTrack.polygonList.Count; i++)
+                {
+                    if (randomTrack.polygonList[i].currentIgnoredBody == this._compound)
+                    {
+                        randomTrack.polygonList[i].compound.RestoreCollisionWith(this._compound);
+                    }
+                }
+                
                 isDrawing = false;
+   
             }
             else if (powerupIndex == powerupInverted)
             {
@@ -1051,6 +1061,17 @@ namespace WindowsGame2.GameElements
 
         public void stopPowerup()
         {
+            if (currentPowerup == powerupNoDrawing)
+            {
+                for (int i = 0; i < randomTrack.polygonList.Count; i++)
+                {
+                    if (randomTrack.polygonList[i].currentIgnoredBody == this._compound)
+                    {
+                        randomTrack.polygonList[i].compound.IgnoreCollisionWith(this._compound);
+                    }
+                }
+            }
+
             _compound.CollisionCategories = Category.Cat20;
             currentPowerup = powerupNone;
             currentMaxVel = maxVel;
