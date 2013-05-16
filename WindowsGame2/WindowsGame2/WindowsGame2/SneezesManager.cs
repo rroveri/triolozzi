@@ -71,13 +71,17 @@ namespace WindowsGame2
                         }
                     }
                     fluid.shouldResetDensity = true;
-                    fluid.renderPosition = ConvertUnits.ToDisplayUnits(randomTrack.curvePointsMiddle[maxMiddlePoint % randomTrack.curvePointsMiddle.Count]);
+                    sneezePosition = randomTrack.curvePointsMiddle[maxMiddlePoint % randomTrack.curvePointsMiddle.Count];
+                    sneezePosition.X += -5.0f + (float)random.NextDouble() * 10.0f;
+                    sneezePosition.Y += -5.0f + (float)random.NextDouble() * 10.0f;
+                    fluid.renderPosition = ConvertUnits.ToDisplayUnits(sneezePosition);
 
                     
 
 
                     timer = 0;
-                    nextSneezeTime = Math.Max(5000, random.NextDouble() * 15000);
+                    //nextSneezeTime = Math.Max(30000, random.NextDouble() * 60000);
+                    nextSneezeTime = Math.Max(3000, random.NextDouble() * 6000);
 
                     soundPlayed = false;
 
