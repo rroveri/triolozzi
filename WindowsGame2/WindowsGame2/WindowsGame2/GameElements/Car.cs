@@ -331,7 +331,7 @@ namespace WindowsGame2.GameElements
 
             timer += gameTime.ElapsedGameTime.TotalMilliseconds;
             blinkTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (timer > powerupDuration) stopPowerup();
+            if (timer > powerupDuration && currentPowerup != powerupNone) stopPowerup();
 
             updateCounter++;
             
@@ -378,12 +378,18 @@ namespace WindowsGame2.GameElements
             if ((ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0 || ks.IsKeyDown(Keys.D) && brownOnly || invertedLeftToRight) && !invertedRightToLeft)
             {
                 _compound.AngularVelocity = 0;
-                _compound.Rotation += rotVel;
+                if (gps.ThumbSticks.Right.X > 0)
+                    _compound.Rotation += rotVel * gps.ThumbSticks.Right.X;
+                else
+                    _compound.Rotation += rotVel;
             }
             if ((ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0 || ks.IsKeyDown(Keys.A) && brownOnly || invertedRightToLeft) && !invertedLeftToRight)
             {
                 _compound.AngularVelocity = 0;
-                _compound.Rotation -= rotVel;
+                if (gps.ThumbSticks.Right.X < 0)
+                    _compound.Rotation += rotVel * gps.ThumbSticks.Right.X;
+                else
+                    _compound.Rotation -= rotVel;
             }
 
             bool isSteering = ks.IsKeyDown(Keys.Left) || ks.IsKeyDown(Keys.Right) || gps.ThumbSticks.Right.X != 0;

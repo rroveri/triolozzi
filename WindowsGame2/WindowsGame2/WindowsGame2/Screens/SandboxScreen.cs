@@ -142,7 +142,7 @@ namespace WindowsGame2.Screens
 
             for (int i = 0; i < _cars.Count; i++)
             {
-                _cars[i].HandleInput(gameTime, input);
+                _cars[i].HandleInput(gameTime, (PlayerIndex)i, input);
             }
         }
 
