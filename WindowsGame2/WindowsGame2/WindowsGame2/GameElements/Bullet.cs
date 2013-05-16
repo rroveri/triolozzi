@@ -126,6 +126,7 @@ namespace WindowsGame2.GameElements
                         if (car.randomTrack.postItDreamsList[obstacleNumber].color == Color.White)
                         {
                             car.randomTrack.changePostItColor(obstacleNumber, car);
+                            car.setPowerup(car.randomTrack.postItDreamsList[obstacleNumber].indexNumber);
 
                             reset();
                         }
