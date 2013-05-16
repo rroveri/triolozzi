@@ -1088,6 +1088,27 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Images\pencilTextire.jpg">
+      <Name>pencilTextire</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\SketchTexture.bmp">
+      <Name>SketchTexture</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sounds\laserorribiledimmerda.wav">
+      <Name>laserorribiledimmerda</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Images\SandboxScreen\sandbox_title.png">
       <Name>sandbox_title</Name>
       <Importer>TextureImporter</Importer>

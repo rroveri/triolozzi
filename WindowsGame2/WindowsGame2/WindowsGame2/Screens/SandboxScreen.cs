@@ -157,7 +157,10 @@ namespace WindowsGame2.Screens
 
         private void CarReadyToPlay(object sender, ReadyToPlayEventArgs e)
         {
-            _writer.addString(message, Color.Black, 20f, _cars[e.CarIndex].Position, _cars[e.CarIndex]._direction);
+            Vector3 pos3d = new Vector3(_cars[e.CarIndex].Position, 1);
+            Vector3.Transform(pos3d, _camera);
+            Vector2 pos2d = new Vector2(pos3d.X,-pos3d.Y);
+            _writer.addString(message, Color.Black, 20f, pos2d, _cars[e.CarIndex]._direction);
             _readyCount++;
         }
 
@@ -178,8 +181,8 @@ namespace WindowsGame2.Screens
 
             // TODO: ask for help...?
             _effect.CurrentTechnique.Passes["AlphabetPass"].Apply();
-            _effect.Parameters["Projection"].SetValue(_projectionMatrix);
-            _effect.Parameters["View"].SetValue(_viewMatrix);
+            _effect.Parameters["Projection"].SetValue(Matrix.Identity);
+            _effect.Parameters["View"].SetValue(Matrix.Identity);
             ScreenManager.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, _writer.stringVertices, 0, _writer.stringVertices.Count() / 3);
 
             ScreenManager.SpriteBatch.End();
