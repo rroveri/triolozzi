@@ -825,7 +825,7 @@ namespace WindowsGame2.GameElements
         {
             if (powerupsTextures[currentPowerup] == null) return;
             spriteBatch.Draw(powerupsTextures[currentPowerup], ConvertUnits.ToDisplayUnits(_compound.Position),
-                                           null, mColor, _compound.Rotation, _origin * 3.0f, textureScale, SpriteEffects.None,
+                                           null, Color.White, _compound.Rotation, _origin * 3.0f, textureScale, SpriteEffects.None,
                                            0.9f);
         }
 

@@ -123,8 +123,9 @@ namespace WindowsGame2.Screens
             _postIts[3] = Content.Load<Texture2D>("Images/PimpScreen/player4_postit");
 
             GraphicsDevice device = GameServices.GetService<GraphicsDevice>();
-            int width = 1920/2;
-            int height = 1090/2;
+            Viewport view = ScreenManager.GraphicsDevice.Viewport;
+            int width = view.Width / 2;
+            int height = view.Height / 2;
             int horizontalOffset = 200;
             int horizontalSize = 500;
             int verticalSize = 520;
