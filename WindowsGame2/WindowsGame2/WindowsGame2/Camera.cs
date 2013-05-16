@@ -111,7 +111,6 @@ namespace WindowsGame2
 
         private bool firstTimeSound = false;
 
-        private float currentZoom;
         private bool isFullHd;
         private float initialZoom;
 
