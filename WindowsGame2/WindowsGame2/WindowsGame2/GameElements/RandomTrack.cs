@@ -486,7 +486,7 @@ namespace WindowsGame2.GameElements
                 int randomMiddlePoint = computeRandomDreamMiddlePoint();
                 dreamsMiddlePoints.Add(randomMiddlePoint);
 
-                PostItDream newDream = new PostItDream(randomMiddlePoint, postItSize, 1, this, world, listNightmaresTextures[i % listNightmaresTextures.Count], i, random);
+                PostItDream newDream = new PostItDream(randomMiddlePoint, postItSize, 3 + i % listNightmaresTextures.Count + 1, this, world, listNightmaresTextures[i % listNightmaresTextures.Count], i, random);
                 postItDreamsList.Add(newDream);
             }
             //wishes
@@ -496,7 +496,7 @@ namespace WindowsGame2.GameElements
                 int randomMiddlePoint = computeRandomDreamMiddlePoint();
                 dreamsMiddlePoints.Add(randomMiddlePoint);
 
-                PostItDream newDream = new PostItDream(randomMiddlePoint, postItSize, 0, this, world, listWishesTextures[i % listWishesTextures.Count], i + nightmaresCount, random);
+                PostItDream newDream = new PostItDream(randomMiddlePoint, postItSize, i % listWishesTextures.Count + 1, this, world, listWishesTextures[i % listWishesTextures.Count], i + nightmaresCount, random);
                 postItDreamsList.Add(newDream);
             }
 

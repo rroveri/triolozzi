@@ -13,7 +13,13 @@ namespace WindowsGame2.GameElements
     public class PostItDream
     {
 
-        public int isNightmare;
+        public int isNightmare {
+            get {
+                if (indexNumber > 3) return 1;
+                else return 0;
+            }
+        }
+        public int indexNumber;
         public Vector2 postItSize;
         public Vector2 textureScaleVec;
         public Vector2 position;
@@ -24,7 +30,7 @@ namespace WindowsGame2.GameElements
         private Texture2D backgroundTexture;
         private Texture2D foregroundTexture;
 
-        public PostItDream(int middlePoint, Vector2 _postItSize, int _isNightmare, RandomTrack randomTrack, World world, Texture2D _foregroundTexture, int postItIndex, Random random)
+        public PostItDream(int middlePoint, Vector2 _postItSize, int indexNumber, RandomTrack randomTrack, World world, Texture2D _foregroundTexture, int postItIndex, Random random)
         {
 
             postItSize = _postItSize;
@@ -36,7 +42,7 @@ namespace WindowsGame2.GameElements
             
             color = Color.White;
 
-            isNightmare = _isNightmare;
+            this.indexNumber = indexNumber;
 
             if (isNightmare == 0)
             {

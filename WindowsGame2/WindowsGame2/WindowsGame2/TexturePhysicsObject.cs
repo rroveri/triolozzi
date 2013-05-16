@@ -19,17 +19,17 @@ namespace WindowsGame2
     {
         public Body _compound;
         public Vector2 _origin;
-        private Texture2D _polygonTexture;
-        private Vector2 textureScale;
-        private Vector2 vertScale;
-        private Color color;
+        protected Texture2D _polygonTexture;
+        protected Vector2 textureScale;
+        protected Vector2 vertScale;
+        protected Color color;
 
-        private Vector2 secondTextureScale;
-        private Vector2 secondVertScale;
+        protected Vector2 secondTextureScale;
+        protected Vector2 secondVertScale;
 
-        private Vector2 currentScale;
+        protected Vector2 currentScale;
 
-        private bool isSecondModeActive;
+        protected bool isSecondModeActive;
 
         public Vector2 Position
         {
