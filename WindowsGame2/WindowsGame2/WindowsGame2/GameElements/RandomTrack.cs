@@ -486,7 +486,7 @@ namespace WindowsGame2.GameElements
                 int randomMiddlePoint = computeRandomDreamMiddlePoint();
                 dreamsMiddlePoints.Add(randomMiddlePoint);
 
-                PostItDream newDream = new PostItDream(randomMiddlePoint, postItSize, 1, this, world, listNightmaresTextures[i % listNightmaresTextures.Count], i, random);
+                PostItDream newDream = new PostItDream(randomMiddlePoint, postItSize, 3 + i % listNightmaresTextures.Count + 1, this, world, listNightmaresTextures[i % listNightmaresTextures.Count], i, random);
                 postItDreamsList.Add(newDream);
             }
             //wishes
@@ -496,7 +496,7 @@ namespace WindowsGame2.GameElements
                 int randomMiddlePoint = computeRandomDreamMiddlePoint();
                 dreamsMiddlePoints.Add(randomMiddlePoint);
 
-                PostItDream newDream = new PostItDream(randomMiddlePoint, postItSize, 0, this, world, listWishesTextures[i % listWishesTextures.Count], i + nightmaresCount, random);
+                PostItDream newDream = new PostItDream(randomMiddlePoint, postItSize, i % listWishesTextures.Count + 1, this, world, listWishesTextures[i % listWishesTextures.Count], i + nightmaresCount, random);
                 postItDreamsList.Add(newDream);
             }
 
@@ -521,6 +521,16 @@ namespace WindowsGame2.GameElements
             startLineVertices[3].Position = new Vector3(curvePointsExternal[0]+ normalLine, -0.1f);
             startLineVertices[4].Position = new Vector3(curvePointsInternal[internalCorrispondances[0]] + normalLine, -0.1f);
             startLineVertices[5].Position = new Vector3(curvePointsExternal[0], -0.1f);
+
+            float shortRatioY = ConvertUnits.ToDisplayUnits(1 / 64.0f * normalLine.Length()) * .5f;
+            float longRationX = ConvertUnits.ToDisplayUnits(1 / 64.0f * (curvePointsInternal[internalCorrispondances[0]] - curvePointsExternal[0]).Length()) * .5f;
+
+            startLineVertices[0].TextureCoordinate = new Vector2(0, shortRatioY);
+            startLineVertices[1].TextureCoordinate = new Vector2(longRationX, shortRatioY);
+            startLineVertices[2].TextureCoordinate = new Vector2(0,0);
+            startLineVertices[3].TextureCoordinate = new Vector2(longRationX, 0);
+            startLineVertices[4].TextureCoordinate = new Vector2(0,0);
+            startLineVertices[5].TextureCoordinate = new Vector2(longRationX, shortRatioY);
         }
 
         public void changePostItColor(int index, Car car)

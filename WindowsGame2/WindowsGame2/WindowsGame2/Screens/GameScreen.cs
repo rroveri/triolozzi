@@ -1065,18 +1065,26 @@ namespace WindowsGame2.Screens
             // draw cars and their trails
             for (int i = 0; i < Cars.Count; i++)
             {
+                Cars[i].DrawGlow(spriteBatch);
+                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
+            }
+
+            // draw cars and their trails
+            for (int i = 0; i < Cars.Count; i++)
+            {
                 Cars[i].Draw(spriteBatch, out trails[i], out burnouts[i]);
+                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
+            }
+
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                Cars[i].DrawPowerup(spriteBatch);
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
             }
 
             spriteBatch.End();
 
-            
-
-            
-
             drawFluid();
-
 
             spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.TransformNoZoom);
 

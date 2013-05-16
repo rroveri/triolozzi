@@ -121,8 +121,18 @@ namespace WindowsGame2.GameElements
         static public int powerupInverted = 6;
         public int currentPowerup = 0;
 
+        private Texture2D[] powerupsTextures = new Texture2D[7];
+        private Texture2D powerupGlowTexture;
+
+        private double timer, blinkTimer;
+        private double powerupDuration = 7.0 * 1000.0;
+        private double startBlinkingFrom = 5.0 * 1000.0;
+        private double blinkingDuration = 0.2 * 1000.0;
+        private bool startedBlinking;
+
         public Bullet bullet;
         public bool bulletIsShot;
+        
 
         
 
@@ -236,11 +246,17 @@ namespace WindowsGame2.GameElements
 
             _compound.CollisionCategories = Category.Cat20;
 
+            ContentManager cm = GameServices.GetService<ContentManager>();
 
+            powerupsTextures[0] = null;
+            powerupsTextures[1] = cm.Load<Texture2D>("Images/powerups/powerup-ali");
+            powerupsTextures[2] = cm.Load<Texture2D>("Images/powerups/powerup-fuoco");
+            powerupsTextures[3] = null;
+            powerupsTextures[4] = null;
+            powerupsTextures[5] = null;
+            powerupsTextures[6] = null;
 
-
-
-            
+            powerupGlowTexture = cm.Load<Texture2D>("Images/powerups/glow");
         }
 
         bool body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
@@ -261,6 +277,7 @@ namespace WindowsGame2.GameElements
                     if (randomTrack.postItDreamsList[postItNumber].color == Color.White)
                     {
                         randomTrack.changePostItColor(postItNumber, this);
+                        setPowerup(randomTrack.postItDreamsList[postItNumber].indexNumber);
                     }
                 }
             }
@@ -311,6 +328,10 @@ namespace WindowsGame2.GameElements
 
         public void Update(GamePadState gps, KeyboardState ks, GameTime gameTime)
         {
+
+            timer += gameTime.ElapsedGameTime.TotalMilliseconds;
+            blinkTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (timer > powerupDuration) stopPowerup();
 
             updateCounter++;
             
@@ -800,6 +821,36 @@ namespace WindowsGame2.GameElements
             message.Draw(spriteBatch);
         }
 
+        public void DrawPowerup(SpriteBatch spriteBatch)
+        {
+            if (powerupsTextures[currentPowerup] == null) return;
+            spriteBatch.Draw(powerupsTextures[currentPowerup], ConvertUnits.ToDisplayUnits(_compound.Position),
+                                           null, mColor, _compound.Rotation, _origin * 3.0f, textureScale, SpriteEffects.None,
+                                           0.9f);
+        }
+
+        public void DrawGlow(SpriteBatch spriteBatch)
+        {
+            if (currentPowerup == powerupNone) return;
+            if (timer > startBlinkingFrom)
+            {
+                if(!startedBlinking) 
+                {
+                    blinkTimer = 0.0;
+                    startedBlinking = true;
+                }
+
+                if (blinkTimer > 2.0 * blinkingDuration) blinkTimer = 0.0;
+                else if (blinkTimer < blinkingDuration) return; 
+            }
+
+            Color glowColor = mColor;
+            if (currentPowerup > 3) glowColor = Color.Gray;
+            spriteBatch.Draw(powerupGlowTexture, ConvertUnits.ToDisplayUnits(_compound.Position),
+                                           null, glowColor, _compound.Rotation, _origin * 3.0f, textureScale, SpriteEffects.None,
+                                           0.9f);
+        }
+
         public void DrawBullet(SpriteBatch spriteBatch)
         {
             bullet.Draw(spriteBatch);
@@ -825,7 +876,21 @@ namespace WindowsGame2.GameElements
 
             DrawBullet(spriteBatch);
 
-            base.Draw(spriteBatch);
+            Color carColor = mColor;
+            if (currentPowerup == powerupNoDrawing) carColor = Color.White;
+            if (!isSecondModeActive)
+            {
+                spriteBatch.Draw(_polygonTexture, ConvertUnits.ToDisplayUnits(_compound.Position),
+                                           null, carColor, _compound.Rotation, _origin, textureScale, SpriteEffects.None,
+                                           0.9f);
+            }
+            else
+            {
+                spriteBatch.Draw(_polygonTexture, ConvertUnits.ToDisplayUnits(_compound.Position),
+                                           null, carColor, _compound.Rotation, _origin, secondTextureScale, SpriteEffects.None,
+                                           0.9f);
+
+            }
         }
 
         public bool TrailObstacle(World World)
@@ -954,13 +1019,11 @@ namespace WindowsGame2.GameElements
 
         public void setPowerup(int powerupIndex)
         {
+            stopPowerup();
             currentPowerup = powerupIndex;
+            timer = 0.0;
 
-            if (powerupIndex == 0)
-            {
-                stopPowerup();
-            }
-            else if(powerupIndex == powerupWings)
+            if(powerupIndex == powerupWings)
             {
                 _compound.CollisionCategories = Category.Cat21;
             }
