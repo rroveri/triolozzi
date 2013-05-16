@@ -144,7 +144,6 @@ namespace WindowsGame2.Screens
 
             RankScreen = new RankingScreen("");
             RankScreen.Accepted += RankScreenAccepted;
-
             PauseScreen = new PauseMenuScreen();
 
             polygonsList = new List<PolygonPhysicsObject>();
@@ -1128,8 +1127,6 @@ namespace WindowsGame2.Screens
             {
                 Cars[i].stopSteeringSound();
             }
-
-            ScreenManager.RemoveScreen(RankScreen);
             ScreenManager.QuitGame();
         }
 

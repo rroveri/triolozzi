@@ -270,9 +270,6 @@ namespace WindowsGame2.Screens
 
             if (IsEveryoneReady())
             {
-                //ScreenManager.ShowScreen<LoadingScreen>();
-                //ScreenManager.GetScreen<LoadingScreen>().SetBusy();
-                
                 StartSandboxScreen();
 
                 return;
