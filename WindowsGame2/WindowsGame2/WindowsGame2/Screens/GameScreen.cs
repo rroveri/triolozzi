@@ -121,11 +121,12 @@ namespace WindowsGame2.Screens
         Texture2D texInk;
         RenderTarget2D buffer;
 
-        Effect coloredEffect;
+        Effect fluidEffect;
 
         private bool isFullHd;
 
         private int obstaclesLoop;
+        private Texture2D randomTex;
 
 
 
@@ -291,7 +292,8 @@ namespace WindowsGame2.Screens
 
             mySneezesManager.fluid = fluid;
 
-            coloredEffect = Content.Load<Effect>("Shaders/FluidEffect");
+            fluidEffect = Content.Load<Effect>("Shaders/FluidEffect");
+            fluidEffect.Parameters["random"].SetValue(randomTex);
 
             texInk = new Texture2D(graphics.GraphicsDevice,
                 fluid.m_w, fluid.m_h, true,
@@ -329,7 +331,7 @@ namespace WindowsGame2.Screens
             randomArray[0] = 0.5f;
             for (int i = 1; i < randomArray.Count(); i++) randomArray[i] = (float)Random.NextDouble();
             for (int i = 0; i < randomArray.Count(); i++) randomCol[i] = Color.White * randomArray[i];
-            Texture2D randomTex = new Texture2D(graphics.GraphicsDevice, 16, 16);
+            randomTex = new Texture2D(graphics.GraphicsDevice, 16, 16);
             randomTex.SetData(randomCol);
             paperEffect.Parameters["random"].SetValue(randomTex);
         }
@@ -896,11 +898,11 @@ namespace WindowsGame2.Screens
             graphics.GraphicsDevice.Textures[0] = null;
 
             texInk.SetData<Color>(fluid.texData);
-            coloredEffect.Parameters["Texture"].SetValue(texInk);
+            fluidEffect.Parameters["Texture"].SetValue(texInk);
 
 #if !XBOX360
-            coloredEffect.Parameters["textureSize"].SetValue(100.0f);
-            coloredEffect.Parameters["texelSize"].SetValue(0.01f);
+            fluidEffect.Parameters["textureSize"].SetValue(100.0f);
+            fluidEffect.Parameters["texelSize"].SetValue(0.01f);
 #endif
             //graphics.GraphicsDevice.SetRenderTarget(buffer);
             //graphics.GraphicsDevice.Clear(ClearOptions.Target, Color.White, 0, 0);
@@ -908,13 +910,13 @@ namespace WindowsGame2.Screens
             //quad.renderMainQuad();
             //graphics.GraphicsDevice.SetRenderTarget(null);
             //Texture2D rend = gaussian.Render(buffer);
-            coloredEffect.Parameters["Texture"].SetValue(texInk);
-            coloredEffect.Techniques[0].Passes[0].Apply();
+            fluidEffect.Parameters["Texture"].SetValue(texInk);
+            fluidEffect.Techniques[0].Passes[0].Apply();
             quad.renderFromDisplayUnits(fluid.renderPosition,fluid.renderWidth,fluid.renderHeight);
 
             Texture2D trailSketch = Content.Load<Texture2D>("Materials/trailSketch");
-            coloredEffect.Parameters["Texture"].SetValue(trailSketch);
-            coloredEffect.Techniques[0].Passes[0].Apply();
+            fluidEffect.Parameters["Texture"].SetValue(trailSketch);
+            fluidEffect.Techniques[0].Passes[0].Apply();
             
             //quad.renderFromScreenUnits(currentMousePos, 10, 10);
         }

@@ -95,6 +95,11 @@ namespace WindowsGame2
 
         public void renderFromDisplayUnits(Vector2 v1, float dx, float dy)
         {
+            verts[0].Position.Z = v1.X + v1.Y;
+            verts[1].Position.Z = v1.X;
+            verts[2].Position.Z = v1.Y;
+            verts[3].Position.Z = v1.X - v1.Y;
+
             v1 = Vector2.Transform(v1, camera.Transform);
             v1.X = v1.X / (float)screenWidth * 2 - 1;
             v1.Y = 1 - v1.Y / (float)screenHeight * 2;
