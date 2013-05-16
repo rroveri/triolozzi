@@ -1091,7 +1091,7 @@ namespace WindowsGame2.Screens
             ScreenManager.QuitGame();
         }
 
-        public void InitializeGame(int playersCount, ref int[] selectedCars, ref Texture2D[] availableCars, ref int[] selectedColors, ref Color[] availableColors)
+        public void InitializeGame(int playersCount, ref List<Tuple<Texture2D, Color>> cars)
         {
             Cars.Clear();
             particleComponent.particleEmitterList.Clear();
@@ -1104,8 +1104,8 @@ namespace WindowsGame2.Screens
 
             for (int i = 0; i < playersCount; i++)
             {
-                Cars.Add(new Car(world, availableCars[selectedCars[i]], availableColors[selectedColors[i]], randomRaceTrack, i));
-                screenRenderer.SetColor(availableColors[selectedColors[i]], i);
+                Cars.Add(new Car(world, cars[i].Item1, cars[i].Item2, randomRaceTrack, i));
+                screenRenderer.SetColor(cars[i].Item2, i);
             }
 
             double frequency = 1d;

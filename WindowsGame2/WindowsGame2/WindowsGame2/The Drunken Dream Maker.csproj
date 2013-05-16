@@ -132,6 +132,7 @@
     <Compile Include="GameElements\PostItDream.cs" />
     <Compile Include="GameElements\PostItQuote.cs" />
     <Compile Include="GameElements\RandomTrack.cs" />
+    <Compile Include="GameElements\SandboxCar.cs" />
     <Compile Include="ScreenManagement\GameServices.cs" />
     <Compile Include="ScreenManagement\InputAction.cs" />
     <Compile Include="PolygonPhysicsObject.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Screens\PauseMenuScreen.cs" />
     <Compile Include="Screens\PlayerIndexEventArgs.cs" />
     <Compile Include="Screens\RankingScreen.cs" />
+    <Compile Include="Screens\SandboxScreen.cs" />
     <Compile Include="SneezesManager.cs" />
     <Compile Include="SoundManager.cs" />
     <Compile Include="Sprite.cs" />

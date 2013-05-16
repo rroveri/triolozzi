@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{683DEA16-57A3-41B5-975D-95A7E9B1AE45}</ProjectGuid>
+    <ProjectGuid>{02b93655-7b6f-4643-a204-21852c81d533}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">Xbox 360</Platform>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WindowsGame2</RootNamespace>
-    <AssemblyName>WindowsGame2</AssemblyName>
+    <AssemblyName>The Drunken Dream Maker</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
@@ -18,7 +18,8 @@
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
     <Thumbnail>GameThumbnail.png</Thumbnail>
-    <PublishUrl>publish\</PublishUrl>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>T:\private\desktop-dinfk-xp\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -28,10 +29,10 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Xbox 360' ">
@@ -69,11 +70,10 @@
     <Compile Include="CounterIndicator.cs" />
     <Compile Include="Events\EliminatedCarEventArgs.cs" />
     <Compile Include="Events\FinishedLapEventArgs.cs" />
-    <Compile Include="fluid\Fluid.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="fluid\Fluid.cs" />
     <Compile Include="fluid\GaussianBlur.cs" />
     <Compile Include="fluid\QuadRenderComponent.cs" />
+    <Compile Include="GameElements\Bullet.cs" />
     <Compile Include="GameElements\Car.cs" />
     <Compile Include="AssetCreator.cs" />
     <Compile Include="ConvertUnits.cs" />
@@ -86,6 +86,7 @@
     <Compile Include="GameElements\PostItDream.cs" />
     <Compile Include="GameElements\PostItQuote.cs" />
     <Compile Include="GameElements\RandomTrack.cs" />
+    <Compile Include="GameElements\SandboxCar.cs" />
     <Compile Include="ScreenManagement\GameServices.cs" />
     <Compile Include="ScreenManagement\InputAction.cs" />
     <Compile Include="PolygonPhysicsObject.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="Screens\PauseMenuScreen.cs" />
     <Compile Include="Screens\PlayerIndexEventArgs.cs" />
     <Compile Include="Screens\RankingScreen.cs" />
+    <Compile Include="Screens\SandboxScreen.cs" />
     <Compile Include="SneezesManager.cs" />
     <Compile Include="SoundManager.cs" />
     <Compile Include="Sprite.cs" />

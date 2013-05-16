@@ -150,7 +150,7 @@ namespace WindowsGame2
             timerGoAwayBastard = false;
             timerGoAway = 0;
 
-
+            setCameraZoom(numberOfCars);
         }
 
         public void setCameraZoom(int numberOfCars)

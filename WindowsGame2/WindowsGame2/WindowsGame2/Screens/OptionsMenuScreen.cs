@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using System;
 using System.Threading;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace WindowsGame2.Screens
 {
@@ -239,15 +240,26 @@ namespace WindowsGame2.Screens
 
         #region Handle Input
 
-        private void StartGame(object sender, DoWorkEventArgs e)
+        private void StartSandboxScreen()
         {
-            ScreenManager.AddScreen(new GameScreen(), null, false);
-            ScreenManager.GetScreen<GameScreen>().InitializeGame(PlayersCount, ref _selectedCars, ref _availableCars, ref _selectedColors, ref _availableColors);
+            var cars = new List<Tuple<Texture2D, Color>>();
+            Texture2D selectedCar;
+            Color selectedColor;
+            Rectangle[] positions = _CarsPositions[PlayersCount-2];
+            for (int i = 0; i < PlayersCount; i++)
+            {
+                selectedCar = _availableCars[_selectedCars[i]];
+                selectedColor = _availableColors[_selectedColors[i]];
+
+                cars.Add(new Tuple<Texture2D, Color>(selectedCar, selectedColor));
+            }
+            ScreenManager.AddScreen(new SandboxScreen(cars, _CarsPositions[PlayersCount-2]), null);
+            ScreenManager.ShowScreen<SandboxScreen>();
         }
 
         private void StartGameCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            ScreenManager.GetScreen<LoadingScreen>().SetReady();
+            //ScreenManager.GetScreen<LoadingScreen>().SetReady();
         }
 
         public override void HandleInput(GameTime gameTime, InputState input)
@@ -257,15 +269,11 @@ namespace WindowsGame2.Screens
 
             if (IsEveryoneReady())
             {
-                ScreenManager.ShowScreen<LoadingScreen>();
-                ScreenManager.GetScreen<LoadingScreen>().SetBusy();
+                //ScreenManager.ShowScreen<LoadingScreen>();
+                //ScreenManager.GetScreen<LoadingScreen>().SetBusy();
+                
+                StartSandboxScreen();
 
-                BackgroundWorker worker = new BackgroundWorker();
-                worker.DoWork += StartGame;
-                worker.RunWorkerCompleted += StartGameCompleted;
-                worker.RunWorkerAsync();
-
-                //_soundManager.PlaySong("Cracks", false);
                 return;
             }
 
