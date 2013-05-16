@@ -29,6 +29,9 @@ namespace WindowsGame2
 
         public static readonly string CarSteering = "CarSteering";
 
+        public static readonly string Sneeze = "Sneeze";
+        public static readonly string Splat = "Splat";
+
         public static readonly string MenuSong = "MenuSong";
         public static readonly string GameSong = "GameSong";
 
@@ -51,6 +54,8 @@ namespace WindowsGame2
             effectsPool[SoundManager.MenuSelection] = new Queue<SoundEffectInstance>();
             effectsPool[SoundManager.CarCrash] = new Queue<SoundEffectInstance>();
             effectsPool[SoundManager.CarSteering] = new Queue<SoundEffectInstance>();
+            effectsPool[SoundManager.Sneeze] = new Queue<SoundEffectInstance>();
+            effectsPool[SoundManager.Splat] = new Queue<SoundEffectInstance>();
 
             loopedEffectsPool = new Dictionary<string, Queue<SoundEffectInstance>>();
         }
@@ -64,6 +69,8 @@ namespace WindowsGame2
 
             LoadSound(SoundManager.MenuSelection, "Sounds/menu_selection");
             LoadSound(SoundManager.CarSteering, "Sounds/CarSteering");
+            LoadSound(SoundManager.Sneeze, "Sounds/mucus/sneeze");
+            LoadSound(SoundManager.Splat, "Sounds/mucus/splat2_converted");
             
             SoundEffectInstance sound;
 
@@ -74,6 +81,12 @@ namespace WindowsGame2
                 effectsPool[SoundManager.MenuSelection].Enqueue(sound);
             }
 
+
+            sound = Sounds[SoundManager.Sneeze].CreateInstance();
+            sound.Volume = 0.5f;
+            sound.IsLooped = false;
+            effectsPool[SoundManager.Sneeze].Enqueue(sound);
+
             
             for (int i = 0; i < 4; i++)
             {
@@ -81,6 +94,11 @@ namespace WindowsGame2
                 sound.Volume = 0.2f;
                 sound.IsLooped = true;
                 effectsPool[SoundManager.CarSteering].Enqueue(sound);
+
+                sound = Sounds[SoundManager.Splat].CreateInstance();
+                sound.Volume = 1f;
+                sound.IsLooped = false;
+                effectsPool[SoundManager.Splat].Enqueue(sound);
 
                 for (int j = 0; j < 20; j++)
                 {

@@ -123,8 +123,6 @@ namespace WindowsGame2.Screens
 
         Effect coloredEffect;
 
-        SoundEffect splatSound;
-
         private bool isFullHd;
 
         private int obstaclesLoop;
@@ -175,7 +173,7 @@ namespace WindowsGame2.Screens
 
             mySneezesManager = new SneezesManager();
 
-            splatSound=GameServices.GetService<ContentManager>().Load<SoundEffect>("Sounds/mucus/splat2_converted");
+            
 
             obstaclesLoop = 0;
         }
@@ -573,7 +571,7 @@ namespace WindowsGame2.Screens
                     if (!Cars[i].isInsideMucus)
                     {
                         //play splat sound
-                        splatSound.Play();
+                        soundManager.PlaySound(SoundManager.Splat);
                         Cars[i].isInsideMucus = true;
                     }
                 }
@@ -1099,6 +1097,14 @@ namespace WindowsGame2.Screens
         public void RankScreenAccepted(object sender, PlayerIndexEventArgs e)
         {
             RankScreen.Accepted -= RankScreenAccepted;
+
+            soundManager.StopSong();
+            soundManager.StopAllSounds();
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                Cars[i].stopSteeringSound();
+            }
+
             ScreenManager.RemoveScreen(RankScreen);
             ScreenManager.QuitGame();
         }
