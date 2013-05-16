@@ -115,7 +115,15 @@ namespace WindowsGame2
             CurrentSong = songName;
             MediaPlayer.IsRepeating = repeat;
             MediaPlayer.Play(Songs[CurrentSong]);
-            MediaPlayer.Volume = 1f;
+
+            if (songName == SoundManager.MenuSong)
+            {
+                MediaPlayer.Volume = .65f;
+            }
+            else
+            {
+                MediaPlayer.Volume = 1f;
+            }
         }
 
         public void PauseSong()
