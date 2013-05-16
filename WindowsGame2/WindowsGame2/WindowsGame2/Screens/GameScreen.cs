@@ -419,7 +419,9 @@ namespace WindowsGame2.Screens
 
             //compute angle
             float angle = randomRaceTrack.computeStartingAngle(startingPoint) - 90;
-            
+
+            bool didFinishLap = false;
+
             for (int i = 0; i < Cars.Count; i++)
             {
                 Cars[i].isActive = true;
@@ -428,8 +430,17 @@ namespace WindowsGame2.Screens
                 Cars[i]._compound.ResetDynamics();
 
                 Cars[i]._compound.Position = startingPos[i];
+
+                // Check if moving the car to the new
+                // position caused a lap to be completed
+                if (startingPoint < Cars[i].currentMiddlePoint)
+                {
+                    didFinishLap = true;
+                }
+                
                 //set current middle point
                 Cars[i].currentMiddlePoint = startingPoint;
+
                 //set rotation
                 Cars[i]._compound.Rotation = angle;
                 
@@ -447,6 +458,11 @@ namespace WindowsGame2.Screens
                 Cars[i].message.disactivate();
 
                 Cars[i].bulletIsShot = false;
+            }
+
+            if (didFinishLap)
+            {
+                Logic.IncreaseLaps();
             }
             
             readyToStart = true;

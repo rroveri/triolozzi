@@ -118,6 +118,17 @@ namespace WindowsGame2.GameElements
             LastCarIndex = Ranking[Cars.Count - 1 - _eliminatedCars];
         }
 
+        public void IncreaseLaps()
+        {
+            Laps++;
+            ResetCrucialPoints();
+            _finishedLapEvent.LapNumber = Laps;
+            if (DidFinishLap != null)
+            {
+                DidFinishLap(this, _finishedLapEvent);
+            }
+        }
+
         #endregion
 
         #region Queries
@@ -219,13 +230,7 @@ namespace WindowsGame2.GameElements
 
                 if (point <= 50 && !didReachCrucialPoint.ContainsValue(false))
                 {
-                    Laps++;
-                    ResetCrucialPoints();
-                    _finishedLapEvent.LapNumber = Laps;
-                    if (DidFinishLap != null)
-                    {
-                        DidFinishLap(this, _finishedLapEvent);
-                    }
+                    IncreaseLaps();
                 }
             }
         }
