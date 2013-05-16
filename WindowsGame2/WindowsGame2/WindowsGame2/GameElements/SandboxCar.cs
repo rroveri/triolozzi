@@ -103,12 +103,12 @@ namespace WindowsGame2.GameElements
             }
         }
 
-        public void HandleInput(GameTime gameTime, InputState input)
+        public void HandleInput(GameTime gameTime, PlayerIndex controllingPlayer, InputState input)
         {
             if (_isReady) return;
 
             PlayerIndex playerIndex;
-            if (_readyAction.Evaluate(input, null, out playerIndex))
+            if (_readyAction.Evaluate(input, controllingPlayer, out playerIndex))
             {
                 _isReady = true;
                 _compound.LinearVelocity = Vector2.Zero;

@@ -82,7 +82,7 @@ namespace WindowsGame2.Screens
 
             _titlePosition = new Rectangle(viewport.Width / 2 - _sandboxTitle.Width / 2, 100, _sandboxTitle.Width, _sandboxTitle.Height);
             
-            SetupWorldBorders(viewport);
+            SetupWorldBorders();
 
             // TODO: adjust matrices
             _projectionMatrix = _camera; //Matrix.CreateOrthographicOffCenter(0f, ConvertUnits.ToSimUnits(viewport.Width) * (1 / (float)Math.Pow(Zoom, 10)),
@@ -90,10 +90,10 @@ namespace WindowsGame2.Screens
             _viewMatrix = _camera; // Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(objectPosition) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(Zoom, 10)), 0f));
         }
 
-        private void SetupWorldBorders(Viewport viewport)
+        private void SetupWorldBorders()
         {
-            float width = ConvertUnits.ToSimUnits(viewport.Width);
-            float height = ConvertUnits.ToSimUnits(viewport.Height);
+            float width = ConvertUnits.ToSimUnits(1920);
+            float height = ConvertUnits.ToSimUnits(1080);
 
             Vertices borders = new Vertices(4);
             borders.Add(Vector2.Zero);
@@ -140,7 +140,7 @@ namespace WindowsGame2.Screens
 
             for (int i = 0; i < _cars.Count; i++)
             {
-                _cars[i].HandleInput(gameTime, input);
+                _cars[i].HandleInput(gameTime, (PlayerIndex)i, input);
             }
         }
 
@@ -173,6 +173,9 @@ namespace WindowsGame2.Screens
             ScreenManager.SpriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, _camera);
             ScreenManager.SpriteBatch.Draw(_backgroundTexture, Vector2.Zero, ScreenManager.GraphicsDevice.Viewport.Bounds, Color.White, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1f);
             ScreenManager.SpriteBatch.Draw(_sandboxTitle, _titlePosition, null, Color.White);
+            ScreenManager.SpriteBatch.End();
+
+            ScreenManager.SpriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, ScreenManager.scaleMatrix);
 
             for (int i = 0; i < _cars.Count; i++)
             {

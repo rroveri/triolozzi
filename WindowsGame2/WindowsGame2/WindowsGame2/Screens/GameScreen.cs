@@ -435,7 +435,7 @@ namespace WindowsGame2.Screens
 
                 // Check if moving the car to the new
                 // position caused a lap to be completed
-                if (startingPoint < Cars[i].currentMiddlePoint)
+                if (startingPoint / randomRaceTrack.curvePointsMiddle.Count > Cars[i].currentMiddlePoint / randomRaceTrack.curvePointsMiddle.Count)
                 {
                     didFinishLap = true;
                 }
