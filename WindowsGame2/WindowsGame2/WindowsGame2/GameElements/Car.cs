@@ -331,7 +331,7 @@ namespace WindowsGame2.GameElements
 
             timer += gameTime.ElapsedGameTime.TotalMilliseconds;
             blinkTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (timer > powerupDuration) stopPowerup();
+            if (timer > powerupDuration && currentPowerup != powerupNone) stopPowerup();
 
             updateCounter++;
             
