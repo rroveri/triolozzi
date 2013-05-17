@@ -379,10 +379,10 @@ namespace WindowsGame2.GameElements
 
             float newAcc = 0.0f;
 
-            bool invertedLeftToRight = ks.IsKeyDown(Keys.Left) && currentPowerup == powerupInverted;
-            bool invertedRightToLeft = ks.IsKeyDown(Keys.Right) && currentPowerup == powerupInverted;
-            bool invertedUpToDown = ks.IsKeyDown(Keys.Up) && currentPowerup == powerupInverted;
-            bool invertedDownToUp = ks.IsKeyDown(Keys.Down) && currentPowerup == powerupInverted;
+            bool invertedLeftToRight = (ks.IsKeyDown(Keys.Left) || gps.ThumbSticks.Right.X < 0) && currentPowerup == powerupInverted;
+            bool invertedRightToLeft = (ks.IsKeyDown(Keys.Right) || gps.ThumbSticks.Right.X > 0) && currentPowerup == powerupInverted;
+            bool invertedUpToDown = (ks.IsKeyDown(Keys.Up) || gps.ThumbSticks.Right.Y > 0) && currentPowerup == powerupInverted;
+            bool invertedDownToUp = (ks.IsKeyDown(Keys.Down) || gps.ThumbSticks.Right.Y < 0) && currentPowerup == powerupInverted;
 
             if ((ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0 || ks.IsKeyDown(Keys.D) && brownOnly || invertedLeftToRight) && !invertedRightToLeft)
             {

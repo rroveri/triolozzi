@@ -21,6 +21,7 @@ namespace WindowsGame2
         private float nPoints = 54;
         public VertexPositionColorTexture[] postitVertices, pijiamaVertices,lapVertices, nLapsVertices;
         public VertexPositionColorTexture[][] barVertices;
+        public VertexPositionColorTexture[][] bulletVertices;
 
         private Vector2 texNW, texNE, texOW, texOE;
         private Vector2 initPoint = new Vector2();
@@ -28,6 +29,8 @@ namespace WindowsGame2
         private float offset = 0.0f;
         private float width = 0.25f, height = 0.30f;
         private float barOffsetW, barOffsetH, barWidth, barHeight, pointLength;
+
+        private float bulletOffsetW = 0.03f, bulletOffsetH = 0, bulletWidth = 0.03f, bulletHeight = 0.25f;
 
         private float lapWidth = 0.125f, lapHeight = 0.15f;
         private float lapOffset = 0.0f;
@@ -57,9 +60,11 @@ namespace WindowsGame2
             postitVertices = new VertexPositionColorTexture[6 * kMaximumPlayers];
             pijiamaVertices = new VertexPositionColorTexture[6 * kMaximumPlayers];
             barVertices = new VertexPositionColorTexture[kMaximumPlayers][];
+            bulletVertices = new VertexPositionColorTexture[kMaximumPlayers][];
             for (int i = 0; i < kMaximumPlayers; i++)
             {
                 barVertices[i] = new VertexPositionColorTexture[6 * (int)nPoints * 4];
+                bulletVertices[i] = new VertexPositionColorTexture[6];
             }
 
 
@@ -160,6 +165,54 @@ namespace WindowsGame2
                     for(int c = 0; c < 6; c++)
                         barVertices[p][i * 6 + c].Color = Color.White;
                 }
+
+                if (p == 0)
+                {
+                    initPoint.X = -1 + width + bulletOffsetW;
+                    initPoint.Y = -1 + bulletOffsetH;
+                }
+                else if (p == 1)
+                {
+                    initPoint.X = 1 - width - bulletOffsetW - bulletOffsetW;
+                    initPoint.Y = -1 + bulletOffsetH;
+                }
+                else if (p == 2)
+                {
+                    initPoint.X = -1 + width + bulletOffsetW;
+                    initPoint.Y = 1 - bulletOffsetH - bulletHeight;
+                }
+                else if (p == 3)
+                {
+                    initPoint.X = 1 - width - bulletOffsetW - bulletOffsetW;
+                    initPoint.Y = 1 - bulletOffsetH - bulletHeight;
+                }
+
+                bulletVertices[p][0].Position = new Vector3(initPoint.X, initPoint.Y, 0);
+                bulletVertices[p][1].Position = new Vector3(initPoint.X + bulletWidth, initPoint.Y, 0);
+                bulletVertices[p][2].Position = new Vector3(initPoint.X, initPoint.Y + bulletHeight, 0);
+
+                bulletVertices[p][3].Position = new Vector3(initPoint.X + bulletWidth, initPoint.Y, 0);
+                bulletVertices[p][4].Position = new Vector3(initPoint.X + bulletWidth, initPoint.Y + bulletHeight, 0);
+                bulletVertices[p][5].Position = new Vector3(initPoint.X, initPoint.Y + bulletHeight, 0);
+
+                if (p > 1)
+                {
+                    bulletVertices[p][0].TextureCoordinate = texNW;
+                    bulletVertices[p][1].TextureCoordinate = texNE;
+                    bulletVertices[p][2].TextureCoordinate = texOW;
+                    bulletVertices[p][3].TextureCoordinate = texNE;
+                    bulletVertices[p][4].TextureCoordinate = texOE;
+                    bulletVertices[p][5].TextureCoordinate = texOW;
+                }
+                else
+                {
+                    bulletVertices[p][0].TextureCoordinate = texOW;
+                    bulletVertices[p][1].TextureCoordinate = texOE;
+                    bulletVertices[p][2].TextureCoordinate = texNW;
+                    bulletVertices[p][3].TextureCoordinate = texOE;
+                    bulletVertices[p][4].TextureCoordinate = texNE;
+                    bulletVertices[p][5].TextureCoordinate = texNW;
+                }
             }
 
             initPoint.X = -lapWidth / 2;
@@ -210,6 +263,7 @@ namespace WindowsGame2
                 {
                     barVertices[playerIndex][i * 6 + c].Color = color;
                     pijiamaVertices[playerIndex * 6 + c].Color = color;
+                    bulletVertices[playerIndex][c].Color = color;
                 }
             }
         }
@@ -249,6 +303,18 @@ namespace WindowsGame2
         {
             for (int i = 0; i < postitVertices.Count(); i++)
                     postitVertices[i].Color = Color.White;
+        }
+
+        public void setBulletShotToPlayer(int player)
+        {
+            for (int c = 0; c < 6; c++)
+                bulletVertices[player][c].Color = Color.White;
+        }
+
+        public void setBulletNotShotToPlayer(int player)
+        {
+            for (int c = 0; c < 6; c++)
+                bulletVertices[player][c].Color = barVertices[player][0].Color;
         }
 
         public void drawHUD(ref List<Car> Cars)
@@ -305,7 +371,16 @@ namespace WindowsGame2
 
             screenEffect.CurrentTechnique.Passes["BarPass"].Apply();
             for (int i = 0; i < Cars.Count(); i++)
+            {
                 device.DrawUserPrimitives(PrimitiveType.TriangleList, barVertices[i], 0, Cars[i].score * 2);
+            }
+
+            screenEffect.CurrentTechnique.Passes["PencilPass"].Apply();
+            for (int i = 0; i < Cars.Count(); i++)
+            {
+                device.DrawUserPrimitives(PrimitiveType.TriangleList, bulletVertices[i], 0, 2);
+            }
+            
         }
 
         private void LoadScreenEffect()
@@ -326,6 +401,9 @@ namespace WindowsGame2
 
             Texture2D numbers = Content.Load<Texture2D>("Images/numbers");
             screenEffect.Parameters["numbers"].SetValue(numbers);
+
+            Texture2D pencil = Content.Load<Texture2D>("Images/pencil");
+            screenEffect.Parameters["pencil"].SetValue(pencil);
 
             // Load and set happy post it for each player
             screenEffect.Parameters["postitHappy_NW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_NW"));

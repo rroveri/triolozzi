@@ -124,6 +124,7 @@ namespace WindowsGame2
 
         public void PlaySong(string songName, bool repeat)
         {
+            return;
             // If the song is already playing, do nothing.
             if (CurrentSong == songName) return;
 
