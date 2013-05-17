@@ -32,6 +32,10 @@ namespace WindowsGame2
         public static readonly string Sneeze = "Sneeze";
         public static readonly string Splat = "Splat";
 
+        public static readonly string Win = "Win";
+
+        public static readonly string Wish = "Wish";
+
         public static readonly string MenuSong = "MenuSong";
         public static readonly string GameSong = "GameSong";
 
@@ -56,6 +60,8 @@ namespace WindowsGame2
             effectsPool[SoundManager.CarSteering] = new Queue<SoundEffectInstance>();
             effectsPool[SoundManager.Sneeze] = new Queue<SoundEffectInstance>();
             effectsPool[SoundManager.Splat] = new Queue<SoundEffectInstance>();
+            effectsPool[SoundManager.Win] = new Queue<SoundEffectInstance>();
+            effectsPool[SoundManager.Wish] = new Queue<SoundEffectInstance>();
 
             loopedEffectsPool = new Dictionary<string, Queue<SoundEffectInstance>>();
         }
@@ -71,6 +77,8 @@ namespace WindowsGame2
             LoadSound(SoundManager.CarSteering, "Sounds/CarSteering");
             LoadSound(SoundManager.Sneeze, "Sounds/mucus/sneeze");
             LoadSound(SoundManager.Splat, "Sounds/mucus/splat2_converted");
+            LoadSound(SoundManager.Win, "Sounds/carwin");
+            LoadSound(SoundManager.Wish, "Sounds/wishSound");
             
             SoundEffectInstance sound;
 
@@ -124,6 +132,7 @@ namespace WindowsGame2
 
         public void PlaySong(string songName, bool repeat)
         {
+            
             // If the song is already playing, do nothing.
             if (CurrentSong == songName) return;
 

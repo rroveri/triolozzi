@@ -19,7 +19,7 @@ namespace WindowsGame2.GameElements
         /// <summary>
         /// The number of laps needed to finish the game.
         /// </summary>
-        private const int kMaximumLaps = 4;
+        private const int kMaximumLaps = 5;
 
         /// <summary>
         /// The crucial points in a track.
@@ -193,6 +193,7 @@ namespace WindowsGame2.GameElements
                             //show message
                             Cars[i].message.activate("?",1);
                             Cars[i].message.currentTexture = Cars[i].message.thumbsDown;
+                            Cars[i].isVisible = false;
 
                             // Immediately update the score of the eliminated car
                             UpdateScore(Cars[i], Cars.Count - 1 - _eliminatedCars);

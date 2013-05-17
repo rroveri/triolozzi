@@ -137,8 +137,8 @@ namespace WindowsGame2.GameElements
 
         public Bullet bullet;
         public bool bulletIsShot;
-        
 
+        public bool isVisible;
         
 
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
@@ -266,6 +266,8 @@ namespace WindowsGame2.GameElements
             powerupsTextures[6] = null;
 
             powerupGlowTexture = cm.Load<Texture2D>("Images/powerups/glow");
+
+            isVisible = true;
         }
 
         bool body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
@@ -931,6 +933,9 @@ namespace WindowsGame2.GameElements
 
             Color carColor = mColor;
             if (currentPowerup == powerupNoDrawing) carColor = Color.White;
+
+            if (isVisible == false) return;
+
             if (!isSecondModeActive)
             {
                 spriteBatch.Draw(_polygonTexture, ConvertUnits.ToDisplayUnits(_compound.Position),

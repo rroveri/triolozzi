@@ -114,6 +114,13 @@ namespace WindowsGame2
         private bool isFullHd;
         private float initialZoom;
 
+        public double timerShowOff;
+        public double timerShowOffMax = 1000;
+        public bool timerShowOffCanStart = true;
+        public bool updateTimerShowOff=false;
+
+        ScreenRenderer screenRenderer;
+
         /// <summary>
         /// Initialize a new Camera object
         /// </summary>
@@ -124,6 +131,9 @@ namespace WindowsGame2
         /// <param name="rotation">How much we want the camera to be rotated by default</param>
         public Camera(Viewport view, Vector2 position, Vector2 focus, float rotation, int numberOfCars, bool _isFullHd)
         {
+
+
+            screenRenderer = GameServices.GetService<ScreenRenderer>();
 
             isFullHd = _isFullHd;
 
@@ -150,6 +160,11 @@ namespace WindowsGame2
             timerGoAway = 0;
 
             setCameraZoom(numberOfCars);
+
+            timerShowOff = 0;
+            timerShowOffCanStart = true;
+            updateTimerShowOff = false;
+
         }
 
         public void setCameraZoom(int numberOfCars)
@@ -233,6 +248,13 @@ namespace WindowsGame2
                 counterIndicator.enter();
             }
 
+            if (updateTimerShowOff)
+            {
+                timerShowOff += gametime.ElapsedGameTime.TotalMilliseconds;
+                checkShowOffTimer(Cars);
+
+                counterIndicator.enter();
+            }
 
             //choose interpolation weight and cars weights depending on the number of players
             float interpWeight = 0.1f;
@@ -268,11 +290,15 @@ namespace WindowsGame2
 
             if (Vector2.Distance(oldPosition, objectPosition_) < 0.6f)
             {
+                /*
                 if (timerCanStart)
                 {
-                    updateTimer = true;
-                    timerCanStart = false;
-
+                    activateTimer();
+                }
+                */
+                if (timerShowOffCanStart)
+                {
+                    activateShowOffTimer();
                 }
 
             }
@@ -311,6 +337,31 @@ namespace WindowsGame2
             ViewMatrix = Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(objectPosition) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(Zoom, 10)), 0f));
         }
 
+        public void activateShowOffTimer()
+        {
+            updateTimerShowOff = true;
+            timerShowOffCanStart = false;
+        }
+
+        public void activateTimer()
+        {
+            updateTimer = true;
+            timerCanStart = false;
+        }
+
+        public void checkShowOffTimer(List<Car> Cars)
+        {
+            if (timerShowOff > timerShowOffMax)
+            {
+                timerShowOff = 0;
+                updateTimerShowOff = false;
+                activateTimer();
+                for (int i = 0; i < Cars.Count; i++)
+                {
+                    Cars[i].isVisible = true;
+                }
+            }
+        }
 
         public void checkTimer(List<Car> Cars)
         {
@@ -318,6 +369,8 @@ namespace WindowsGame2
             float totalMilliseconds = 1500;
             if (timer > totalMilliseconds)
             {
+                screenRenderer.setHappyToAllPlayers();
+
                 raceCanStart = true;
                 timer = 0;
                 updateTimer = false;

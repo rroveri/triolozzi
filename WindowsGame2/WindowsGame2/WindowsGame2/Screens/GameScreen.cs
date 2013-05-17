@@ -128,6 +128,7 @@ namespace WindowsGame2.Screens
         private int obstaclesLoop;
         private Texture2D randomTex;
 
+        private bool firstTime;
 
 
         #endregion
@@ -140,6 +141,8 @@ namespace WindowsGame2.Screens
         /// </summary>
         public GameScreen()
         {
+            firstTime = true;
+
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
@@ -216,6 +219,9 @@ namespace WindowsGame2.Screens
             LoadPaperEffect();
 
             screenRenderer = new ScreenRenderer();
+
+            GameServices.AddService<ScreenRenderer>(screenRenderer);
+
             Logic.DidEliminateCar += screenRenderer.setSadToPlayer;
             Logic.DidFinishLap += screenRenderer.setLap;
 
@@ -252,7 +258,7 @@ namespace WindowsGame2.Screens
 
             //generate starting positions and angles
             int startingPoint = 0;
-            positionCars(startingPoint);
+           // positionCars(startingPoint);
 
             _debugView = new DebugViewXNA(world);
             _debugView.AppendFlags(FarseerPhysics.DebugViewFlags.Shape);
@@ -338,7 +344,20 @@ namespace WindowsGame2.Screens
 
         public void positionCars(int startingPointToCheck)
         {
-            cameraFollowing.timerCanStart = true;
+            if (firstTime)
+            {
+                cameraFollowing.timerCanStart = true;
+                firstTime = false;
+                for (int i = 0; i < Cars.Count; i++)
+                {
+                    Cars[i].isVisible = true;
+                }
+            }
+            else
+            {
+                soundManager.PlaySound("Wish");
+                cameraFollowing.timerShowOffCanStart = true;
+            }
             
 
             GC.Collect();
@@ -426,6 +445,8 @@ namespace WindowsGame2.Screens
 
             for (int i = 0; i < Cars.Count; i++)
             {
+                
+
                 Cars[i].isActive = true;
                 
                 //erase velocities
@@ -698,7 +719,7 @@ namespace WindowsGame2.Screens
             {
                 int newMiddlePoint = findACloserMiddlePoint();
                 positionCars(newMiddlePoint % randomRaceTrack.curvePointsMiddle.Count);
-                screenRenderer.setHappyToAllPlayers();
+              //  screenRenderer.setHappyToAllPlayers();
                 for (int i = 0; i < Cars.Count(); i++) Cars[i].stopPowerup();
             }
         }

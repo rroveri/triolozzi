@@ -216,6 +216,7 @@ namespace WindowsGame2
 
         public void setSadToPlayer(object sender, EliminatedCarEventArgs e)
         {
+            
             for (int c = 0; c < 6; c++)
                 postitVertices[e.EliminatedCarIndex * 6 + c].Color = Color.Black;
         }
