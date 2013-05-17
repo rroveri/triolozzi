@@ -7,12 +7,25 @@ struct VertexShaderInput
 struct VertexShaderOutput
 {
     float4 Position : POSITION0;
+	float  rand		: TEXCOORD1;
     float2 TexCoord	: TEXCOORD0;
 };
 
 float4 Color;
 
 texture Texture;
+
+Texture2D random;
+
+sampler randomSampler = sampler_state
+{
+    Texture = <random>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = Wrap;
+    AddressV  = Wrap;
+};
 
 sampler2D texSampler = sampler_state
 {
@@ -28,7 +41,8 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
     VertexShaderOutput output;
 
-    output.Position = input.Position;
+	output.rand = input.Position[2];
+    output.Position = float4(input.Position[0],input.Position[1],1,1);
     output.TexCoord = input.TexCoord;
 
     return output;
@@ -59,15 +73,29 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 	//return tex2Dbilinear(texSampler, float4(input.TexCoord.xy,0,0));
     float4 final = tex2D(texSampler,input.TexCoord);
 	float sum = final[0] + final[1] + final[2];
-    if(sum < 0.3)
+	final[3] = 1;
+	if(sum < 0.3)
+	{
+		final[3] = 0;
+	}
+    else if(sum <= 0.4 && sum >= 0.3)
     {
-        final[3] = 0;
+        final[3] = (sum - 0.3) / 0.1;
     }
-	else final[3] = 1;
-    if(final[0] < 0.05) final[0] = 0.05;
+	if(length(input.TexCoord - float2(0.5,0.5)) >= 0.4)
+	{
+		final[3] = final[3] - max(0,(length(input.TexCoord - float2(0.5,0.5)) - 0.4) / 0.1);
+    }
+	if(final[0] < 0.05) final[0] = 0.05;
     if(final[1] < 0.3) final[1] = 0.3;
     if(final[2] < 0.1) final[2] = 0.1;
     //return float4(1,1,0,1);
+
+	float2 access = float2(input.rand / 100,input.rand / 100);
+	float rand = tex2D(randomSampler, access)[0];
+
+    //if(length(input.TexCoord - float2(0.5,0.5)) > (0.7 + 0.2 * rand))
+
 	return final;
 }
 

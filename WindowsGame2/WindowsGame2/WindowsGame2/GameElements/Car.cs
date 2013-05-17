@@ -128,6 +128,11 @@ namespace WindowsGame2.GameElements
         private double powerupDuration = 7.0 * 1000.0;
         private double startBlinkingFrom = 5.0 * 1000.0;
         private double blinkingDuration = 0.2 * 1000.0;
+        private double powerupDurationCurrent;
+        private double startBlinkingFromCurrent;
+        private double powerupDurationSpeed;
+        private double startBlinkingFromSpeed;
+
         private bool startedBlinking;
 
         public Bullet bullet;
@@ -140,7 +145,11 @@ namespace WindowsGame2.GameElements
             : base(world, texture, new Vector2(65.0f, 40.0f), Color, new Vector2(130.0f,80.0f))
         {
 
-            
+            powerupDurationSpeed = powerupDuration / 2.7f;
+            startBlinkingFromSpeed = startBlinkingFrom / 2.7f;
+            powerupDurationCurrent = powerupDuration;
+            startBlinkingFromCurrent = startBlinkingFrom;
+
 
             isInsideMucus=false;
 
@@ -331,7 +340,7 @@ namespace WindowsGame2.GameElements
 
             timer += gameTime.ElapsedGameTime.TotalMilliseconds;
             blinkTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (timer > powerupDuration) stopPowerup();
+            if (timer > powerupDurationCurrent && currentPowerup != powerupNone) stopPowerup();
 
             updateCounter++;
             
@@ -378,12 +387,18 @@ namespace WindowsGame2.GameElements
             if ((ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0 || ks.IsKeyDown(Keys.D) && brownOnly || invertedLeftToRight) && !invertedRightToLeft)
             {
                 _compound.AngularVelocity = 0;
-                _compound.Rotation += rotVel;
+                if (gps.ThumbSticks.Right.X > 0)
+                    _compound.Rotation += rotVel * gps.ThumbSticks.Right.X;
+                else
+                    _compound.Rotation += rotVel;
             }
             if ((ks.IsKeyDown(Keys.Left) && blueOnly || gps.ThumbSticks.Right.X < 0 || ks.IsKeyDown(Keys.A) && brownOnly || invertedRightToLeft) && !invertedLeftToRight)
             {
                 _compound.AngularVelocity = 0;
-                _compound.Rotation -= rotVel;
+                if (gps.ThumbSticks.Right.X < 0)
+                    _compound.Rotation += rotVel * gps.ThumbSticks.Right.X;
+                else
+                    _compound.Rotation -= rotVel;
             }
 
             bool isSteering = ks.IsKeyDown(Keys.Left) || ks.IsKeyDown(Keys.Right) || gps.ThumbSticks.Right.X != 0;
@@ -825,14 +840,14 @@ namespace WindowsGame2.GameElements
         {
             if (powerupsTextures[currentPowerup] == null) return;
             spriteBatch.Draw(powerupsTextures[currentPowerup], ConvertUnits.ToDisplayUnits(_compound.Position),
-                                           null, mColor, _compound.Rotation, _origin * 3.0f, textureScale, SpriteEffects.None,
+                                           null, Color.White, _compound.Rotation, _origin * 3.0f, textureScale, SpriteEffects.None,
                                            0.9f);
         }
 
         public void DrawGlow(SpriteBatch spriteBatch)
         {
             if (currentPowerup == powerupNone) return;
-            if (timer > startBlinkingFrom)
+            if (timer > startBlinkingFromCurrent)
             {
                 if(!startedBlinking) 
                 {
@@ -856,10 +871,48 @@ namespace WindowsGame2.GameElements
             bullet.Draw(spriteBatch);
         }
 
+        void DrawLine(SpriteBatch batch, float width, Color color, Vector2 point1, Vector2 point2)
+        {
+
+            float angle = (float)Math.Atan2(point2.Y - point1.Y, point2.X - point1.X);
+            float length = Vector2.Distance(point1, point2);
+
+            if (length > 100f)
+            {
+                length = 100f;
+            }
+            Vector2 lengthWidth = new Vector2(length, width);
+
+            batch.Draw(mDummyTexture, point1, null, color, angle, Vector2.Zero, lengthWidth, SpriteEffects.None, 0);
+            
+        }
+
+        public void drawBrush(SpriteBatch spriteBatch)
+        {
+            Vector2 tangent = new Vector2(-mDirection.Y, mDirection.X);
+
+            for (int i = 0; i < painters.Count; i++)
+            {
+                Vector2 startingPoint = Position - mDirection * tailOffset + (painters[i].ease - 0.7f) * tangent * 80f;
+                DrawLine(spriteBatch, 2f, Color.Gray, startingPoint, ConvertUnits.ToDisplayUnits(new Vector2(painters[i].dx, painters[i].dy)));
+
+                Vector2 startingPoint2 = Position - mDirection * tailOffset + (painters[i].ease2 - 0.7f) * tangent * 80f;
+                DrawLine(spriteBatch, 2f, Color.Black, startingPoint2, ConvertUnits.ToDisplayUnits(new Vector2(painters[i].dx, painters[i].dy)));
+
+                Vector2 startingPoint3 = Position - mDirection * tailOffset + (painters[i].ease3 - 0.7f) * tangent * 80f;
+                DrawLine(spriteBatch, 2f, Color.Gray, startingPoint3, ConvertUnits.ToDisplayUnits(new Vector2(painters[i].dx, painters[i].dy)));
+            }
+        }
+
         public void Draw(SpriteBatch spriteBatch, out VertexPositionColorTexture[] vertices, out VertexPositionColorTexture[] _burnoutsVertices)
         {
             vertices = trailVertices;
             _burnoutsVertices = burnoutsVertices;
+
+            if (isActive)
+            {
+                drawBrush(spriteBatch);
+            }
 
             //draw projected position
            //   spriteBatch.Draw(mDummyTexture,ConvertUnits.ToDisplayUnits( projectedPosition),
@@ -992,10 +1045,11 @@ namespace WindowsGame2.GameElements
                     result.currentIgnoredBody = _compound;
                     result.compound.CollisionCategories = Category.Cat10;
                     result.compound.CollidesWith = Category.Cat20;
-
+            
+                    
                     if (currentPowerup != powerupSlow && currentPowerup != powerupTurbo)
                     {
-                        maxBoostFrames = (int)Math.Floor(result.compound.Mass * 4);
+                        maxBoostFrames = (int)Math.Floor(result.compound.Mass * 5); //*4
                         //  maxVel = 10 + result.compound.Mass;
                         currentMaxVel = boostMaxVel;
                         //   acc = acc + result.compound.Mass / 10;
@@ -1025,32 +1079,70 @@ namespace WindowsGame2.GameElements
 
             if(powerupIndex == powerupWings)
             {
+                powerupDurationCurrent = powerupDuration;
+                startBlinkingFromCurrent = startBlinkingFrom;
+
                 _compound.CollisionCategories = Category.Cat21;
             }
             else if(powerupIndex == powerupTurbo)
             {
+                powerupDurationCurrent = powerupDurationSpeed;
+                startBlinkingFromCurrent = startBlinkingFromSpeed;
+
                 currentMaxVel = 20.0f; 
             }
             else if (powerupIndex == powerupBig)
             {
+                powerupDurationCurrent = powerupDuration;
+                startBlinkingFromCurrent = startBlinkingFrom;
+
                 activateSecondMode();
             }
             else if(powerupIndex == powerupSlow)
             {
+                powerupDurationCurrent = powerupDurationSpeed;
+                startBlinkingFromCurrent = startBlinkingFromSpeed;
+
                 currentMaxVel = 6.5f;
             }
             else if(powerupIndex == powerupNoDrawing)
             {
+                powerupDurationCurrent = powerupDuration;
+                startBlinkingFromCurrent = startBlinkingFrom;
+
+                for (int i = 0; i < randomTrack.polygonList.Count; i++)
+                {
+                    if (randomTrack.polygonList[i].currentIgnoredBody == this._compound)
+                    {
+                        randomTrack.polygonList[i].compound.RestoreCollisionWith(this._compound);
+                    }
+                }
+                
                 isDrawing = false;
+   
             }
             else if (powerupIndex == powerupInverted)
             {
                 // invert commands in update
+                powerupDurationCurrent = powerupDuration;
+                startBlinkingFromCurrent = startBlinkingFrom;
+
             }
         }
 
         public void stopPowerup()
         {
+            if (currentPowerup == powerupNoDrawing)
+            {
+                for (int i = 0; i < randomTrack.polygonList.Count; i++)
+                {
+                    if (randomTrack.polygonList[i].currentIgnoredBody == this._compound)
+                    {
+                        randomTrack.polygonList[i].compound.IgnoreCollisionWith(this._compound);
+                    }
+                }
+            }
+
             _compound.CollisionCategories = Category.Cat20;
             currentPowerup = powerupNone;
             currentMaxVel = maxVel;

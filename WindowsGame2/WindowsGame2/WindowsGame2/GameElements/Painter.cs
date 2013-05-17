@@ -17,6 +17,10 @@ namespace WindowsGame2.GameElements
         public Vector3 oldWVert;
         public Vector3 oldEVert;
 
+        public float ease2;
+        public float ease3;
+        
+
         public Painter(Random seed)
         {
             dx = 0f;
@@ -34,7 +38,9 @@ namespace WindowsGame2.GameElements
             //close, perfect if drawing every two frames 
             div = 0.3f; 
             ease = (float)seed.NextDouble() * 0.4f + 0.5f;
-            
+
+            ease2 = (float)seed.NextDouble() * 0.4f + 0.5f;
+            ease3 = (float)seed.NextDouble() * 0.4f + 0.5f;
         }
     }
 }

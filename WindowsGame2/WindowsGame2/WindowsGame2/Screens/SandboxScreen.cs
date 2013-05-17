@@ -13,6 +13,18 @@ using System.ComponentModel;
 
 namespace WindowsGame2.Screens
 {
+    public class Tuple<T1, T2>
+    {
+        public T1 Item1 { get; set; }
+        public T2 Item2 { get; set; }
+
+        public Tuple(T1 item1, T2 item2)
+        {
+            Item1 = item1;
+            Item2 = item2;
+        }
+    }
+
     public class SandboxScreen : AbstractScreen
     {
         #region Fields
@@ -26,13 +38,15 @@ namespace WindowsGame2.Screens
 
         private List<SandboxCar> _cars;
         private List<Tuple<Texture2D, Color>> _gameCars;
-        private const string message = "READY";
+        private const string message = "ready";
         private int _carsCount;
         private int _readyCount;
 
         private StringWriter _writer;
         private Effect _effect;
         private Matrix _projectionMatrix, _viewMatrix;
+        Viewport viewport;
+
 
         #endregion
 
@@ -78,7 +92,7 @@ namespace WindowsGame2.Screens
             _effect.CurrentTechnique = _effect.Techniques["DoodleTechinque"];
             _effect.Parameters["alphabet"].SetValue(ScreenManager.Game.Content.Load<Texture2D>("Images/alphabet"));
 
-            Viewport viewport = ScreenManager.GraphicsDevice.Viewport;
+           viewport = ScreenManager.GraphicsDevice.Viewport;
 
             _titlePosition = new Rectangle(viewport.Width / 2 - _sandboxTitle.Width / 2, 100, _sandboxTitle.Width, _sandboxTitle.Height);
             
@@ -157,9 +171,13 @@ namespace WindowsGame2.Screens
 
         private void CarReadyToPlay(object sender, ReadyToPlayEventArgs e)
         {
-            Vector3 pos3d = new Vector3(_cars[e.CarIndex].Position, 1);
+
+
+
+            Vector3 pos3d = new Vector3( _cars[e.CarIndex]._compound.Position,1);
             Vector3.Transform(pos3d, _camera);
-            Vector2 pos2d = new Vector2(pos3d.X,-pos3d.Y);
+            Vector2 pos2d = new Vector2(pos3d.X,pos3d.Y);
+            pos2d = new Vector2(pos2d.X/viewport.Width *2-1,pos2d.Y/viewport.Height *2 -1);
             _writer.addString(message, Color.Black, 20f, pos2d, _cars[e.CarIndex]._direction);
             _readyCount++;
         }
