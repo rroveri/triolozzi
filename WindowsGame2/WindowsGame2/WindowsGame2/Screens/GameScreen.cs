@@ -352,7 +352,8 @@ namespace WindowsGame2.Screens
             }
             else
             {
-                soundManager.PlaySound("Wish");
+                cameraFollowing.firstTimeNonGongolare = false;
+               // soundManager.PlaySound("Wish");
                 cameraFollowing.timerShowOffCanStart = true;
             }
             

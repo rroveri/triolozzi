@@ -939,7 +939,7 @@ namespace WindowsGame2.GameElements
             Color carColor = mColor;
             if (currentPowerup == powerupNoDrawing) carColor = Color.White;
 
-            if (isVisible == false) return;
+           // if (isVisible == false) return;
 
             if (!isSecondModeActive)
             {
