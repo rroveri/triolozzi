@@ -137,8 +137,8 @@ namespace WindowsGame2.GameElements
 
         public Bullet bullet;
         public bool bulletIsShot;
-        
 
+        private ScreenRenderer screenRenderer;
         
 
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
@@ -266,6 +266,8 @@ namespace WindowsGame2.GameElements
             powerupsTextures[6] = null;
 
             powerupGlowTexture = cm.Load<Texture2D>("Images/powerups/glow");
+
+            screenRenderer = GameServices.GetService<ScreenRenderer>();
         }
 
         bool body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
@@ -559,6 +561,7 @@ namespace WindowsGame2.GameElements
         {
             bullet.Shoot();
             bulletIsShot = true;
+            screenRenderer.setBulletShotToPlayer(index);
         }
 
         public void drawQuad(Vector3 newWVert,Vector3 newEVert,Vector3 oldWVert,Vector3 oldEVert, int painterIndex)

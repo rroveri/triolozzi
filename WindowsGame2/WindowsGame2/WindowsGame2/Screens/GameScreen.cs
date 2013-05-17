@@ -216,6 +216,7 @@ namespace WindowsGame2.Screens
             LoadPaperEffect();
 
             screenRenderer = new ScreenRenderer();
+            GameServices.AddService<ScreenRenderer>(screenRenderer);
             Logic.DidEliminateCar += screenRenderer.setSadToPlayer;
             Logic.DidFinishLap += screenRenderer.setLap;
 
@@ -342,6 +343,8 @@ namespace WindowsGame2.Screens
             
 
             GC.Collect();
+
+            screenRenderer.setBulletNotShotToAllPlayers();
 
             int startingPoint = startingPointToCheck;
             bool tooClose=true;

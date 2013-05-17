@@ -311,10 +311,11 @@ namespace WindowsGame2
                 bulletVertices[player][c].Color = Color.White;
         }
 
-        public void setBulletNotShotToPlayer(int player)
+        public void setBulletNotShotToAllPlayers()
         {
-            for (int c = 0; c < 6; c++)
-                bulletVertices[player][c].Color = barVertices[player][0].Color;
+            for (int player = 0; player < kMaximumPlayers; player++)
+                for (int c = 0; c < 6; c++)
+                    bulletVertices[player][c].Color = barVertices[player][0].Color;
         }
 
         public void drawHUD(ref List<Car> Cars)
