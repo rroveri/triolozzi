@@ -28,7 +28,7 @@ namespace WindowsGame2.Screens
         private string[] _ranks = { "1st: ", "2nd: ", "3rd: ", "4th: " };
 
         private StringBuilder _rankingText;
-        private string _finalString;
+        private string _finalString = "";
 
         #endregion
 
