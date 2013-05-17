@@ -331,6 +331,7 @@ namespace WindowsGame2
             RemoveScreen(GetScreen<GameScreen>());
             RemoveScreen(GetScreen<SandboxScreen>());
             RemoveScreen(GetScreen<PauseMenuScreen>());
+            RemoveScreen(GetScreen<RankingScreen>());
             GetScreen<LoadingScreen>().SetBusy();
             ShowScreen<MainMenuScreen>();
         }

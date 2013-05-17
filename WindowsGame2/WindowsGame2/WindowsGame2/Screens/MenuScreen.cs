@@ -70,9 +70,6 @@ namespace WindowsGame2.Screens
         {
             this.menuTitle = menuTitle;
 
-            TransitionOnTime = TimeSpan.FromSeconds(0.5);
-            TransitionOffTime = TimeSpan.FromSeconds(0.5);
-
             menuUp = new InputAction(
                 new Buttons[] { Buttons.DPadUp, Buttons.LeftThumbstickUp }, 
                 new Keys[] { Keys.Up },
