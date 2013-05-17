@@ -148,7 +148,6 @@ namespace WindowsGame2.Screens
 
             RankScreen = new RankingScreen("");
             RankScreen.Accepted += RankScreenAccepted;
-
             PauseScreen = new PauseMenuScreen();
 
             polygonsList = new List<PolygonPhysicsObject>();
@@ -219,9 +218,7 @@ namespace WindowsGame2.Screens
             LoadPaperEffect();
 
             screenRenderer = new ScreenRenderer();
-
             GameServices.AddService<ScreenRenderer>(screenRenderer);
-
             Logic.DidEliminateCar += screenRenderer.setSadToPlayer;
             Logic.DidFinishLap += screenRenderer.setLap;
 
@@ -361,6 +358,8 @@ namespace WindowsGame2.Screens
             
 
             GC.Collect();
+
+            screenRenderer.setBulletNotShotToAllPlayers();
 
             int startingPoint = startingPointToCheck;
             bool tooClose=true;
@@ -533,10 +532,12 @@ namespace WindowsGame2.Screens
                     return;
             }
 
-            if (Logic.isGameOver())
+            if (Logic.isGameOver() && RankScreen != null)
             {
                 RankScreen.UpdateRankings(Cars);
                 ScreenManager.ShowScreen<RankingScreen>();
+                // Only call rank screen once
+                RankScreen = null;
                 return;
             }
 
@@ -1143,16 +1144,12 @@ namespace WindowsGame2.Screens
 
         public void RankScreenAccepted(object sender, PlayerIndexEventArgs e)
         {
-            RankScreen.Accepted -= RankScreenAccepted;
-
             soundManager.StopSong();
             soundManager.StopAllSounds();
             for (int i = 0; i < Cars.Count; i++)
             {
                 Cars[i].stopSteeringSound();
             }
-
-            ScreenManager.RemoveScreen(RankScreen);
             ScreenManager.QuitGame();
         }
 

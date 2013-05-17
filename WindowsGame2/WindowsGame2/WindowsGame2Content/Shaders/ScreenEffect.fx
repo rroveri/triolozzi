@@ -3,8 +3,19 @@ Texture2D postitHappy, postitSad, lap, numbers;
 Texture2D postitHappy_NW, postitHappy_NE, postitHappy_SW, postitHappy_SE;
 Texture2D postitSad_NW, postitSad_NE, postitSad_SW, postitSad_SE;
 Texture2D pigiama_NW, pigiama_NE, pigiama_SW, pigiama_SE;
+Texture2D pencil;
 
 float4 nLaps;
+
+sampler pencilSampler = sampler_state
+{
+    Texture = <pencil>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
+};
 
 sampler pigiamaNWSampler = sampler_state
 {
@@ -372,8 +383,22 @@ float4 PixelShaderFunctionPigiamaSE(LapVertexShaderOutput input) : COLOR0
 	return texCol;
 }
 
+float4 PixelShaderFunctionPencil(LapVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(pencilSampler, input.uv);
+	texCol *= input.Color;
+	return texCol;
+}
+
+
 technique ScreenTechinque
 {
+
+	pass PencilPass
+	{
+		VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPencil();
+	}
 	pass PostitPassNW
     {
         VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
