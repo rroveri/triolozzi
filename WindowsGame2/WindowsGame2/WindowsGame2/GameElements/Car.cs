@@ -871,10 +871,43 @@ namespace WindowsGame2.GameElements
             bullet.Draw(spriteBatch);
         }
 
+        void DrawLine(SpriteBatch batch, float width, Color color, Vector2 point1, Vector2 point2)
+        {
+
+            float angle = (float)Math.Atan2(point2.Y - point1.Y, point2.X - point1.X);
+            float length = Vector2.Distance(point1, point2);
+            Vector2 lengthWidth = new Vector2(length, width);
+
+            batch.Draw(mDummyTexture, point1, null, color, angle, Vector2.Zero, lengthWidth, SpriteEffects.None, 0);
+            
+        }
+
+        public void drawBrush(SpriteBatch spriteBatch)
+        {
+            Vector2 tangent = new Vector2(-mDirection.Y, mDirection.X);
+
+            for (int i = 0; i < painters.Count; i++)
+            {
+                Vector2 startingPoint = Position + (painters[i].ease -0.7f) * tangent * 80f ;
+                DrawLine(spriteBatch, 2f, Color.Gray, startingPoint, ConvertUnits.ToDisplayUnits(new Vector2(painters[i].dx, painters[i].dy)));
+
+                Vector2 startingPoint2 = Position + (painters[i].ease2 - 0.7f) * tangent * 80f;
+                DrawLine(spriteBatch, 2f, Color.Black, startingPoint2, ConvertUnits.ToDisplayUnits(new Vector2(painters[i].dx, painters[i].dy)));
+
+                Vector2 startingPoint3 = Position + (painters[i].ease3 - 0.7f) * tangent * 80f;
+                DrawLine(spriteBatch, 2f, Color.Gray, startingPoint3, ConvertUnits.ToDisplayUnits(new Vector2(painters[i].dx, painters[i].dy)));
+            }
+        }
+
         public void Draw(SpriteBatch spriteBatch, out VertexPositionColorTexture[] vertices, out VertexPositionColorTexture[] _burnoutsVertices)
         {
             vertices = trailVertices;
             _burnoutsVertices = burnoutsVertices;
+
+            if (isActive)
+            {
+                drawBrush(spriteBatch);
+            }
 
             //draw projected position
            //   spriteBatch.Draw(mDummyTexture,ConvertUnits.ToDisplayUnits( projectedPosition),
