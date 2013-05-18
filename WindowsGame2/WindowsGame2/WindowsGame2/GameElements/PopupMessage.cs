@@ -39,15 +39,15 @@ namespace WindowsGame2.GameElements
         public PopupMessage(Car _car)
         {
             car = _car;
-            textureScale = 0.4f;
-            textureBg = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/onomatopeeBg");
-            thumbsDown= GameServices.GetService<ContentManager>().Load<Texture2D>("Images/thumbs_down");
-            thumbsUp = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/thumbs_up");
+            textureScale = 0.5f;
+            textureBg = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/white_postit");
+            thumbsDown= GameServices.GetService<ContentManager>().Load<Texture2D>("Images/awaken");
+            thumbsUp = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/dream_message");
             rainbowTex = GameServices.GetService<ContentManager>().Load<Texture2D>("Images/rainbow_texture");
 
             origin = new Vector2(textureBg.Width, textureBg.Height) * textureScale / 2f;
 
-            stringWriter.nCharacters = 1;
+            stringWriter.nCharacters = 7;
             bgTextureVertices = new VertexPositionColorTexture[6];
 
             timer = 0.0f;
@@ -121,7 +121,7 @@ namespace WindowsGame2.GameElements
 
             if (isActive)
             {
-               // stringWriter.addString(messageString, Color.Black, 1f, ConvertUnits.ToSimUnits(car.messageImagePos), new Vector2(1, 0));
+                //stringWriter.addString("awaken!", car.mColor, 0.5f, ConvertUnits.ToSimUnits(car.messageImagePos), new Vector2(1, 0));
 
                 if (firstTime)
                 {
@@ -132,10 +132,10 @@ namespace WindowsGame2.GameElements
                 Vector2 newPos = Vector2.Lerp(oldPos, car.messageImagePos,0.1f);
 
                 spriteBatch.Draw(textureBg, newPos,
-                                               null, car.mColor, 0, origin, Vector2.One * textureScale, SpriteEffects.None,
+                                               null, Color.White, 0, origin, Vector2.One * textureScale, SpriteEffects.None,
                                                0.0f);
                 spriteBatch.Draw(currentTexture, newPos,
-                                               null, Color.White, 0, origin, Vector2.One * textureScale, SpriteEffects.None,
+                                               null, car.mColor, 0, origin, Vector2.One * textureScale, SpriteEffects.None,
                                                0.0f);
                 /*
                 Color transp = new Color(1, 1, 1, 0.4f);
