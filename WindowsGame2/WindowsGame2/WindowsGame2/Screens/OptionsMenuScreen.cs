@@ -63,6 +63,8 @@ namespace WindowsGame2.Screens
         InputAction UpPad;
         InputAction DownPad;
         InputAction BackAction;
+        InputAction SelectAction;
+        InputAction UndoAction;
 
         #endregion
 
@@ -93,8 +95,16 @@ namespace WindowsGame2.Screens
                     new Keys[] { Keys.Down },
                     true);
             BackAction = new InputAction(
-                    new Buttons[] { Buttons.B, Buttons.Back },
-                    new Keys[] { Keys.Escape },
+                    new Buttons[] { Buttons.X, Buttons.Back },
+                    new Keys[] { Keys.X, Keys.Escape },
+                    true);
+            SelectAction = new InputAction(
+                    new Buttons[] { Buttons.A },
+                    new Keys[] { Keys.A },
+                    true);
+            UndoAction = new InputAction(
+                    new Buttons[] { Buttons.B },
+                    new Keys[] { Keys.B },
                     true);
         }
 
@@ -179,7 +189,7 @@ namespace WindowsGame2.Screens
                 for (int j = 0; j < _StringsPositions[i].Length; j++)
                 {
                     postit = _PostitsPositions[i][j];
-                    _StringsPositions[i][j] = new Rectangle(postit.Left, postit.Bottom + verticalOffset, 350, 70);
+                    _StringsPositions[i][j] = new Rectangle(postit.Left + 60, postit.Bottom + verticalOffset, 350, 70);
                 }
             }
 
@@ -283,22 +293,28 @@ namespace WindowsGame2.Screens
                     ScreenManager.ShowScreen<MainMenuScreen>();
                     return;
                 }
-                // Ignore everything if color has been selected already
-                if (_didSelectColor[i])
-                {
-                    continue;
-                }
+                
                 // Select the car and colors
-                if (input.DidTouchButton(Buttons.A, i) || input.DidTouchKey(Keys.A, i))
+                if (SelectAction.Evaluate(input, (PlayerIndex)i, out playerIndex))
                 {
                     if (CanSelectColor(i, _selectedColors[i]))
                     {
                         _didSelectColor[i] = true;
                     }
-                    else
+                }
+
+                if (UndoAction.Evaluate(input, (PlayerIndex)i, out playerIndex))
+                {
+                    if (_didSelectColor[i])
                     {
-                        //Console.WriteLine("Putative problem: " + i);
+                        _didSelectColor[i] = false;
                     }
+                }
+
+                // Ignore everything else if color has been selected already
+                if (_didSelectColor[i])
+                {
+                    continue;
                 }
 
                 if (RightPad.Evaluate(input, (PlayerIndex)i, out playerIndex))
