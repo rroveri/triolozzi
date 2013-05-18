@@ -65,13 +65,6 @@ namespace WindowsGame2.GameElements
             laserVertices[4].Color = car.mColor;
             laserVertices[5].Color = car.mColor;
 
-            laserVertices[0].TextureCoordinate = new Vector2(0,0);
-            laserVertices[1].TextureCoordinate = new Vector2(1,0);
-            laserVertices[2].TextureCoordinate = new Vector2(0,1);
-            laserVertices[3].TextureCoordinate = new Vector2(1, 1);
-            laserVertices[4].TextureCoordinate = new Vector2(0, 1);
-            laserVertices[5].TextureCoordinate = new Vector2(1, 0);
-
 
             laserSound = GameServices.GetService<ContentManager>().Load<SoundEffect>("Sounds/laserorribiledimmerda");
 
@@ -173,7 +166,7 @@ namespace WindowsGame2.GameElements
             bulletPhysicsObject.ResetDynamics();
 
             laserSoundInstance.Stop();
-         //   car.bulletIsShot = false;
+            car.bulletIsShot = false;
         }
 
         void DrawLine(SpriteBatch batch, float width, Color color, Vector2 point1, Vector2 point2)
@@ -191,7 +184,7 @@ namespace WindowsGame2.GameElements
             batch.Draw(dummyTexture, point1, null, color, angle, Vector2.Zero, lengthWidth, SpriteEffects.None, 0);
              */
 
-            float widthFactor = 3f;
+            float widthFactor = 1.5f;
 
             laserVertices[0].Position = new Vector3(car._compound.Position - tangent / widthFactor, -0.1f);
             laserVertices[1].Position = new Vector3(car._compound.Position + tangent / widthFactor, -0.1f);
@@ -200,7 +193,14 @@ namespace WindowsGame2.GameElements
             laserVertices[4].Position = new Vector3(bulletPhysicsObject.Position - tangent / widthFactor, -0.1f);
             laserVertices[5].Position = new Vector3(car._compound.Position + tangent / widthFactor, -0.1f);
 
+            float length = (bulletPhysicsObject.Position - car._compound.Position).Length();
 
+            laserVertices[0].TextureCoordinate = new Vector2(0, 0);
+            laserVertices[1].TextureCoordinate = new Vector2(1, 0);
+            laserVertices[2].TextureCoordinate = new Vector2(0, length);
+            laserVertices[3].TextureCoordinate = new Vector2(1, length);
+            laserVertices[4].TextureCoordinate = new Vector2(0, length);
+            laserVertices[5].TextureCoordinate = new Vector2(1, 0);
 
 
         }

@@ -137,13 +137,18 @@ namespace WindowsGame2.GameElements
 
         public Bullet bullet;
         public bool bulletIsShot;
-        
 
+        private ScreenRenderer screenRenderer;
+
+        public bool isVisible;
+        public bool hasNeverStarted;
         
 
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
             : base(world, texture, new Vector2(65.0f, 40.0f), Color, new Vector2(130.0f,80.0f))
         {
+
+            hasNeverStarted = true;
 
             powerupDurationSpeed = powerupDuration / 2.7f;
             startBlinkingFromSpeed = startBlinkingFrom / 2.7f;
@@ -266,6 +271,10 @@ namespace WindowsGame2.GameElements
             powerupsTextures[6] = null;
 
             powerupGlowTexture = cm.Load<Texture2D>("Images/powerups/glow");
+
+            screenRenderer = GameServices.GetService<ScreenRenderer>();
+
+            isVisible = true;
         }
 
         bool body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
@@ -379,10 +388,10 @@ namespace WindowsGame2.GameElements
 
             float newAcc = 0.0f;
 
-            bool invertedLeftToRight = ks.IsKeyDown(Keys.Left) && currentPowerup == powerupInverted;
-            bool invertedRightToLeft = ks.IsKeyDown(Keys.Right) && currentPowerup == powerupInverted;
-            bool invertedUpToDown = ks.IsKeyDown(Keys.Up) && currentPowerup == powerupInverted;
-            bool invertedDownToUp = ks.IsKeyDown(Keys.Down) && currentPowerup == powerupInverted;
+            bool invertedLeftToRight = (ks.IsKeyDown(Keys.Left) || gps.ThumbSticks.Right.X < 0) && currentPowerup == powerupInverted;
+            bool invertedRightToLeft = (ks.IsKeyDown(Keys.Right) || gps.ThumbSticks.Right.X > 0) && currentPowerup == powerupInverted;
+            bool invertedUpToDown = (ks.IsKeyDown(Keys.Up) || gps.ThumbSticks.Right.Y > 0) && currentPowerup == powerupInverted;
+            bool invertedDownToUp = (ks.IsKeyDown(Keys.Down) || gps.ThumbSticks.Right.Y < 0) && currentPowerup == powerupInverted;
 
             if ((ks.IsKeyDown(Keys.Right) && blueOnly || gps.ThumbSticks.Right.X > 0 || ks.IsKeyDown(Keys.D) && brownOnly || invertedLeftToRight) && !invertedRightToLeft)
             {
@@ -559,6 +568,7 @@ namespace WindowsGame2.GameElements
         {
             bullet.Shoot();
             bulletIsShot = true;
+            screenRenderer.setBulletShotToPlayer(index);
         }
 
         public void drawQuad(Vector3 newWVert,Vector3 newEVert,Vector3 oldWVert,Vector3 oldEVert, int painterIndex)
@@ -931,6 +941,9 @@ namespace WindowsGame2.GameElements
 
             Color carColor = mColor;
             if (currentPowerup == powerupNoDrawing) carColor = Color.White;
+
+           // if (isVisible == false) return;
+
             if (!isSecondModeActive)
             {
                 spriteBatch.Draw(_polygonTexture, ConvertUnits.ToDisplayUnits(_compound.Position),

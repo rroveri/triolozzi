@@ -19,7 +19,7 @@ namespace WindowsGame2.GameElements
         /// <summary>
         /// The number of laps needed to finish the game.
         /// </summary>
-        private const int kMaximumLaps = 4;
+        private const int kMaximumLaps = 5;
 
         /// <summary>
         /// The crucial points in a track.
@@ -59,6 +59,8 @@ namespace WindowsGame2.GameElements
         private FinishedLapEventArgs _finishedLapEvent;
         private EliminatedCarEventArgs _eliminatedCarEvent;
 
+        private bool firstTime;
+
         /// <summary>
         /// The ranking position for each car in the race.
         /// </summary>
@@ -72,6 +74,8 @@ namespace WindowsGame2.GameElements
 
         public GameLogic(int[] crucialPoints, int pointsCount)
         {
+            firstTime = true;
+
             Laps = 0;
 
             // Set up the reference points in the track
@@ -94,6 +98,7 @@ namespace WindowsGame2.GameElements
         public void RestartMiniRace()
         {
             isMiniRaceOver = false;
+            
         }
 
         #endregion
@@ -193,7 +198,9 @@ namespace WindowsGame2.GameElements
                             //show message
                             Cars[i].message.activate("?",1);
                             Cars[i].message.currentTexture = Cars[i].message.thumbsDown;
+                            Cars[i].isVisible = false;
 
+                            
                             // Immediately update the score of the eliminated car
                             UpdateScore(Cars[i], Cars.Count - 1 - _eliminatedCars);
 
@@ -202,10 +209,17 @@ namespace WindowsGame2.GameElements
                             // Fire event
                             _eliminatedCarEvent.EliminatedCarIndex = i;
 
+
+
                             if (DidEliminateCar != null)
                             {
-                                DidEliminateCar(this, _eliminatedCarEvent);
+                                if (!Cars[i].hasNeverStarted)
+                                {
+                                    DidEliminateCar(this, _eliminatedCarEvent);
+                                }
+                                
                             }
+                            
                             break;
                         }
                     }
@@ -237,6 +251,8 @@ namespace WindowsGame2.GameElements
 
         private void UpdateRemainingCars(List<Car> Cars)
         {
+        
+
             // Is the first player the only one left in the game?
             if (_eliminatedCars == Cars.Count - 1)
             {
@@ -253,6 +269,11 @@ namespace WindowsGame2.GameElements
         /// <param name="position">Must be between [0, kMaximumPlayers-1]</param>
         public void UpdateScore(Car car, int position)
         {
+            if (car.hasNeverStarted)
+            {
+                return;
+            }
+
             // -1: last position
             if (position == -1)
             {
