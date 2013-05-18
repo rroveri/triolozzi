@@ -36,8 +36,8 @@ namespace WindowsGame2.Screens
 
             SpriteBatch spriteBatch = ScreenManager.SpriteBatch;
 
-            spriteBatch.Begin();
-            spriteBatch.Draw(_creditsTexture, Vector2.Zero, ScreenManager.GraphicsDevice.Viewport.Bounds, Color.White, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1f);
+            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, ScreenManager.scaleMatrix);
+            spriteBatch.Draw(_creditsTexture, Vector2.Zero, null, Color.White, 0.0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 1f);
             spriteBatch.End();
         }
 

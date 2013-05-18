@@ -1142,9 +1142,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sounds\cryingkid.wav">
+    <Compile Include="Sounds\cryingkid.mp3">
       <Name>cryingkid</Name>
-      <Importer>WavImporter</Importer>
+      <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
