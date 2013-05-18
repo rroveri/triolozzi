@@ -386,7 +386,8 @@ float4 PixelShaderFunctionPigiamaSE(LapVertexShaderOutput input) : COLOR0
 float4 PixelShaderFunctionPencil(LapVertexShaderOutput input) : COLOR0
 {
     float4 texCol = tex2D(pencilSampler, input.uv);
-	texCol *= input.Color;
+    if(texCol[0] == texCol[1] && texCol[1] == texCol[2])
+	    texCol *= input.Color;
 	return texCol;
 }
 
