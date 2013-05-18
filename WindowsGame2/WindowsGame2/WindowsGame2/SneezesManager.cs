@@ -80,8 +80,8 @@ namespace WindowsGame2
 
 
                     timer = 0;
-                    //nextSneezeTime = Math.Max(30000, random.NextDouble() * 60000);
-                    nextSneezeTime = Math.Max(3000, random.NextDouble() * 6000);
+                    nextSneezeTime = Math.Max(5000, random.NextDouble() * 20000);
+                    //nextSneezeTime = Math.Max(3000, random.NextDouble() * 6000);
 
                     soundPlayed = false;
 
@@ -114,7 +114,7 @@ namespace WindowsGame2
                     timer = 0;
                     fluidWasSeen = false;
                 }
-                else
+                else if (!fluidOffScreen)
                 {
                     fluidWasSeen = true;
                 }
