@@ -497,6 +497,7 @@ namespace WindowsGame2.Screens
             base.Unload();
             GameServices.DeleteService<World>();
             GameServices.DeleteService<Camera>();
+            GameServices.DeleteService<ScreenRenderer>();
             gameIsExiting = true;
 
             if (fluidUpdateThread != null)

@@ -166,7 +166,7 @@ namespace WindowsGame2.GameElements
             bulletPhysicsObject.ResetDynamics();
 
             laserSoundInstance.Stop();
-            car.bulletIsShot = false;
+            //car.bulletIsShot = false;
         }
 
         void DrawLine(SpriteBatch batch, float width, Color color, Vector2 point1, Vector2 point2)
