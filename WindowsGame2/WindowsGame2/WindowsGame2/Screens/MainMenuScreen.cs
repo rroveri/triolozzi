@@ -76,8 +76,8 @@ namespace WindowsGame2.Screens
             MenuEntries.Add(playersMenuEntry);
 
             resolutionMenuEntry = new MenuEntry(_resolutionTextures, _resolutionSelectedTextures);
-            resolutionMenuEntry.LeftClick += ResolutionMenuEntryChange;
-            resolutionMenuEntry.RightClick += ResolutionMenuEntryChange;
+            resolutionMenuEntry.LeftClick += ResolutionMenuEntryDecrement;
+            resolutionMenuEntry.RightClick += ResolutionMenuEntryIncrement;
             MenuEntries.Add(resolutionMenuEntry);
 
             creditsMenuEntry = new MenuEntry(_creditsTextures, _creditsSelectedTextures);
@@ -110,7 +110,7 @@ namespace WindowsGame2.Screens
             }
         }
 
-        void ResolutionMenuEntryChange(object sender, PlayerIndexEventArgs e)
+        void ResolutionMenuEntryDecrement(object sender, PlayerIndexEventArgs e)
         {
             if (ScreenManager.preferredHeight == 1080)
             {
@@ -123,7 +123,11 @@ namespace WindowsGame2.Screens
 
                 ScreenManager.initParameters();
             }
-            else
+        }
+
+        void ResolutionMenuEntryIncrement(object sender, PlayerIndexEventArgs e)
+        {
+            if (ScreenManager.preferredHeight == 720)
             {
                 ScreenManager.preferredHeight = 1080;
                 ScreenManager.preferredWidth = 1920;
