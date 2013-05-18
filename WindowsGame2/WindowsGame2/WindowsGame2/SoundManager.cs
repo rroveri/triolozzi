@@ -44,6 +44,8 @@ namespace WindowsGame2
         private Dictionary<string, Queue<SoundEffectInstance>> effectsPool;
         private Dictionary<string, Queue<SoundEffectInstance>> loopedEffectsPool;
 
+        private Random _random;
+
         #endregion
 
         #region Initialization
@@ -51,6 +53,7 @@ namespace WindowsGame2
         public SoundManager(Game game) : base(game)
         {
             _content = game.Content;
+            _random = new Random(DateTime.Now.Millisecond);
             Songs = new Dictionary<string, Song>();
             Sounds = new Dictionary<string, SoundEffect>();
 
@@ -213,7 +216,17 @@ namespace WindowsGame2
             }
             else
             {
-                sound = Sounds[soundName].CreateInstance();
+                if (soundName == SoundManager.CarCrash)
+                {
+                    // CarCrash does not exist, thus we need to load
+                    // a random car crash sound from the CarCrashes list
+                    int r = _random.Next(SoundManager.CarCrashes.Length);
+                    sound = Sounds[SoundManager.CarCrashes[r]].CreateInstance();
+                }
+                else
+                {
+                    sound = Sounds[soundName].CreateInstance();
+                }
                 sound.Volume = volume;
                 sound.Pitch = pitch;
                 sound.Pan = pan;
