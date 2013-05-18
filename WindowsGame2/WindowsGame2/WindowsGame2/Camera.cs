@@ -264,13 +264,20 @@ namespace WindowsGame2
                 }
 
                 //gongola
-                if (!firstTimeNonGongolare){
+                if (!firstTimeNonGongolare)
+                {
+                    Cars[winnerIndex].isGloating = true;
                     Cars[winnerIndex]._compound.Rotation = MathHelper.Lerp(Cars[winnerIndex]._compound.Rotation, savedRotation + (float)Math.PI * 2, ((float)timerShowOff / (float)timerShowOffMax) * ((float)timerShowOff / (float)timerShowOffMax));
                 }
                 timerShowOff += gametime.ElapsedGameTime.TotalMilliseconds;
                 checkShowOffTimer(Cars);
 
                 counterIndicator.enter();
+            }
+            else
+            {
+                for (int i=0; i<Cars.Count; i++)
+                    Cars[i].isGloating = false;
             }
 
             //choose interpolation weight and cars weights depending on the number of players

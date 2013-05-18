@@ -1100,6 +1100,12 @@ namespace WindowsGame2.Screens
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
             }
 
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                Cars[i].DrawGloatingStars(spriteBatch);
+                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
+            }
+
             // draw cars and their trails
             for (int i = 0; i < Cars.Count; i++)
             {
