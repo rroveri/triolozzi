@@ -409,6 +409,11 @@ namespace WindowsGame2
                 {
                     firstTimeSound = false;
                     GameServices.GetService<SoundManager>().PlaySong(SoundManager.GameSong, true);
+
+                    for (int i = 0; i < Cars.Count; i++)
+                    {
+                        Cars[i].hasNeverStarted = false;
+                    }
                 }
             }
             else if (timer > totalMilliseconds / 3f * 2f)

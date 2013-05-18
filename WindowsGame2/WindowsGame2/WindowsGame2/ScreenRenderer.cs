@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using WindowsGame2.Events;
 using Microsoft.Xna.Framework.Content;
 using WindowsGame2.GameElements;
+using Microsoft.Xna.Framework.Audio;
 
 namespace WindowsGame2
 {
@@ -41,8 +42,12 @@ namespace WindowsGame2
         Effect screenEffect;
         GraphicsDevice device;
 
+        SoundEffect cryingSound;
+
         public ScreenRenderer()
         {
+
+            cryingSound = GameServices.GetService<ContentManager>().Load<SoundEffect>("Sounds/cryingkid");
 
             PlayersCount = kMaximumPlayers;
             
@@ -271,6 +276,8 @@ namespace WindowsGame2
         public void setSadToPlayer(object sender, EliminatedCarEventArgs e)
         {
             
+            cryingSound.Play(1f, 0, 0);
+
             for (int c = 0; c < 6; c++)
                 postitVertices[e.EliminatedCarIndex * 6 + c].Color = Color.Black;
         }

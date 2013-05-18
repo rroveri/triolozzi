@@ -141,11 +141,14 @@ namespace WindowsGame2.GameElements
         private ScreenRenderer screenRenderer;
 
         public bool isVisible;
+        public bool hasNeverStarted;
         
 
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
             : base(world, texture, new Vector2(65.0f, 40.0f), Color, new Vector2(130.0f,80.0f))
         {
+
+            hasNeverStarted = true;
 
             powerupDurationSpeed = powerupDuration / 2.7f;
             startBlinkingFromSpeed = startBlinkingFrom / 2.7f;
