@@ -1124,6 +1124,10 @@ namespace WindowsGame2.Screens
 
             drawFluid();
 
+            
+
+            screenRenderer.drawHUD(ref Cars);
+
             spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, camera.TransformNoZoom);
 
             // draw cars and their trails
@@ -1134,8 +1138,6 @@ namespace WindowsGame2.Screens
             }
 
             spriteBatch.End();
-
-            screenRenderer.drawHUD(ref Cars);
 
 
             spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
