@@ -476,7 +476,7 @@ namespace WindowsGame2.Screens
                 Cars[i].resetTrail();
 
                 Cars[i].isActive = false;
-                Cars[i]._compound.Enabled = false;
+                Cars[i]._compound.IsStatic = true;
 
                 Cars[i].message.disactivate();
 
@@ -497,6 +497,7 @@ namespace WindowsGame2.Screens
             base.Unload();
             GameServices.DeleteService<World>();
             GameServices.DeleteService<Camera>();
+            GameServices.DeleteService<ScreenRenderer>();
             gameIsExiting = true;
 
             if (fluidUpdateThread != null)
@@ -553,7 +554,7 @@ namespace WindowsGame2.Screens
                 for (int i = 0; i < Cars.Count; i++)
                 {
                     Cars[i].isActive = true;
-                    Cars[i]._compound.Enabled = true;
+                    Cars[i]._compound.IsStatic = false;
                 }
             }
 
@@ -1096,6 +1097,12 @@ namespace WindowsGame2.Screens
             for (int i = 0; i < Cars.Count; i++)
             {
                 Cars[i].DrawGlow(spriteBatch);
+                //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
+            }
+
+            for (int i = 0; i < Cars.Count; i++)
+            {
+                Cars[i].DrawGloatingStars(spriteBatch);
                 //GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, basicVert, 0, 130 * 2);
             }
 

@@ -110,6 +110,7 @@ namespace WindowsGame2.Screens
 
         public override void Draw(GameTime gameTime)
         {
+            if (_cars == null) return;
             SpriteBatch spriteBatch = ScreenManager.SpriteBatch;
 
             // Darken down any other screens that were drawn beneath the popup.

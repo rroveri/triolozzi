@@ -142,6 +142,8 @@ namespace WindowsGame2.GameElements
 
         public bool isVisible;
         public bool hasNeverStarted;
+        public bool isGloating;
+        private Texture2D gloatingTexture;
         
 
         public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
@@ -271,6 +273,7 @@ namespace WindowsGame2.GameElements
             powerupsTextures[6] = null;
 
             powerupGlowTexture = cm.Load<Texture2D>("Images/powerups/glow");
+            gloatingTexture = cm.Load<Texture2D>("Images/powerups/glow");
 
             screenRenderer = GameServices.GetService<ScreenRenderer>();
 
@@ -851,6 +854,14 @@ namespace WindowsGame2.GameElements
             if (powerupsTextures[currentPowerup] == null) return;
             spriteBatch.Draw(powerupsTextures[currentPowerup], ConvertUnits.ToDisplayUnits(_compound.Position),
                                            null, Color.White, _compound.Rotation, _origin * 3.0f, textureScale, SpriteEffects.None,
+                                           0.9f);
+        }
+
+        public void DrawGloatingStars(SpriteBatch spriteBatch)
+        {
+            if (!isGloating) return;
+            spriteBatch.Draw(gloatingTexture, ConvertUnits.ToDisplayUnits(_compound.Position),
+                                           null, mColor, _compound.Rotation, _origin * 3.0f, textureScale, SpriteEffects.None,
                                            0.9f);
         }
 
