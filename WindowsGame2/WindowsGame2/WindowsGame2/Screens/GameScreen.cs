@@ -476,7 +476,7 @@ namespace WindowsGame2.Screens
                 Cars[i].resetTrail();
 
                 Cars[i].isActive = false;
-                Cars[i]._compound.Enabled = false;
+                Cars[i]._compound.IsStatic = true;
 
                 Cars[i].message.disactivate();
 
@@ -554,7 +554,7 @@ namespace WindowsGame2.Screens
                 for (int i = 0; i < Cars.Count; i++)
                 {
                     Cars[i].isActive = true;
-                    Cars[i]._compound.Enabled = true;
+                    Cars[i]._compound.IsStatic = false;
                 }
             }
 
