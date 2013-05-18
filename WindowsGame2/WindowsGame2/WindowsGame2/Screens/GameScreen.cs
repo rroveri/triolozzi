@@ -146,7 +146,7 @@ namespace WindowsGame2.Screens
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
-            RankScreen = new RankingScreen("");
+            RankScreen = new RankingScreen();
             RankScreen.Accepted += RankScreenAccepted;
             PauseScreen = new PauseMenuScreen();
 
@@ -535,9 +535,14 @@ namespace WindowsGame2.Screens
 
             if (Logic.isGameOver() && RankScreen != null)
             {
+                soundManager.StopAllSounds();
+                for (int i = 0; i < Cars.Count; i++)
+                {
+                    Cars[i].stopSteeringSound();
+                }
+
                 RankScreen.UpdateRankings(Cars);
                 ScreenManager.ShowScreen<RankingScreen>();
-                // Only call rank screen once
                 RankScreen = null;
                 return;
             }
@@ -1146,11 +1151,7 @@ namespace WindowsGame2.Screens
         public void RankScreenAccepted(object sender, PlayerIndexEventArgs e)
         {
             soundManager.StopSong();
-            soundManager.StopAllSounds();
-            for (int i = 0; i < Cars.Count; i++)
-            {
-                Cars[i].stopSteeringSound();
-            }
+            
             ScreenManager.QuitGame();
         }
 

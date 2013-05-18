@@ -18,21 +18,13 @@ namespace WindowsGame2.Screens
     {
         #region Fields
 
-        string message;
-        const string longestString = "\n\n\n\n\n\nPress Start to return to the main menu";
         Texture2D gradientTexture;
+        private Rectangle _bgPosition;
 
         InputAction menuSelect;
 
-        private string[] _playersNumber = { "Player 1", "Player 2", "Player 3", "Player 4" };
-        private string[] _ranks = { "1st: ", "2nd: ", "3rd: ", "4th: " };
-
-        private StringBuilder _rankingText;
-        private string _finalString = "";
-
-        #endregion
-
-        #region Events
+        private Rectangle[] _carPositions;
+        private List<Car> _cars;
 
         public event EventHandler<PlayerIndexEventArgs> Accepted;
 
@@ -45,10 +37,8 @@ namespace WindowsGame2.Screens
         /// Constructor automatically includes the standard "A=ok, B=cancel"
         /// usage text prompt.
         /// </summary>
-        public RankingScreen(string message)
+        public RankingScreen()
         {
-            this.message = message;
-
             IsPopup = true;
 
             TransitionOnTime = TimeSpan.FromSeconds(0.2);
@@ -58,30 +48,38 @@ namespace WindowsGame2.Screens
                 new Buttons[] { Buttons.A, Buttons.Start },
                 new Keys[] { Keys.Space, Keys.Enter },
                 true);
-
-            _rankingText = new StringBuilder();
         }
 
         public override void LoadContent()
         {
             ContentManager content = ScreenManager.Game.Content;
             gradientTexture = content.Load<Texture2D>("Images/rankingBG");
+
+            int width = 1920 / 2;
+            int height = 1080 / 2;
+            int carWidth = 130;
+            int carHeight = 80;
+            int offset = 180;
+            int top = 480;
+
+            _carPositions = new Rectangle[4];
+            _carPositions[0] = new Rectangle(width - carHeight/2, top, carWidth, carHeight);
+
+            carWidth = 117; carHeight = 72; top += 70;
+            _carPositions[1] = new Rectangle(width - offset - carHeight, top, carWidth, carHeight);
+
+            carWidth = 104; carHeight = 64; top += 40;
+            _carPositions[2] = new Rectangle(width + offset, top, carWidth, carHeight);
+
+            carWidth = 78; carHeight = 48; top += 150;
+            _carPositions[3] = new Rectangle(width - carHeight/2, top, carWidth, carHeight);
+
+            _bgPosition = new Rectangle(width - gradientTexture.Width / 2, height - gradientTexture.Height / 2, gradientTexture.Width, gradientTexture.Height);
         }
 
         public void UpdateRankings(List<Car> Cars)
         {
-            List<Car> sortedCars = Cars.OrderByDescending(c => c.score).ToList();
-            _rankingText.Remove(0, _rankingText.Length);
-            _rankingText.Append(message);
-            _rankingText.Append("\n\n");
-            for (int i = 0; i < sortedCars.Count; i++)
-            {
-                _rankingText.Append("     ");
-                _rankingText.Append(_ranks[i]);
-                _rankingText.Append(_playersNumber[Cars.IndexOf(sortedCars[i])]);
-                _rankingText.Append('\n');
-            }
-            _finalString = _rankingText.ToString();
+            _cars = Cars.OrderByDescending(c => c.score).ToList();
         }
 
 
@@ -102,8 +100,6 @@ namespace WindowsGame2.Screens
                 // Raise the accepted event, then exit the message box.
                 if (Accepted != null)
                     Accepted(this, new PlayerIndexEventArgs(playerIndex));
-
-                ExitScreen();
             }
         }
 
@@ -115,36 +111,18 @@ namespace WindowsGame2.Screens
         public override void Draw(GameTime gameTime)
         {
             SpriteBatch spriteBatch = ScreenManager.SpriteBatch;
-            SpriteFont font = ScreenManager.Font;
 
             // Darken down any other screens that were drawn beneath the popup.
-            ScreenManager.FadeBackBufferToBlack(TransitionAlpha * 2 / 3);
+            ScreenManager.FadeBackBufferToBlack(TransitionAlpha * 1 / 3);
 
-            // Center the message text in the viewport.
-            Viewport viewport = ScreenManager.GraphicsDevice.Viewport;
-            Vector2 viewportSize = new Vector2(viewport.Width, viewport.Height);
-            Vector2 textSize = font.MeasureString(longestString);
-            Vector2 textPosition = (viewportSize - textSize) / 2;
+            spriteBatch.Begin(0, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, ScreenManager.scaleMatrix);
 
-            // The background includes a border somewhat larger than the text itself.
-            const int hPad = 32;
-            const int vPad = 16;
+            spriteBatch.Draw(gradientTexture, _bgPosition, Color.White * TransitionAlpha);
 
-            Rectangle backgroundRectangle = new Rectangle((int)textPosition.X - hPad,
-                                                          (int)textPosition.Y - vPad,
-                                                          (int)textSize.X + hPad * 2,
-                                                          (int)textSize.Y + vPad * 2);
-
-            // Fade the popup alpha during transitions.
-            Color color = Color.White * TransitionAlpha;
-
-            spriteBatch.Begin();
-
-            // Draw the background rectangle.
-            spriteBatch.Draw(gradientTexture, backgroundRectangle, color);
-
-            // Draw the message box text.
-            spriteBatch.DrawString(font, _finalString, textPosition, Color.Black);
+            for (int i = 0; i < _cars.Count; i++)
+            {
+                spriteBatch.Draw(_cars[i]._polygonTexture, _carPositions[i], null, _cars[i].mColor, -(float)Math.PI/2, Vector2.Zero, SpriteEffects.None, 1f);
+            }
 
             spriteBatch.End();
         }

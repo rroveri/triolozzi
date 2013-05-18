@@ -19,7 +19,7 @@ namespace WindowsGame2
     {
         public Body _compound;
         public Vector2 _origin;
-        protected Texture2D _polygonTexture;
+        public Texture2D _polygonTexture;
         protected Vector2 textureScale;
         protected Vector2 vertScale;
         protected Color color;
