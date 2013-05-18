@@ -38,6 +38,8 @@ namespace WindowsGame2
 
         public static readonly string CryingKid = "CryingKid";
 
+        public static readonly string Boost = "Boost";
+
         public static readonly string MenuSong = "MenuSong";
         public static readonly string GameSong = "GameSong";
 
@@ -67,6 +69,7 @@ namespace WindowsGame2
             effectsPool[SoundManager.Splat] = new Queue<SoundEffectInstance>();
             effectsPool[SoundManager.Win] = new Queue<SoundEffectInstance>();
             effectsPool[SoundManager.Wish] = new Queue<SoundEffectInstance>();
+            effectsPool[SoundManager.Boost] = new Queue<SoundEffectInstance>();
 
 
             loopedEffectsPool = new Dictionary<string, Queue<SoundEffectInstance>>();
@@ -85,6 +88,7 @@ namespace WindowsGame2
             LoadSound(SoundManager.Splat, "Sounds/mucus/splat2_converted");
             LoadSound(SoundManager.Win, "Sounds/carwin");
             LoadSound(SoundManager.Wish, "Sounds/wishSound");
+            LoadSound(SoundManager.Boost, "Sounds/boostSound");
 
             
             SoundEffectInstance sound;

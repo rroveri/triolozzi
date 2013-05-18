@@ -601,6 +601,7 @@ namespace WindowsGame2.Screens
                     {
                         polygonsList.Add(obstacle);
                         obstacle.compound.UserData = 1000 + polygonsList.Count - 1;
+                        soundManager.PlaySound("Boost");
                     }
                 }
                 

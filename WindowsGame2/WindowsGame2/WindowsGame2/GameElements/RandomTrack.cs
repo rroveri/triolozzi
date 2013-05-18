@@ -539,9 +539,9 @@ namespace WindowsGame2.GameElements
             postItDreamsList[index].color = car.mColor;
             if (postItDreamsList[index].isNightmare!=1)
             {
-             //   gameLogic.UpdateScore(car, 0);
-                car.message.activate("!",0);
-                car.message.currentTexture = car.message.thumbsUp;
+              //   gameLogic.UpdateScore(car, 0);
+              //  car.message.activate("!",0);
+              //  car.message.currentTexture = car.message.thumbsUp;
 
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
 
@@ -553,8 +553,8 @@ namespace WindowsGame2.GameElements
             else
             {
               //  gameLogic.UpdateScore(car,-1);
-                car.message.activate("?",0);
-                car.message.currentTexture = car.message.thumbsDown;
+              //  car.message.activate("?",0);
+              //  car.message.currentTexture = car.message.thumbsDown;
                 
 
                 Vector2 postitCenter = ConvertUnits.ToDisplayUnits(postItDreamsList[index].contourPhysicsObject._compound.Position);
