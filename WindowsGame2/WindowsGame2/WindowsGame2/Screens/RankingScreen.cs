@@ -45,7 +45,7 @@ namespace WindowsGame2.Screens
             TransitionOffTime = TimeSpan.FromSeconds(0.2);
 
             menuSelect = new InputAction(
-                new Buttons[] { Buttons.A, Buttons.Start },
+                new Buttons[] { Buttons.X, Buttons.Start },
                 new Keys[] { Keys.Space, Keys.Enter },
                 true);
         }
@@ -65,13 +65,13 @@ namespace WindowsGame2.Screens
             _carPositions = new Rectangle[4];
             _carPositions[0] = new Rectangle(width - carHeight/2, top, carWidth, carHeight);
 
-            carWidth = 117; carHeight = 72; top += 70;
+            carWidth = 117; carHeight = 72; top += 150;
             _carPositions[1] = new Rectangle(width - offset - carHeight, top, carWidth, carHeight);
 
             carWidth = 104; carHeight = 64; top += 40;
             _carPositions[2] = new Rectangle(width + offset, top, carWidth, carHeight);
 
-            carWidth = 78; carHeight = 48; top += 150;
+            carWidth = 78; carHeight = 48; top += 100;
             _carPositions[3] = new Rectangle(width - carHeight/2, top, carWidth, carHeight);
 
             _bgPosition = new Rectangle(width - gradientTexture.Width / 2, height - gradientTexture.Height / 2, gradientTexture.Width, gradientTexture.Height);

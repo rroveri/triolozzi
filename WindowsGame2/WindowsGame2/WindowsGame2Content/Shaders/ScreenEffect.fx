@@ -3,6 +3,7 @@ Texture2D postitHappy, postitSad, lap, numbers;
 Texture2D postitHappy_NW, postitHappy_NE, postitHappy_SW, postitHappy_SE;
 Texture2D postitSad_NW, postitSad_NE, postitSad_SW, postitSad_SE;
 Texture2D pigiama_NW, pigiama_NE, pigiama_SW, pigiama_SE;
+Texture2D awake_NW, awake_NE, awake_SW, awake_SE;
 Texture2D pencil;
 
 float4 nLaps;
@@ -47,6 +48,43 @@ sampler pigiamaSWSampler = sampler_state
 sampler pigiamaSESampler = sampler_state
 {
     Texture = <pigiama_SE>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
+};
+
+sampler awakeNWSampler = sampler_state
+{
+    Texture = <awake_NW>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
+};
+sampler awakeNESampler = sampler_state
+{
+    Texture = <awake_NE>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
+};
+sampler awakeSWSampler = sampler_state
+{
+    Texture = <awake_SW>;
+	MipFilter = None;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU  = CLAMP;
+    AddressV  = CLAMP;
+};
+sampler awakeSESampler = sampler_state
+{
+    Texture = <awake_SE>;
 	MipFilter = None;
     MinFilter = Linear;
     MagFilter = Linear;
@@ -383,6 +421,34 @@ float4 PixelShaderFunctionPigiamaSE(LapVertexShaderOutput input) : COLOR0
 	return texCol;
 }
 
+float4 PixelShaderFunctionAwakeNW(LapVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(awakeNWSampler, input.uv);
+	texCol *= input.Color;
+	return texCol;
+}
+
+float4 PixelShaderFunctionAwakeNE(LapVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(awakeNESampler, input.uv);
+	texCol *= input.Color;
+	return texCol;
+}
+
+float4 PixelShaderFunctionAwakeSW(LapVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(awakeSWSampler, input.uv);
+	texCol *= input.Color;
+	return texCol;
+}
+
+float4 PixelShaderFunctionAwakeSE(LapVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(awakeSESampler, input.uv);
+	texCol *= input.Color;
+	return texCol;
+}
+
 float4 PixelShaderFunctionPencil(LapVertexShaderOutput input) : COLOR0
 {
     float4 texCol = tex2D(pencilSampler, input.uv);
@@ -440,6 +506,27 @@ technique ScreenTechinque
     {
         VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
         PixelShader = compile ps_3_0 PixelShaderFunctionPigiamaSE();
+    }
+
+	pass AwakePassNW
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionAwakeNW();
+    }
+	pass AwakePassNE
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionAwakeNE();
+    }
+	pass AwakePassSW
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionAwakeSW();
+    }
+	pass AwakePassSE
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionAwakeSE();
     }
 	
     pass PostitPass

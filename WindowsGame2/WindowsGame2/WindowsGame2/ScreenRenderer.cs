@@ -337,6 +337,11 @@ namespace WindowsGame2
                     screenEffect.CurrentTechnique.Passes["PigiamaPassNW"].Apply();
                     device.DrawUserPrimitives(PrimitiveType.TriangleList, pijiamaVertices, 0, 2);
                 }
+                else
+                {
+                    screenEffect.CurrentTechnique.Passes["AwakePassNW"].Apply();
+                    device.DrawUserPrimitives(PrimitiveType.TriangleList, pijiamaVertices, 0, 2);
+                }
             }
 
             if (PlayersCount >= 2)
@@ -346,6 +351,11 @@ namespace WindowsGame2
                 if (postitVertices[6].Color != Color.Black)
                 {
                     screenEffect.CurrentTechnique.Passes["PigiamaPassNE"].Apply();
+                    device.DrawUserPrimitives(PrimitiveType.TriangleList, pijiamaVertices, 6, 2);
+                }
+                else
+                {
+                    screenEffect.CurrentTechnique.Passes["AwakePassNE"].Apply();
                     device.DrawUserPrimitives(PrimitiveType.TriangleList, pijiamaVertices, 6, 2);
                 }
             }
@@ -359,6 +369,11 @@ namespace WindowsGame2
                     screenEffect.CurrentTechnique.Passes["PigiamaPassSW"].Apply();
                     device.DrawUserPrimitives(PrimitiveType.TriangleList, pijiamaVertices, 12, 2);
                 }
+                else
+                {
+                    screenEffect.CurrentTechnique.Passes["AwakePassSW"].Apply();
+                    device.DrawUserPrimitives(PrimitiveType.TriangleList, pijiamaVertices, 12, 2);
+                }
             }
 
             if (PlayersCount >= 4)
@@ -368,6 +383,11 @@ namespace WindowsGame2
                 if (postitVertices[18].Color != Color.Black)
                 {
                     screenEffect.CurrentTechnique.Passes["PigiamaPassSE"].Apply();
+                    device.DrawUserPrimitives(PrimitiveType.TriangleList, pijiamaVertices, 18, 2);
+                }
+                else
+                {
+                    screenEffect.CurrentTechnique.Passes["AwakePassSE"].Apply();
                     device.DrawUserPrimitives(PrimitiveType.TriangleList, pijiamaVertices, 18, 2);
                 }
             }
@@ -431,6 +451,12 @@ namespace WindowsGame2
             screenEffect.Parameters["pigiama_NE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/pigiamaNE"));
             screenEffect.Parameters["pigiama_SW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/pigiamaSW"));
             screenEffect.Parameters["pigiama_SE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/pigiamaSE"));
+
+            // Load and set pijama post it for each awaken player
+            screenEffect.Parameters["awake_NW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/awakeNW"));
+            screenEffect.Parameters["awake_NE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/awakeNE"));
+            screenEffect.Parameters["awake_SW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/awakeSW"));
+            screenEffect.Parameters["awake_SE"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/awakeSE"));
         }
     }
 }
