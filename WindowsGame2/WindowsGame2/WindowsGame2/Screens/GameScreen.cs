@@ -807,8 +807,13 @@ namespace WindowsGame2.Screens
                         maxImpulse = Math.Max(maxImpulse, impulse.Points[j].NormalImpulse);
                         if (Cars[i].currentPowerup == Car.powerupBig) maxImpulse /= 5;
                     }
+                    
+                    float multiplicator = 1f;
+#if XBOX360
+            multiplicator=2f;
+#endif
 
-                    Cars[i].startVibrationTimer(Math.Min(maxImpulse*2f,1.0f));
+                    Cars[i].startVibrationTimer(Math.Min(maxImpulse*2f*multiplicator,1.0f));
 
 
                     if (maxImpulse > 1)
