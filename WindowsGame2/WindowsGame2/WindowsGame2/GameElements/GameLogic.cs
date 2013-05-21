@@ -19,7 +19,7 @@ namespace WindowsGame2.GameElements
         /// <summary>
         /// The number of laps needed to finish the game.
         /// </summary>
-        private const int kMaximumLaps = 1;
+        private const int kMaximumLaps = 5;
 
         /// <summary>
         /// The crucial points in a track.
@@ -59,8 +59,6 @@ namespace WindowsGame2.GameElements
         private FinishedLapEventArgs _finishedLapEvent;
         private EliminatedCarEventArgs _eliminatedCarEvent;
 
-        private bool firstTime;
-
         /// <summary>
         /// The ranking position for each car in the race.
         /// </summary>
@@ -74,8 +72,6 @@ namespace WindowsGame2.GameElements
 
         public GameLogic(int[] crucialPoints, int pointsCount)
         {
-            firstTime = true;
-
             Laps = 0;
 
             // Set up the reference points in the track

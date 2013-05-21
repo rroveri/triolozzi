@@ -39,13 +39,15 @@ namespace WindowsGame2.Screens
         private List<SandboxCar> _cars;
         private List<Tuple<Texture2D, Color>> _gameCars;
         private const string message = "ready";
+        private Texture2D readyTexture;
+        private bool[] readyCars = new bool[4];
         private int _carsCount;
         private int _readyCount;
 
-        private StringWriter _writer;
         private Effect _effect;
         private Matrix _projectionMatrix, _viewMatrix;
         Viewport viewport;
+        Vector2 screenCenter;
 
 
         #endregion
@@ -64,7 +66,6 @@ namespace WindowsGame2.Screens
             _gameCars = cars;
             _carsCount = cars.Count;
             _readyCount = 0;
-            _writer = new StringWriter();
 
             Vector2 v;
             for (int i = 0; i < cars.Count; i++)
@@ -87,6 +88,7 @@ namespace WindowsGame2.Screens
             base.LoadContent();
             _backgroundTexture = ScreenManager.Game.Content.Load<Texture2D>("Images/bgNew");
             _sandboxTitle = ScreenManager.Game.Content.Load<Texture2D>("Images/SandboxScreen/sandbox_title");
+            readyTexture = ScreenManager.Game.Content.Load<Texture2D>("Images/SandboxScreen/sandbox_ready");
 
             _effect = ScreenManager.Game.Content.Load<Effect>("Shaders/PaperEffect");
             _effect.CurrentTechnique = _effect.Techniques["DoodleTechinque"];
@@ -95,13 +97,12 @@ namespace WindowsGame2.Screens
            viewport = ScreenManager.GraphicsDevice.Viewport;
 
             _titlePosition = new Rectangle(viewport.Width / 2 - _sandboxTitle.Width / 2, 100, _sandboxTitle.Width, _sandboxTitle.Height);
+            screenCenter = new Vector2(1920 / 2, 1080 / 2);
             
             SetupWorldBorders();
 
-            // TODO: adjust matrices
-            _projectionMatrix = _camera; //Matrix.CreateOrthographicOffCenter(0f, ConvertUnits.ToSimUnits(viewport.Width) * (1 / (float)Math.Pow(Zoom, 10)),
-                //                            ConvertUnits.ToSimUnits(viewport.Height) * (1 / (float)Math.Pow(Zoom, 10)), 0f, 0f, 1f);
-            _viewMatrix = _camera; // Matrix.CreateTranslation(new Vector3(-ConvertUnits.ToSimUnits(objectPosition) + ConvertUnits.ToSimUnits(_screenCenter) * (1 / (float)Math.Pow(Zoom, 10)), 0f));
+            _projectionMatrix = _camera;
+            _viewMatrix = _camera;
         }
 
         private void SetupWorldBorders()
@@ -171,15 +172,12 @@ namespace WindowsGame2.Screens
 
         private void CarReadyToPlay(object sender, ReadyToPlayEventArgs e)
         {
-
-
-
             Vector3 pos3d = new Vector3( _cars[e.CarIndex]._compound.Position,1);
             Vector3.Transform(pos3d, _camera);
             Vector2 pos2d = new Vector2(pos3d.X,pos3d.Y);
-            pos2d = new Vector2(pos2d.X/(float)viewport.Width *2-1,pos2d.Y/(float)viewport.Height *2 -1);
-            _writer.addString(message, Color.Black, 20f, pos2d, _cars[e.CarIndex]._direction);
+            pos2d = new Vector2(pos2d.X/viewport.Width *2-1,pos2d.Y/viewport.Height *2 -1);
             _readyCount++;
+            readyCars[e.CarIndex] = true;
         }
 
         #endregion
@@ -198,17 +196,22 @@ namespace WindowsGame2.Screens
             for (int i = 0; i < _cars.Count; i++)
             {
                 _cars[i].Draw(ScreenManager.SpriteBatch);
+                if (readyCars[i])
+                {
+                    Vector2 pos = (screenCenter - _cars[i].Position);
+                    pos.Normalize();
+                    if (pos.X < 0) pos.X -= readyTexture.Width;
+                    else pos.X += readyTexture.Width / 2;
+                    if (pos.Y < 0) pos.Y -= readyTexture.Height;
+                    else pos.Y += readyTexture.Height / 2;
+                    pos += _cars[i].Position;
+                    ScreenManager.SpriteBatch.Draw(readyTexture, pos, null, _cars[i].color);
+                }
             }
 
-            ScreenManager.SpriteBatch.End();
-
-            // TODO: ask for help...?
-            _effect.CurrentTechnique.Passes["AlphabetPass"].Apply();
-            _effect.Parameters["Projection"].SetValue(Matrix.Identity);
-            _effect.Parameters["View"].SetValue(Matrix.Identity);
-            ScreenManager.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, _writer.stringVertices, 0, _writer.stringVertices.Count() / 3);
-
             
+
+            ScreenManager.SpriteBatch.End();
             base.Draw(gameTime);
         }
 

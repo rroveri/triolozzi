@@ -22,7 +22,7 @@ namespace WindowsGame2
         public Texture2D _polygonTexture;
         protected Vector2 textureScale;
         protected Vector2 vertScale;
-        protected Color color;
+        public Color color;
 
         protected Vector2 secondTextureScale;
         protected Vector2 secondVertScale;
