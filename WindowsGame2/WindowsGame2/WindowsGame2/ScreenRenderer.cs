@@ -44,6 +44,8 @@ namespace WindowsGame2
 
         SoundEffect cryingSound;
 
+        Texture2D pencilTop, pencilBottom;
+
         public ScreenRenderer()
         {
 
@@ -404,12 +406,25 @@ namespace WindowsGame2
                 device.DrawUserPrimitives(PrimitiveType.TriangleList, barVertices[i], 0, Cars[i].score * 2);
             }
 
-            screenEffect.CurrentTechnique.Passes["PencilPass"].Apply();
+            screenEffect.CurrentTechnique.Passes["PencilPassTop"].Apply();
             for (int i = 0; i < Cars.Count(); i++)
             {
                 device.DrawUserPrimitives(PrimitiveType.TriangleList, bulletVertices[i], 0, 2);
             }
-            
+
+            screenEffect.CurrentTechnique.Passes["PencilPassTop"].Apply();
+            for (int i = 0; i < Cars.Count(); i++)
+            {
+                screenEffect.Parameters["pencil"].SetValue(pencilTop);
+                device.DrawUserPrimitives(PrimitiveType.TriangleList, bulletVertices[i], 0, 2);
+            }
+
+            screenEffect.CurrentTechnique.Passes["PencilPassBottom"].Apply();
+            for (int i = 0; i < Cars.Count(); i++)
+            {
+                screenEffect.Parameters["pencil"].SetValue(pencilBottom);
+                device.DrawUserPrimitives(PrimitiveType.TriangleList, bulletVertices[i], 0, 2);
+            }
         }
 
         private void LoadScreenEffect()
@@ -431,8 +446,9 @@ namespace WindowsGame2
             Texture2D numbers = Content.Load<Texture2D>("Images/numbers");
             screenEffect.Parameters["numbers"].SetValue(numbers);
 
-            Texture2D pencil = Content.Load<Texture2D>("Images/pencil");
-            screenEffect.Parameters["pencil"].SetValue(pencil);
+            pencilTop = Content.Load<Texture2D>("Images/pencil-top");
+            pencilBottom = Content.Load<Texture2D>("Images/pencil_bottom");
+            
 
             // Load and set happy post it for each player
             screenEffect.Parameters["postitHappy_NW"].SetValue(Content.Load<Texture2D>("Images/PlayerPostits/postitHappy_NW"));

@@ -449,22 +449,32 @@ float4 PixelShaderFunctionAwakeSE(LapVertexShaderOutput input) : COLOR0
 	return texCol;
 }
 
-float4 PixelShaderFunctionPencil(LapVertexShaderOutput input) : COLOR0
+float4 PixelShaderFunctionPencilTop(LapVertexShaderOutput input) : COLOR0
 {
     float4 texCol = tex2D(pencilSampler, input.uv);
-    if(texCol[0] == texCol[1] && texCol[1] == texCol[2])
-	    texCol *= input.Color;
+	texCol *= input.Color;
 	return texCol;
 }
 
+float4 PixelShaderFunctionPencilBottom(LapVertexShaderOutput input) : COLOR0
+{
+    float4 texCol = tex2D(pencilSampler, input.uv);
+	
+	return texCol;
+}
 
 technique ScreenTechinque
 {
 
-	pass PencilPass
+	pass PencilPassTop
 	{
 		VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
-        PixelShader = compile ps_3_0 PixelShaderFunctionPencil();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPencilTop();
+	}
+	pass PencilPassBottom
+	{
+		VertexShader = compile vs_3_0 VertexShaderFunctionPostit();
+        PixelShader = compile ps_3_0 PixelShaderFunctionPencilBottom();
 	}
 	pass PostitPassNW
     {
