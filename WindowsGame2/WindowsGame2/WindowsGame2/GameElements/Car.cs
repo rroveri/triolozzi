@@ -278,9 +278,9 @@ namespace WindowsGame2.GameElements
             powerupsTextures[1] = cm.Load<Texture2D>("Images/powerups/powerup-ali");
             powerupsTextures[2] = cm.Load<Texture2D>("Images/powerups/powerup-fuoco");
             powerupsTextures[3] = null;
-            powerupsTextures[4] = null;
+            powerupsTextures[4] = cm.Load<Texture2D>("Images/powerups/powerup-paracadute");
             powerupsTextures[5] = null;
-            powerupsTextures[6] = null;
+            powerupsTextures[6] = cm.Load<Texture2D>("Images/powerups/powerup-freccia");
 
             powerupGlowTexture = cm.Load<Texture2D>("Images/powerups/glow");
             gloatingTexture = cm.Load<Texture2D>("Images/powerups/glow");
