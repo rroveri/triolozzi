@@ -36,11 +36,15 @@ namespace WindowsGame2.GameElements
             //ease = (float)seed.NextDouble() * 0.4f + 0.5f;
 
             //close, perfect if drawing every two frames 
-            div = 0.3f; 
-            ease = (float)seed.NextDouble() * 0.4f + 0.5f;
+           // div = 0.3f; 
+           // ease = (float)seed.NextDouble() * 0.4f + 0.5f;
 
-            ease2 = (float)seed.NextDouble() * 0.4f + 0.5f;
-            ease3 = (float)seed.NextDouble() * 0.4f + 0.5f;
+           // ease2 = (float)seed.NextDouble() * 0.4f + 0.5f;
+           // ease3 = (float)seed.NextDouble() * 0.4f + 0.5f;
+
+            //close without brush
+            div = 0.3f;
+            ease = (float)seed.NextDouble() * 0.4f + 0.5f;
         }
     }
 }

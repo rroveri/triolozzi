@@ -283,20 +283,23 @@ namespace WindowsGame2
             //choose interpolation weight and cars weights depending on the number of players
             float interpWeight = 0.1f;
             float firstCarWeight = 0.5f;
-            if (Cars.Count == 4)
+            if (activeCars == 4)
             {
                 interpWeight = 0.1f;
-                firstCarWeight = 0.6f;
+                //firstCarWeight = 0.6f;
+                firstCarWeight = 0.65f;
             }
-            else if (Cars.Count == 3)
+            else if (activeCars == 3)
             {
                 interpWeight = 0.1f;
-                firstCarWeight = 0.55f;
+               // firstCarWeight = 0.55f;
+                firstCarWeight = 0.63f;
             }
-            else if (Cars.Count == 2)
+            else if (activeCars == 2)
             {
                 interpWeight = 0.1f;
-                firstCarWeight = 0.55f;
+               // firstCarWeight = 0.55f;
+                firstCarWeight = 0.63f;
             }
 
             //set taget position

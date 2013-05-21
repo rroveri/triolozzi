@@ -446,8 +446,8 @@ namespace WindowsGame2.GameElements
                 resetTrail();
             }
 
-            tdPos.X = _compound.Position.X;
-            tdPos.Y = _compound.Position.Y;
+            tdPos.X = _compound.Position.X +mDirection.X * 0.4f;
+            tdPos.Y = _compound.Position.Y +mDirection.Y * 0.4f;
 
             // Add a trail point if the player is drawing
             if (isDrawing && !justStarted )
@@ -932,7 +932,7 @@ namespace WindowsGame2.GameElements
 
             if (isActive)
             {
-                drawBrush(spriteBatch);
+               // drawBrush(spriteBatch);
             }
 
             //draw projected position
