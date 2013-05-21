@@ -142,6 +142,7 @@ namespace WindowsGame2.GameElements
             tangent = new Vector2(-car.mDirection.Y, car.mDirection.X);
 
             laserSoundInstance.Play();
+            car.startVibrationBullet();
         }
 
         public void Update()
@@ -167,6 +168,8 @@ namespace WindowsGame2.GameElements
 
             laserSoundInstance.Stop();
           //  car.bulletIsShot = false;
+
+            car.stopVibrationBullet();
         }
 
         void DrawLine(SpriteBatch batch, float width, Color color, Vector2 point1, Vector2 point2)

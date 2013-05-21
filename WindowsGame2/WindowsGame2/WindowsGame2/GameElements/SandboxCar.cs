@@ -37,6 +37,9 @@ namespace WindowsGame2.GameElements
         /// </summary>
         public event EventHandler<ReadyToPlayEventArgs> OnReadyToPlay;
 
+        private float vibrationTimer;
+        private bool mustVibrate;
+
         #endregion
 
         public SandboxCar(World world, Texture2D texture, Color Color) : base(world, texture, new Vector2(65.0f, 40.0f), Color)
@@ -52,12 +55,38 @@ namespace WindowsGame2.GameElements
             _isReady = false;
 
             _readyAction = new InputAction(new Buttons[] { Buttons.A }, new Keys[] { Keys.A }, true);
+
+            mustVibrate = false;
+            vibrationTimer = 0.0f;
+        }
+
+        public void startVibrationTimer(PlayerIndex carIndex)
+        {
+             vibrationTimer = 0.0f;
+             GamePad.SetVibration(carIndex, 1.0f, 1.0f);
+             mustVibrate = true;
+        }
+
+        public void checkVibrationTimer(GameTime gameTime, PlayerIndex carIndex)
+        {
+            vibrationTimer += gameTime.ElapsedGameTime.Milliseconds;
+            if (vibrationTimer > 200.0f)
+            {
+                mustVibrate = false;
+                GamePad.SetVibration(carIndex, 0.0f, 0.0f);
+                vibrationTimer = 0.0f;
+            }
         }
 
         public void Update(GameTime gameTime, PlayerIndex playerIndex)
         {
             _gamePad = GamePad.GetState(playerIndex);
             _keyboard = Keyboard.GetState();
+
+            if (mustVibrate)
+            {
+                checkVibrationTimer(gameTime, playerIndex);
+            }
 
             // Check if the player is ready to play
             if (_isReady) return;
@@ -110,6 +139,8 @@ namespace WindowsGame2.GameElements
             PlayerIndex playerIndex;
             if (_readyAction.Evaluate(input, controllingPlayer, out playerIndex))
             {
+                startVibrationTimer(playerIndex);
+
                 _isReady = true;
                 _compound.LinearVelocity = Vector2.Zero;
                 if (OnReadyToPlay != null)

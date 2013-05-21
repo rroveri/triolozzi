@@ -144,11 +144,21 @@ namespace WindowsGame2.GameElements
         public bool hasNeverStarted;
         public bool isGloating;
         private Texture2D gloatingTexture;
+
+        PlayerIndex carIndex;
+
+        private float vibrationTimer;
+        private bool mustVibrate;
         
 
-        public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index)
+        public Car(World world, Texture2D texture, Color Color, RandomTrack _randomTrack, int _index, PlayerIndex _carIndex)
             : base(world, texture, new Vector2(65.0f, 40.0f), Color, new Vector2(130.0f,80.0f))
         {
+
+            vibrationTimer = 0.0f;
+            mustVibrate = false;
+
+            carIndex = _carIndex;
 
             hasNeverStarted = true;
 
@@ -282,6 +292,9 @@ namespace WindowsGame2.GameElements
 
         bool body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
         {
+
+
+
             if (!isDrawing)
             {
                 return true;
@@ -303,6 +316,25 @@ namespace WindowsGame2.GameElements
                 }
             }
             return true;
+        }
+
+        public void startVibrationBullet()
+        {
+            GamePad.SetVibration(carIndex, 1.0f, 1.0f);
+        }
+        public void stopVibrationBullet()
+        {
+            GamePad.SetVibration(carIndex, 0.0f, 0.0f);
+        }
+
+        public void startVibrationTimer(float power)
+        {
+            if (!bullet.isGoing)
+            {
+                vibrationTimer = 0.0f;
+                GamePad.SetVibration(carIndex, power, power);
+                mustVibrate = true;
+            }
         }
 
         public Vector2 ProjectedPosition
@@ -347,8 +379,24 @@ namespace WindowsGame2.GameElements
             }
         }
 
+        public void checkVibrationTimer(GameTime gameTime)
+        {
+            vibrationTimer += gameTime.ElapsedGameTime.Milliseconds;
+            if (vibrationTimer > 300.0f)
+            {
+                mustVibrate = false;
+                GamePad.SetVibration(carIndex, 0.0f, 0.0f);
+                vibrationTimer = 0.0f;
+            }
+        }
+
         public void Update(GamePadState gps, KeyboardState ks, GameTime gameTime)
         {
+
+            if (mustVibrate)
+            {
+                checkVibrationTimer(gameTime);
+            }
 
             timer += gameTime.ElapsedGameTime.TotalMilliseconds;
             blinkTimer += gameTime.ElapsedGameTime.TotalMilliseconds;

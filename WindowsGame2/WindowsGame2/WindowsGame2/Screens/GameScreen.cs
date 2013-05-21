@@ -224,7 +224,7 @@ namespace WindowsGame2.Screens
 
             for (int i = 0; i < 4; i++)
             {
-                Car aCar = new Car(world, Content.Load<Texture2D>("Images/small_car"), Color.White, randomRaceTrack, i);
+                Car aCar = new Car(world, Content.Load<Texture2D>("Images/small_car"), Color.White, randomRaceTrack, i, playerIndexes[i]);
                 Cars.Add(aCar);
             }
             
@@ -800,13 +800,22 @@ namespace WindowsGame2.Screens
                     float maxImpulse = 0.0f;
                     int count = contact.Manifold.PointCount;
 
+                    
+
                     for (int j = 0; j < count; ++j)
                     {
                         maxImpulse = Math.Max(maxImpulse, impulse.Points[j].NormalImpulse);
                         if (Cars[i].currentPowerup == Car.powerupBig) maxImpulse /= 5;
                     }
+
+                    Cars[i].startVibrationTimer(Math.Min(maxImpulse*2f,1.0f));
+
+
                     if (maxImpulse > 1)
                     {
+
+                        
+
                         //randomly choose whether front or back
 
                         if (Cars[i]._compound.LinearVelocity.Length() > 2.0f)
@@ -1178,7 +1187,7 @@ namespace WindowsGame2.Screens
 
             for (int i = 0; i < playersCount; i++)
             {
-                Cars.Add(new Car(world, cars[i].Item1, cars[i].Item2, randomRaceTrack, i));
+                Cars.Add(new Car(world, cars[i].Item1, cars[i].Item2, randomRaceTrack, i, playerIndexes[i]));
                 screenRenderer.SetColor(cars[i].Item2, i);
             }
 
