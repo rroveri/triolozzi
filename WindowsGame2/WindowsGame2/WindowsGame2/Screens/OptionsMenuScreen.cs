@@ -208,7 +208,7 @@ namespace WindowsGame2.Screens
                 for (int j = 0; j < _CarsPositions[i].Length; j++)
                 {
                     postit = _PostitsPositions[i][j];
-                    _CarsPositions[i][j] = new Rectangle(postit.Center.X - 50, postit.Center.Y - 25, 100, 50);
+                    _CarsPositions[i][j] = new Rectangle(postit.Center.X - 25, postit.Center.Y + 50, 80, 50);
                 }
             }
 
@@ -352,7 +352,12 @@ namespace WindowsGame2.Screens
                 ScreenManager.SpriteBatch.Draw(_postIts[i], _PostitsPositions[PlayersCount - 2][i], null, Color.White);
 
                 // Draw the selected car with the selected color
-                ScreenManager.SpriteBatch.Draw(_availableCars[_selectedCars[i]], _CarsPositions[PlayersCount - 2][i], null, _availableColors[_selectedColors[i]]);
+                Texture2D car = _availableCars[_selectedCars[i]];
+                Rectangle rec = _CarsPositions[PlayersCount - 2][i];
+                Color col = _availableColors[_selectedColors[i]];
+
+                //ScreenManager.SpriteBatch.Draw(car, rec, null, col);
+                ScreenManager.SpriteBatch.Draw(car, rec, null, col, -(float)Math.PI / 2, Vector2.Zero, SpriteEffects.None, 1f); 
 
                 // Show "Done" or "Ready" string
                 if (_didSelectColor[i])
