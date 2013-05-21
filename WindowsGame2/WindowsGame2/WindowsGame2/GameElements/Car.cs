@@ -1117,6 +1117,8 @@ namespace WindowsGame2.GameElements
                     result.currentIgnoredBody = _compound;
                     result.compound.CollisionCategories = Category.Cat10;
                     result.compound.CollidesWith = Category.Cat20;
+
+                    result.compound.Mass = result.compound.Mass * 0.5f;
             
                     
                     if (currentPowerup != powerupSlow && currentPowerup != powerupTurbo)

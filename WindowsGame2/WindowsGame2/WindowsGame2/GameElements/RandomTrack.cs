@@ -514,7 +514,7 @@ namespace WindowsGame2.GameElements
 
             startLineVertices= new VertexPositionColorTexture[6];
             Vector2 startingLine = (curvePointsInternal[internalCorrispondances[0]] - curvePointsExternal[0]);
-            Vector2 normalLine = Vector2.Normalize(new Vector2(-startingLine.Y, startingLine.X))*1f;
+            Vector2 normalLine = Vector2.Normalize(new Vector2(-startingLine.Y, startingLine.X))*0.94f;
             startLineVertices[0].Position = new Vector3(curvePointsInternal[internalCorrispondances[0]], -0.1f);
             startLineVertices[1].Position = new Vector3(curvePointsExternal[0], -0.1f);
             startLineVertices[2].Position = new Vector3(curvePointsInternal[internalCorrispondances[0]]+ normalLine, -0.1f);
