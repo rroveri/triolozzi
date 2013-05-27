@@ -41,6 +41,7 @@ namespace WindowsGame2.Screens
         private const string message = "ready";
         private Texture2D readyTexture;
         private bool[] readyCars = new bool[4];
+        private Vector2[] readyPos = new Vector2[4];
         private int _carsCount;
         private int _readyCount;
 
@@ -198,14 +199,18 @@ namespace WindowsGame2.Screens
                 _cars[i].Draw(ScreenManager.SpriteBatch);
                 if (readyCars[i])
                 {
-                    Vector2 pos = (screenCenter - _cars[i].Position);
-                    pos.Normalize();
-                    if (pos.X < 0) pos.X -= readyTexture.Width;
-                    else pos.X += readyTexture.Width / 2;
-                    if (pos.Y < 0) pos.Y -= readyTexture.Height;
-                    else pos.Y += readyTexture.Height / 2;
-                    pos += _cars[i].Position;
-                    ScreenManager.SpriteBatch.Draw(readyTexture, pos, null, _cars[i].color);
+                    if (readyPos[i].X == 0 && readyPos[i].Y == 0)
+                    {
+                        Vector2 pos = (screenCenter - _cars[i].Position);
+                        pos.Normalize();
+                        if (pos.X < 0) pos.X -= readyTexture.Width;
+                        else pos.X += readyTexture.Width / 2;
+                        if (pos.Y < 0) pos.Y -= readyTexture.Height;
+                        else pos.Y += readyTexture.Height / 2;
+                        pos += _cars[i].Position;
+                        readyPos[i] = pos;
+                    }
+                    ScreenManager.SpriteBatch.Draw(readyTexture, readyPos[i], null, _cars[i].color);
                 }
             }
 

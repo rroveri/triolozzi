@@ -603,7 +603,7 @@ namespace WindowsGame2.GameElements
 
 
 
-            if (ks.IsKeyDown(Keys.R) && blueOnly || gps.Buttons.A >0 )
+            if (ks.IsKeyDown(Keys.R) && blueOnly || gps.Triggers.Right > 0.5 )
             {
                 if (bulletIsShot == false)
                 {

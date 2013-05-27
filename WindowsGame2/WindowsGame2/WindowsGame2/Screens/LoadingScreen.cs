@@ -41,21 +41,25 @@ namespace WindowsGame2
             _switchTip = content.Load<Texture2D>("Images/PimpScreen/tutorialSwitchMessage");
             _readyToPlayMessage = content.Load<Texture2D>("Images/PimpScreen/startGameMessage");
 
-            _tutorials = new Texture2D[4];
-            _tutorials[0] = content.Load<Texture2D>("Images/PimpScreen/game_controls");
-            _tutorials[1] = content.Load<Texture2D>("Images/PimpScreen/tutorial1");
-            _tutorials[2] = content.Load<Texture2D>("Images/PimpScreen/tutorial2");
-            _tutorials[3] = content.Load<Texture2D>("Images/PimpScreen/tutorial3");
+            _tutorials = new Texture2D[6];
+            _tutorials[0] = content.Load<Texture2D>("Images/PimpScreen/tutorial0");
+            _tutorials[1] = content.Load<Texture2D>("Images/PimpScreen/game_controls");
+            _tutorials[2] = content.Load<Texture2D>("Images/PimpScreen/tutorial1");
+            _tutorials[3] = content.Load<Texture2D>("Images/PimpScreen/tutorial2");
+            _tutorials[4] = content.Load<Texture2D>("Images/PimpScreen/tutorial3");
+            _tutorials[5] = content.Load<Texture2D>("Images/PimpScreen/tutorial4");
 
             Viewport viewport = ScreenManager.GraphicsDevice.Viewport;
             _currentPosition = new Rectangle(1920/2 - 300, 1080/2 - 500, 600, 150);
             _switchTipPosition = new Rectangle(1920 / 2 - 850, 1080 / 2 + 400, 500, 150);
 
-            _tutorialsPosition = new Rectangle[4];
-            _tutorialsPosition[0] = new Rectangle(1920 / 2 - 450, 1080 / 2 - 300, 900, 581);
-            _tutorialsPosition[1] = new Rectangle(0, 0, 1920, 1080);
+            _tutorialsPosition = new Rectangle[6];
+            _tutorialsPosition[0] = new Rectangle(0, 0, 1920, 1080); 
+            _tutorialsPosition[1] = new Rectangle(1920 / 2 - 450, 1080 / 2 - 300, 900, 581);
             _tutorialsPosition[2] = new Rectangle(0, 0, 1920, 1080);
             _tutorialsPosition[3] = new Rectangle(0, 0, 1920, 1080);
+            _tutorialsPosition[4] = new Rectangle(0, 0, 1920, 1080);
+            _tutorialsPosition[5] = new Rectangle(0, 0, 1920, 1080);
 
             _currentTexture = _loadingMessage;
 
